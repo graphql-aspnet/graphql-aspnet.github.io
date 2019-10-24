@@ -1,0 +1,209 @@
+<!DOCTYPE html><html lang="en"><head><meta charSet="utf-8"/><meta http-equiv="X-UA-Compatible" content="IE=edge"/><title>Structured Logging · GraphQL ASP.NET</title><meta name="viewport" content="width=device-width"/><meta name="generator" content="Docusaurus"/><meta name="description" content="GraphQL ASP.NET utilizes structured logging for reporting runtime events. The log messages generated aren&#x27;t just packed strings but actual objects. All internal log events are raised as objects that inherit from `IGraphLogEntry`."/><meta name="docsearch:language" content="en"/><meta property="og:title" content="Structured Logging · GraphQL ASP.NET"/><meta property="og:type" content="website"/><meta property="og:url" content="https://graphql-aspnet.github.io/"/><meta property="og:description" content="GraphQL ASP.NET utilizes structured logging for reporting runtime events. The log messages generated aren&#x27;t just packed strings but actual objects. All internal log events are raised as objects that inherit from `IGraphLogEntry`."/><meta property="og:image" content="https://graphql-aspnet.github.io/img/undraw_online.svg"/><meta name="twitter:card" content="summary"/><meta name="twitter:image" content="https://graphql-aspnet.github.io/img/undraw_tweetstorm.svg"/><link rel="shortcut icon" href="/img/logo-64.png"/><link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/hybrid.min.css"/><script>
+              (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+              (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+              m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+              })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+              ga('create', 'UA-150856900-1', 'auto');
+              ga('send', 'pageview');
+            </script><script type="text/javascript" src="https://buttons.github.io/buttons.js"></script><script src="/js/scrollSpy.js"></script><link rel="stylesheet" href="/css/main.css"/><script src="/js/codetabs.js"></script></head><body class="sideNavVisible separateOnPageNav"><div class="fixedHeaderContainer"><div class="headerWrapper wrapper"><header><a href="/"><img class="logo" src="/img/logo-64.png" alt="GraphQL ASP.NET"/><h2 class="headerTitleWithLogo">GraphQL ASP.NET</h2></a><div class="navigationWrapper navigationSlider"><nav class="slidingNav"><ul class="nav-site nav-site-internal"><li class="siteNavGroupActive"><a href="/docs/quick/overview" target="_self">Documentation</a></li><li class=""><a href="https://github.com/graphql-aspnet/graphql-aspnet" target="_self">Source Code</a></li></ul></nav></div></header></div></div><div class="navPusher"><div class="docMainWrapper wrapper"><div class="docsNavContainer" id="docsNav"><nav class="toc"><div class="toggleNav"><section class="navWrapper wrapper"><div class="navBreadcrumb wrapper"><div class="navToggle" id="navToggler"><div class="hamburger-menu"><div class="line1"></div><div class="line2"></div><div class="line3"></div></div></div><h2><i>›</i><span>Logging</span></h2><div class="tocToggler" id="tocToggler"><i class="icon-toc"></i></div></div><div class="navGroups"><div class="navGroup"><h3 class="navGroupCategoryTitle">Jump In!</h3><ul class=""><li class="navListItem"><a class="navItem" href="/docs/quick/overview">Overview</a></li><li class="navListItem"><a class="navItem" href="/docs/quick/quick-start">Quick Start</a></li><li class="navListItem"><a class="navItem" href="/docs/quick/code-examples">Code Examples</a></li></ul></div><div class="navGroup"><h3 class="navGroupCategoryTitle">Introduction</h3><ul class=""><li class="navListItem"><a class="navItem" href="/docs/introduction/what-is-graphql">What is GraphQL?</a></li><li class="navListItem"><a class="navItem" href="/docs/introduction/made-for-aspnet-developers">Made for ASP.NET Developers</a></li></ul></div><div class="navGroup"><h3 class="navGroupCategoryTitle">Controllers &amp; Actions</h3><ul class=""><li class="navListItem"><a class="navItem" href="/docs/controllers/actions">Actions</a></li><li class="navListItem"><a class="navItem" href="/docs/controllers/model-state">Model State</a></li><li class="navListItem"><a class="navItem" href="/docs/controllers/field-paths">Field Paths</a></li><li class="navListItem"><a class="navItem" href="/docs/controllers/authorization">Authorization</a></li><li class="navListItem"><a class="navItem" href="/docs/controllers/type-extensions">Type Extensions</a></li><li class="navListItem"><a class="navItem" href="/docs/controllers/batch-operations">Batch Operations</a></li></ul></div><div class="navGroup"><h3 class="navGroupCategoryTitle">Graph Type Definitions</h3><ul class=""><li class="navListItem"><a class="navItem" href="/docs/types/objects">Objects</a></li><li class="navListItem"><a class="navItem" href="/docs/types/input-objects">Input Objects</a></li><li class="navListItem"><a class="navItem" href="/docs/types/interfaces">Interfaces</a></li><li class="navListItem"><a class="navItem" href="/docs/types/unions">Unions</a></li><li class="navListItem"><a class="navItem" href="/docs/types/enums">Enums</a></li><li class="navListItem"><a class="navItem" href="/docs/types/scalars">Scalars</a></li><li class="navListItem"><a class="navItem" href="/docs/types/list-non-null">List &amp; Non-Null</a></li></ul></div><div class="navGroup"><h3 class="navGroupCategoryTitle">Logging</h3><ul class=""><li class="navListItem navListItemActive"><a class="navItem" href="/docs/logging/structured-logging">Structured Logging</a></li><li class="navListItem"><a class="navItem" href="/docs/logging/standard-events">Standard Events</a></li></ul></div><div class="navGroup"><h3 class="navGroupCategoryTitle">Query Execution</h3><ul class=""><li class="navListItem"><a class="navItem" href="/docs/execution/metrics">Query Profiling</a></li><li class="navListItem"><a class="navItem" href="/docs/execution/malicious-queries">Malicious Queries</a></li></ul></div><div class="navGroup"><h3 class="navGroupCategoryTitle">Advanced</h3><ul class=""><li class="navListItem"><a class="navItem" href="/docs/advanced/subscriptions">Subscriptions</a></li><li class="navListItem"><a class="navItem" href="/docs/advanced/type-expressions">Type Expressions</a></li><li class="navListItem"><a class="navItem" href="/docs/advanced/directives">Directives</a></li><li class="navListItem"><a class="navItem" href="/docs/advanced/custom-scalars">Custom Scalars</a></li><li class="navListItem"><a class="navItem" href="/docs/advanced/graph-action-results">Action Results</a></li><li class="navListItem"><a class="navItem" href="/docs/advanced/middleware">Pipelines &amp; Middleware</a></li><li class="navListItem"><a class="navItem" href="/docs/advanced/query-cache">Query Caching</a></li><li class="navListItem"><a class="navItem" href="/docs/advanced/multi-schema-support">Multi-Schema Support</a></li></ul></div><div class="navGroup"><h3 class="navGroupCategoryTitle">Development Concerns</h3><ul class=""><li class="navListItem"><a class="navItem" href="/docs/development/debugging">Debugging</a></li><li class="navListItem"><a class="navItem" href="/docs/development/unit-testing">Unit Testing</a></li></ul></div><div class="navGroup"><h3 class="navGroupCategoryTitle">References</h3><ul class=""><li class="navListItem"><a class="navItem" href="/docs/reference/how-it-works">How it Works</a></li><li class="navListItem"><a class="navItem" href="/docs/reference/schema-configuration">Schema Configuration</a></li><li class="navListItem"><a class="navItem" href="/docs/reference/attributes">Attributes</a></li><li class="navListItem"><a class="navItem" href="/docs/reference/graph-controller">GraphController</a></li><li class="navListItem"><a class="navItem" href="/docs/reference/graph-directive">GraphDirective</a></li><li class="navListItem"><a class="navItem" href="/docs/reference/http-processor">HTTP Processor</a></li><li class="navListItem"><a class="navItem" href="/docs/reference/demo-projects">Demo Projects</a></li><li class="navListItem"><a class="navItem" href="/docs/reference/performance">Benchmarks</a></li><li class="navListItem"><a class="navItem" href="/docs/reference/contributing">Contributing</a></li></ul></div></div></section></div><script>
+            var coll = document.getElementsByClassName('collapsible');
+            var checkActiveCategory = true;
+            for (var i = 0; i < coll.length; i++) {
+              var links = coll[i].nextElementSibling.getElementsByTagName('*');
+              if (checkActiveCategory){
+                for (var j = 0; j < links.length; j++) {
+                  if (links[j].classList.contains('navListItemActive')){
+                    coll[i].nextElementSibling.classList.toggle('hide');
+                    coll[i].childNodes[1].classList.toggle('rotate');
+                    checkActiveCategory = false;
+                    break;
+                  }
+                }
+              }
+
+              coll[i].addEventListener('click', function() {
+                var arrow = this.childNodes[1];
+                arrow.classList.toggle('rotate');
+                var content = this.nextElementSibling;
+                content.classList.toggle('hide');
+              });
+            }
+
+            document.addEventListener('DOMContentLoaded', function() {
+              createToggler('#navToggler', '#docsNav', 'docsSliderActive');
+              createToggler('#tocToggler', 'body', 'tocActive');
+
+              var headings = document.querySelector('.toc-headings');
+              headings && headings.addEventListener('click', function(event) {
+                var el = event.target;
+                while(el !== headings){
+                  if (el.tagName === 'A') {
+                    document.body.classList.remove('tocActive');
+                    break;
+                  } else{
+                    el = el.parentNode;
+                  }
+                }
+              }, false);
+
+              function createToggler(togglerSelector, targetSelector, className) {
+                var toggler = document.querySelector(togglerSelector);
+                var target = document.querySelector(targetSelector);
+
+                if (!toggler) {
+                  return;
+                }
+
+                toggler.onclick = function(event) {
+                  event.preventDefault();
+
+                  target.classList.toggle(className);
+                };
+              }
+            });
+        </script></nav></div><div class="container mainContainer"><div class="wrapper"><div class="post"><header class="postHeader"><h1 class="postHeaderTitle">Structured Logging</h1></header><article><div><span><p>GraphQL ASP.NET utilizes structured logging for reporting runtime events. The log messages generated aren't just packed strings but actual objects. All internal log events are raised as objects that inherit from <code>IGraphLogEntry</code>.</p>
+<h2><a class="anchor" aria-hidden="true" id="iservicecollectionaddlogging"></a><a href="#iservicecollectionaddlogging" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>IServiceCollection.AddLogging()</h2>
+<p>GraphQL's logging extends off of .NET's built in logging framework. To enable it, you need to register logging to your application at startup. By doing so, GraphQL will automatically wire up its own logging as well.</p>
+<pre><code class="hljs css language-csharp"><span class="hljs-comment">//Startup.cs</span>
+<span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title">Startup</span>
+{
+    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">ConfigureServices</span>(<span class="hljs-params">IServiceCollection services</span>)</span>
+    {
+        <span class="hljs-comment">// other service entries omitted for brevity</span>
+        services.AddLogging();
+        service.AddGraphQL(<span class="hljs-comment">/*...*/</span>);
+    }
+}
+</code></pre>
+<h2><a class="anchor" aria-hidden="true" id="extending-igrapheventlogger"></a><a href="#extending-igrapheventlogger" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Extending IGraphEventLogger</h2>
+<p>GraphQL registers an <code>IGraphEventLogger</code> with methods for recording the the <a href="./standard-events">standard events</a> created during query execution. This can be extended by injecting your own <code>IGraphEventLogger</code> to the DI container <strong>before</strong> calling <code>.AddGraphQL()</code> and provides a clean way to inject your own <a href="./custom-events">custom events</a> from your graph controllers into the logging pipeline.</p>
+<p>It can be helpful to view the <a href="https://github.com/graphql-aspnet/graphql-aspnet/blob/develop/src/graphql-aspnet/Defaults/DefaultGraphLogger.cs">source code</a> for the <code>DefaultLogger</code> that GraphQL registers for reference.</p>
+<h2><a class="anchor" aria-hidden="true" id="using-igraphlogger"></a><a href="#using-igraphlogger" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Using IGraphLogger</h2>
+<p>Its common practice to inject an instance of <code>ILogger</code> or <code>ILoggerFactory</code> into a controller in order to log various events of your controller methods.</p>
+<p>This is fully supported but GraphQL can also generate an instance of <code>IGraphLogger</code> with a few helpful methods for raising &quot;on the fly&quot; log entries if you wish to make use of it. <code>IGraphLogger</code> inherits from <code>ILogger</code>, the two can be used interchangeably as needed.</p>
+<pre><code class="hljs css language-csharp"><span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title">BakeryController</span> : <span class="hljs-title">GraphController</span>
+{
+    <span class="hljs-keyword">private</span> IGraphLogger _graphLogger;
+    <span class="hljs-keyword">private</span> IDonutService _service;
+    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-title">BakeryController</span>(<span class="hljs-params">IDonutService service, IGraphLogger graphLogger</span>)</span>
+    {
+        _service = service;
+        _graphLogger = graphLogger;
+    }
+
+    [<span class="hljs-meta">MutationRoot</span>]
+    <span class="hljs-function"><span class="hljs-keyword">public</span> Donut <span class="hljs-title">CreateDonut</span>(<span class="hljs-params"><span class="hljs-keyword">string</span> name</span>)</span>
+    {
+        Donut donut = _service.CreateDonut(name);
+
+        <span class="hljs-keyword">var</span> donutEvent = <span class="hljs-keyword">new</span> GraphLogEntry(<span class="hljs-string">"New Donut Created!"</span>);
+        donutEvent[<span class="hljs-string">"Name"</span>] = name;
+        donutEvent[<span class="hljs-string">"Id"</span>] = donut.Id;
+
+        _graphLogger.Log(LogLevel.Information, donutEvent);
+        <span class="hljs-keyword">return</span> donut;
+    }
+}
+</code></pre>
+<p><code>GraphLogEntry</code> is an untyped implementation of <code>IGraphLogEvent</code> and can be used on the fly for quick operations.</p>
+<h2><a class="anchor" aria-hidden="true" id="custom-iloggers"></a><a href="#custom-iloggers" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Custom ILoggers</h2>
+<p>By default, the log events will return a contextual message on <code>.ToString()</code> with the important data related to the event, so they can be easily serialized. This is very handy when logging to the console during development.</p>
+<p><img src="../assets/console-logger.png" alt="console logger"></p>
+<p>But given the extra data the log entries contain it makes more sense to implement a custom <code>ILogger</code> to take advantage of the full object.</p>
+<p>The <code>ILogger</code> interface's workhorse method is:</p>
+<p><code>Log&lt;TState&gt;(LogLevel, EventId, TState, Exception, Func&lt;TState,Exception,String&gt;)</code></p>
+<p>The GraphQL log entry will be passed on the <code>state</code> parameter and will be castable to<code>IGraphLogEntry</code>.</p>
+<blockquote>
+<p>The state parameter of <code>ILogger.Log</code> will be an instance of <code>IGraphLogEntry</code> whenever a GraphQL ASP.NET log event is recorded.</p>
+</blockquote>
+<pre><code class="hljs css language-csharp"><span class="hljs-keyword">using</span> Microsoft.Extensions.Logging;
+<span class="hljs-keyword">using</span> GraphQL.AspNet.Interfaces.Logging;
+<span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title">MyCustomLogger</span> : <span class="hljs-title">ILogger</span>
+{
+    <span class="hljs-keyword">public</span> IDisposable BeginScope&lt;TState&gt;(TState state)
+    {
+        <span class="hljs-comment">// ...</span>
+    }
+
+    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">bool</span> <span class="hljs-title">IsEnabled</span>(<span class="hljs-params">LogLevel logLevel</span>)</span>
+    {
+        <span class="hljs-comment">// ...</span>
+    }
+
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> Log&lt;TState&gt;(LogLevel logLevel, EventId eventId,
+        TState state, Exception exception, Func&lt;TState, Exception, <span class="hljs-keyword">string</span>&gt; formatter)
+    {
+        <span class="hljs-keyword">if</span> (state <span class="hljs-keyword">is</span> IGraphLogEntry logEntry)
+        {
+            <span class="hljs-comment">// handle the log entry here</span>
+        }
+    }
+}
+</code></pre>
+<h2><a class="anchor" aria-hidden="true" id="log-entries-are-keyvaluepair-collections"></a><a href="#log-entries-are-keyvaluepair-collections" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Log Entries are KeyValuePair Collections</h2>
+<p>While the various <a href="./standard-events">standard log events</a> declare explicit properties for the data they return, every log entry is just a collection of key/value pairs that can be iterated through for quick serialization.</p>
+<pre><code class="hljs css language-csharp">public interface IGraphLogEntry : IGraphLogPropertyCollection
+{ /*...*/ }
+
+public interface IGraphLogPropertyCollection : IEnumerable&lt;KeyValuePair&lt;string, object&gt;&gt;
+{ /*...*/ }
+</code></pre>
+<h2><a class="anchor" aria-hidden="true" id="logging-category"></a><a href="#logging-category" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Logging Category</h2>
+<p>All log events are registered under the the <code>GraphQL.AspNet</code> category. With the exception of field authorization fails, all log events are recorded at <code>Debug</code> or <code>Trace</code>.</p>
+<p>Here we've enabled the log events through <code>appsettings.json</code></p>
+<pre><code class="hljs css language-javascript"><span class="hljs-comment">// appsettings.json</span>
+{
+    <span class="hljs-string">"Logging"</span> : {
+        <span class="hljs-string">"IncludeScopes"</span> : <span class="hljs-literal">false</span>,
+        <span class="hljs-string">"LogLevel"</span>: {
+            <span class="hljs-string">"Default"</span> : <span class="hljs-string">"Information"</span>,
+            <span class="hljs-string">"System"</span>: <span class="hljs-string">"Debug"</span>,
+            <span class="hljs-string">"Microsoft"</span>: <span class="hljs-string">"Information"</span>,
+            <span class="hljs-string">"GraphQL.AspNet"</span> : <span class="hljs-string">"Debug"</span>
+        }
+    }
+}
+</code></pre>
+<p>Log Entries are not allocated unless their respective log levels are enabled. It is not uncommon for real world queries to generate 100s of log entries per request. Take care to ensure you have enabled or disabled logging appropriately in your environment as it can greatly impact performance if left unchecked. It is never a good idea to enable trace level logging for graphQL outside of development.</p>
+<h3><a class="anchor" aria-hidden="true" id="scoped-log-entries"></a><a href="#scoped-log-entries" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Scoped Log Entries</h3>
+<p><code>IGraphLogger</code> is generated from your service provider on a &quot;per scope&quot; basis. By default, this is at the HTTP Request level. Any log entries created through it using <code>.Log(LogLevel, IGraphLogEntry)</code> will be injected with a <code>scopeId</code> and along with the date can produce a complete record of a request from when it was received through query plan generation, authorization and field resolution.</p>
+<p>Here we've used a custom <code>ILogProvider</code> and written out a small sample of events to a json array. Note the shared <code>scopeId</code> on each entry. See the <a href="/docs/reference/demo-projects">example projects</a> to download the code.</p>
+<pre><code class="hljs">[{
+  <span class="hljs-attr">"eventId"</span>: <span class="hljs-number">86000</span>,
+  <span class="hljs-attr">"eventName"</span>: <span class="hljs-string">"GraphQL Request Received"</span>,
+  <span class="hljs-attr">"dateTimeUTC"</span>: <span class="hljs-string">"2019-09-23T22:05:39.6023597+00:00"</span>,
+  <span class="hljs-attr">"logEntryId"</span>: <span class="hljs-string">"6afdf3d1f9464679becfbd2b96aa594f"</span>,
+  <span class="hljs-attr">"operationRequestId"</span>: <span class="hljs-string">"a13f5f7232dc475783c4e4798cfb50d2"</span>,
+  <span class="hljs-attr">"userName"</span>: <span class="hljs-string">"john-doe"</span>,
+  <span class="hljs-attr">"queryOperationName"</span>: <span class="hljs-literal">null</span>,
+  <span class="hljs-attr">"queryText"</span>: <span class="hljs-string">"query {\n  hero(episode: EMPIRE){\n    id\n    name    \n  }\n}"</span>,
+  <span class="hljs-attr">"scopeId"</span>: <span class="hljs-string">"3c3c858b1b344d0b9c0f8ac6b95469d1"</span>
+},
+{
+  <span class="hljs-attr">"eventId"</span>: <span class="hljs-number">86400</span>,
+  <span class="hljs-attr">"eventName"</span>: <span class="hljs-string">"GraphQL Query Plan Generated"</span>,
+  <span class="hljs-attr">"dateTimeUTC"</span>: <span class="hljs-string">"2019-09-23T22:05:39.7214431+00:00"</span>,
+  <span class="hljs-attr">"logEntryId"</span>: <span class="hljs-string">"d133e032e2fc42a98a639ee8c72d2497"</span>,
+  <span class="hljs-attr">"schemaType"</span>: <span class="hljs-string">"GraphQL.AspNet.Schemas.GraphSchema"</span>,
+  <span class="hljs-attr">"isValid"</span>: <span class="hljs-literal">true</span>,
+  <span class="hljs-attr">"operationCount"</span>: <span class="hljs-number">1</span>,
+  <span class="hljs-attr">"estimatedComplexity"</span>: <span class="hljs-number">9.5076</span>,
+  <span class="hljs-attr">"maxDepth"</span>: <span class="hljs-number">2</span>,
+  <span class="hljs-attr">"queryPlanId"</span>: <span class="hljs-string">"57caffc5d5124f2fb08419ae99724974"</span>,
+  <span class="hljs-attr">"scopeId"</span>: <span class="hljs-string">"3c3c858b1b344d0b9c0f8ac6b95469d1"</span>
+},
+{
+  <span class="hljs-attr">"eventId"</span>: <span class="hljs-number">86599</span>,
+  <span class="hljs-attr">"eventName"</span>: <span class="hljs-string">"GraphQL Field Resolution Completed"</span>,
+  <span class="hljs-attr">"path"</span>: <span class="hljs-string">"[type]/Human/Id"</span>,
+  <span class="hljs-attr">"dateTimeUTC"</span>: <span class="hljs-string">"2019-09-23T22:05:39.8528847+00:00"</span>,
+  <span class="hljs-attr">"logEntryId"</span>: <span class="hljs-string">"750ee155bf7e4eea895e5eec01d3fb6d"</span>,
+  <span class="hljs-attr">"pipelineRequestId"</span>: <span class="hljs-string">"aa670d3e2d6a41e1b314711acf6bc51c"</span>,
+  <span class="hljs-attr">"typeExpression"</span>: <span class="hljs-string">"ID!"</span>,
+  <span class="hljs-attr">"hasData"</span>: <span class="hljs-literal">true</span>,
+  <span class="hljs-attr">"resultIsValid"</span>: <span class="hljs-literal">true</span>,
+  <span class="hljs-attr">"scopeId"</span>: <span class="hljs-string">"3c3c858b1b344d0b9c0f8ac6b95469d1"</span>
+}]
+</code></pre>
+</span></div></article></div><div class="docs-prevnext"><a class="docs-prev button" href="/docs/types/list-non-null"><span class="arrow-prev">← </span><span>List &amp; Non-Null</span></a><a class="docs-next button" href="/docs/logging/standard-events"><span>Standard Events</span><span class="arrow-next"> →</span></a></div></div></div><nav class="onPageNav"><ul class="toc-headings"><li><a href="#iservicecollectionaddlogging">IServiceCollection.AddLogging()</a></li><li><a href="#extending-igrapheventlogger">Extending IGraphEventLogger</a></li><li><a href="#using-igraphlogger">Using IGraphLogger</a></li><li><a href="#custom-iloggers">Custom ILoggers</a></li><li><a href="#log-entries-are-keyvaluepair-collections">Log Entries are KeyValuePair Collections</a></li><li><a href="#logging-category">Logging Category</a><ul class="toc-headings"><li><a href="#scoped-log-entries">Scoped Log Entries</a></li></ul></li></ul></nav></div><footer class="nav-footer" id="footer"><section class="sitemap"><div><h5>Docs</h5><a href="/docs/introduction/made-for-aspnet-developers">Made for ASP.NET Developers</a><a href="/docs/quick/code-examples">Code Examples</a></div><div></div><div><h5>More</h5><a class="github-button" href="https://github.com/graphql-aspnet/graphql-aspnet" data-show-count="true" data-count-href="/graphql-aspnet/graphql-aspnet/stargazers" aria-label="Star this project on GitHub">Star on GitHub</a><a href="https://graphql.org">GraphQL.org</a><a href="https://dotnet.microsoft.com/learn/aspnet">Learn ASP.NET</a></div></section><section class="copyright">Copyright © 2019 GraphQL ASP.NET</section></footer></div><script>window.twttr=(function(d,s, id){var js,fjs=d.getElementsByTagName(s)[0],t=window.twttr||{};if(d.getElementById(id))return t;js=d.createElement(s);js.id=id;js.src='https://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js, fjs);t._e = [];t.ready = function(f) {t._e.push(f);};return t;}(document, 'script', 'twitter-wjs'));</script></body></html>

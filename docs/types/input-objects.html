@@ -1,0 +1,225 @@
+<!DOCTYPE html><html lang="en"><head><meta charSet="utf-8"/><meta http-equiv="X-UA-Compatible" content="IE=edge"/><title>Input Objects · GraphQL ASP.NET</title><meta name="viewport" content="width=device-width"/><meta name="generator" content="Docusaurus"/><meta name="description" content="`INPUT_OBJECT` graph types function in much the same way as [object graph types](./objects) do."/><meta name="docsearch:language" content="en"/><meta property="og:title" content="Input Objects · GraphQL ASP.NET"/><meta property="og:type" content="website"/><meta property="og:url" content="https://graphql-aspnet.github.io/"/><meta property="og:description" content="`INPUT_OBJECT` graph types function in much the same way as [object graph types](./objects) do."/><meta property="og:image" content="https://graphql-aspnet.github.io/img/undraw_online.svg"/><meta name="twitter:card" content="summary"/><meta name="twitter:image" content="https://graphql-aspnet.github.io/img/undraw_tweetstorm.svg"/><link rel="shortcut icon" href="/img/logo-64.png"/><link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/hybrid.min.css"/><script>
+              (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+              (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+              m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+              })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+              ga('create', 'UA-150856900-1', 'auto');
+              ga('send', 'pageview');
+            </script><script type="text/javascript" src="https://buttons.github.io/buttons.js"></script><script src="/js/scrollSpy.js"></script><link rel="stylesheet" href="/css/main.css"/><script src="/js/codetabs.js"></script></head><body class="sideNavVisible separateOnPageNav"><div class="fixedHeaderContainer"><div class="headerWrapper wrapper"><header><a href="/"><img class="logo" src="/img/logo-64.png" alt="GraphQL ASP.NET"/><h2 class="headerTitleWithLogo">GraphQL ASP.NET</h2></a><div class="navigationWrapper navigationSlider"><nav class="slidingNav"><ul class="nav-site nav-site-internal"><li class="siteNavGroupActive"><a href="/docs/quick/overview" target="_self">Documentation</a></li><li class=""><a href="https://github.com/graphql-aspnet/graphql-aspnet" target="_self">Source Code</a></li></ul></nav></div></header></div></div><div class="navPusher"><div class="docMainWrapper wrapper"><div class="docsNavContainer" id="docsNav"><nav class="toc"><div class="toggleNav"><section class="navWrapper wrapper"><div class="navBreadcrumb wrapper"><div class="navToggle" id="navToggler"><div class="hamburger-menu"><div class="line1"></div><div class="line2"></div><div class="line3"></div></div></div><h2><i>›</i><span>Graph Type Definitions</span></h2><div class="tocToggler" id="tocToggler"><i class="icon-toc"></i></div></div><div class="navGroups"><div class="navGroup"><h3 class="navGroupCategoryTitle">Jump In!</h3><ul class=""><li class="navListItem"><a class="navItem" href="/docs/quick/overview">Overview</a></li><li class="navListItem"><a class="navItem" href="/docs/quick/quick-start">Quick Start</a></li><li class="navListItem"><a class="navItem" href="/docs/quick/code-examples">Code Examples</a></li></ul></div><div class="navGroup"><h3 class="navGroupCategoryTitle">Introduction</h3><ul class=""><li class="navListItem"><a class="navItem" href="/docs/introduction/what-is-graphql">What is GraphQL?</a></li><li class="navListItem"><a class="navItem" href="/docs/introduction/made-for-aspnet-developers">Made for ASP.NET Developers</a></li></ul></div><div class="navGroup"><h3 class="navGroupCategoryTitle">Controllers &amp; Actions</h3><ul class=""><li class="navListItem"><a class="navItem" href="/docs/controllers/actions">Actions</a></li><li class="navListItem"><a class="navItem" href="/docs/controllers/model-state">Model State</a></li><li class="navListItem"><a class="navItem" href="/docs/controllers/field-paths">Field Paths</a></li><li class="navListItem"><a class="navItem" href="/docs/controllers/authorization">Authorization</a></li><li class="navListItem"><a class="navItem" href="/docs/controllers/type-extensions">Type Extensions</a></li><li class="navListItem"><a class="navItem" href="/docs/controllers/batch-operations">Batch Operations</a></li></ul></div><div class="navGroup"><h3 class="navGroupCategoryTitle">Graph Type Definitions</h3><ul class=""><li class="navListItem"><a class="navItem" href="/docs/types/objects">Objects</a></li><li class="navListItem navListItemActive"><a class="navItem" href="/docs/types/input-objects">Input Objects</a></li><li class="navListItem"><a class="navItem" href="/docs/types/interfaces">Interfaces</a></li><li class="navListItem"><a class="navItem" href="/docs/types/unions">Unions</a></li><li class="navListItem"><a class="navItem" href="/docs/types/enums">Enums</a></li><li class="navListItem"><a class="navItem" href="/docs/types/scalars">Scalars</a></li><li class="navListItem"><a class="navItem" href="/docs/types/list-non-null">List &amp; Non-Null</a></li></ul></div><div class="navGroup"><h3 class="navGroupCategoryTitle">Logging</h3><ul class=""><li class="navListItem"><a class="navItem" href="/docs/logging/structured-logging">Structured Logging</a></li><li class="navListItem"><a class="navItem" href="/docs/logging/standard-events">Standard Events</a></li></ul></div><div class="navGroup"><h3 class="navGroupCategoryTitle">Query Execution</h3><ul class=""><li class="navListItem"><a class="navItem" href="/docs/execution/metrics">Query Profiling</a></li><li class="navListItem"><a class="navItem" href="/docs/execution/malicious-queries">Malicious Queries</a></li></ul></div><div class="navGroup"><h3 class="navGroupCategoryTitle">Advanced</h3><ul class=""><li class="navListItem"><a class="navItem" href="/docs/advanced/subscriptions">Subscriptions</a></li><li class="navListItem"><a class="navItem" href="/docs/advanced/type-expressions">Type Expressions</a></li><li class="navListItem"><a class="navItem" href="/docs/advanced/directives">Directives</a></li><li class="navListItem"><a class="navItem" href="/docs/advanced/custom-scalars">Custom Scalars</a></li><li class="navListItem"><a class="navItem" href="/docs/advanced/graph-action-results">Action Results</a></li><li class="navListItem"><a class="navItem" href="/docs/advanced/middleware">Pipelines &amp; Middleware</a></li><li class="navListItem"><a class="navItem" href="/docs/advanced/query-cache">Query Caching</a></li><li class="navListItem"><a class="navItem" href="/docs/advanced/multi-schema-support">Multi-Schema Support</a></li></ul></div><div class="navGroup"><h3 class="navGroupCategoryTitle">Development Concerns</h3><ul class=""><li class="navListItem"><a class="navItem" href="/docs/development/debugging">Debugging</a></li><li class="navListItem"><a class="navItem" href="/docs/development/unit-testing">Unit Testing</a></li></ul></div><div class="navGroup"><h3 class="navGroupCategoryTitle">References</h3><ul class=""><li class="navListItem"><a class="navItem" href="/docs/reference/how-it-works">How it Works</a></li><li class="navListItem"><a class="navItem" href="/docs/reference/schema-configuration">Schema Configuration</a></li><li class="navListItem"><a class="navItem" href="/docs/reference/attributes">Attributes</a></li><li class="navListItem"><a class="navItem" href="/docs/reference/graph-controller">GraphController</a></li><li class="navListItem"><a class="navItem" href="/docs/reference/graph-directive">GraphDirective</a></li><li class="navListItem"><a class="navItem" href="/docs/reference/http-processor">HTTP Processor</a></li><li class="navListItem"><a class="navItem" href="/docs/reference/demo-projects">Demo Projects</a></li><li class="navListItem"><a class="navItem" href="/docs/reference/performance">Benchmarks</a></li><li class="navListItem"><a class="navItem" href="/docs/reference/contributing">Contributing</a></li></ul></div></div></section></div><script>
+            var coll = document.getElementsByClassName('collapsible');
+            var checkActiveCategory = true;
+            for (var i = 0; i < coll.length; i++) {
+              var links = coll[i].nextElementSibling.getElementsByTagName('*');
+              if (checkActiveCategory){
+                for (var j = 0; j < links.length; j++) {
+                  if (links[j].classList.contains('navListItemActive')){
+                    coll[i].nextElementSibling.classList.toggle('hide');
+                    coll[i].childNodes[1].classList.toggle('rotate');
+                    checkActiveCategory = false;
+                    break;
+                  }
+                }
+              }
+
+              coll[i].addEventListener('click', function() {
+                var arrow = this.childNodes[1];
+                arrow.classList.toggle('rotate');
+                var content = this.nextElementSibling;
+                content.classList.toggle('hide');
+              });
+            }
+
+            document.addEventListener('DOMContentLoaded', function() {
+              createToggler('#navToggler', '#docsNav', 'docsSliderActive');
+              createToggler('#tocToggler', 'body', 'tocActive');
+
+              var headings = document.querySelector('.toc-headings');
+              headings && headings.addEventListener('click', function(event) {
+                var el = event.target;
+                while(el !== headings){
+                  if (el.tagName === 'A') {
+                    document.body.classList.remove('tocActive');
+                    break;
+                  } else{
+                    el = el.parentNode;
+                  }
+                }
+              }, false);
+
+              function createToggler(togglerSelector, targetSelector, className) {
+                var toggler = document.querySelector(togglerSelector);
+                var target = document.querySelector(targetSelector);
+
+                if (!toggler) {
+                  return;
+                }
+
+                toggler.onclick = function(event) {
+                  event.preventDefault();
+
+                  target.classList.toggle(className);
+                };
+              }
+            });
+        </script></nav></div><div class="container mainContainer"><div class="wrapper"><div class="post"><header class="postHeader"><h1 class="postHeaderTitle">Input Objects</h1></header><article><div><span><p><code>INPUT_OBJECT</code> graph types function in much the same way as <a href="./objects">object graph types</a> do.
+While GraphQL is doing its discovery of controllers and graph types, whenever it comes across a class used as a parameter to a method it will attempt to generate the appropriate input type definition.</p>
+<p>The rules surrounding naming, field declarations, exclusions, use of <code>[GraphSkip]</code> etc. apply to input objects but with a few key differences.</p>
+<p>By Default:</p>
+<ul>
+<li>An input object is named the same as its <code>class</code> name, prefixed with <code>Input_</code>
+<ul>
+<li>i.e. <code>Input_Donut</code>, <code>Input_Employee</code></li>
+</ul></li>
+<li>All public properties with a <code>get</code> and <code>set</code> statement will be included.
+<ul>
+<li>The return type of the property must be an acceptable type or it will be skipped</li>
+</ul></li>
+<li>Methods are always skipped.</li>
+</ul>
+<h2><a class="anchor" aria-hidden="true" id="names"></a><a href="#names" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Names</h2>
+<p>Input object types can be given customized names, just like with object types, using the <code>[GraphType]</code> attribute.</p>
+<div class="sideBySideCode hljs">
+<div>
+<pre><code class="hljs css language-csharp"><span class="hljs-comment">// Donut.cs</span>
+[<span class="hljs-meta">GraphType(InputName = <span class="hljs-meta-string">"NewDonutModel"</span>)</span>]
+<span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title">Donut</span>
+{
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">int</span> Id { <span class="hljs-keyword">get</span>; <span class="hljs-keyword">set</span>; }
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">string</span> Name { <span class="hljs-keyword">get</span>; <span class="hljs-keyword">set</span>; }
+    <span class="hljs-keyword">public</span> DonutType Type { <span class="hljs-keyword">get</span>; <span class="hljs-keyword">set</span>; }
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">decimal</span> Price { <span class="hljs-keyword">get</span>; <span class="hljs-keyword">set</span>; }
+}
+</code></pre>
+</div>
+<div>
+<pre><code class="hljs">// <span class="hljs-type">GraphQL</span> <span class="hljs-type">Type</span> <span class="hljs-type">Definition</span>
+<span class="hljs-keyword">type</span> <span class="hljs-type">NewDonutModel</span> {
+  id: <span class="hljs-type">Int</span>!
+  name: <span class="hljs-type">String</span>
+  type: <span class="hljs-type">DonutType</span>!
+  price: <span class="hljs-type">Decimal</span>!
+}
+</code></pre>
+</div>
+</div>
+<br/>
+<h2><a class="anchor" aria-hidden="true" id="use-an-empty-constructor"></a><a href="#use-an-empty-constructor" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Use an Empty Constructor</h2>
+<p>When GraphQL executes a query it will attempt to create an instance of your input object then assign the key/value pairs received on the query to the properties. In order to do the initial instantiation it requires a public parameterless constructor to do so.</p>
+<pre><code class="hljs css language-csharp"><span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title">BakeryController</span> : <span class="hljs-title">GraphController</span>
+{
+    [<span class="hljs-meta">Mutation(<span class="hljs-meta-string">"createDonut"</span>)</span>]
+    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">bool</span> <span class="hljs-title">CreateNewDonut</span>(<span class="hljs-params">DonutModel donut</span>)</span>
+    {<span class="hljs-comment">/*....*/</span>}
+}
+
+<span class="hljs-comment">// DonutModel.cs</span>
+<span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title">DonutModel</span>
+{
+    <span class="hljs-comment">//Use a public parameterless constructor</span>
+    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-title">DonutModel</span>(<span class="hljs-params"></span>)</span>
+    {
+    }
+
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">int</span> Id { <span class="hljs-keyword">get</span>; <span class="hljs-keyword">set</span>; }
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">string</span> Name { <span class="hljs-keyword">get</span>; <span class="hljs-keyword">set</span>; }
+}
+</code></pre>
+<p>Because of this restriction it can be helpful to separate your classes between &quot;input&quot; and &quot;output&quot; types much is the same way we do with <code>ViewModel</code> vs. <code>BindingModel</code> objects in MVC. This is optional, mix and match as needed by your use case.</p>
+<h2><a class="anchor" aria-hidden="true" id="properties-must-have-a-public-setter"></a><a href="#properties-must-have-a-public-setter" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Properties Must Have a Public Setter</h2>
+<p>Properties without a setter are ignored. At runtime, GraphQL compiles an expression tree with the set assignments declared on the graph type, it won't attempt to sneakily reflect and invoke a private or protected setter.</p>
+<div class="sideBySideCode hljs">
+<div>
+<pre><code class="hljs css language-csharp"><span class="hljs-comment">// Donut.cs</span>
+<span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title">Donut</span>
+{
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">int</span> Id { <span class="hljs-keyword">get</span>; }
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">string</span> Name { <span class="hljs-keyword">get</span>; <span class="hljs-keyword">set</span>; }
+    <span class="hljs-keyword">public</span> DonutType Type { <span class="hljs-keyword">get</span>; <span class="hljs-keyword">set</span>; }
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">decimal</span> Price { <span class="hljs-keyword">get</span>; <span class="hljs-keyword">set</span>; }
+}
+</code></pre>
+</div>
+<div>
+<pre><code class="hljs css language-ruby">// GraphQL Type Definition
+// No Id field is included on the INPUT_OBJECT
+
+type Input_Donut {
+  name: String
+  type: DonutType!
+  price: Decimal!
+}
+</code></pre>
+</div>
+</div>
+<br/>
+<h2><a class="anchor" aria-hidden="true" id="methods-are-ignored"></a><a href="#methods-are-ignored" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Methods are Ignored</h2>
+<p>While its possible to have methods be exposed as fields on regular <code>OBJECT</code> types they are ignored for input arguments regardless of the declaration rules applied to the type.</p>
+<div class="sideBySideCode hljs">
+<div>
+<pre><code class="hljs css language-csharp"><span class="hljs-comment">// Donut.cs</span>
+<span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title">Donut</span>
+{
+    [<span class="hljs-meta">GraphField(<span class="hljs-meta-string">"salesTax"</span>)</span>]
+    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">decimal</span> <span class="hljs-title">CalculateSalesTax</span>(<span class="hljs-params"><span class="hljs-keyword">decimal</span> taxPercentage</span>)</span>
+    {
+        <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>.Price * taxPercentage;
+    }
+
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">int</span> Id { <span class="hljs-keyword">get</span>; <span class="hljs-keyword">set</span>; }
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">string</span> Name { <span class="hljs-keyword">get</span>; <span class="hljs-keyword">set</span>; }
+    <span class="hljs-keyword">public</span> DonutType Type { <span class="hljs-keyword">get</span>; <span class="hljs-keyword">set</span>; }
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">decimal</span> Price { <span class="hljs-keyword">get</span>; <span class="hljs-keyword">set</span>; }
+}
+</code></pre>
+</div>
+<div>
+<pre><code class="hljs">// <span class="hljs-type">GraphQL</span> <span class="hljs-type">Type</span> <span class="hljs-type">Definition</span>
+<span class="hljs-keyword">type</span> <span class="hljs-type">Input_Donut</span> {
+  id: <span class="hljs-type">Int</span>!
+  name: <span class="hljs-type">String</span>
+  type: <span class="hljs-type">DonutType</span>!
+  price: <span class="hljs-type">Decimal</span>!
+}
+</code></pre>
+</div>
+</div>
+<br/>
+<h2><a class="anchor" aria-hidden="true" id="working-with-lists"></a><a href="#working-with-lists" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Working With Lists</h2>
+<p>When constructing a set of items as an input value, GraphQL will instantiate a <code>List&lt;T&gt;</code> and fill it with the appropriate data, be that another list, another input object or a scalar. As a result, any input objects that need to accept a collection of items, or any action method parameters, need to declare themselves as something that can be successlly cast from <code>List&lt;T&gt;</code>. (e.g. <code>IEnumerable&lt;T&gt;</code>, <code>ICollection&lt;T&gt;</code> etc.).</p>
+<p><strong>Note</strong>: This is only a restriction for input objects.</p>
+<p>This example shows various ways of accepting collections of data as inputs to controller actions.</p>
+<pre><code class="hljs css language-csharp"><span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title">BakeryController</span> : <span class="hljs-title">GraphController</span>
+{
+    <span class="hljs-comment">// a list of donuts</span>
+    <span class="hljs-comment">// schema syntax:  [Donut]</span>
+    [<span class="hljs-meta">Mutation(<span class="hljs-meta-string">"createDonuts"</span>)</span>]
+    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">bool</span> <span class="hljs-title">CreateDonuts</span>(<span class="hljs-params">IEnumerable&lt;Donut&gt; donuts</span>)</span>
+    {<span class="hljs-comment">/*....*/</span>}
+
+    <span class="hljs-comment">// when used as a "list of list"</span>
+    <span class="hljs-comment">// schema syntax:  [[Donut]]</span>
+    [<span class="hljs-meta">Mutation(<span class="hljs-meta-string">"createDonutsBySet"</span>)</span>]
+    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">bool</span> <span class="hljs-title">CreateDonuts</span>(<span class="hljs-params">List&lt;List&lt;Donut&gt;&gt; donuts</span>)</span>
+    {<span class="hljs-comment">/*....*/</span>}
+
+    <span class="hljs-comment">// This is a valid nested list</span>
+    <span class="hljs-comment">// schema syntax:  [[[[Donut]]]]</span>
+    [<span class="hljs-meta">Mutation(<span class="hljs-meta-string">"createDonutsBySet"</span>)</span>]
+    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">bool</span> <span class="hljs-title">SoManyDonuts</span>(<span class="hljs-params">IEnumerable&lt;List&lt;IEnumerable&lt;List&lt;Donut&gt;&gt;&gt;&gt; donuts</span>)</span>
+    {<span class="hljs-comment">/*....*/</span>}
+
+    <span class="hljs-comment">// when used as a field of another input object</span>
+    [<span class="hljs-meta">Mutation(<span class="hljs-meta-string">"createDonutCollection"</span>)</span>]
+    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">bool</span> <span class="hljs-title">CreateDonuts</span>(<span class="hljs-params">DonutCollection donutCollection</span>)</span>
+    {<span class="hljs-comment">/*....*/</span>}
+
+}
+
+<span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title">DonutCollection</span>
+{
+    <span class="hljs-keyword">public</span> List&lt;Donut&gt; Donuts { <span class="hljs-keyword">get</span>; <span class="hljs-keyword">set</span>; }
+}
+
+</code></pre>
+</span></div></article></div><div class="docs-prevnext"><a class="docs-prev button" href="/docs/types/objects"><span class="arrow-prev">← </span><span>Objects</span></a><a class="docs-next button" href="/docs/types/interfaces"><span>Interfaces</span><span class="arrow-next"> →</span></a></div></div></div><nav class="onPageNav"><ul class="toc-headings"><li><a href="#names">Names</a></li><li><a href="#use-an-empty-constructor">Use an Empty Constructor</a></li><li><a href="#properties-must-have-a-public-setter">Properties Must Have a Public Setter</a></li><li><a href="#methods-are-ignored">Methods are Ignored</a></li><li><a href="#working-with-lists">Working With Lists</a></li></ul></nav></div><footer class="nav-footer" id="footer"><section class="sitemap"><div><h5>Docs</h5><a href="/docs/introduction/made-for-aspnet-developers">Made for ASP.NET Developers</a><a href="/docs/quick/code-examples">Code Examples</a></div><div></div><div><h5>More</h5><a class="github-button" href="https://github.com/graphql-aspnet/graphql-aspnet" data-show-count="true" data-count-href="/graphql-aspnet/graphql-aspnet/stargazers" aria-label="Star this project on GitHub">Star on GitHub</a><a href="https://graphql.org">GraphQL.org</a><a href="https://dotnet.microsoft.com/learn/aspnet">Learn ASP.NET</a></div></section><section class="copyright">Copyright © 2019 GraphQL ASP.NET</section></footer></div><script>window.twttr=(function(d,s, id){var js,fjs=d.getElementsByTagName(s)[0],t=window.twttr||{};if(d.getElementById(id))return t;js=d.createElement(s);js.id=id;js.src='https://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js, fjs);t._e = [];t.ready = function(f) {t._e.push(f);};return t;}(document, 'script', 'twitter-wjs'));</script></body></html>

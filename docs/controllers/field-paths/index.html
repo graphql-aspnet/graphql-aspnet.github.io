@@ -1,0 +1,400 @@
+<!DOCTYPE html><html lang="en"><head><meta charSet="utf-8"/><meta http-equiv="X-UA-Compatible" content="IE=edge"/><title>Field Paths · GraphQL ASP.NET</title><meta name="viewport" content="width=device-width"/><meta name="generator" content="Docusaurus"/><meta name="description" content="## What is Field Pathing?"/><meta name="docsearch:language" content="en"/><meta property="og:title" content="Field Paths · GraphQL ASP.NET"/><meta property="og:type" content="website"/><meta property="og:url" content="https://graphql-aspnet.github.io/"/><meta property="og:description" content="## What is Field Pathing?"/><meta property="og:image" content="https://graphql-aspnet.github.io/img/undraw_online.svg"/><meta name="twitter:card" content="summary"/><meta name="twitter:image" content="https://graphql-aspnet.github.io/img/undraw_tweetstorm.svg"/><link rel="shortcut icon" href="/img/logo-64.png"/><link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/hybrid.min.css"/><script>
+              (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+              (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+              m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+              })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+              ga('create', 'UA-150856900-1', 'auto');
+              ga('send', 'pageview');
+            </script><script type="text/javascript" src="https://buttons.github.io/buttons.js"></script><script src="/js/scrollSpy.js"></script><link rel="stylesheet" href="/css/main.css"/><script src="/js/codetabs.js"></script></head><body class="sideNavVisible separateOnPageNav"><div class="fixedHeaderContainer"><div class="headerWrapper wrapper"><header><a href="/"><img class="logo" src="/img/logo-64.png" alt="GraphQL ASP.NET"/><h2 class="headerTitleWithLogo">GraphQL ASP.NET</h2></a><div class="navigationWrapper navigationSlider"><nav class="slidingNav"><ul class="nav-site nav-site-internal"><li class="siteNavGroupActive"><a href="/docs/quick/overview" target="_self">Documentation</a></li><li class=""><a href="https://github.com/graphql-aspnet/graphql-aspnet" target="_self">Source Code</a></li></ul></nav></div></header></div></div><div class="navPusher"><div class="docMainWrapper wrapper"><div class="docsNavContainer" id="docsNav"><nav class="toc"><div class="toggleNav"><section class="navWrapper wrapper"><div class="navBreadcrumb wrapper"><div class="navToggle" id="navToggler"><div class="hamburger-menu"><div class="line1"></div><div class="line2"></div><div class="line3"></div></div></div><h2><i>›</i><span>Controllers &amp; Actions</span></h2><div class="tocToggler" id="tocToggler"><i class="icon-toc"></i></div></div><div class="navGroups"><div class="navGroup"><h3 class="navGroupCategoryTitle">Jump In!</h3><ul class=""><li class="navListItem"><a class="navItem" href="/docs/quick/overview">Overview</a></li><li class="navListItem"><a class="navItem" href="/docs/quick/quick-start">Quick Start</a></li><li class="navListItem"><a class="navItem" href="/docs/quick/code-examples">Code Examples</a></li></ul></div><div class="navGroup"><h3 class="navGroupCategoryTitle">Introduction</h3><ul class=""><li class="navListItem"><a class="navItem" href="/docs/introduction/what-is-graphql">What is GraphQL?</a></li><li class="navListItem"><a class="navItem" href="/docs/introduction/made-for-aspnet-developers">Made for ASP.NET Developers</a></li></ul></div><div class="navGroup"><h3 class="navGroupCategoryTitle">Controllers &amp; Actions</h3><ul class=""><li class="navListItem"><a class="navItem" href="/docs/controllers/actions">Actions</a></li><li class="navListItem"><a class="navItem" href="/docs/controllers/model-state">Model State</a></li><li class="navListItem navListItemActive"><a class="navItem" href="/docs/controllers/field-paths">Field Paths</a></li><li class="navListItem"><a class="navItem" href="/docs/controllers/authorization">Authorization</a></li><li class="navListItem"><a class="navItem" href="/docs/controllers/type-extensions">Type Extensions</a></li><li class="navListItem"><a class="navItem" href="/docs/controllers/batch-operations">Batch Operations</a></li></ul></div><div class="navGroup"><h3 class="navGroupCategoryTitle">Graph Type Definitions</h3><ul class=""><li class="navListItem"><a class="navItem" href="/docs/types/objects">Objects</a></li><li class="navListItem"><a class="navItem" href="/docs/types/input-objects">Input Objects</a></li><li class="navListItem"><a class="navItem" href="/docs/types/interfaces">Interfaces</a></li><li class="navListItem"><a class="navItem" href="/docs/types/unions">Unions</a></li><li class="navListItem"><a class="navItem" href="/docs/types/enums">Enums</a></li><li class="navListItem"><a class="navItem" href="/docs/types/scalars">Scalars</a></li><li class="navListItem"><a class="navItem" href="/docs/types/list-non-null">List &amp; Non-Null</a></li></ul></div><div class="navGroup"><h3 class="navGroupCategoryTitle">Logging</h3><ul class=""><li class="navListItem"><a class="navItem" href="/docs/logging/structured-logging">Structured Logging</a></li><li class="navListItem"><a class="navItem" href="/docs/logging/standard-events">Standard Events</a></li></ul></div><div class="navGroup"><h3 class="navGroupCategoryTitle">Query Execution</h3><ul class=""><li class="navListItem"><a class="navItem" href="/docs/execution/metrics">Query Profiling</a></li><li class="navListItem"><a class="navItem" href="/docs/execution/malicious-queries">Malicious Queries</a></li></ul></div><div class="navGroup"><h3 class="navGroupCategoryTitle">Advanced</h3><ul class=""><li class="navListItem"><a class="navItem" href="/docs/advanced/subscriptions">Subscriptions</a></li><li class="navListItem"><a class="navItem" href="/docs/advanced/type-expressions">Type Expressions</a></li><li class="navListItem"><a class="navItem" href="/docs/advanced/directives">Directives</a></li><li class="navListItem"><a class="navItem" href="/docs/advanced/custom-scalars">Custom Scalars</a></li><li class="navListItem"><a class="navItem" href="/docs/advanced/graph-action-results">Action Results</a></li><li class="navListItem"><a class="navItem" href="/docs/advanced/middleware">Pipelines &amp; Middleware</a></li><li class="navListItem"><a class="navItem" href="/docs/advanced/query-cache">Query Caching</a></li><li class="navListItem"><a class="navItem" href="/docs/advanced/multi-schema-support">Multi-Schema Support</a></li></ul></div><div class="navGroup"><h3 class="navGroupCategoryTitle">Development Concerns</h3><ul class=""><li class="navListItem"><a class="navItem" href="/docs/development/debugging">Debugging</a></li><li class="navListItem"><a class="navItem" href="/docs/development/unit-testing">Unit Testing</a></li></ul></div><div class="navGroup"><h3 class="navGroupCategoryTitle">References</h3><ul class=""><li class="navListItem"><a class="navItem" href="/docs/reference/how-it-works">How it Works</a></li><li class="navListItem"><a class="navItem" href="/docs/reference/schema-configuration">Schema Configuration</a></li><li class="navListItem"><a class="navItem" href="/docs/reference/attributes">Attributes</a></li><li class="navListItem"><a class="navItem" href="/docs/reference/graph-controller">GraphController</a></li><li class="navListItem"><a class="navItem" href="/docs/reference/graph-directive">GraphDirective</a></li><li class="navListItem"><a class="navItem" href="/docs/reference/http-processor">HTTP Processor</a></li><li class="navListItem"><a class="navItem" href="/docs/reference/demo-projects">Demo Projects</a></li><li class="navListItem"><a class="navItem" href="/docs/reference/performance">Benchmarks</a></li><li class="navListItem"><a class="navItem" href="/docs/reference/contributing">Contributing</a></li></ul></div></div></section></div><script>
+            var coll = document.getElementsByClassName('collapsible');
+            var checkActiveCategory = true;
+            for (var i = 0; i < coll.length; i++) {
+              var links = coll[i].nextElementSibling.getElementsByTagName('*');
+              if (checkActiveCategory){
+                for (var j = 0; j < links.length; j++) {
+                  if (links[j].classList.contains('navListItemActive')){
+                    coll[i].nextElementSibling.classList.toggle('hide');
+                    coll[i].childNodes[1].classList.toggle('rotate');
+                    checkActiveCategory = false;
+                    break;
+                  }
+                }
+              }
+
+              coll[i].addEventListener('click', function() {
+                var arrow = this.childNodes[1];
+                arrow.classList.toggle('rotate');
+                var content = this.nextElementSibling;
+                content.classList.toggle('hide');
+              });
+            }
+
+            document.addEventListener('DOMContentLoaded', function() {
+              createToggler('#navToggler', '#docsNav', 'docsSliderActive');
+              createToggler('#tocToggler', 'body', 'tocActive');
+
+              var headings = document.querySelector('.toc-headings');
+              headings && headings.addEventListener('click', function(event) {
+                var el = event.target;
+                while(el !== headings){
+                  if (el.tagName === 'A') {
+                    document.body.classList.remove('tocActive');
+                    break;
+                  } else{
+                    el = el.parentNode;
+                  }
+                }
+              }, false);
+
+              function createToggler(togglerSelector, targetSelector, className) {
+                var toggler = document.querySelector(togglerSelector);
+                var target = document.querySelector(targetSelector);
+
+                if (!toggler) {
+                  return;
+                }
+
+                toggler.onclick = function(event) {
+                  event.preventDefault();
+
+                  target.classList.toggle(className);
+                };
+              }
+            });
+        </script></nav></div><div class="container mainContainer"><div class="wrapper"><div class="post"><header class="postHeader"><h1 class="postHeaderTitle">Field Paths</h1></header><article><div><span><h2><a class="anchor" aria-hidden="true" id="what-is-field-pathing"></a><a href="#what-is-field-pathing" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>What is Field Pathing?</h2>
+<p>When we reason about ASP.NET MVC, routing comes naturally. We define a URL and perform an HTTP request to fetch data.</p>
+<pre><code class="hljs">GET <span class="hljs-symbol">http:</span>/<span class="hljs-regexp">/homeMadeBakery.local/pastries</span><span class="hljs-regexp">/donuts/</span><span class="hljs-number">15</span>
+</code></pre>
+<p>and we can picture how this might map to an API Controller:</p>
+<pre><code class="hljs css language-csharp">[<span class="hljs-meta">Route(<span class="hljs-meta-string">"pastries"</span>)</span>]
+<span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title">PastriesController</span> : <span class="hljs-title">Controller</span>
+{
+    [<span class="hljs-meta">HttpGet(<span class="hljs-meta-string">"donuts/{id}"</span>)</span>]
+    <span class="hljs-function"><span class="hljs-keyword">public</span> Donut <span class="hljs-title">RetrieveDonut</span>(<span class="hljs-params"><span class="hljs-keyword">int</span> id</span>)</span>
+    {<span class="hljs-comment">/* ... */</span>}
+}
+</code></pre>
+<p>When you startup an MVC or Web API application .NET gathers your configured routes and maintains a map of <code>endpoint -&gt; action method</code> in order to hand off an HTTP request to a given method.</p>
+<p>OK, Great! Now lets think about this graphQL query:</p>
+<pre><code class="hljs css language-javascript">query {
+    pastries {
+        donut(id: <span class="hljs-number">15</span>){
+            name
+            flavor
+        }
+    }
+}
+</code></pre>
+<p>We can think about each field in the query as a unique path in our schema, similar to the URL above:</p>
+<pre><code class="hljs css language-ruby">[query]
+[query]/pastries
+[query]/pastries/donut
+[type]/donut/name
+[type]/donut/flavor
+</code></pre>
+<p>In fact, this is how GraphQL ASP.NET knows how to invoke your methods. At startup, a complete map of the query and mutation methods as well as every graph type is translated into a set of field paths. Then, when a request is made of a field, it invokes the method or property associated with that <code>field path</code>.</p>
+<blockquote>
+<p>All action methods, graph type properties and graph type methods must map to a unique field path in your graph schema.</p>
+</blockquote>
+<pre><code class="hljs css language-csharp">[<span class="hljs-meta">GraphRoute(<span class="hljs-meta-string">"pastries"</span>)</span>]
+<span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title">PastriesController</span> : <span class="hljs-title">GraphController</span>
+{
+    [<span class="hljs-meta">Query(<span class="hljs-meta-string">"donut"</span>)</span>]
+    <span class="hljs-function"><span class="hljs-keyword">public</span> Donut <span class="hljs-title">RetrieveDonut</span>(<span class="hljs-params"><span class="hljs-keyword">int</span> id</span>)</span>
+    {<span class="hljs-comment">/* ...*/</span>}
+
+}
+</code></pre>
+<p>This is a different controller than in the top example. We inherit from <code>GraphController</code> and use <code>Query</code> instead of <code>Controller</code> and <code>HttpGet</code>, respectively.</p>
+<p>You can nest fields as deep as you need in order to create a rich organizational hierarchy to your data. This is best explained by code, take a look at these two controllers:</p>
+<pre><code class="hljs css language-csharp">
+<span class="hljs-comment">// BakeryController.cs</span>
+[<span class="hljs-meta">GraphRoute(<span class="hljs-meta-string">"groceryStore/bakery"</span>)</span>]
+<span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title">BakeryController</span> : <span class="hljs-title">GraphController</span>
+{
+    [<span class="hljs-meta">Query(<span class="hljs-meta-string">"pastries/search"</span>)</span>]
+    <span class="hljs-function"><span class="hljs-keyword">public</span> IEnumerable&lt;IPastry&gt; <span class="hljs-title">SearchPastries</span>(<span class="hljs-params"><span class="hljs-keyword">string</span> nameLike</span>)</span>
+    {<span class="hljs-comment">/* ... */</span>}
+
+    [<span class="hljs-meta">Query(<span class="hljs-meta-string">"pastries/recipe"</span>)</span>]
+    <span class="hljs-function"><span class="hljs-keyword">public</span> Recipe <span class="hljs-title">RetrieveRecipe</span>(<span class="hljs-params"><span class="hljs-keyword">int</span> id</span>)</span>
+    {<span class="hljs-comment">/* ... */</span>}
+
+    [<span class="hljs-meta">Query(<span class="hljs-meta-string">"breadCounter/orders"</span>)</span>]
+    <span class="hljs-function"><span class="hljs-keyword">public</span> IEnumerable&lt;BreadOrder&gt; <span class="hljs-title">FindOrders</span>(<span class="hljs-params"><span class="hljs-keyword">int</span> customerId</span>)</span>
+    {<span class="hljs-comment">/* ... */</span>}
+}
+
+<span class="hljs-comment">// PharmacyController.cs</span>
+[<span class="hljs-meta">GraphRoute(<span class="hljs-meta-string">"groceryStore/pharmacy"</span>)</span>]
+<span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title">PharmacyController</span> : <span class="hljs-title">GraphController</span>
+{
+    [<span class="hljs-meta">Query(<span class="hljs-meta-string">"employees/search"</span>)</span>]
+    <span class="hljs-function"><span class="hljs-keyword">public</span> IPastry <span class="hljs-title">SearchEmployees</span>(<span class="hljs-params"><span class="hljs-keyword">string</span> nameLike</span>)</span>
+    {<span class="hljs-comment">/* ... */</span>}
+
+    [<span class="hljs-meta">QueryRoot(<span class="hljs-meta-string">"pharmacyHours"</span>)</span>]
+    <span class="hljs-function"><span class="hljs-keyword">public</span> HoursOfOperation <span class="hljs-title">RetrievePharmacyHours</span>(<span class="hljs-params">DayOfTheWeek day</span>)</span>
+    {<span class="hljs-comment">/* ... */</span>}
+
+    [<span class="hljs-meta">Query(<span class="hljs-meta-string">"orders"</span>)</span>]
+    <span class="hljs-function"><span class="hljs-keyword">public</span> IEnumerable&lt;Prescription&gt; <span class="hljs-title">FindOrders</span>(<span class="hljs-params"><span class="hljs-keyword">int</span> customerId</span>)</span>
+    {<span class="hljs-comment">/* ... */</span>}
+}
+</code></pre>
+<p>And this single query we can perform:</p>
+<pre><code class="hljs css language-javascript">query SearchGroceryStore {
+    groceryStore {
+        bakery {
+            pastries {
+                search(nameLike: <span class="hljs-string">"chocolate"</span>){
+                    name
+                    type
+                }
+                recipe(id: <span class="hljs-number">15</span>) {
+                    name
+                    ingredients {
+                        name
+                    }
+                }
+            }
+        }
+        pharmacy {
+            orders(customerId: <span class="hljs-number">45123</span>){
+                dayOrdered
+                type
+                doctorsName
+            }
+        }
+    }
+    pharmacyHours(day: MONDAY){
+        openAt
+        closeAt
+    }
+}
+</code></pre>
+<p>With REST, this is probably 4 separate requests or one super contrived request but with GraphQL and a carefully thought out set of field paths we can model our data hierarchy quickly and without over complicating the code. There is no more code in this example than would be required by a REST API; we've just changed how its interpreted at runtime.</p>
+<h2><a class="anchor" aria-hidden="true" id="actions-must-have-a-unique-path"></a><a href="#actions-must-have-a-unique-path" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Actions Must Have a Unique Path</h2>
+<p>As was said above, each field in your object graph must uniquely map to one method (or getter property) in your code.</p>
+<p>Take this example:</p>
+<div class="sideBySideCode hljs">
+<div>
+<pre><code class="hljs css language-csharp"><span class="hljs-comment">// C# Controller</span>
+<span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title">BakeryController</span> : <span class="hljs-title">GraphController</span>
+{
+    [<span class="hljs-meta">QueryRoot</span>]
+    <span class="hljs-function"><span class="hljs-keyword">public</span> Donut <span class="hljs-title">RetrieveDonutType</span>(<span class="hljs-params"><span class="hljs-keyword">int</span> id</span>)</span>{<span class="hljs-comment">/*...*/</span>}
+}
+
+<span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title">Donut</span>
+{
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">int</span> Id { <span class="hljs-keyword">get</span>; <span class="hljs-keyword">set</span>; }
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">string</span> Name { <span class="hljs-keyword">get</span>; <span class="hljs-keyword">set</span>; }
+    <span class="hljs-keyword">public</span> Icing Icing { <span class="hljs-keyword">get</span>; <span class="hljs-keyword">set</span>; }
+}
+
+<span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title">Icing</span>
+{
+    <span class="hljs-keyword">public</span> IcingType Type { <span class="hljs-keyword">get</span>; <span class="hljs-keyword">set</span>; }
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">string</span> Name { <span class="hljs-keyword">get</span>; <span class="hljs-keyword">set</span>; }
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">bool</span> MegaSugar { <span class="hljs-keyword">get</span>; <span class="hljs-keyword">set</span>; }
+}
+</code></pre>
+</div>
+<div>
+<pre><code class="hljs css language-javascript">query {
+    donut(id: <span class="hljs-number">5</span>){
+        id
+        name
+        icing {
+            type
+            name
+            megaSugar
+        }
+    }
+}
+</code></pre>
+</div>
+</div>
+<br/>
+<p>We can identify 8 unique fields:</p>
+<pre><code class="hljs css language-ruby">[query]                     // the top level query type
+[query]/retrieveDonutType   // the root level action method
+[type]/donut/id             // the id property of the donut object
+[type]/donut/name
+[type]/donut/icing
+[type]/icing/type
+[type]/icing/name
+[type]/icing/megaSugar
+</code></pre>
+<p>But what about method overloading?</p>
+<pre><code class="hljs css language-csharp"><span class="hljs-comment">// C# Controller</span>
+[<span class="hljs-meta">GraphRoute(<span class="hljs-meta-string">"bakery"</span>)</span>]
+<span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title">BakeryController</span> : <span class="hljs-title">GraphController</span>
+{
+    <span class="hljs-comment">// Both Methods represent the same 'orderDonuts' field on the object graph</span>
+    [<span class="hljs-meta">Mutation</span>]
+    <span class="hljs-function"><span class="hljs-keyword">public</span> Manager <span class="hljs-title">OrderDonuts</span>(<span class="hljs-params"><span class="hljs-keyword">int</span> quantity</span>)</span>{<span class="hljs-comment">/*...*/</span>}
+
+    [<span class="hljs-meta">Mutation</span>]
+    <span class="hljs-function"><span class="hljs-keyword">public</span> Manager <span class="hljs-title">OrderDonuts</span>(<span class="hljs-params"><span class="hljs-keyword">string</span> type, <span class="hljs-keyword">int</span> quantity</span>)</span>{<span class="hljs-comment">/*...*/</span>}
+}
+</code></pre>
+<p>Since both methods map to a field path of <code>[mutation]/bakery/orderDonuts</code> this would cause a <code>GraphTypeDeclarationException</code> to be thrown when your application starts.</p>
+<p>With MVC the ASP.NET runtime could inspect any combinations of parameters passed on the query string or the POST body to work out which overload to call. You might be thinking, why can't GraphQL inspect the passed input arguments and make the same determination?</p>
+<p>In some cases it probably could. But looking at this example we run into an issue:</p>
+<pre><code class="hljs css language-csharp"><span class="hljs-comment">// C# Controller</span>
+[<span class="hljs-meta">GraphRoute(<span class="hljs-meta-string">"bakery"</span>)</span>]
+<span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title">BakeryController</span> : <span class="hljs-title">GraphController</span>
+{
+    <span class="hljs-comment">// Both Methods represent the same 'orderDonuts' field on the object graph</span>
+    [<span class="hljs-meta">Mutation</span>]
+    <span class="hljs-function"><span class="hljs-keyword">public</span> Manager <span class="hljs-title">OrderDonuts</span>(<span class="hljs-params"><span class="hljs-keyword">int</span> quantity, <span class="hljs-keyword">string</span> type</span>)</span>{<span class="hljs-comment">/*...*/</span>}
+
+    [<span class="hljs-meta">Mutation</span>]
+    <span class="hljs-function"><span class="hljs-keyword">public</span> Manager <span class="hljs-title">OrderDonuts</span>(<span class="hljs-params"><span class="hljs-keyword">string</span> type, <span class="hljs-keyword">int</span> quantity</span>)</span>{<span class="hljs-comment">/*...*/</span>}
+}
+</code></pre>
+<p>We'd pair these methods with different URL fragments and could work out which method to call in a REST request based on the full structure of the URL.</p>
+<p>However, the GraphQL specification states that input arguments can be passed in any order [Spec § <a href="https://graphql.github.io/graphql-spec/June2018/#sec-Language.Arguments">2.6</a>]. GraphQL, by definition, does not supply enough information in its query syntax to decide which overload to invoke. To combat the issue, the runtime will reject any field that it can't uniquely identify.</p>
+<p>No problem through, there are a number of ways fix the conflict.</p>
+<h3><a class="anchor" aria-hidden="true" id="declare-explicit-names"></a><a href="#declare-explicit-names" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Declare Explicit Names</h3>
+<p>One approach is to declare explicit names for each of your methods. Not only does this resolve the conflict but should an errant refactor of your code occur, your graph fields won't magically be renamed to their new method names and break your front-end.</p>
+<pre><code class="hljs css language-csharp"><span class="hljs-comment">// C# Controller</span>
+[<span class="hljs-meta">GraphRoute(<span class="hljs-meta-string">"bakery"</span>)</span>]
+<span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title">BakeryController</span> : <span class="hljs-title">GraphController</span>
+{
+    <span class="hljs-comment">// GraphQL treats these fields differently!</span>
+    [<span class="hljs-meta">Mutation(<span class="hljs-meta-string">"orderDonutsByQuantity"</span>)</span>]
+    <span class="hljs-function"><span class="hljs-keyword">public</span> Manager <span class="hljs-title">OrderDonuts</span>(<span class="hljs-params"><span class="hljs-keyword">int</span> quantity</span>)</span>{<span class="hljs-comment">/*...*/</span>}
+
+    [<span class="hljs-meta">Mutation(<span class="hljs-meta-string">"orderDonutsByType"</span>)</span>]
+    <span class="hljs-function"><span class="hljs-keyword">public</span> Manager <span class="hljs-title">OrderDonuts</span>(<span class="hljs-params"><span class="hljs-keyword">string</span> type, <span class="hljs-keyword">int</span> quantity</span>)</span>{<span class="hljs-comment">/*...*/</span>}
+}
+</code></pre>
+<p>Now we have unique field paths:</p>
+<pre><code class="hljs css language-ruby">[query]/bakery/orderDonutsByQuantity
+[query]/bakery/orderDonutsByType
+</code></pre>
+<p>But this can feel a bit awkward in some situations so instead...</p>
+<h3><a class="anchor" aria-hidden="true" id="change-the-hierarchy"></a><a href="#change-the-hierarchy" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Change The Hierarchy</h3>
+<p>Another alternative is to change where in the object graph the field sits. Here we've moved one field to the root mutation type and left the other under the controller's own <code>bakery</code> field. This can be a good strategy if you have one primary way of interacting with your data and a few auxillary methods such as a quick dozen donuts at the drive thru window or going into the shop and selecting which ones you want.</p>
+<div class="sideBySideCode hljs">
+<div>
+<pre><code class="hljs css language-csharp"><span class="hljs-comment">// C# Controller</span>
+[<span class="hljs-meta">GraphRoute(<span class="hljs-meta-string">"bakery"</span>)</span>]
+<span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title">BakeryController</span> : <span class="hljs-title">GraphController</span>
+{
+    [<span class="hljs-meta">MutationRoot(<span class="hljs-meta-string">"orderDonuts"</span>)</span>]
+    <span class="hljs-function"><span class="hljs-keyword">public</span> IEnumerable&lt;Donut&gt; <span class="hljs-title">OrderDonuts</span>(<span class="hljs-params"><span class="hljs-keyword">int</span> count</span>)</span>
+    {<span class="hljs-comment">/*...*/</span>}
+
+    [<span class="hljs-meta">Mutation(<span class="hljs-meta-string">"orderDonuts"</span>)</span>]
+    <span class="hljs-function"><span class="hljs-keyword">public</span> IEnumerable&lt;Donut&gt; <span class="hljs-title">OrderDonuts</span>(<span class="hljs-params">
+        <span class="hljs-keyword">string</span> type,
+        <span class="hljs-keyword">int</span> count</span>)</span>
+    {<span class="hljs-comment">/*...*/</span>}
+}
+</code></pre>
+</div>
+<div>
+<pre><code class="hljs css language-javascript">mutation {
+    orderDonuts(count: <span class="hljs-number">12</span>){
+        name
+        flavor
+    }
+}
+</code></pre>
+<pre><code class="hljs css language-javascript">mutation {
+    bakery {
+        orderDonuts(
+                type: <span class="hljs-string">"Chocolate"</span>
+                count: <span class="hljs-number">3</span>){
+            name
+            flavor
+        }
+    }
+}
+</code></pre>
+</div>
+</div>
+<br/>
+<p>And the unique field paths are:</p>
+<pre><code class="hljs css language-ruby">[mutation]/orderDonuts
+[mutation]/bakery/orderDonuts
+</code></pre>
+<h3><a class="anchor" aria-hidden="true" id="combine-the-fields"></a><a href="#combine-the-fields" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Combine the Fields</h3>
+<p>Lastly, we can make use of input objects with optional fields and combine parameters into a more robust method.</p>
+<pre><code class="hljs css language-csharp"><span class="hljs-comment">// BakeryController.cs</span>
+[<span class="hljs-meta">GraphRoute(<span class="hljs-meta-string">"bakery"</span>)</span>]
+<span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title">BakeryController</span> : <span class="hljs-title">GraphController</span>
+{
+    [<span class="hljs-meta">Mutation(<span class="hljs-meta-string">"orderDonuts"</span>)</span>]
+    <span class="hljs-function"><span class="hljs-keyword">public</span> IEnumerable&lt;Donut&gt; <span class="hljs-title">OrderDonuts</span>(<span class="hljs-params">DonutOrderModel order</span>)</span>
+    {<span class="hljs-comment">/*...*/</span>}
+}
+
+<span class="hljs-comment">// DonutOrderModel.cs</span>
+<span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title">DonutOrderModel</span>
+{
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">int</span>? Quantity { <span class="hljs-keyword">get</span>; <span class="hljs-keyword">set</span>; }
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">string</span> Type { <span class="hljs-keyword">get</span>; <span class="hljs-keyword">set</span>; }
+}
+</code></pre>
+<p>Which can be called by either of these mutations:</p>
+<pre><code class="hljs css language-javascript">mutation byQuantity {
+    bakery{
+        orderDonuts (order: {<span class="hljs-attr">quantity</span>: <span class="hljs-number">12</span>}){
+            id
+            type
+        }
+    }
+}
+
+mutation byType {
+    bakery{
+        orderDonuts (order: {<span class="hljs-attr">type</span>: <span class="hljs-string">"Chocolate"</span> quantity: <span class="hljs-number">12</span>}){
+            id
+            type
+        }
+    }
+}
+
+</code></pre>
+<p>When you start thinking about large object graphs, 100s of controllers and 100s of types, you have to put some thought in to how you organize your data. Coming up with an intuitive structure to your hierarchy is going to be dependent on your audience and use cases. There is no one-size fits all approach, but with the ability to move graph fields by updating one string, its trivial to build as you iterate.</p>
+<h2><a class="anchor" aria-hidden="true" id="field-path-names"></a><a href="#field-path-names" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Field Path Names</h2>
+<blockquote>
+<p>Each segment of a field path must individually conform to the required naming standards for fields and graph type names.</p>
+</blockquote>
+<p>In reality this primarily means don't start your fields with a double underscore, <code>__</code>, as thats reserved by the introspection system. The complete regex is available in the source code at <code>Constants.RegExPatterns.NameRegex</code>.</p>
+<p>These are some valid field paths:</p>
+<pre><code class="hljs css language-csharp"><span class="hljs-comment">// Valid Field Fragments</span>
+[<span class="hljs-meta">Mutation(<span class="hljs-meta-string">"store/bakery/deliCounter/sandwiches/order"</span>)</span>]
+[<span class="hljs-meta">Mutation(<span class="hljs-meta-string">"path1/path2/path3/path4/"</span>)</span>]
+[<span class="hljs-meta">Mutation(<span class="hljs-meta-string">"path1/path1/path1/path1/path1/path1/path1/path1/path1"</span>)</span>]
+</code></pre>
+<p>But if even one segment of the path is invalid GraphQL will reject it completely.</p>
+<pre><code class="hljs css language-csharp"><span class="hljs-comment">// ERROR: Invalid Field Fragments</span>
+[<span class="hljs-meta">Query(<span class="hljs-meta-string">"store/__bakery"</span>)</span>]
+[<span class="hljs-meta">Query(<span class="hljs-meta-string">"store/βakery"</span>)</span>]
+[<span class="hljs-meta">Query(<span class="hljs-meta-string">"path1/path2/path 33"</span>)</span>]
+</code></pre>
+<h3><a class="anchor" aria-hidden="true" id="schema-naming-formats"></a><a href="#schema-naming-formats" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Schema Naming Formats</h3>
+<p>At runtime, when your schema is generated, the naming requirements it defines will be enforced for each path segment. By default this means <code>camelCasing</code> on field names.</p>
+<p>If you declare:</p>
+<pre><code class="hljs css language-csharp">[<span class="hljs-meta">Mutation(<span class="hljs-meta-string">"Store/Bakery/DeliCounter"</span>)</span>]
+</code></pre>
+<p>You would still query with :</p>
+<pre><code class="hljs css language-javascript">mutation {
+    store {
+        bakery {
+            deliCounter {
+                ...
+
+        }
+    }
+}
+</code></pre>
+<p>You can alter the naming formats for fields, enum values and graph types using the declaration options on your <a href="../reference/schema-configuration">schema configuration</a>.</p>
+</span></div></article></div><div class="docs-prevnext"><a class="docs-prev button" href="/docs/controllers/model-state"><span class="arrow-prev">← </span><span>Model State</span></a><a class="docs-next button" href="/docs/controllers/authorization"><span>Authorization</span><span class="arrow-next"> →</span></a></div></div></div><nav class="onPageNav"><ul class="toc-headings"><li><a href="#what-is-field-pathing">What is Field Pathing?</a></li><li><a href="#actions-must-have-a-unique-path">Actions Must Have a Unique Path</a><ul class="toc-headings"><li><a href="#declare-explicit-names">Declare Explicit Names</a></li><li><a href="#change-the-hierarchy">Change The Hierarchy</a></li><li><a href="#combine-the-fields">Combine the Fields</a></li></ul></li><li><a href="#field-path-names">Field Path Names</a><ul class="toc-headings"><li><a href="#schema-naming-formats">Schema Naming Formats</a></li></ul></li></ul></nav></div><footer class="nav-footer" id="footer"><section class="sitemap"><div><h5>Docs</h5><a href="/docs/introduction/made-for-aspnet-developers">Made for ASP.NET Developers</a><a href="/docs/quick/code-examples">Code Examples</a></div><div></div><div><h5>More</h5><a class="github-button" href="https://github.com/graphql-aspnet/graphql-aspnet" data-show-count="true" data-count-href="/graphql-aspnet/graphql-aspnet/stargazers" aria-label="Star this project on GitHub">Star on GitHub</a><a href="https://graphql.org">GraphQL.org</a><a href="https://dotnet.microsoft.com/learn/aspnet">Learn ASP.NET</a></div></section><section class="copyright">Copyright © 2019 GraphQL ASP.NET</section></footer></div><script>window.twttr=(function(d,s, id){var js,fjs=d.getElementsByTagName(s)[0],t=window.twttr||{};if(d.getElementById(id))return t;js=d.createElement(s);js.id=id;js.src='https://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js, fjs);t._e = [];t.ready = function(f) {t._e.push(f);};return t;}(document, 'script', 'twitter-wjs'));</script></body></html>

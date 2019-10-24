@@ -1,0 +1,124 @@
+<!DOCTYPE html><html lang="en"><head><meta charSet="utf-8"/><meta http-equiv="X-UA-Compatible" content="IE=edge"/><title>Made for ASP.NET Developers · GraphQL ASP.NET</title><meta name="viewport" content="width=device-width"/><meta name="generator" content="Docusaurus"/><meta name="description" content="This library is designed by people who use [ASP.NET MVC](https://dotnet.microsoft.com/apps/aspnet/mvc) and Web API in their day to day activities and built for similar minded developers. When you first started digging in to GraphQL you most likely came across the plethora of [articles](https://www.graphqlweekly.com/), [documents](https://en.wikipedia.org/wiki/GraphQL), [tutorials](https://www.howtographql.com/) and [groups](https://www.apollographql.com/) centered around JavaScript. JavaScript certainly has the highest adoption rate and with the tools provided by Apollo and Facebook&#x27;s [Relay](https://relay.dev/) its no surprise. Its amazing how well those tools fit in with the existing knowledge and coding paradigms of JavaScript developers on both sides of the fence (be that front end or back end)."/><meta name="docsearch:language" content="en"/><meta property="og:title" content="Made for ASP.NET Developers · GraphQL ASP.NET"/><meta property="og:type" content="website"/><meta property="og:url" content="https://graphql-aspnet.github.io/"/><meta property="og:description" content="This library is designed by people who use [ASP.NET MVC](https://dotnet.microsoft.com/apps/aspnet/mvc) and Web API in their day to day activities and built for similar minded developers. When you first started digging in to GraphQL you most likely came across the plethora of [articles](https://www.graphqlweekly.com/), [documents](https://en.wikipedia.org/wiki/GraphQL), [tutorials](https://www.howtographql.com/) and [groups](https://www.apollographql.com/) centered around JavaScript. JavaScript certainly has the highest adoption rate and with the tools provided by Apollo and Facebook&#x27;s [Relay](https://relay.dev/) its no surprise. Its amazing how well those tools fit in with the existing knowledge and coding paradigms of JavaScript developers on both sides of the fence (be that front end or back end)."/><meta property="og:image" content="https://graphql-aspnet.github.io/img/undraw_online.svg"/><meta name="twitter:card" content="summary"/><meta name="twitter:image" content="https://graphql-aspnet.github.io/img/undraw_tweetstorm.svg"/><link rel="shortcut icon" href="/img/logo-64.png"/><link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/hybrid.min.css"/><script>
+              (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+              (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+              m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+              })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+              ga('create', 'UA-150856900-1', 'auto');
+              ga('send', 'pageview');
+            </script><script type="text/javascript" src="https://buttons.github.io/buttons.js"></script><script src="/js/scrollSpy.js"></script><link rel="stylesheet" href="/css/main.css"/><script src="/js/codetabs.js"></script></head><body class="sideNavVisible separateOnPageNav"><div class="fixedHeaderContainer"><div class="headerWrapper wrapper"><header><a href="/"><img class="logo" src="/img/logo-64.png" alt="GraphQL ASP.NET"/><h2 class="headerTitleWithLogo">GraphQL ASP.NET</h2></a><div class="navigationWrapper navigationSlider"><nav class="slidingNav"><ul class="nav-site nav-site-internal"><li class="siteNavGroupActive"><a href="/docs/quick/overview" target="_self">Documentation</a></li><li class=""><a href="https://github.com/graphql-aspnet/graphql-aspnet" target="_self">Source Code</a></li></ul></nav></div></header></div></div><div class="navPusher"><div class="docMainWrapper wrapper"><div class="docsNavContainer" id="docsNav"><nav class="toc"><div class="toggleNav"><section class="navWrapper wrapper"><div class="navBreadcrumb wrapper"><div class="navToggle" id="navToggler"><div class="hamburger-menu"><div class="line1"></div><div class="line2"></div><div class="line3"></div></div></div><h2><i>›</i><span>Introduction</span></h2><div class="tocToggler" id="tocToggler"><i class="icon-toc"></i></div></div><div class="navGroups"><div class="navGroup"><h3 class="navGroupCategoryTitle">Jump In!</h3><ul class=""><li class="navListItem"><a class="navItem" href="/docs/quick/overview">Overview</a></li><li class="navListItem"><a class="navItem" href="/docs/quick/quick-start">Quick Start</a></li><li class="navListItem"><a class="navItem" href="/docs/quick/code-examples">Code Examples</a></li></ul></div><div class="navGroup"><h3 class="navGroupCategoryTitle">Introduction</h3><ul class=""><li class="navListItem"><a class="navItem" href="/docs/introduction/what-is-graphql">What is GraphQL?</a></li><li class="navListItem navListItemActive"><a class="navItem" href="/docs/introduction/made-for-aspnet-developers">Made for ASP.NET Developers</a></li></ul></div><div class="navGroup"><h3 class="navGroupCategoryTitle">Controllers &amp; Actions</h3><ul class=""><li class="navListItem"><a class="navItem" href="/docs/controllers/actions">Actions</a></li><li class="navListItem"><a class="navItem" href="/docs/controllers/model-state">Model State</a></li><li class="navListItem"><a class="navItem" href="/docs/controllers/field-paths">Field Paths</a></li><li class="navListItem"><a class="navItem" href="/docs/controllers/authorization">Authorization</a></li><li class="navListItem"><a class="navItem" href="/docs/controllers/type-extensions">Type Extensions</a></li><li class="navListItem"><a class="navItem" href="/docs/controllers/batch-operations">Batch Operations</a></li></ul></div><div class="navGroup"><h3 class="navGroupCategoryTitle">Graph Type Definitions</h3><ul class=""><li class="navListItem"><a class="navItem" href="/docs/types/objects">Objects</a></li><li class="navListItem"><a class="navItem" href="/docs/types/input-objects">Input Objects</a></li><li class="navListItem"><a class="navItem" href="/docs/types/interfaces">Interfaces</a></li><li class="navListItem"><a class="navItem" href="/docs/types/unions">Unions</a></li><li class="navListItem"><a class="navItem" href="/docs/types/enums">Enums</a></li><li class="navListItem"><a class="navItem" href="/docs/types/scalars">Scalars</a></li><li class="navListItem"><a class="navItem" href="/docs/types/list-non-null">List &amp; Non-Null</a></li></ul></div><div class="navGroup"><h3 class="navGroupCategoryTitle">Logging</h3><ul class=""><li class="navListItem"><a class="navItem" href="/docs/logging/structured-logging">Structured Logging</a></li><li class="navListItem"><a class="navItem" href="/docs/logging/standard-events">Standard Events</a></li></ul></div><div class="navGroup"><h3 class="navGroupCategoryTitle">Query Execution</h3><ul class=""><li class="navListItem"><a class="navItem" href="/docs/execution/metrics">Query Profiling</a></li><li class="navListItem"><a class="navItem" href="/docs/execution/malicious-queries">Malicious Queries</a></li></ul></div><div class="navGroup"><h3 class="navGroupCategoryTitle">Advanced</h3><ul class=""><li class="navListItem"><a class="navItem" href="/docs/advanced/subscriptions">Subscriptions</a></li><li class="navListItem"><a class="navItem" href="/docs/advanced/type-expressions">Type Expressions</a></li><li class="navListItem"><a class="navItem" href="/docs/advanced/directives">Directives</a></li><li class="navListItem"><a class="navItem" href="/docs/advanced/custom-scalars">Custom Scalars</a></li><li class="navListItem"><a class="navItem" href="/docs/advanced/graph-action-results">Action Results</a></li><li class="navListItem"><a class="navItem" href="/docs/advanced/middleware">Pipelines &amp; Middleware</a></li><li class="navListItem"><a class="navItem" href="/docs/advanced/query-cache">Query Caching</a></li><li class="navListItem"><a class="navItem" href="/docs/advanced/multi-schema-support">Multi-Schema Support</a></li></ul></div><div class="navGroup"><h3 class="navGroupCategoryTitle">Development Concerns</h3><ul class=""><li class="navListItem"><a class="navItem" href="/docs/development/debugging">Debugging</a></li><li class="navListItem"><a class="navItem" href="/docs/development/unit-testing">Unit Testing</a></li></ul></div><div class="navGroup"><h3 class="navGroupCategoryTitle">References</h3><ul class=""><li class="navListItem"><a class="navItem" href="/docs/reference/how-it-works">How it Works</a></li><li class="navListItem"><a class="navItem" href="/docs/reference/schema-configuration">Schema Configuration</a></li><li class="navListItem"><a class="navItem" href="/docs/reference/attributes">Attributes</a></li><li class="navListItem"><a class="navItem" href="/docs/reference/graph-controller">GraphController</a></li><li class="navListItem"><a class="navItem" href="/docs/reference/graph-directive">GraphDirective</a></li><li class="navListItem"><a class="navItem" href="/docs/reference/http-processor">HTTP Processor</a></li><li class="navListItem"><a class="navItem" href="/docs/reference/demo-projects">Demo Projects</a></li><li class="navListItem"><a class="navItem" href="/docs/reference/performance">Benchmarks</a></li><li class="navListItem"><a class="navItem" href="/docs/reference/contributing">Contributing</a></li></ul></div></div></section></div><script>
+            var coll = document.getElementsByClassName('collapsible');
+            var checkActiveCategory = true;
+            for (var i = 0; i < coll.length; i++) {
+              var links = coll[i].nextElementSibling.getElementsByTagName('*');
+              if (checkActiveCategory){
+                for (var j = 0; j < links.length; j++) {
+                  if (links[j].classList.contains('navListItemActive')){
+                    coll[i].nextElementSibling.classList.toggle('hide');
+                    coll[i].childNodes[1].classList.toggle('rotate');
+                    checkActiveCategory = false;
+                    break;
+                  }
+                }
+              }
+
+              coll[i].addEventListener('click', function() {
+                var arrow = this.childNodes[1];
+                arrow.classList.toggle('rotate');
+                var content = this.nextElementSibling;
+                content.classList.toggle('hide');
+              });
+            }
+
+            document.addEventListener('DOMContentLoaded', function() {
+              createToggler('#navToggler', '#docsNav', 'docsSliderActive');
+              createToggler('#tocToggler', 'body', 'tocActive');
+
+              var headings = document.querySelector('.toc-headings');
+              headings && headings.addEventListener('click', function(event) {
+                var el = event.target;
+                while(el !== headings){
+                  if (el.tagName === 'A') {
+                    document.body.classList.remove('tocActive');
+                    break;
+                  } else{
+                    el = el.parentNode;
+                  }
+                }
+              }, false);
+
+              function createToggler(togglerSelector, targetSelector, className) {
+                var toggler = document.querySelector(togglerSelector);
+                var target = document.querySelector(targetSelector);
+
+                if (!toggler) {
+                  return;
+                }
+
+                toggler.onclick = function(event) {
+                  event.preventDefault();
+
+                  target.classList.toggle(className);
+                };
+              }
+            });
+        </script></nav></div><div class="container mainContainer"><div class="wrapper"><div class="post"><header class="postHeader"><h1 class="postHeaderTitle">Made for ASP.NET Developers</h1></header><article><div><span><p>This library is designed by people who use <a href="https://dotnet.microsoft.com/apps/aspnet/mvc">ASP.NET MVC</a> and Web API in their day to day activities and built for similar minded developers. When you first started digging in to GraphQL you most likely came across the plethora of <a href="https://www.graphqlweekly.com/">articles</a>, <a href="https://en.wikipedia.org/wiki/GraphQL">documents</a>, <a href="https://www.howtographql.com/">tutorials</a> and <a href="https://www.apollographql.com/">groups</a> centered around JavaScript. JavaScript certainly has the highest adoption rate and with the tools provided by Apollo and Facebook's <a href="https://relay.dev/">Relay</a> its no surprise. Its amazing how well those tools fit in with the existing knowledge and coding paradigms of JavaScript developers on both sides of the fence (be that front end or back end).</p>
+<p>We believe that tooling and workflow is everything when it comes to picking up a technology. Its much more difficult for you (or your team) to adopt something new if there is no connection to what you already know. Migrating your personal development efforts or an entire team from .NET to NodeJS to leverage, for instance, is hard. The learning curve and even the monetary cost of bringing a team up to speed is high. But if you can leverage existing skills you reduce that cost significantly.</p>
+<blockquote>
+<p>GraphQL ASP.NET aims to reuse your existing knowledge of ASP.NET MVC and Web API</p>
+</blockquote>
+<p>This is a core, guiding principle for the development of this library. We aim to reuse what you know. Or if you are still learning, make what you learn transferable to other .NET technologies. When coming from a .NET background, being able to reason about your graph queries in terms of <code>Controllers</code> and <code>Actions</code> eases the cognitive load as you transition to thinking in terms of Fields and object graphs.</p>
+<p>Using familiar concepts like <em>Binding Models</em> and <em>View Models</em>; commonly used attributes like <code>[Authorize]</code>, <code>[Required]</code>, <code>[StringLength]</code>; modern ASP.NET's abstraction concepts like <code>IServiceCollection</code>, <code>ILogger</code>, and <code>Startup.cs</code> all play a part in hopes to give you a familiar programming model that you can start using immediately without reinventing too many wheels.</p>
+<p>Take, for instance, this controller and a sample query that would call it. Can you tell what it does? If you are familiar with ASP.NET MVC then the answer is probably yes!</p>
+<div class="sideBySideCode hljs">
+<div>
+<pre><code class="hljs css language-cs"><span class="hljs-comment">// C#</span>
+<span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title">PersonController</span>: <span class="hljs-title">GraphController</span>
+{
+    <span class="hljs-keyword">private</span> IPersonService _service;
+    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-title">PersonController</span>(<span class="hljs-params">IPersonService personService</span>)</span>
+    {
+        _service = personService;
+    }
+
+    [<span class="hljs-meta">QueryRoot(<span class="hljs-meta-string">"person"</span>)</span>]
+    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">async</span> Task&lt;Person&gt; <span class="hljs-title">RetrievePerson</span>(<span class="hljs-params"><span class="hljs-keyword">int</span> id</span>)</span>
+    {
+        <span class="hljs-keyword">return</span> <span class="hljs-keyword">await</span> _service.FetchPerson(id);
+    }
+}
+</code></pre>
+</div>
+<div>
+<pre><code class="hljs css language-javascript"><span class="hljs-comment">// graphQL</span>
+query {
+    person(id: <span class="hljs-number">5</span>){
+        firstName
+        lastName
+        title
+    }
+}
+</code></pre>
+</div>
+</div>
+<br/>
+<p>Another consideration when trying to implement GraphQL in .NET is the amount of boiler plate code required. Since C# is a strongly typed language the volume of additional coding required to generate an object graph tends to be high. Many libraries take the approach of ultimate flexibility, requiring you to completely code your object graph (the fields that can be queried) and individually map all model properties and resolver methods manually.</p>
+<p>To address this, GraphQL ASP.NET has adopted an opinionated approach to its implementation. It makes some minor assumptions about how you will deliver your data in exchange for some much needed code generation and specification support. If the code in the controller above makes sense and feels natural to you; then this library might be worth a look. In terms of GraphQL, this single controller will:</p>
+<ul>
+<li>Generate a fully qualified schema definition</li>
+<li>Provide introspection support</li>
+<li>Generate all required graph types (there are 17 in this example)</li>
+</ul>
+<p>Just like with MVC, GraphQL will automatically wire up your graph controllers and scan your model objects. There is no additional, required configuration. When you add a new controller, new actions or new model properties they are automatically injected everywhere that object is used*.</p>
+<p>Working on a large project that has shared assemblies between services? No problem, you can direct GraphQL on where to look for controllers and model objects or even be explicit in what you want it to consume...down to the property level.</p>
+<h2><a class="anchor" aria-hidden="true" id="plays-nice-with-mvc-controllers-razor-views-and-razor-pages"></a><a href="#plays-nice-with-mvc-controllers-razor-views-and-razor-pages" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Plays Nice with MVC Controllers, Razor Views and Razor Pages</h2>
+<p>This library is an extension on the standard MVC pipeline, not a replacement. At its core, a graphql query is just another route on your application. At startup it registers a middleware component to handle requests using <code>appBuilder.Map()</code>.</p>
+<p>Also, if you are integrating into an existing project, you'll find a lot of utility code will work out of the box which should ease your migration. Any existing services, custom Authorization and Validation attributes can be directly attached to graph action methods and input models. You might even find that many of your model objects work as well.</p>
+<h2><a class="anchor" aria-hidden="true" id="scoped-dependency-injection"></a><a href="#scoped-dependency-injection" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Scoped Dependency Injection</h2>
+<p>Services are injected into graph controllers in the same manner as MVC controllers and with the same scope resolution as the HTTP request. Yes, your HTTP request level Entity Framework <code>DbContext</code> will be carried forward through all field resolutions.</p>
+<h2><a class="anchor" aria-hidden="true" id="user-authorization"></a><a href="#user-authorization" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>User Authorization</h2>
+<p>The user model is exactly the same. In fact, the <code>ClaimsPrincipal</code> passed to <code>this.User</code> on an MVC controller is forwarded to GraphQL and used to validate any <code>[Authorize]</code> attributes on your graph controller actions. Internally, it uses the same <code>IAuthorizationService</code> that gets added when you call <code>services.AddAuthorization()</code> in <code>Startup.cs</code>.</p>
+<h2><a class="anchor" aria-hidden="true" id="custom-action-results"></a><a href="#custom-action-results" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Custom Action Results</h2>
+<p>Many teams define custom action results beyond <code>this.Ok()</code> and <code>this.BadRequest()</code> to centralize how they will respond to requests on their Web API controllers to provide consistent messaging, perform some sort of logging or create a common return payload. GraphQL ASP.NET supports this model as well. Out of the box you get support for many of the relevant action results around returning data, indicating an error or denying access, but you can implement your own <code>IGraphActionResult</code> to standardize how a given result is converted into a response object and used by the runtime. This includes control to invalidate the field, inject customized error messages or cancel the field request altogether.</p>
+<p><em>Side Note:</em> Not all action results make sense in GraphQL. For instance, you won't find a way to download a file or indicate a 204 (no content) result. A GraphQL field must always return a piece of data (even if its null). Since the <code>IGraphActionResult</code> object is only a small piece in an entire query of many fields, its scope of abilities is paired to match.</p>
+</span></div></article></div><div class="docs-prevnext"><a class="docs-prev button" href="/docs/introduction/what-is-graphql"><span class="arrow-prev">← </span><span class="function-name-prevnext">What is GraphQL?</span></a><a class="docs-next button" href="/docs/controllers/actions"><span>Actions</span><span class="arrow-next"> →</span></a></div></div></div><nav class="onPageNav"><ul class="toc-headings"><li><a href="#plays-nice-with-mvc-controllers-razor-views-and-razor-pages">Plays Nice with MVC Controllers, Razor Views and Razor Pages</a></li><li><a href="#scoped-dependency-injection">Scoped Dependency Injection</a></li><li><a href="#user-authorization">User Authorization</a></li><li><a href="#custom-action-results">Custom Action Results</a></li></ul></nav></div><footer class="nav-footer" id="footer"><section class="sitemap"><div><h5>Docs</h5><a href="/docs/introduction/made-for-aspnet-developers">Made for ASP.NET Developers</a><a href="/docs/quick/code-examples">Code Examples</a></div><div></div><div><h5>More</h5><a class="github-button" href="https://github.com/graphql-aspnet/graphql-aspnet" data-show-count="true" data-count-href="/graphql-aspnet/graphql-aspnet/stargazers" aria-label="Star this project on GitHub">Star on GitHub</a><a href="https://graphql.org">GraphQL.org</a><a href="https://dotnet.microsoft.com/learn/aspnet">Learn ASP.NET</a></div></section><section class="copyright">Copyright © 2019 GraphQL ASP.NET</section></footer></div><script>window.twttr=(function(d,s, id){var js,fjs=d.getElementsByTagName(s)[0],t=window.twttr||{};if(d.getElementById(id))return t;js=d.createElement(s);js.id=id;js.src='https://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js, fjs);t._e = [];t.ready = function(f) {t._e.push(f);};return t;}(document, 'script', 'twitter-wjs'));</script></body></html>

@@ -1,0 +1,179 @@
+<!DOCTYPE html><html lang="en"><head><meta charSet="utf-8"/><meta http-equiv="X-UA-Compatible" content="IE=edge"/><title>Dealing with Malicious Queries · GraphQL ASP.NET</title><meta name="viewport" content="width=device-width"/><meta name="generator" content="Docusaurus"/><meta name="description" content="When GraphQL ASP.NET parses a query it creates two values that attempt to describe the query in terms of impact and server load; Max Depth and Estimated Complexity. These values are attached to the generated query plan. There also exists limiters to these values that can be set in the schema configuration such that should any query plan exceed the limits you set, the plan will be rejected and the query not fulfilled."/><meta name="docsearch:language" content="en"/><meta property="og:title" content="Dealing with Malicious Queries · GraphQL ASP.NET"/><meta property="og:type" content="website"/><meta property="og:url" content="https://graphql-aspnet.github.io/"/><meta property="og:description" content="When GraphQL ASP.NET parses a query it creates two values that attempt to describe the query in terms of impact and server load; Max Depth and Estimated Complexity. These values are attached to the generated query plan. There also exists limiters to these values that can be set in the schema configuration such that should any query plan exceed the limits you set, the plan will be rejected and the query not fulfilled."/><meta property="og:image" content="https://graphql-aspnet.github.io/img/undraw_online.svg"/><meta name="twitter:card" content="summary"/><meta name="twitter:image" content="https://graphql-aspnet.github.io/img/undraw_tweetstorm.svg"/><link rel="shortcut icon" href="/img/logo-64.png"/><link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/hybrid.min.css"/><script>
+              (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+              (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+              m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+              })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+              ga('create', 'UA-150856900-1', 'auto');
+              ga('send', 'pageview');
+            </script><script type="text/javascript" src="https://buttons.github.io/buttons.js"></script><script src="/js/scrollSpy.js"></script><link rel="stylesheet" href="/css/main.css"/><script src="/js/codetabs.js"></script></head><body class="sideNavVisible separateOnPageNav"><div class="fixedHeaderContainer"><div class="headerWrapper wrapper"><header><a href="/"><img class="logo" src="/img/logo-64.png" alt="GraphQL ASP.NET"/><h2 class="headerTitleWithLogo">GraphQL ASP.NET</h2></a><div class="navigationWrapper navigationSlider"><nav class="slidingNav"><ul class="nav-site nav-site-internal"><li class="siteNavGroupActive"><a href="/docs/quick/overview" target="_self">Documentation</a></li><li class=""><a href="https://github.com/graphql-aspnet/graphql-aspnet" target="_self">Source Code</a></li></ul></nav></div></header></div></div><div class="navPusher"><div class="docMainWrapper wrapper"><div class="docsNavContainer" id="docsNav"><nav class="toc"><div class="toggleNav"><section class="navWrapper wrapper"><div class="navBreadcrumb wrapper"><div class="navToggle" id="navToggler"><div class="hamburger-menu"><div class="line1"></div><div class="line2"></div><div class="line3"></div></div></div><h2><i>›</i><span>Query Execution</span></h2><div class="tocToggler" id="tocToggler"><i class="icon-toc"></i></div></div><div class="navGroups"><div class="navGroup"><h3 class="navGroupCategoryTitle">Jump In!</h3><ul class=""><li class="navListItem"><a class="navItem" href="/docs/quick/overview">Overview</a></li><li class="navListItem"><a class="navItem" href="/docs/quick/quick-start">Quick Start</a></li><li class="navListItem"><a class="navItem" href="/docs/quick/code-examples">Code Examples</a></li></ul></div><div class="navGroup"><h3 class="navGroupCategoryTitle">Introduction</h3><ul class=""><li class="navListItem"><a class="navItem" href="/docs/introduction/what-is-graphql">What is GraphQL?</a></li><li class="navListItem"><a class="navItem" href="/docs/introduction/made-for-aspnet-developers">Made for ASP.NET Developers</a></li></ul></div><div class="navGroup"><h3 class="navGroupCategoryTitle">Controllers &amp; Actions</h3><ul class=""><li class="navListItem"><a class="navItem" href="/docs/controllers/actions">Actions</a></li><li class="navListItem"><a class="navItem" href="/docs/controllers/model-state">Model State</a></li><li class="navListItem"><a class="navItem" href="/docs/controllers/field-paths">Field Paths</a></li><li class="navListItem"><a class="navItem" href="/docs/controllers/authorization">Authorization</a></li><li class="navListItem"><a class="navItem" href="/docs/controllers/type-extensions">Type Extensions</a></li><li class="navListItem"><a class="navItem" href="/docs/controllers/batch-operations">Batch Operations</a></li></ul></div><div class="navGroup"><h3 class="navGroupCategoryTitle">Graph Type Definitions</h3><ul class=""><li class="navListItem"><a class="navItem" href="/docs/types/objects">Objects</a></li><li class="navListItem"><a class="navItem" href="/docs/types/input-objects">Input Objects</a></li><li class="navListItem"><a class="navItem" href="/docs/types/interfaces">Interfaces</a></li><li class="navListItem"><a class="navItem" href="/docs/types/unions">Unions</a></li><li class="navListItem"><a class="navItem" href="/docs/types/enums">Enums</a></li><li class="navListItem"><a class="navItem" href="/docs/types/scalars">Scalars</a></li><li class="navListItem"><a class="navItem" href="/docs/types/list-non-null">List &amp; Non-Null</a></li></ul></div><div class="navGroup"><h3 class="navGroupCategoryTitle">Logging</h3><ul class=""><li class="navListItem"><a class="navItem" href="/docs/logging/structured-logging">Structured Logging</a></li><li class="navListItem"><a class="navItem" href="/docs/logging/standard-events">Standard Events</a></li></ul></div><div class="navGroup"><h3 class="navGroupCategoryTitle">Query Execution</h3><ul class=""><li class="navListItem"><a class="navItem" href="/docs/execution/metrics">Query Profiling</a></li><li class="navListItem navListItemActive"><a class="navItem" href="/docs/execution/malicious-queries">Malicious Queries</a></li></ul></div><div class="navGroup"><h3 class="navGroupCategoryTitle">Advanced</h3><ul class=""><li class="navListItem"><a class="navItem" href="/docs/advanced/subscriptions">Subscriptions</a></li><li class="navListItem"><a class="navItem" href="/docs/advanced/type-expressions">Type Expressions</a></li><li class="navListItem"><a class="navItem" href="/docs/advanced/directives">Directives</a></li><li class="navListItem"><a class="navItem" href="/docs/advanced/custom-scalars">Custom Scalars</a></li><li class="navListItem"><a class="navItem" href="/docs/advanced/graph-action-results">Action Results</a></li><li class="navListItem"><a class="navItem" href="/docs/advanced/middleware">Pipelines &amp; Middleware</a></li><li class="navListItem"><a class="navItem" href="/docs/advanced/query-cache">Query Caching</a></li><li class="navListItem"><a class="navItem" href="/docs/advanced/multi-schema-support">Multi-Schema Support</a></li></ul></div><div class="navGroup"><h3 class="navGroupCategoryTitle">Development Concerns</h3><ul class=""><li class="navListItem"><a class="navItem" href="/docs/development/debugging">Debugging</a></li><li class="navListItem"><a class="navItem" href="/docs/development/unit-testing">Unit Testing</a></li></ul></div><div class="navGroup"><h3 class="navGroupCategoryTitle">References</h3><ul class=""><li class="navListItem"><a class="navItem" href="/docs/reference/how-it-works">How it Works</a></li><li class="navListItem"><a class="navItem" href="/docs/reference/schema-configuration">Schema Configuration</a></li><li class="navListItem"><a class="navItem" href="/docs/reference/attributes">Attributes</a></li><li class="navListItem"><a class="navItem" href="/docs/reference/graph-controller">GraphController</a></li><li class="navListItem"><a class="navItem" href="/docs/reference/graph-directive">GraphDirective</a></li><li class="navListItem"><a class="navItem" href="/docs/reference/http-processor">HTTP Processor</a></li><li class="navListItem"><a class="navItem" href="/docs/reference/demo-projects">Demo Projects</a></li><li class="navListItem"><a class="navItem" href="/docs/reference/performance">Benchmarks</a></li><li class="navListItem"><a class="navItem" href="/docs/reference/contributing">Contributing</a></li></ul></div></div></section></div><script>
+            var coll = document.getElementsByClassName('collapsible');
+            var checkActiveCategory = true;
+            for (var i = 0; i < coll.length; i++) {
+              var links = coll[i].nextElementSibling.getElementsByTagName('*');
+              if (checkActiveCategory){
+                for (var j = 0; j < links.length; j++) {
+                  if (links[j].classList.contains('navListItemActive')){
+                    coll[i].nextElementSibling.classList.toggle('hide');
+                    coll[i].childNodes[1].classList.toggle('rotate');
+                    checkActiveCategory = false;
+                    break;
+                  }
+                }
+              }
+
+              coll[i].addEventListener('click', function() {
+                var arrow = this.childNodes[1];
+                arrow.classList.toggle('rotate');
+                var content = this.nextElementSibling;
+                content.classList.toggle('hide');
+              });
+            }
+
+            document.addEventListener('DOMContentLoaded', function() {
+              createToggler('#navToggler', '#docsNav', 'docsSliderActive');
+              createToggler('#tocToggler', 'body', 'tocActive');
+
+              var headings = document.querySelector('.toc-headings');
+              headings && headings.addEventListener('click', function(event) {
+                var el = event.target;
+                while(el !== headings){
+                  if (el.tagName === 'A') {
+                    document.body.classList.remove('tocActive');
+                    break;
+                  } else{
+                    el = el.parentNode;
+                  }
+                }
+              }, false);
+
+              function createToggler(togglerSelector, targetSelector, className) {
+                var toggler = document.querySelector(togglerSelector);
+                var target = document.querySelector(targetSelector);
+
+                if (!toggler) {
+                  return;
+                }
+
+                toggler.onclick = function(event) {
+                  event.preventDefault();
+
+                  target.classList.toggle(className);
+                };
+              }
+            });
+        </script></nav></div><div class="container mainContainer"><div class="wrapper"><div class="post"><header class="postHeader"><h1 class="postHeaderTitle">Dealing with Malicious Queries</h1></header><article><div><span><p>When GraphQL ASP.NET parses a query it creates two values that attempt to describe the query in terms of impact and server load; Max Depth and Estimated Complexity. These values are attached to the generated query plan. There also exists limiters to these values that can be set in the schema configuration such that should any query plan exceed the limits you set, the plan will be rejected and the query not fulfilled.</p>
+<h2><a class="anchor" aria-hidden="true" id="maximum-allowed-field-depth"></a><a href="#maximum-allowed-field-depth" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Maximum Allowed Field Depth</h2>
+<p>Field depth refers to how deeply nested a field is within a query.</p>
+<p>In this example, for instance, the &quot;search&quot; field has a depth of 4 and the maximum depth reached is 6: <code>groceryStore &gt; bakery &gt; pastries &gt; recipe &gt; ingredients &gt; name</code></p>
+<pre><code class="hljs css language-javascript">query SearchGroceryStore {
+    groceryStore {
+        bakery {
+            pastries {
+                search(nameLike: <span class="hljs-string">"chocolate"</span>){
+                    name
+                    type
+                }
+                recipe(id: <span class="hljs-number">15</span>) {
+                    name
+                    ingredients {
+                        name
+                    }
+                }
+            }
+        }
+    }
+}
+</code></pre>
+<p>This becomes important on large object graphs where its possible for a requestor to submit a query that is 10s or 100s of nodes deep. Running such a large query can have performance implications if ran en masse. A large volume of queries against your server executing a perfectly valid, yet deeply nested query will quickly grind things to a halt.</p>
+<p>To combat this you can set a maximum allowed depth for any query targeting your schema. During the parsing phase, once GraphQL has gathered enough information about the query document, it will inspect the maximum depth and if it violates your constraint, immediately reject the query without executing it.</p>
+<p>To set a maximum allowed depth, set the appropriate property in your schema configuration at startup:</p>
+<pre><code class="hljs css language-csharp"><span class="hljs-comment">// Startup.cs</span>
+<span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">ConfigureServices</span>(<span class="hljs-params">IServiceCollection services</span>)</span>
+{
+    services.AddGraphQL(options =&gt;
+        {
+            options.ExecutionOptions.MaxQueryDepth = <span class="hljs-number">15</span>;
+        });
+}
+</code></pre>
+<blockquote>
+<p>The default value for <code>MaxQueryDepth</code> is <code>null</code> or no limit.</p>
+</blockquote>
+<h2><a class="anchor" aria-hidden="true" id="query-complexity"></a><a href="#query-complexity" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Query Complexity</h2>
+<p>The field depth is only part of the picture though. The way in which your fields interact with each other also plays a role.</p>
+<p>Take for instance this query:</p>
+<pre><code class="hljs css language-javascript">query PhoneManufacturer {
+    allParts {
+        id
+        name
+        suppliers {
+            name
+            address
+        }
+    }
+}
+</code></pre>
+<p>It would not be far fetched to assume that this phone manufacturer has at least 500 parts in their inventory and that those parts might be sourced from 2-3 individual suppliers. If that's the case our result is going to contain 3000 field resolutions (500 parts * 3 suppliers * 2 fields per supplier) just to show the name and address of each supplier. Thats a lot of data!!!! What if we added order history per supplier? Now we'd looking at 100,000+ results. The take away here is that your field resolutions can balloon quickly if you're not careful.</p>
+<p>While this query only has a field depth of 3, <code>allParts -&gt; suppliers -&gt; name</code>, the performance implications are much more impactful than the bakery in the first example because of the type of data involved. (Side note, this is a perfect example where a <a href="../controllers/batch-operations">batch operation</a> would improve performance exponentially.)</p>
+<p>GraphQL will assign a score to every query plan, its <code>estimated complexity</code>, to help gauge the load its likely to incur on the server when trying to execute. As you might expect you can set a maximum allowed complexity value and reject any queries that exceed your limit:</p>
+<pre><code class="hljs css language-csharp"><span class="hljs-comment">// Startup.cs</span>
+<span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">ConfigureServices</span>(<span class="hljs-params">IServiceCollection services</span>)</span>
+{
+    services.AddMvc()
+            .AddGraphQL(options =&gt;
+            {
+                options.ExecutionOptions.MaxQueryComplexity = <span class="hljs-number">50.00</span>;
+            });
+}
+</code></pre>
+<blockquote>
+<p>The default value for <code>MaxQueryComplexity</code> is <code>null</code> or no limit.</p>
+</blockquote>
+<p>There is no magic bullet for choosing a maximum value as its going to be largely dependent on your data and how customers query it. When logging is enabled, the estimated complexity is written along with the <code>Query Plan Generated</code> event. Analyzing the values your queries are producing during development will help you get a feel for things in order to make a good decision for production limitations.</p>
+<h2><a class="anchor" aria-hidden="true" id="calculating-query-complexity"></a><a href="#calculating-query-complexity" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Calculating Query Complexity</h2>
+<p>After a query plan is generated each of the operations defined in the document is inspected and weights are applied to each of the fields then summed together to generate a final score.</p>
+<p>A complexity score is derived from these attributes:</p>
+<table>
+<thead>
+<tr><th>Attribute</th><th>Description</th></tr>
+</thead>
+<tbody>
+<tr><td>Operation Type</td><td>This refers to the operation as a whole being a <code>mutation</code> or a <code>query</code>.</td></tr>
+<tr><td>Execution Mode</td><td>Whether or not a field is being executed as a batch operation or per source item.</td></tr>
+<tr><td>Resolver Type</td><td>Is the field targeting a controller method, an object property or an object method?</td></tr>
+<tr><td>Type Expression</td><td>Does the field produce 1 single item or a collection of items</td></tr>
+<tr><td>Complexity Factor</td><td>A user controlled value to influence the calculation for queries or mutations that are particularly long running</td></tr>
+</tbody>
+</table>
+<p>The <code>estimated complexity</code> of the query plan is the operation with the highest individual score.</p>
+<p>The code for calculating the value can be seen in <a href="https://github.com/graphql-aspnet/graphql-aspnet/blob/develop/src/graphql-aspnet/Defaults/DefaultOperationComplexityCalculator{TSchema}.cs"><code>DefaultOperationComplexityCalculator&lt;TSchema&gt;</code></a></p>
+<blockquote>
+<p><strong><em>Beta Note</em></strong>: The exact calculation used for query complexity is still in flux and likely to change before v1.0 is finalized. If you have expertise in this arena and would like to weigh in on the values chosen or the computation formula in general please reach out on Github! We'd love to hear from you.</p>
+</blockquote>
+<p>where <code>IGraphFieldExecutableOperation</code> represents the collection of requested fields contexts along with the input arguments, child fields and directives that were parsed.</p>
+<h3><a class="anchor" aria-hidden="true" id="setting-a-complexity-weight"></a><a href="#setting-a-complexity-weight" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Setting a Complexity Weight</h3>
+<p>You can influence the complexity value of any given field by applying a weight to the field as part of its declaration.</p>
+<p>The attributes <code>[GraphField]</code>, <code>[Query]</code>, <code>[Mutation]</code>, <code>[QueryRoot]</code>, <code>[MutationRoot]</code> expose access to this value.</p>
+<pre><code class="hljs css language-csharp"><span class="hljs-comment">// C# Controller</span>
+<span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title">BakeryController</span> : <span class="hljs-title">GraphController</span>
+{
+    <span class="hljs-comment">// Complexity is a float value</span>
+    [<span class="hljs-meta">QueryRoot(Complexity = 1.3)</span>]
+    <span class="hljs-function"><span class="hljs-keyword">public</span> Donut <span class="hljs-title">RetrieveDonutType</span>(<span class="hljs-params"><span class="hljs-keyword">int</span> id</span>)</span>{<span class="hljs-comment">/*...*/</span>}
+}
+</code></pre>
+<ul>
+<li>A factor greater than 1 will increase the weight applied to this field</li>
+<li>A factor less than 1 will decrease the weight</li>
+<li>The minimum value is 0 and the default value is <code>1</code></li>
+</ul>
+<h2><a class="anchor" aria-hidden="true" id="implement-your-own-complexity-calculation"></a><a href="#implement-your-own-complexity-calculation" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Implement Your Own Complexity Calculation</h2>
+<p>You can override how GraphQL calculates the complexity of any given query operation. Implement <code>IQueryOperationComplexityCalculator&lt;TSchema&gt;</code> and inject it into your DI container before calling <code>.AddGraphQL()</code>.</p>
+<p>This interface has one method:</p>
+<pre><code class="hljs css language-csharp">public interface IQueryOperationComplexityCalculator&lt;TSchema&gt;
+{
+    float Calculate(IGraphFieldExecutableOperation operation);
+}
+</code></pre>
+</span></div></article></div><div class="docs-prevnext"><a class="docs-prev button" href="/docs/execution/metrics"><span class="arrow-prev">← </span><span>Query Profiling</span></a><a class="docs-next button" href="/docs/advanced/subscriptions"><span>Subscriptions</span><span class="arrow-next"> →</span></a></div></div></div><nav class="onPageNav"><ul class="toc-headings"><li><a href="#maximum-allowed-field-depth">Maximum Allowed Field Depth</a></li><li><a href="#query-complexity">Query Complexity</a></li><li><a href="#calculating-query-complexity">Calculating Query Complexity</a><ul class="toc-headings"><li><a href="#setting-a-complexity-weight">Setting a Complexity Weight</a></li></ul></li><li><a href="#implement-your-own-complexity-calculation">Implement Your Own Complexity Calculation</a></li></ul></nav></div><footer class="nav-footer" id="footer"><section class="sitemap"><div><h5>Docs</h5><a href="/docs/introduction/made-for-aspnet-developers">Made for ASP.NET Developers</a><a href="/docs/quick/code-examples">Code Examples</a></div><div></div><div><h5>More</h5><a class="github-button" href="https://github.com/graphql-aspnet/graphql-aspnet" data-show-count="true" data-count-href="/graphql-aspnet/graphql-aspnet/stargazers" aria-label="Star this project on GitHub">Star on GitHub</a><a href="https://graphql.org">GraphQL.org</a><a href="https://dotnet.microsoft.com/learn/aspnet">Learn ASP.NET</a></div></section><section class="copyright">Copyright © 2019 GraphQL ASP.NET</section></footer></div><script>window.twttr=(function(d,s, id){var js,fjs=d.getElementsByTagName(s)[0],t=window.twttr||{};if(d.getElementById(id))return t;js=d.createElement(s);js.id=id;js.src='https://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js, fjs);t._e = [];t.ready = function(f) {t._e.push(f);};return t;}(document, 'script', 'twitter-wjs'));</script></body></html>

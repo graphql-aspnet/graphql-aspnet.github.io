@@ -1,0 +1,251 @@
+<!DOCTYPE html><html lang="en"><head><meta charSet="utf-8"/><meta http-equiv="X-UA-Compatible" content="IE=edge"/><title>How it Works · GraphQL ASP.NET</title><meta name="viewport" content="width=device-width"/><meta name="generator" content="Docusaurus"/><meta name="description" content="&gt; This document is a high level overview how GraphQL ASP.NET ultimately generates a response to a query with some insight into core details. Its assumes a working knowledge of both ASP.NET MVC and GraphQL. If you are only interested in the &quot;how to&quot; for using the library, feel free to skip this."/><meta name="docsearch:language" content="en"/><meta property="og:title" content="How it Works · GraphQL ASP.NET"/><meta property="og:type" content="website"/><meta property="og:url" content="https://graphql-aspnet.github.io/"/><meta property="og:description" content="&gt; This document is a high level overview how GraphQL ASP.NET ultimately generates a response to a query with some insight into core details. Its assumes a working knowledge of both ASP.NET MVC and GraphQL. If you are only interested in the &quot;how to&quot; for using the library, feel free to skip this."/><meta property="og:image" content="https://graphql-aspnet.github.io/img/undraw_online.svg"/><meta name="twitter:card" content="summary"/><meta name="twitter:image" content="https://graphql-aspnet.github.io/img/undraw_tweetstorm.svg"/><link rel="shortcut icon" href="/img/logo-64.png"/><link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/hybrid.min.css"/><script>
+              (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+              (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+              m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+              })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+              ga('create', 'UA-150856900-1', 'auto');
+              ga('send', 'pageview');
+            </script><script type="text/javascript" src="https://buttons.github.io/buttons.js"></script><script src="/js/scrollSpy.js"></script><link rel="stylesheet" href="/css/main.css"/><script src="/js/codetabs.js"></script></head><body class="sideNavVisible separateOnPageNav"><div class="fixedHeaderContainer"><div class="headerWrapper wrapper"><header><a href="/"><img class="logo" src="/img/logo-64.png" alt="GraphQL ASP.NET"/><h2 class="headerTitleWithLogo">GraphQL ASP.NET</h2></a><div class="navigationWrapper navigationSlider"><nav class="slidingNav"><ul class="nav-site nav-site-internal"><li class="siteNavGroupActive"><a href="/docs/quick/overview" target="_self">Documentation</a></li><li class=""><a href="https://github.com/graphql-aspnet/graphql-aspnet" target="_self">Source Code</a></li></ul></nav></div></header></div></div><div class="navPusher"><div class="docMainWrapper wrapper"><div class="docsNavContainer" id="docsNav"><nav class="toc"><div class="toggleNav"><section class="navWrapper wrapper"><div class="navBreadcrumb wrapper"><div class="navToggle" id="navToggler"><div class="hamburger-menu"><div class="line1"></div><div class="line2"></div><div class="line3"></div></div></div><h2><i>›</i><span>References</span></h2><div class="tocToggler" id="tocToggler"><i class="icon-toc"></i></div></div><div class="navGroups"><div class="navGroup"><h3 class="navGroupCategoryTitle">Jump In!</h3><ul class=""><li class="navListItem"><a class="navItem" href="/docs/quick/overview">Overview</a></li><li class="navListItem"><a class="navItem" href="/docs/quick/quick-start">Quick Start</a></li><li class="navListItem"><a class="navItem" href="/docs/quick/code-examples">Code Examples</a></li></ul></div><div class="navGroup"><h3 class="navGroupCategoryTitle">Introduction</h3><ul class=""><li class="navListItem"><a class="navItem" href="/docs/introduction/what-is-graphql">What is GraphQL?</a></li><li class="navListItem"><a class="navItem" href="/docs/introduction/made-for-aspnet-developers">Made for ASP.NET Developers</a></li></ul></div><div class="navGroup"><h3 class="navGroupCategoryTitle">Controllers &amp; Actions</h3><ul class=""><li class="navListItem"><a class="navItem" href="/docs/controllers/actions">Actions</a></li><li class="navListItem"><a class="navItem" href="/docs/controllers/model-state">Model State</a></li><li class="navListItem"><a class="navItem" href="/docs/controllers/field-paths">Field Paths</a></li><li class="navListItem"><a class="navItem" href="/docs/controllers/authorization">Authorization</a></li><li class="navListItem"><a class="navItem" href="/docs/controllers/type-extensions">Type Extensions</a></li><li class="navListItem"><a class="navItem" href="/docs/controllers/batch-operations">Batch Operations</a></li></ul></div><div class="navGroup"><h3 class="navGroupCategoryTitle">Graph Type Definitions</h3><ul class=""><li class="navListItem"><a class="navItem" href="/docs/types/objects">Objects</a></li><li class="navListItem"><a class="navItem" href="/docs/types/input-objects">Input Objects</a></li><li class="navListItem"><a class="navItem" href="/docs/types/interfaces">Interfaces</a></li><li class="navListItem"><a class="navItem" href="/docs/types/unions">Unions</a></li><li class="navListItem"><a class="navItem" href="/docs/types/enums">Enums</a></li><li class="navListItem"><a class="navItem" href="/docs/types/scalars">Scalars</a></li><li class="navListItem"><a class="navItem" href="/docs/types/list-non-null">List &amp; Non-Null</a></li></ul></div><div class="navGroup"><h3 class="navGroupCategoryTitle">Logging</h3><ul class=""><li class="navListItem"><a class="navItem" href="/docs/logging/structured-logging">Structured Logging</a></li><li class="navListItem"><a class="navItem" href="/docs/logging/standard-events">Standard Events</a></li></ul></div><div class="navGroup"><h3 class="navGroupCategoryTitle">Query Execution</h3><ul class=""><li class="navListItem"><a class="navItem" href="/docs/execution/metrics">Query Profiling</a></li><li class="navListItem"><a class="navItem" href="/docs/execution/malicious-queries">Malicious Queries</a></li></ul></div><div class="navGroup"><h3 class="navGroupCategoryTitle">Advanced</h3><ul class=""><li class="navListItem"><a class="navItem" href="/docs/advanced/subscriptions">Subscriptions</a></li><li class="navListItem"><a class="navItem" href="/docs/advanced/type-expressions">Type Expressions</a></li><li class="navListItem"><a class="navItem" href="/docs/advanced/directives">Directives</a></li><li class="navListItem"><a class="navItem" href="/docs/advanced/custom-scalars">Custom Scalars</a></li><li class="navListItem"><a class="navItem" href="/docs/advanced/graph-action-results">Action Results</a></li><li class="navListItem"><a class="navItem" href="/docs/advanced/middleware">Pipelines &amp; Middleware</a></li><li class="navListItem"><a class="navItem" href="/docs/advanced/query-cache">Query Caching</a></li><li class="navListItem"><a class="navItem" href="/docs/advanced/multi-schema-support">Multi-Schema Support</a></li></ul></div><div class="navGroup"><h3 class="navGroupCategoryTitle">Development Concerns</h3><ul class=""><li class="navListItem"><a class="navItem" href="/docs/development/debugging">Debugging</a></li><li class="navListItem"><a class="navItem" href="/docs/development/unit-testing">Unit Testing</a></li></ul></div><div class="navGroup"><h3 class="navGroupCategoryTitle">References</h3><ul class=""><li class="navListItem navListItemActive"><a class="navItem" href="/docs/reference/how-it-works">How it Works</a></li><li class="navListItem"><a class="navItem" href="/docs/reference/schema-configuration">Schema Configuration</a></li><li class="navListItem"><a class="navItem" href="/docs/reference/attributes">Attributes</a></li><li class="navListItem"><a class="navItem" href="/docs/reference/graph-controller">GraphController</a></li><li class="navListItem"><a class="navItem" href="/docs/reference/graph-directive">GraphDirective</a></li><li class="navListItem"><a class="navItem" href="/docs/reference/http-processor">HTTP Processor</a></li><li class="navListItem"><a class="navItem" href="/docs/reference/demo-projects">Demo Projects</a></li><li class="navListItem"><a class="navItem" href="/docs/reference/performance">Benchmarks</a></li><li class="navListItem"><a class="navItem" href="/docs/reference/contributing">Contributing</a></li></ul></div></div></section></div><script>
+            var coll = document.getElementsByClassName('collapsible');
+            var checkActiveCategory = true;
+            for (var i = 0; i < coll.length; i++) {
+              var links = coll[i].nextElementSibling.getElementsByTagName('*');
+              if (checkActiveCategory){
+                for (var j = 0; j < links.length; j++) {
+                  if (links[j].classList.contains('navListItemActive')){
+                    coll[i].nextElementSibling.classList.toggle('hide');
+                    coll[i].childNodes[1].classList.toggle('rotate');
+                    checkActiveCategory = false;
+                    break;
+                  }
+                }
+              }
+
+              coll[i].addEventListener('click', function() {
+                var arrow = this.childNodes[1];
+                arrow.classList.toggle('rotate');
+                var content = this.nextElementSibling;
+                content.classList.toggle('hide');
+              });
+            }
+
+            document.addEventListener('DOMContentLoaded', function() {
+              createToggler('#navToggler', '#docsNav', 'docsSliderActive');
+              createToggler('#tocToggler', 'body', 'tocActive');
+
+              var headings = document.querySelector('.toc-headings');
+              headings && headings.addEventListener('click', function(event) {
+                var el = event.target;
+                while(el !== headings){
+                  if (el.tagName === 'A') {
+                    document.body.classList.remove('tocActive');
+                    break;
+                  } else{
+                    el = el.parentNode;
+                  }
+                }
+              }, false);
+
+              function createToggler(togglerSelector, targetSelector, className) {
+                var toggler = document.querySelector(togglerSelector);
+                var target = document.querySelector(targetSelector);
+
+                if (!toggler) {
+                  return;
+                }
+
+                toggler.onclick = function(event) {
+                  event.preventDefault();
+
+                  target.classList.toggle(className);
+                };
+              }
+            });
+        </script></nav></div><div class="container mainContainer"><div class="wrapper"><div class="post"><header class="postHeader"><h1 class="postHeaderTitle">How it Works</h1></header><article><div><span><blockquote>
+<p>This document is a high level overview how GraphQL ASP.NET ultimately generates a response to a query with some insight into core details. Its assumes a working knowledge of both ASP.NET MVC and GraphQL. If you are only interested in the &quot;how to&quot; for using the library, feel free to skip this.</p>
+</blockquote>
+<h2><a class="anchor" aria-hidden="true" id="schema-generation"></a><a href="#schema-generation" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Schema Generation</h2>
+<p><img src="../assets/how-it-works-1.png" alt="How it Works"></p>
+<h4><a class="anchor" aria-hidden="true" id="object-templating"></a><a href="#object-templating" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Object Templating</h4>
+<p>When your application starts the runtime begins by inspecting the registered <code>ISchema</code> types in your <code>Startup.cs</code> for the different options you've declared and sets off gathering a collection of the possible graph types that may be required.</p>
+<p>For each type, it generates a template that <em>describes</em> how you've asked GraphQL to use your classes. By inspecting declared attributes and the <code>System.Type</code> metadata it generates the appropriate metadata to create everything GraphQL ASP.NET will need to fulfill a query. Information such as input and output parameters for methods, property types, custom type naming, implemented interfaces, union declarations, field path definitions, validation requirements and enforced authorization policies are all gathered and stored at the application level under the configured <code>IGraphTypeTemplateProvider</code>.</p>
+<p>From this collection of metadata, GraphQL then generates the appropriate <code>IGraphType</code> objects for each of your schemas based on their individual configurations. By default, this completed <code>ISchema</code> instance is stored as a singleton in your DI container. There shouldn't be a need to change this but if your use case demands it you can perform a custom schema registration and generate a new schema instance per request/operation.</p>
+<p><strong>How does it know what objects to include?</strong></p>
+<p>GraphQL ASP.NET has a few methods of determining what objects to include in your schema. By default, it will inspect your application (the entry assembly) for any public <code>GraphController</code> classes and work from there. It checks every tagged query and mutation method, looks at every return value and every method parameter to find relevant scalars, enums and object types then inspects each one in turn to create a full map. It will even inspect the arbitrary interfaces implemented on each of your consumed objects. If that interface is ever used as a return type on an action method or a property, its automatically promoted to a graph type and included in the schema.</p>
+<p>You have complete control of what to include. Be that including additional assemblies, preventing the inclusion of the startup assembly, manually specifying each model class and controller etc. Attributes exist such as <code>[GraphSkip]</code> to exclude certain properties, methods or entire classes and limit the scope of the inclusion. On the other side of the fence, you can configure it to only accept classes with an explicitly declared <code>[GraphType]</code> attribute, ignoring everything else. And for the most control, disable everything and manually call <code>.AddGraphType&lt;T&gt;()</code> at startup for each class you want to have in your schema (controllers included). GraphQL will then happily generate declaration errors when it can't find a reference declared in your controllers. This can be an effective technique in spotting data leaks or rogue methods that slipped through a code review. Configure a unit test to generate a schema with different inclusion rules per environment and you now have an automatic CI/CD check in place to give your developers more freedom to write code during a sprint and only have to worry about configurations when submitting a PR.</p>
+<p>You can even go so far as to add a class to the schema but prevent its publication in introspection queries which can provide some helpful obfuscation. Alternatively, just disable introspection queries altogether. While this does cause client tooling to complain endlessly and makes front-end development much harder; if you and a private 3rd party can agree ahead of time on the query syntax then there is no issue.</p>
+<h4><a class="anchor" aria-hidden="true" id="middleware-pipelines"></a><a href="#middleware-pipelines" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Middleware Pipelines</h4>
+<p>Similar to how ASP.NET MVC utilizes a middleware pipeline to fulfill an HTTP request, GraphQL follows suit to fulfill a graphQL request. Major tasks like validation, parsing, field resolution and result packaging are just <a href="../advanced/middleware">middleware components</a> added to a chain of tasks and executed to complete the operation.</p>
+<p>At the same time as its constructing your schema, GraphQL sets up the 3 primary pipelines and store them in the DI container as an <code>ISchemaPipeline&lt;TSchema, TContext&gt;</code>. Each pipeline can be extended, reworked or completely replaced as needed for your use case.</p>
+<h2><a class="anchor" aria-hidden="true" id="query-execution"></a><a href="#query-execution" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Query Execution</h2>
+<p>Query execution is performed in a phased approach. For the sake of brevity we've left out the HTTP request steps required to invoke the GraphQL runtime but you can inspect the <code>DefaultGraphQLHttpProcessor</code> to read through the code.</p>
+<h3><a class="anchor" aria-hidden="true" id="phase-1-parsing-validation"></a><a href="#phase-1-parsing-validation" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Phase 1: Parsing &amp; Validation</h3>
+<div class="sideBySideCode hljs">
+<div>
+<pre><code class="hljs css language-csharp"><span class="hljs-comment">// C# Controller</span>
+<span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title">HeroController</span> : <span class="hljs-title">GraphController</span>
+{
+    [<span class="hljs-meta">QueryRoot(<span class="hljs-meta-string">"hero"</span>)</span>]
+    <span class="hljs-function"><span class="hljs-keyword">public</span> Human <span class="hljs-title">RetrieveHero</span>(<span class="hljs-params">Episode episode</span>)</span>
+    {
+        <span class="hljs-keyword">if</span>(episode == Episode.Empire)
+        {
+            <span class="hljs-keyword">return</span> <span class="hljs-keyword">new</span> Human()
+            {
+                Id = <span class="hljs-number">1000</span>,
+                Name = <span class="hljs-string">"Han Solo"</span>,
+                HomePlanet = <span class="hljs-string">"Corellia"</span>,
+            }
+        }
+        <span class="hljs-keyword">else</span>
+        {
+            <span class="hljs-keyword">return</span> <span class="hljs-keyword">new</span> Human()
+            {
+                Id = <span class="hljs-number">1001</span>,
+                Name = <span class="hljs-string">"Luke SkyWalker"</span>,
+                HomePlanet = <span class="hljs-string">"Tatooine"</span>,
+            }
+        }
+    }
+}
+</code></pre>
+</div>
+<div>
+<pre><code class="hljs css language-js"><span class="hljs-comment">// GraphQL Query Document</span>
+query {
+    hero(episode: EMPIRE) {
+        name
+        homePlanet
+    }
+}
+</code></pre>
+<pre><code class="hljs css language-js"><span class="hljs-comment">// Generated Response</span>
+{
+    <span class="hljs-string">"data"</span> : {
+        <span class="hljs-string">"hero"</span>: {
+            <span class="hljs-string">"name"</span> : <span class="hljs-string">"Han Solo"</span>,
+            <span class="hljs-string">"homePlanet"</span> : <span class="hljs-string">"Corellia"</span>
+        }
+    }
+}
+</code></pre>
+</div>
+</div>
+<p><em>Sample query used as a reference example in this section</em></p>
+<p>The supplied query document (top right in the example) is ran through a compilation cycle to generate an <code>IGraphQueryPlan</code>. It is first lexed into a series of tokens representing the various parts; things like curly braces, colons, strings etc. Then it parses those tokens into a collection of <code>SyntaxNodes</code> (an Abstract Syntax Tree) representing concepts like <code>FieldNode</code>, <code>InputValueNode</code>, and <code>OperationTypeNode</code> following the <a href="https://graphql.github.io/graphql-spec/June2018/#sec-Source-Text">graphql specification rules for source text documents</a>.</p>
+<p>Once parsed, the runtime will execute its internal rules engine against the generated <code>ISyntaxTree</code>, using the targeted <code>ISchema</code>, to create a query plan where it marries the AST with concrete structures such as controllers, action methods and POCOs. It is at this stage where the <code>hero</code> field in the example is matched to the <code>HeroController</code> with its appropriate <code>IGraphFieldResolver</code> to invoke the <code>RetrieveHero</code> method.</p>
+<p>While generating a query plan the rules engine will do its best to complete an analysis of the entire document and return to the requestor every error it finds. Depending on the errors though, it may or may not be able to catch them all. For instance, a syntax error, like a missing <code>}</code>, will preclude generating a query plan so errors centered around invalid field names or a type expression mismatch won't be caught until the syntax error is fixed (just like any other compiler).</p>
+<blockquote>
+<p><strong><em>Performance Note</em></strong>: The parser uses <code>Span&lt;T&gt;</code> and <code>Memory&lt;T&gt;</code> to analyze a document and carries those references for as long as possible, through much of the query plan generation; greatly reducing string allocations and providing a significant <a href="../reference/performance">performance boost</a>.</p>
+</blockquote>
+<h3><a class="anchor" aria-hidden="true" id="phase-2-execution"></a><a href="#phase-2-execution" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Phase 2: Execution</h3>
+<p>The engine now has a completed query plan that describes:</p>
+<ul>
+<li>The named operations declared in the document (or the anonymous operation in the example above)</li>
+<li>The top level fields and every child field for each operation</li>
+</ul>
+<p><strong>Its successfully validated that:</strong></p>
+<ul>
+<li>All the referenced fields for the graph types exist and are valid where requested</li>
+<li>Required input arguments have been supplied and their data is &quot;resolvable&quot;
+<ul>
+<li>This just means that we've validated that a number is a number, arguments on input objects exist etc.</li>
+</ul></li>
+</ul>
+<p>The specifics provided by the client are now brought into play and the runtime will select the correct operation, validate any provided variable values against the operation's declarations and select the first set of fields to execute.</p>
+<p><strong>For each field, the runtime will:</strong></p>
+<ul>
+<li>Substitute any deferred input arguments with referenced variable data</li>
+<li>Generate a field execution context containing the necessary data about the source data, arguments and resolver.</li>
+<li>Authenticate the user to the field.</li>
+<li>Execute the resolver to fetch a data value.</li>
+<li>Invoke any child fields requested.</li>
+</ul>
+<h4><a class="anchor" aria-hidden="true" id="resolving-a-field"></a><a href="#resolving-a-field" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Resolving a Field</h4>
+<p>GraphQL use the phrase &quot;resolver&quot; to describe a method that, for a given field, takes in parameters and generates a result.</p>
+<p>At startup, GraphQL ASP.NET automatically creates resolver references for your controller methods, POCO properties and tagged POCO methods. These are nothing more than delegates for method invocations; for properties it uses the getter registered with <code>PropertyInfo</code>.</p>
+<p><strong><em>Performance Note</em></strong>: The library makes heavy use of Lambdas generated from compiled Expression Trees to call its resolvers and for instantiating input objects when generating a field request. As a result, its many orders of magnitude faster than baseline reflected calls and nearly as performant as precompiled code.</p>
+<p><strong>Concerning the N+1 Problem</strong></p>
+<p>If you're reading this document you're probably aware of the <a href="https://itnext.io/what-is-the-n-1-problem-in-graphql-dd4921cb3c1a">N+1 problem</a> and the concept of Data Loaders as they relate to GraphQL. The section in this documentation on <a href="../controllers/batch-operations">batch operations</a> covers it in detail, but suffice it to say this library can handle 1:1, 1:N and N:N relationships with no trouble. These are implemented as type extensions through controller methods.</p>
+<p>Lets use a scenario where we query a set of managers and for each manager, their employees; setting up a 1:N concern. Using a <code>[BatchTypeExtension]</code> we can query all the needed children at once then split them out to the individual managers.</p>
+<pre><code class="hljs css language-js"><span class="hljs-comment">//  Assume that in this query the fields for</span>
+<span class="hljs-comment">// "managers" and "employees" both return an array of people</span>
+query {
+    managers(lastNameLike: <span class="hljs-string">"Sm*"</span>) {
+        id
+        name
+        employees {
+            id
+            name
+            title
+        }
+    }
+}
+</code></pre>
+<p>Your controller might look like this:</p>
+<pre><code class="hljs css language-csharp"><span class="hljs-comment">// C# Controller</span>
+<span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title">ManagersController</span> : <span class="hljs-title">GraphController</span>
+{
+    <span class="hljs-comment">// constructor with service injection omitted</span>
+
+    [<span class="hljs-meta">QueryRoot(<span class="hljs-meta-string">"managers"</span>)</span>]
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">async</span> Task&lt;IEnumerable&lt;Manager&gt;&gt; RetrieveManagers(<span class="hljs-keyword">string</span> lastNameLike)
+    {
+        <span class="hljs-keyword">return</span> <span class="hljs-keyword">await</span> _service.SearchManagers(lastNameLike);
+    }
+
+    <span class="hljs-comment">// Declare a new field that:</span>
+    <span class="hljs-comment">//      *Extends the Manager type</span>
+    <span class="hljs-comment">//      *Is called "employees"</span>
+    <span class="hljs-comment">//      *Returns a collection of employees per manager:  IEnumerable&lt;Employee&gt;</span>
+    [<span class="hljs-meta">BatchTypeExtension(typeof(Manager), <span class="hljs-meta-string">"employees"</span>, typeof(IEnumerable&lt;Employee&gt;))</span>]
+    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">async</span> Task&lt;IGraphActionResult&gt; <span class="hljs-title">RetrieveEmployees</span>(<span class="hljs-params">IEnumerable&lt;Manager&gt; managers</span>)</span>
+    {
+        <span class="hljs-comment">// the managers parameter here represents the entire collection of managers</span>
+        <span class="hljs-comment">// previously retrieved on this request, it is not part of the "employees"</span>
+        <span class="hljs-comment">// field definition. The runtime works this out automatically</span>
+        <span class="hljs-comment">// and the parameter is not exposed on the object graph.</span>
+        IEnumerable&lt;Employee&gt; employees = <span class="hljs-keyword">await</span> _service
+                .RetrieveEmployeesByManager(managers.Select(mgr =&gt; mgr.Id));
+
+        <span class="hljs-comment">// We have to tell GraphQL how to map the data for each manager.</span>
+        <span class="hljs-comment">//</span>
+        <span class="hljs-comment">// StartBatch() is a convience method that builds</span>
+        <span class="hljs-comment">// an IDictionary&lt;TSource, IEnumerable&lt;TResult&gt;&gt;</span>
+        <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>.StartBatch()
+            .FromSource(managers, mgr =&gt; mgr.Id)
+            .WithResults(employees, emp =&gt; emp.ManagerId)
+            .Complete();
+    }
+}
+</code></pre>
+<h3><a class="anchor" aria-hidden="true" id="phase-3-response-generation"></a><a href="#phase-3-response-generation" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Phase 3: Response Generation</h3>
+<p>Once all fields have been processed the runtime makes a final pass to propagate any nullability errors up the field chain resulting in a final data set. This data set is then passed to the <code>IGraphResponseWriter</code> registered for the schema and the result is serialized to the HttpResponse.</p>
+<p><strong>Writing a response includes:</strong></p>
+<ul>
+<li><p>Serializing the <code>errors</code> generated during execution</p>
+<ul>
+<li>All error messages have a severity level. Your schema configuration controls which are sent to the client.</li>
+<li>You can add your own error messages through your controller actions by returning <code>this.Error()</code>.</li>
+<li>Error messages may or may not have associated exception data which may or may not be exposed to the client depending on who they are or the schema configuration settings.</li>
+</ul></li>
+<li><p>Serializing the <code>data</code> field to the response stream</p></li>
+<li><p>Serializing the <code>extensions</code> field (such as metrics data) to the response stream</p></li>
+</ul>
+<h2><a class="anchor" aria-hidden="true" id="other-points-of-interest"></a><a href="#other-points-of-interest" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Other Points of Interest</h2>
+<p>Hopefully we've given you a bit of insight into how the library works under the hood. The other documents on this site go into exhaustive detail of the different features and how to use them but since you're here:</p>
+<ul>
+<li>The library targets <a href="https://docs.microsoft.com/en-us/dotnet/standard/net-standard"><code>netstandard2.0</code></a>.
+<ul>
+<li>Out of the box there are no external dependencies beyond official Microsoft packages.</li>
+</ul></li>
+</ul>
+<ul>
+<li><p>Every core component and all middleware components required to complete the tasks outlined in this document are referenced through dependency injection. Any one of them (or all of them) can be overridden and extended to do whatever you want as long as you register them prior to calling <code>.AddGraphQL()</code> at startup.</p>
+<ul>
+<li>Inject your own <code>IGraphResponseWriter</code> to serialize your results to XML or CSV.</li>
+<li>Build your own <code>IOperationComplexityCalculator</code> to intercept and alter how a query plan generates its <a href="../execution/malicious-queries">complexity values</a> to be more suitable to your needs.</li>
+</ul></li>
+</ul>
+</span></div></article></div><div class="docs-prevnext"><a class="docs-prev button" href="/docs/development/unit-testing"><span class="arrow-prev">← </span><span>Unit Testing</span></a><a class="docs-next button" href="/docs/reference/schema-configuration"><span>Schema Configuration</span><span class="arrow-next"> →</span></a></div></div></div><nav class="onPageNav"><ul class="toc-headings"><li><a href="#schema-generation">Schema Generation</a></li><li><a href="#query-execution">Query Execution</a><ul class="toc-headings"><li><a href="#phase-1-parsing-amp-validation">Phase 1: Parsing &amp; Validation</a></li><li><a href="#phase-2-execution">Phase 2: Execution</a></li><li><a href="#phase-3-response-generation">Phase 3: Response Generation</a></li></ul></li><li><a href="#other-points-of-interest">Other Points of Interest</a></li></ul></nav></div><footer class="nav-footer" id="footer"><section class="sitemap"><div><h5>Docs</h5><a href="/docs/introduction/made-for-aspnet-developers">Made for ASP.NET Developers</a><a href="/docs/quick/code-examples">Code Examples</a></div><div></div><div><h5>More</h5><a class="github-button" href="https://github.com/graphql-aspnet/graphql-aspnet" data-show-count="true" data-count-href="/graphql-aspnet/graphql-aspnet/stargazers" aria-label="Star this project on GitHub">Star on GitHub</a><a href="https://graphql.org">GraphQL.org</a><a href="https://dotnet.microsoft.com/learn/aspnet">Learn ASP.NET</a></div></section><section class="copyright">Copyright © 2019 GraphQL ASP.NET</section></footer></div><script>window.twttr=(function(d,s, id){var js,fjs=d.getElementsByTagName(s)[0],t=window.twttr||{};if(d.getElementById(id))return t;js=d.createElement(s);js.id=id;js.src='https://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js, fjs);t._e = [];t.ready = function(f) {t._e.push(f);};return t;}(document, 'script', 'twitter-wjs'));</script></body></html>

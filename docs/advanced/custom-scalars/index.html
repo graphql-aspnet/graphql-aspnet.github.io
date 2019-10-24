@@ -1,0 +1,332 @@
+<!DOCTYPE html><html lang="en"><head><meta charSet="utf-8"/><meta http-equiv="X-UA-Compatible" content="IE=edge"/><title>Custom Scalars · GraphQL ASP.NET</title><meta name="viewport" content="width=device-width"/><meta name="generator" content="Docusaurus"/><meta name="description" content="Scalars are the most basic, fundamental unit of content in GraphQL. It is one of two leaf types (the other being [ENUMS](../types/enums)). When a query is resolved the returned data will be a set of nested key/value pairs where every key is a string and every value is either another set of key/value pairs, an enum or a scalar."/><meta name="docsearch:language" content="en"/><meta property="og:title" content="Custom Scalars · GraphQL ASP.NET"/><meta property="og:type" content="website"/><meta property="og:url" content="https://graphql-aspnet.github.io/"/><meta property="og:description" content="Scalars are the most basic, fundamental unit of content in GraphQL. It is one of two leaf types (the other being [ENUMS](../types/enums)). When a query is resolved the returned data will be a set of nested key/value pairs where every key is a string and every value is either another set of key/value pairs, an enum or a scalar."/><meta property="og:image" content="https://graphql-aspnet.github.io/img/undraw_online.svg"/><meta name="twitter:card" content="summary"/><meta name="twitter:image" content="https://graphql-aspnet.github.io/img/undraw_tweetstorm.svg"/><link rel="shortcut icon" href="/img/logo-64.png"/><link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/hybrid.min.css"/><script>
+              (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+              (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+              m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+              })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+              ga('create', 'UA-150856900-1', 'auto');
+              ga('send', 'pageview');
+            </script><script type="text/javascript" src="https://buttons.github.io/buttons.js"></script><script src="/js/scrollSpy.js"></script><link rel="stylesheet" href="/css/main.css"/><script src="/js/codetabs.js"></script></head><body class="sideNavVisible separateOnPageNav"><div class="fixedHeaderContainer"><div class="headerWrapper wrapper"><header><a href="/"><img class="logo" src="/img/logo-64.png" alt="GraphQL ASP.NET"/><h2 class="headerTitleWithLogo">GraphQL ASP.NET</h2></a><div class="navigationWrapper navigationSlider"><nav class="slidingNav"><ul class="nav-site nav-site-internal"><li class="siteNavGroupActive"><a href="/docs/quick/overview" target="_self">Documentation</a></li><li class=""><a href="https://github.com/graphql-aspnet/graphql-aspnet" target="_self">Source Code</a></li></ul></nav></div></header></div></div><div class="navPusher"><div class="docMainWrapper wrapper"><div class="docsNavContainer" id="docsNav"><nav class="toc"><div class="toggleNav"><section class="navWrapper wrapper"><div class="navBreadcrumb wrapper"><div class="navToggle" id="navToggler"><div class="hamburger-menu"><div class="line1"></div><div class="line2"></div><div class="line3"></div></div></div><h2><i>›</i><span>Advanced</span></h2><div class="tocToggler" id="tocToggler"><i class="icon-toc"></i></div></div><div class="navGroups"><div class="navGroup"><h3 class="navGroupCategoryTitle">Jump In!</h3><ul class=""><li class="navListItem"><a class="navItem" href="/docs/quick/overview">Overview</a></li><li class="navListItem"><a class="navItem" href="/docs/quick/quick-start">Quick Start</a></li><li class="navListItem"><a class="navItem" href="/docs/quick/code-examples">Code Examples</a></li></ul></div><div class="navGroup"><h3 class="navGroupCategoryTitle">Introduction</h3><ul class=""><li class="navListItem"><a class="navItem" href="/docs/introduction/what-is-graphql">What is GraphQL?</a></li><li class="navListItem"><a class="navItem" href="/docs/introduction/made-for-aspnet-developers">Made for ASP.NET Developers</a></li></ul></div><div class="navGroup"><h3 class="navGroupCategoryTitle">Controllers &amp; Actions</h3><ul class=""><li class="navListItem"><a class="navItem" href="/docs/controllers/actions">Actions</a></li><li class="navListItem"><a class="navItem" href="/docs/controllers/model-state">Model State</a></li><li class="navListItem"><a class="navItem" href="/docs/controllers/field-paths">Field Paths</a></li><li class="navListItem"><a class="navItem" href="/docs/controllers/authorization">Authorization</a></li><li class="navListItem"><a class="navItem" href="/docs/controllers/type-extensions">Type Extensions</a></li><li class="navListItem"><a class="navItem" href="/docs/controllers/batch-operations">Batch Operations</a></li></ul></div><div class="navGroup"><h3 class="navGroupCategoryTitle">Graph Type Definitions</h3><ul class=""><li class="navListItem"><a class="navItem" href="/docs/types/objects">Objects</a></li><li class="navListItem"><a class="navItem" href="/docs/types/input-objects">Input Objects</a></li><li class="navListItem"><a class="navItem" href="/docs/types/interfaces">Interfaces</a></li><li class="navListItem"><a class="navItem" href="/docs/types/unions">Unions</a></li><li class="navListItem"><a class="navItem" href="/docs/types/enums">Enums</a></li><li class="navListItem"><a class="navItem" href="/docs/types/scalars">Scalars</a></li><li class="navListItem"><a class="navItem" href="/docs/types/list-non-null">List &amp; Non-Null</a></li></ul></div><div class="navGroup"><h3 class="navGroupCategoryTitle">Logging</h3><ul class=""><li class="navListItem"><a class="navItem" href="/docs/logging/structured-logging">Structured Logging</a></li><li class="navListItem"><a class="navItem" href="/docs/logging/standard-events">Standard Events</a></li></ul></div><div class="navGroup"><h3 class="navGroupCategoryTitle">Query Execution</h3><ul class=""><li class="navListItem"><a class="navItem" href="/docs/execution/metrics">Query Profiling</a></li><li class="navListItem"><a class="navItem" href="/docs/execution/malicious-queries">Malicious Queries</a></li></ul></div><div class="navGroup"><h3 class="navGroupCategoryTitle">Advanced</h3><ul class=""><li class="navListItem"><a class="navItem" href="/docs/advanced/subscriptions">Subscriptions</a></li><li class="navListItem"><a class="navItem" href="/docs/advanced/type-expressions">Type Expressions</a></li><li class="navListItem"><a class="navItem" href="/docs/advanced/directives">Directives</a></li><li class="navListItem navListItemActive"><a class="navItem" href="/docs/advanced/custom-scalars">Custom Scalars</a></li><li class="navListItem"><a class="navItem" href="/docs/advanced/graph-action-results">Action Results</a></li><li class="navListItem"><a class="navItem" href="/docs/advanced/middleware">Pipelines &amp; Middleware</a></li><li class="navListItem"><a class="navItem" href="/docs/advanced/query-cache">Query Caching</a></li><li class="navListItem"><a class="navItem" href="/docs/advanced/multi-schema-support">Multi-Schema Support</a></li></ul></div><div class="navGroup"><h3 class="navGroupCategoryTitle">Development Concerns</h3><ul class=""><li class="navListItem"><a class="navItem" href="/docs/development/debugging">Debugging</a></li><li class="navListItem"><a class="navItem" href="/docs/development/unit-testing">Unit Testing</a></li></ul></div><div class="navGroup"><h3 class="navGroupCategoryTitle">References</h3><ul class=""><li class="navListItem"><a class="navItem" href="/docs/reference/how-it-works">How it Works</a></li><li class="navListItem"><a class="navItem" href="/docs/reference/schema-configuration">Schema Configuration</a></li><li class="navListItem"><a class="navItem" href="/docs/reference/attributes">Attributes</a></li><li class="navListItem"><a class="navItem" href="/docs/reference/graph-controller">GraphController</a></li><li class="navListItem"><a class="navItem" href="/docs/reference/graph-directive">GraphDirective</a></li><li class="navListItem"><a class="navItem" href="/docs/reference/http-processor">HTTP Processor</a></li><li class="navListItem"><a class="navItem" href="/docs/reference/demo-projects">Demo Projects</a></li><li class="navListItem"><a class="navItem" href="/docs/reference/performance">Benchmarks</a></li><li class="navListItem"><a class="navItem" href="/docs/reference/contributing">Contributing</a></li></ul></div></div></section></div><script>
+            var coll = document.getElementsByClassName('collapsible');
+            var checkActiveCategory = true;
+            for (var i = 0; i < coll.length; i++) {
+              var links = coll[i].nextElementSibling.getElementsByTagName('*');
+              if (checkActiveCategory){
+                for (var j = 0; j < links.length; j++) {
+                  if (links[j].classList.contains('navListItemActive')){
+                    coll[i].nextElementSibling.classList.toggle('hide');
+                    coll[i].childNodes[1].classList.toggle('rotate');
+                    checkActiveCategory = false;
+                    break;
+                  }
+                }
+              }
+
+              coll[i].addEventListener('click', function() {
+                var arrow = this.childNodes[1];
+                arrow.classList.toggle('rotate');
+                var content = this.nextElementSibling;
+                content.classList.toggle('hide');
+              });
+            }
+
+            document.addEventListener('DOMContentLoaded', function() {
+              createToggler('#navToggler', '#docsNav', 'docsSliderActive');
+              createToggler('#tocToggler', 'body', 'tocActive');
+
+              var headings = document.querySelector('.toc-headings');
+              headings && headings.addEventListener('click', function(event) {
+                var el = event.target;
+                while(el !== headings){
+                  if (el.tagName === 'A') {
+                    document.body.classList.remove('tocActive');
+                    break;
+                  } else{
+                    el = el.parentNode;
+                  }
+                }
+              }, false);
+
+              function createToggler(togglerSelector, targetSelector, className) {
+                var toggler = document.querySelector(togglerSelector);
+                var target = document.querySelector(targetSelector);
+
+                if (!toggler) {
+                  return;
+                }
+
+                toggler.onclick = function(event) {
+                  event.preventDefault();
+
+                  target.classList.toggle(className);
+                };
+              }
+            });
+        </script></nav></div><div class="container mainContainer"><div class="wrapper"><div class="post"><header class="postHeader"><h1 class="postHeaderTitle">Custom Scalars</h1></header><article><div><span><p>Scalars are the most basic, fundamental unit of content in GraphQL. It is one of two leaf types (the other being <a href="../types/enums">ENUMS</a>). When a query is resolved the returned data will be a set of nested key/value pairs where every key is a string and every value is either another set of key/value pairs, an enum or a scalar.</p>
+<p>Enums, being a type of their own, are very straight forward in .NET. Scalars, however; can be anything. For instance, the <code>Uri</code> scalar is represented in GraphQL by a string. On the server though, we convert it into a <code>System.Uri</code> object, with all the extra features that go along with it.</p>
+<p>This can be done for any value that can be represented as a simple string of characters. When you create a scalar you declare its .NET type, provide a resolver that accepts raw data from a query (a <code>ReadOnlySpan&lt;char&gt;</code>) and returns the completed scalar value.</p>
+<p>Lets say we wanted to build a scalar called <code>Money</code> that can handle both an amount and currency symbol. We might accept it in a query like this:</p>
+<div class="sideBySideCode hljs">
+<div>
+<pre><code class="hljs css language-csharp"><span class="hljs-comment">// C# Controller</span>
+<span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title">InventoryController</span> : <span class="hljs-title">GraphController</span>
+{
+    [<span class="hljs-meta">QueryRoot(<span class="hljs-meta-string">"search"</span>)</span>]
+    <span class="hljs-function"><span class="hljs-keyword">public</span> IEnumerable&lt;Product&gt; <span class="hljs-title">Search</span>(<span class="hljs-params">Money minPrice</span>)</span>
+    {
+        <span class="hljs-keyword">return</span> _service.RetrieveProducts(
+            minPrice.Symbol,
+            minPrice.Price);
+
+    }
+}
+
+<span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title">Money</span>
+{
+    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-title">Money</span>(<span class="hljs-params"><span class="hljs-keyword">char</span> symbol, <span class="hljs-keyword">decimal</span> price</span>)</span>
+    {
+        <span class="hljs-keyword">this</span>.Symbol = symbol;
+        <span class="hljs-keyword">this</span>.Price = price;
+    }
+
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">char</span> Symbol { <span class="hljs-keyword">get</span>; }
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">decimal</span> Price { <span class="hljs-keyword">get</span>; }
+}
+</code></pre>
+</div>
+<div>
+<pre><code class="hljs css language-javascript">query {
+    search(minPrice: <span class="hljs-string">"$18.45"</span>){
+        id
+        name
+    }
+}
+</code></pre>
+</div>
+</div>
+<br/>
+<p>The query supplies the data as a quoted string, <code>&quot;$18.45&quot;</code>, but our action method receives a <code>Money</code> object. Internally, GraphQL senses that the value should be <code>Money</code> from the schema definition and invokes the correct graph type to resolve the value and generate the .NET object that can be passed to our action method.</p>
+<h2><a class="anchor" aria-hidden="true" id="implement-iscalargraphtype"></a><a href="#implement-iscalargraphtype" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Implement IScalarGraphType</h2>
+<p>To create a scalar graph type we need to implement <code>IScalarGraphType</code> and register it with GraphQL. The methods and properties of <code>IScalarGraphType</code> are as follows:</p>
+<pre><code class="hljs css language-csharp">{
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">interface</span> <span class="hljs-title">IScalarGraphType</span>
+    {
+        <span class="hljs-keyword">string</span> Name { <span class="hljs-keyword">get</span>; }
+        <span class="hljs-keyword">string</span> InternalName { <span class="hljs-keyword">get</span>; }
+        <span class="hljs-keyword">string</span> Description { <span class="hljs-keyword">get</span>; }
+        TypeKind Kind { <span class="hljs-keyword">get</span>; }
+        <span class="hljs-keyword">bool</span> Publish { <span class="hljs-keyword">get</span>; }
+        ScalarValueType ValueType { <span class="hljs-keyword">get</span>; }
+        Type ObjectType { <span class="hljs-keyword">get</span>; }
+        TypeCollection OtherKnownTypes { <span class="hljs-keyword">get</span>; }
+        IScalarValueResolver SourceResolver { <span class="hljs-keyword">get</span>; }
+        IScalarValueSerializer Serializer { <span class="hljs-keyword">get</span>; }
+
+        <span class="hljs-function"><span class="hljs-keyword">bool</span> <span class="hljs-title">ValidateObject</span>(<span class="hljs-params"><span class="hljs-keyword">object</span> item</span>)</span>;
+    }
+
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">interface</span> <span class="hljs-title">IScalarValueResolver</span>
+    {
+        <span class="hljs-function"><span class="hljs-keyword">object</span> <span class="hljs-title">Resolve</span>(<span class="hljs-params">ReadOnlySpan&lt;<span class="hljs-keyword">char</span>&gt; data</span>)</span>;
+    }
+
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">interface</span> <span class="hljs-title">IScalarValueSerializer</span>
+    {
+        <span class="hljs-function"><span class="hljs-keyword">object</span> <span class="hljs-title">Serialize</span>(<span class="hljs-params"><span class="hljs-keyword">object</span> item</span>)</span>;
+    }
+}
+</code></pre>
+<h3><a class="anchor" aria-hidden="true" id="iscalargraphtype-members"></a><a href="#iscalargraphtype-members" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>IScalarGraphType Members</h3>
+<ul>
+<li><code>Name</code>: The name of this scalar in GraphQL. This is the name that will be displayed in introspection queries.</li>
+<li><code>InternalName</code>: An alternative name representing the scalar in server side code. This name is commonly used in logging messages and exceptions to identify the scalar in terms of the server. Its common to use the fully qualified name, i.e. <code>System.String</code>.</li>
+<li><code>Description</code>: The phrase that will be displayed describing the scalar in introspection queries.</li>
+<li><code>Kind</code>: Scalars must always be declared as <code>TypeKind.SCALAR</code>.</li>
+<li><code>Publish</code>: Indicates if the scalar should be published for introspection queries. Unless there is a very strong reason not to, scalars should always be published. Set this value to <code>true</code>.</li>
+<li><code>ValueType</code>: A set of flags indicating what type of source data, read from a query, this scalar is capable of processing (string, number or boolean). GraphQL will do a preemptive check and if the query document does not supply the data in the correct format it will not attempt to resolve the scalar. Most custom scalars will use <code>ScalarValueType.String</code>.</li>
+<li><code>ObjectType</code>: The primary, internal type representing the scalar in .NET. In our example above we would set this to <code>typeof(Money)</code>.</li>
+<li><code>OtherKnownTypes</code>: A collection of other potential types that could be used to represent the scalar in a controller class. For instance, integers can be expressed as <code>int</code> or <code>int?</code>. Most scalars will provide an empty list (e.g. <code>TypeCollection.Empty</code>).</li>
+<li><code>SourceResolver</code>: An object that implements <code>IScalarValueResolver</code> that converts raw input data into the scalar's primary <code>ObjectType</code>.</li>
+<li><code>Serializer</code>: An object that implements <code>IScalarValueSerializer</code> that converts the internal representation of the scalar (a class or struct) to a valid graphql scalar (a number, string or boolean).</li>
+<li><code>ValidateObject(object)</code>: A method used when validating data returned from a a field resolver. GraphQL will call this method and provide the value from the resolver to determine if its acceptable and should continue resolving child fields.</li>
+</ul>
+<blockquote>
+<p><code>ValidateObject(object)</code> should not attempt to enforce nullability rules. In general, all scalars should return <code>true</code> if the provided object is <code>null</code>.</p>
+</blockquote>
+<h3><a class="anchor" aria-hidden="true" id="iscalarvalueresolver-members"></a><a href="#iscalarvalueresolver-members" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>IScalarValueResolver Members</h3>
+<ul>
+<li><code>Resolve(ReadOnlySpan&lt;char&gt;)</code>: A resolver function capable of converting an array of characters into the internal representation of the type.</li>
+</ul>
+<h4><a class="anchor" aria-hidden="true" id="dealing-with-escaped-strings"></a><a href="#dealing-with-escaped-strings" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Dealing with Escaped Strings</h4>
+<p>The span provided to <code>IScalarValueResolver.Resolve</code> will be the raw data read from the query document. If the data represents a string, it will be provided in its delimited format. This means being surrounded by quotes as well as containing escaped characters (including unicode characters):</p>
+<p>Example string data:</p>
+<ul>
+<li><code>&quot;quoted string&quot;</code></li>
+<li><code>&quot;&quot;&quot;triple quoted string&quot;&quot;&quot;</code></li>
+<li><code>&quot;With \&quot;\u03A3scaped ch\u03B1racters\&quot;&quot;</code>;</li>
+</ul>
+<p>The <code>StringScalarType</code> provides a handy static method for converting the data if you don't need to do anything special with it, <code>StringScalarType.UnescapeAndTrimDelimiters</code>.</p>
+<p>Calling <code>UnescapeAndTrimDelimiters</code> with the previous examples produces:</p>
+<ul>
+<li><code>quoted string</code></li>
+<li><code>triple quoted string</code></li>
+<li><code>With &quot;Σscaped chαracters&quot;</code></li>
+</ul>
+<h4><a class="anchor" aria-hidden="true" id="indicating-an-error"></a><a href="#indicating-an-error" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Indicating an Error</h4>
+<p>When resolving input values with <code>Resolve()</code>, if the provided value is not usable and must be rejected then the entire query document must be rejected. For instance, if a document contained the value <code>&quot;$15.R0&quot;</code> for our money scalar. Throw an exception and GraphQL will automatically generate a response error with the correct origin information indicating the line and column in the query document where the error occurred.</p>
+<p>If you throw <code>UnresolvedValueException</code> your error message will be delivered verbatim to the requestor as a normal error message. GraphQL will obfuscate any other exception type to a generic message and only expose your exception details if allowed by the <a href="../reference/schema-configuration">schema configuration</a>.</p>
+<h3><a class="anchor" aria-hidden="true" id="iscalarvalueserializer-members"></a><a href="#iscalarvalueserializer-members" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>IScalarValueSerializer Members</h3>
+<ul>
+<li><code>Serialize(object)</code>: A serializer that converts the internal representation of the scalar to a <a href="https://graphql.github.io/graphql-spec/June2018/#sec-Scalars">graphql compliant scalar value</a>; a <code>number</code>, <code>string</code>, <code>bool</code> or <code>null</code>.
+<ul>
+<li>When converting to a number this can be any number value type (int, float, decimal etc.).</li>
+</ul></li>
+</ul>
+<blockquote>
+<p>An <code>IScalarValueSerializer</code> must return a valid graphql scalar type.</p>
+</blockquote>
+<p>Taking a look at the at the serializer for the <code>Guid</code> scalar type we can see that while internally the <code>System.Guid</code> struct represents the value we convert it to a string when serializing it. Most scalar implementations will serialize to a string.</p>
+<pre><code class="hljs css language-csharp"><span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title">GuidScalarSerializer</span> : <span class="hljs-title">IScalarValueSerializer</span>
+{
+    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">override</span> <span class="hljs-keyword">object</span> <span class="hljs-title">Serialize</span>(<span class="hljs-params"><span class="hljs-keyword">object</span> item</span>)</span>
+    {
+        <span class="hljs-keyword">if</span> (item == <span class="hljs-literal">null</span>)
+            <span class="hljs-keyword">return</span> item;
+
+        <span class="hljs-keyword">return</span> ((Guid)item).ToString();
+    }
+}
+</code></pre>
+<hr>
+<p>The Completed Money Scalar:</p>
+<pre><code class="hljs css language-csharp">
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title">MoneyScalarType</span> : <span class="hljs-title">IScalarGraphType</span>
+    {
+        <span class="hljs-keyword">public</span> <span class="hljs-keyword">string</span> Name =&gt; <span class="hljs-string">"Money"</span>;
+
+        <span class="hljs-keyword">public</span> <span class="hljs-keyword">string</span> InternalName =&gt; <span class="hljs-keyword">typeof</span>(Money).FullName;
+
+        <span class="hljs-keyword">public</span> <span class="hljs-keyword">string</span> Description =&gt; <span class="hljs-keyword">string</span>.Empty;
+
+        <span class="hljs-keyword">public</span> TypeKind Kind =&gt; TypeKind.SCALAR;
+
+        <span class="hljs-keyword">public</span> <span class="hljs-keyword">bool</span> Publish =&gt; <span class="hljs-literal">true</span>;
+
+        <span class="hljs-keyword">public</span> ScalarValueType ValueType =&gt; ScalarValueType.String;
+
+        <span class="hljs-keyword">public</span> Type ObjectType =&gt; <span class="hljs-keyword">typeof</span>(Money);
+
+        <span class="hljs-keyword">public</span> TypeCollection OtherKnownTypes =&gt; TypeCollection.Empty;
+
+        <span class="hljs-keyword">public</span> IScalarValueResolver SourceResolver { <span class="hljs-keyword">get</span>; } = <span class="hljs-keyword">new</span> MoneyScalarTypeResolver();
+
+        <span class="hljs-keyword">public</span> IScalarValueSerializer Serializer { <span class="hljs-keyword">get</span>; } = <span class="hljs-keyword">new</span> MoneyScalarTypeSerializer()
+
+        <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">bool</span> <span class="hljs-title">ValidateObject</span>(<span class="hljs-params"><span class="hljs-keyword">object</span> item</span>)</span>
+        {
+            <span class="hljs-keyword">if</span> (item == <span class="hljs-literal">null</span>)
+                <span class="hljs-keyword">return</span> <span class="hljs-literal">true</span>;
+
+            <span class="hljs-keyword">return</span> item.GetType() == <span class="hljs-keyword">typeof</span>(Money);
+        }
+    }
+
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title">MoneyScalarTypeResolver</span> : <span class="hljs-title">IScalarValueResolver</span>
+    {
+        <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">object</span> <span class="hljs-title">Resolve</span>(<span class="hljs-params">ReadOnlySpan&lt;<span class="hljs-keyword">char</span>&gt; data</span>)</span>
+        {
+            <span class="hljs-comment">// example only, more validation code is needed</span>
+            <span class="hljs-keyword">var</span> sanitizedMoney = StringScalarType.UnescapeAndTrimDelimiters(data);
+            <span class="hljs-keyword">if</span>(sanitizedMoney == <span class="hljs-literal">null</span> || sanitizedMoney.Length &lt; <span class="hljs-number">2</span>)
+                <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> UnresolvedValueException(<span class="hljs-string">"Money must be at least 2 characters"</span>);
+
+            <span class="hljs-keyword">return</span> <span class="hljs-keyword">new</span> Money(sanitizedMoney[<span class="hljs-number">0</span>], Decimal.Parse(sanitizedMoney.Substring(<span class="hljs-number">1</span>)));
+        }
+    }
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title">MoneyScalarTypeSerializer</span> : <span class="hljs-title">IScalarValueSerializer</span>
+    {
+        <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">override</span> <span class="hljs-keyword">object</span> <span class="hljs-title">Serialize</span>(<span class="hljs-params"><span class="hljs-keyword">object</span> item</span>)</span>
+        {
+            <span class="hljs-keyword">if</span> (item == <span class="hljs-literal">null</span>)
+                <span class="hljs-keyword">return</span> item;
+
+            <span class="hljs-keyword">var</span> money = (Money)item;
+            <span class="hljs-keyword">return</span> <span class="hljs-string">$"<span class="hljs-subst">{money.Symbol}</span><span class="hljs-subst">{money.Price}</span>"</span>;
+        }
+    }
+</code></pre>
+<h2><a class="anchor" aria-hidden="true" id="registering-a-scalar"></a><a href="#registering-a-scalar" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Registering A Scalar</h2>
+<p>The last step in declaring a scalar is to register it with the runtime. Scalars are schema agnostic. They sit outside of any dependency injection context and must be registered directly with GraphQL.</p>
+<pre><code class="hljs css language-csharp"><span class="hljs-comment">// Startup.cs (other code)</span>
+<span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">ConfigureServices</span>(<span class="hljs-params">IServiceCollection services</span>)</span>
+{
+    <span class="hljs-comment">// register the scalar to the global provider</span>
+    <span class="hljs-comment">// BEFORE a call to .AddGraphQL()</span>
+    GraphQLProviders.ScalarProvider.RegisterCustomScalar(<span class="hljs-keyword">new</span> MoneyScalarType());
+
+    services.AddMvc()
+            .AddGraphQL();
+}
+</code></pre>
+<p>Since our scalar is, internally, represented by a class, if we don't pre-register it GraphQL will attempt to parse the <code>Money</code> class as an object graph type. Once registered as a scalar, any attempt to use <code>Money</code> as an object graph type will cause an exception.</p>
+<h2><a class="anchor" aria-hidden="true" id="when-developing-a-scalar"></a><a href="#when-developing-a-scalar" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>When Developing a Scalar</h2>
+<p>A few points about designing your scalar:</p>
+<ul>
+<li>Scalar types must be thread safe.</li>
+<li>Scalar types should work in isolation.
+<ul>
+<li>The <code>ReadOnlySpan&lt;char&gt;</code> provided to the <code>Resolve()</code> method should be all the data needed to generate a value. If you find yourself fetching data or doing key lookups, chances are that logic belongs in your controller methods or your scalar is too complex.</li>
+</ul></li>
+<li>Scalar types should be simple.
+<ul>
+<li>If you have a lot of logic to unpack a string to create your scalar consider using a regular object graph type instead.</li>
+</ul></li>
+<li>A scalar type is a singleton instance.
+<ul>
+<li>Scalar types exist for the lifetime of the server instance.</li>
+<li>Scalar types should not track any state or depend on any stateful objects.</li>
+</ul></li>
+<li><code>IScalarValueResolver.Resolve</code> must be fast! Since your resolver is used to construct a query plan, it'll be called much more often than any controller action method.</li>
+</ul>
+<h2><a class="anchor" aria-hidden="true" id="aim-for-fewer-scalars"></a><a href="#aim-for-fewer-scalars" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Aim for Fewer Scalars</h2>
+<p>Avoid the urge to start declaring a lot of custom scalars. In fact, chances are that you'll never need to create one. In our example we could have represented our money scalar as an object graph type:</p>
+<div class="sideBySideCode hljs">
+<div>
+<pre><code class="hljs css language-csharp"><span class="hljs-comment">// C# Controller</span>
+<span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title">InventoryController</span> : <span class="hljs-title">GraphController</span>
+{
+    [<span class="hljs-meta">QueryRoot(<span class="hljs-meta-string">"search"</span>)</span>]
+    <span class="hljs-function"><span class="hljs-keyword">public</span> IEnumerable&lt;Product&gt; <span class="hljs-title">Search</span>(<span class="hljs-params">Money minPrice</span>)</span>
+    {
+        <span class="hljs-keyword">return</span> _service.RetrieveProducts(
+            minPrice.Symbol,
+            minPrice.Price);
+    }
+
+}
+
+<span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title">Money</span>
+{
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">string</span> Symbol { <span class="hljs-keyword">get</span>; }
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">decimal</span> Price { <span class="hljs-keyword">get</span>; }
+}
+</code></pre>
+</div>
+<div>
+<pre><code class="hljs css language-javascript">query {
+    search(minPrice: {
+            <span class="hljs-attr">symbol</span>: <span class="hljs-string">"$"</span>
+            price: <span class="hljs-number">18.45</span>}){
+        id
+        name
+    }
+}
+</code></pre>
+</div>
+</div>
+<br/>
+<p>This is a lot more flexible. We can add more properties to <code>Money</code> when needed and not break existing queries. Whereas with a scalar if we change the acceptable format of the string data any existing query text will now be invalid. It is almost always better to represent your data as an object or input object rather than a scalar.</p>
+<blockquote>
+<p>Creating a custom scalar should be a last resort, not a first option.</p>
+</blockquote>
+</span></div></article></div><div class="docs-prevnext"><a class="docs-prev button" href="/docs/advanced/directives"><span class="arrow-prev">← </span><span>Directives</span></a><a class="docs-next button" href="/docs/advanced/graph-action-results"><span>Action Results</span><span class="arrow-next"> →</span></a></div></div></div><nav class="onPageNav"><ul class="toc-headings"><li><a href="#implement-iscalargraphtype">Implement IScalarGraphType</a><ul class="toc-headings"><li><a href="#iscalargraphtype-members">IScalarGraphType Members</a></li><li><a href="#iscalarvalueresolver-members">IScalarValueResolver Members</a></li><li><a href="#iscalarvalueserializer-members">IScalarValueSerializer Members</a></li></ul></li><li><a href="#registering-a-scalar">Registering A Scalar</a></li><li><a href="#when-developing-a-scalar">When Developing a Scalar</a></li><li><a href="#aim-for-fewer-scalars">Aim for Fewer Scalars</a></li></ul></nav></div><footer class="nav-footer" id="footer"><section class="sitemap"><div><h5>Docs</h5><a href="/docs/introduction/made-for-aspnet-developers">Made for ASP.NET Developers</a><a href="/docs/quick/code-examples">Code Examples</a></div><div></div><div><h5>More</h5><a class="github-button" href="https://github.com/graphql-aspnet/graphql-aspnet" data-show-count="true" data-count-href="/graphql-aspnet/graphql-aspnet/stargazers" aria-label="Star this project on GitHub">Star on GitHub</a><a href="https://graphql.org">GraphQL.org</a><a href="https://dotnet.microsoft.com/learn/aspnet">Learn ASP.NET</a></div></section><section class="copyright">Copyright © 2019 GraphQL ASP.NET</section></footer></div><script>window.twttr=(function(d,s, id){var js,fjs=d.getElementsByTagName(s)[0],t=window.twttr||{};if(d.getElementById(id))return t;js=d.createElement(s);js.id=id;js.src='https://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js, fjs);t._e = [];t.ready = function(f) {t._e.push(f);};return t;}(document, 'script', 'twitter-wjs'));</script></body></html>

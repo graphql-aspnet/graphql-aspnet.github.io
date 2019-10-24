@@ -1,0 +1,350 @@
+<!DOCTYPE html><html lang="en"><head><meta charSet="utf-8"/><meta http-equiv="X-UA-Compatible" content="IE=edge"/><title>Schema Configuration · GraphQL ASP.NET</title><meta name="viewport" content="width=device-width"/><meta name="generator" content="Docusaurus"/><meta name="description" content="This document contains a list of each property available during schema configuration when a call to `AddGraphQL()` is made when your application starts:"/><meta name="docsearch:language" content="en"/><meta property="og:title" content="Schema Configuration · GraphQL ASP.NET"/><meta property="og:type" content="website"/><meta property="og:url" content="https://graphql-aspnet.github.io/"/><meta property="og:description" content="This document contains a list of each property available during schema configuration when a call to `AddGraphQL()` is made when your application starts:"/><meta property="og:image" content="https://graphql-aspnet.github.io/img/undraw_online.svg"/><meta name="twitter:card" content="summary"/><meta name="twitter:image" content="https://graphql-aspnet.github.io/img/undraw_tweetstorm.svg"/><link rel="shortcut icon" href="/img/logo-64.png"/><link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/hybrid.min.css"/><script>
+              (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+              (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+              m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+              })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+              ga('create', 'UA-150856900-1', 'auto');
+              ga('send', 'pageview');
+            </script><script type="text/javascript" src="https://buttons.github.io/buttons.js"></script><script src="/js/scrollSpy.js"></script><link rel="stylesheet" href="/css/main.css"/><script src="/js/codetabs.js"></script></head><body class="sideNavVisible separateOnPageNav"><div class="fixedHeaderContainer"><div class="headerWrapper wrapper"><header><a href="/"><img class="logo" src="/img/logo-64.png" alt="GraphQL ASP.NET"/><h2 class="headerTitleWithLogo">GraphQL ASP.NET</h2></a><div class="navigationWrapper navigationSlider"><nav class="slidingNav"><ul class="nav-site nav-site-internal"><li class="siteNavGroupActive"><a href="/docs/quick/overview" target="_self">Documentation</a></li><li class=""><a href="https://github.com/graphql-aspnet/graphql-aspnet" target="_self">Source Code</a></li></ul></nav></div></header></div></div><div class="navPusher"><div class="docMainWrapper wrapper"><div class="docsNavContainer" id="docsNav"><nav class="toc"><div class="toggleNav"><section class="navWrapper wrapper"><div class="navBreadcrumb wrapper"><div class="navToggle" id="navToggler"><div class="hamburger-menu"><div class="line1"></div><div class="line2"></div><div class="line3"></div></div></div><h2><i>›</i><span>References</span></h2><div class="tocToggler" id="tocToggler"><i class="icon-toc"></i></div></div><div class="navGroups"><div class="navGroup"><h3 class="navGroupCategoryTitle">Jump In!</h3><ul class=""><li class="navListItem"><a class="navItem" href="/docs/quick/overview">Overview</a></li><li class="navListItem"><a class="navItem" href="/docs/quick/quick-start">Quick Start</a></li><li class="navListItem"><a class="navItem" href="/docs/quick/code-examples">Code Examples</a></li></ul></div><div class="navGroup"><h3 class="navGroupCategoryTitle">Introduction</h3><ul class=""><li class="navListItem"><a class="navItem" href="/docs/introduction/what-is-graphql">What is GraphQL?</a></li><li class="navListItem"><a class="navItem" href="/docs/introduction/made-for-aspnet-developers">Made for ASP.NET Developers</a></li></ul></div><div class="navGroup"><h3 class="navGroupCategoryTitle">Controllers &amp; Actions</h3><ul class=""><li class="navListItem"><a class="navItem" href="/docs/controllers/actions">Actions</a></li><li class="navListItem"><a class="navItem" href="/docs/controllers/model-state">Model State</a></li><li class="navListItem"><a class="navItem" href="/docs/controllers/field-paths">Field Paths</a></li><li class="navListItem"><a class="navItem" href="/docs/controllers/authorization">Authorization</a></li><li class="navListItem"><a class="navItem" href="/docs/controllers/type-extensions">Type Extensions</a></li><li class="navListItem"><a class="navItem" href="/docs/controllers/batch-operations">Batch Operations</a></li></ul></div><div class="navGroup"><h3 class="navGroupCategoryTitle">Graph Type Definitions</h3><ul class=""><li class="navListItem"><a class="navItem" href="/docs/types/objects">Objects</a></li><li class="navListItem"><a class="navItem" href="/docs/types/input-objects">Input Objects</a></li><li class="navListItem"><a class="navItem" href="/docs/types/interfaces">Interfaces</a></li><li class="navListItem"><a class="navItem" href="/docs/types/unions">Unions</a></li><li class="navListItem"><a class="navItem" href="/docs/types/enums">Enums</a></li><li class="navListItem"><a class="navItem" href="/docs/types/scalars">Scalars</a></li><li class="navListItem"><a class="navItem" href="/docs/types/list-non-null">List &amp; Non-Null</a></li></ul></div><div class="navGroup"><h3 class="navGroupCategoryTitle">Logging</h3><ul class=""><li class="navListItem"><a class="navItem" href="/docs/logging/structured-logging">Structured Logging</a></li><li class="navListItem"><a class="navItem" href="/docs/logging/standard-events">Standard Events</a></li></ul></div><div class="navGroup"><h3 class="navGroupCategoryTitle">Query Execution</h3><ul class=""><li class="navListItem"><a class="navItem" href="/docs/execution/metrics">Query Profiling</a></li><li class="navListItem"><a class="navItem" href="/docs/execution/malicious-queries">Malicious Queries</a></li></ul></div><div class="navGroup"><h3 class="navGroupCategoryTitle">Advanced</h3><ul class=""><li class="navListItem"><a class="navItem" href="/docs/advanced/subscriptions">Subscriptions</a></li><li class="navListItem"><a class="navItem" href="/docs/advanced/type-expressions">Type Expressions</a></li><li class="navListItem"><a class="navItem" href="/docs/advanced/directives">Directives</a></li><li class="navListItem"><a class="navItem" href="/docs/advanced/custom-scalars">Custom Scalars</a></li><li class="navListItem"><a class="navItem" href="/docs/advanced/graph-action-results">Action Results</a></li><li class="navListItem"><a class="navItem" href="/docs/advanced/middleware">Pipelines &amp; Middleware</a></li><li class="navListItem"><a class="navItem" href="/docs/advanced/query-cache">Query Caching</a></li><li class="navListItem"><a class="navItem" href="/docs/advanced/multi-schema-support">Multi-Schema Support</a></li></ul></div><div class="navGroup"><h3 class="navGroupCategoryTitle">Development Concerns</h3><ul class=""><li class="navListItem"><a class="navItem" href="/docs/development/debugging">Debugging</a></li><li class="navListItem"><a class="navItem" href="/docs/development/unit-testing">Unit Testing</a></li></ul></div><div class="navGroup"><h3 class="navGroupCategoryTitle">References</h3><ul class=""><li class="navListItem"><a class="navItem" href="/docs/reference/how-it-works">How it Works</a></li><li class="navListItem navListItemActive"><a class="navItem" href="/docs/reference/schema-configuration">Schema Configuration</a></li><li class="navListItem"><a class="navItem" href="/docs/reference/attributes">Attributes</a></li><li class="navListItem"><a class="navItem" href="/docs/reference/graph-controller">GraphController</a></li><li class="navListItem"><a class="navItem" href="/docs/reference/graph-directive">GraphDirective</a></li><li class="navListItem"><a class="navItem" href="/docs/reference/http-processor">HTTP Processor</a></li><li class="navListItem"><a class="navItem" href="/docs/reference/demo-projects">Demo Projects</a></li><li class="navListItem"><a class="navItem" href="/docs/reference/performance">Benchmarks</a></li><li class="navListItem"><a class="navItem" href="/docs/reference/contributing">Contributing</a></li></ul></div></div></section></div><script>
+            var coll = document.getElementsByClassName('collapsible');
+            var checkActiveCategory = true;
+            for (var i = 0; i < coll.length; i++) {
+              var links = coll[i].nextElementSibling.getElementsByTagName('*');
+              if (checkActiveCategory){
+                for (var j = 0; j < links.length; j++) {
+                  if (links[j].classList.contains('navListItemActive')){
+                    coll[i].nextElementSibling.classList.toggle('hide');
+                    coll[i].childNodes[1].classList.toggle('rotate');
+                    checkActiveCategory = false;
+                    break;
+                  }
+                }
+              }
+
+              coll[i].addEventListener('click', function() {
+                var arrow = this.childNodes[1];
+                arrow.classList.toggle('rotate');
+                var content = this.nextElementSibling;
+                content.classList.toggle('hide');
+              });
+            }
+
+            document.addEventListener('DOMContentLoaded', function() {
+              createToggler('#navToggler', '#docsNav', 'docsSliderActive');
+              createToggler('#tocToggler', 'body', 'tocActive');
+
+              var headings = document.querySelector('.toc-headings');
+              headings && headings.addEventListener('click', function(event) {
+                var el = event.target;
+                while(el !== headings){
+                  if (el.tagName === 'A') {
+                    document.body.classList.remove('tocActive');
+                    break;
+                  } else{
+                    el = el.parentNode;
+                  }
+                }
+              }, false);
+
+              function createToggler(togglerSelector, targetSelector, className) {
+                var toggler = document.querySelector(togglerSelector);
+                var target = document.querySelector(targetSelector);
+
+                if (!toggler) {
+                  return;
+                }
+
+                toggler.onclick = function(event) {
+                  event.preventDefault();
+
+                  target.classList.toggle(className);
+                };
+              }
+            });
+        </script></nav></div><div class="container mainContainer"><div class="wrapper"><div class="post"><header class="postHeader"><h1 class="postHeaderTitle">Schema Configuration</h1></header><article><div><span><p>This document contains a list of each property available during schema configuration when a call to <code>AddGraphQL()</code> is made when your application starts:</p>
+<pre><code class="hljs css language-csharp"><span class="hljs-comment">// Startup.cs</span>
+<span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">ConfigureServices</span>(<span class="hljs-params">IServiceCollection services</span>)</span>
+{
+    <span class="hljs-comment">// other code omitted for brevity</span>
+    
+    services.AddGraphQL(schemaOptions =&gt;
+    {
+        <span class="hljs-comment">// *************************</span>
+        <span class="hljs-comment">// CONFIGURE YOUR SCHEMA HERE</span>
+        <span class="hljs-comment">// *************************</span>
+    });
+}
+
+<span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">Configure</span>(<span class="hljs-params">IApplicationBuilder appBuilder</span>)</span>
+{
+    <span class="hljs-comment">// other code omitted for brevity</span>
+    appBuilder.UseGraphQL();
+}
+</code></pre>
+<h2><a class="anchor" aria-hidden="true" id="builder-options"></a><a href="#builder-options" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Builder Options</h2>
+<h3><a class="anchor" aria-hidden="true" id="addgraphtype"></a><a href="#addgraphtype" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>AddGraphType</h3>
+<pre><code class="hljs css language-csharp"><span class="hljs-comment">// usage examples</span>
+schemaOptions.AddGraphType&lt;Type&gt;()
+schemaOptions.AddGraphType(<span class="hljs-keyword">typeof</span>(MyMiddleware))
+</code></pre>
+<p>Adds the single graph entity to the schema. Use this method to add individual types, interfaces, directives, controllers or enumerations.</p>
+<h3><a class="anchor" aria-hidden="true" id="addschemaassembly"></a><a href="#addschemaassembly" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>AddSchemaAssembly</h3>
+<pre><code class="hljs css language-csharp"><span class="hljs-comment">// usage examples</span>
+schemaOptions.AddSchemaAssembly()
+</code></pre>
+<p>When using .<code>AddGraphQL&lt;TSchema&gt;()</code> on multi-schema servers, the runtime will scan the assembly where the schema is declared and auto-include any found graph entities (controllers, types enums etc.) on the schema.</p>
+<h3><a class="anchor" aria-hidden="true" id="addgraphassembly"></a><a href="#addgraphassembly" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>AddGraphAssembly</h3>
+<pre><code class="hljs css language-csharp"><span class="hljs-comment">// usage examples</span>
+schemaOptions.AddGraphAssembly(Assembly)
+</code></pre>
+<p>The runtime will scan the referenced assembly and auto-include any found graph entities (controllers, types enums etc.) on the schema.</p>
+<h3><a class="anchor" aria-hidden="true" id="autoregisterlocalgraphentities"></a><a href="#autoregisterlocalgraphentities" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>AutoRegisterLocalGraphEntities</h3>
+<pre><code class="hljs css language-csharp"><span class="hljs-comment">// usage examples</span>
+schemaOptions.AutoRegisterLocalGraphEntities = <span class="hljs-literal">true</span>;
+</code></pre>
+<table>
+<thead>
+<tr><th>Default Value</th><th>Acceptable Values</th></tr>
+</thead>
+<tbody>
+<tr><td><code>true</code></td><td><code>true</code>, <code>false</code></td></tr>
+</tbody>
+</table>
+<p>When true those graph entities (controllers, types, enums etc.) that are declared in the entry assembly for the application are automatically registered to the schema.</p>
+<h2><a class="anchor" aria-hidden="true" id="declaration-options"></a><a href="#declaration-options" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Declaration Options</h2>
+<h3><a class="anchor" aria-hidden="true" id="disableintrospection"></a><a href="#disableintrospection" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>DisableIntrospection</h3>
+<pre><code class="hljs css language-csharp"><span class="hljs-comment">// usage examples</span>
+schemaOptions.DeclarationOptions.DisableIntrospection = <span class="hljs-literal">false</span>;
+</code></pre>
+<table>
+<thead>
+<tr><th>Default Value</th><th>Acceptable Values</th></tr>
+</thead>
+<tbody>
+<tr><td><code>false</code></td><td><code>true</code>, <code>false</code></td></tr>
+</tbody>
+</table>
+<p>When <code>true</code>, any attempts to perform an introspection query by making references to the fields <code>__schema</code> and <code>__type</code> will fail, preventing exposure of type meta data.</p>
+<h3><a class="anchor" aria-hidden="true" id="fielddeclarationrequirements"></a><a href="#fielddeclarationrequirements" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>FieldDeclarationRequirements</h3>
+<pre><code class="hljs css language-csharp"><span class="hljs-comment">// usage examples</span>
+schemaOptions.DeclarationOptions.FieldDeclarationRequirements = TemplateDeclarationRequirements.Default;
+</code></pre>
+<table>
+<thead>
+<tr><th>Default Value</th><th>Acceptable Values</th></tr>
+</thead>
+<tbody>
+<tr><td><code>TemplateDeclarationRequirements.Default</code></td><td><em>all enum values</em></td></tr>
+</tbody>
+</table>
+<p>Indicates to the runtime which fields and values of POCO classes must be explicitly declared in order to be added to a schema when said POCO class is added.</p>
+<p>By default:</p>
+<ul>
+<li>All enum values will be included.</li>
+<li>All properties of POCOs and interfaces will be included.</li>
+<li>All methods of POCOs and interfaces will be excluded</li>
+</ul>
+<p>* <em>Controller and Directive action methods are not effected by this setting</em></p>
+<h3><a class="anchor" aria-hidden="true" id="graphnamingformatter"></a><a href="#graphnamingformatter" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>GraphNamingFormatter</h3>
+<pre><code class="hljs css language-csharp"><span class="hljs-comment">// usage examples</span>
+schemaOptions.DeclarationOptions.GraphNamingFormatter = <span class="hljs-keyword">new</span> GraphNameFormatter(...);
+</code></pre>
+<p>An object that will format any internal name of a class or method to an acceptable name for use in the object graph.</p>
+<table>
+<thead>
+<tr><th>Entity Type</th><th>Default Format</th><th>Examples</th></tr>
+</thead>
+<tbody>
+<tr><td>Graph Type Names</td><td>Pascal Casing</td><td><code>Donut</code>, <code>BigHorse</code>, <code>SpeakerSystem</code></td></tr>
+<tr><td>Field Names</td><td>Camel Casing</td><td><code>flavor</code>, <code>minWidth</code>, <code>firstName</code></td></tr>
+<tr><td>Enum Values</td><td>All Caps</td><td><code>CHOCOLATE</code>, <code>FEET</code>, <code>PHONE_NUMBER</code></td></tr>
+</tbody>
+</table>
+<p><em>Default formats for the three different entity types</em></p>
+<h2><a class="anchor" aria-hidden="true" id="execution-options"></a><a href="#execution-options" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Execution Options</h2>
+<h3><a class="anchor" aria-hidden="true" id="enablemetrics"></a><a href="#enablemetrics" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>EnableMetrics</h3>
+<pre><code class="hljs css language-csharp"><span class="hljs-comment">// usage examples</span>
+schemaOptions.ExecutionOptions.EnableMetrics = <span class="hljs-literal">false</span>;
+</code></pre>
+<table>
+<thead>
+<tr><th>Default Value</th><th>Acceptable Values</th></tr>
+</thead>
+<tbody>
+<tr><td><code>false</code></td><td><code>true</code>, <code>false</code></td></tr>
+</tbody>
+</table>
+<p>When true, metrics / query profiling will be enabled for all queries processed for a given schema.</p>
+<h3><a class="anchor" aria-hidden="true" id="querytimeout"></a><a href="#querytimeout" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>QueryTimeout</h3>
+<pre><code class="hljs css language-csharp"><span class="hljs-comment">// usage examples</span>
+schemaOptions.ExecutionOptions.QueryTimeout = TimeSpan.FromMinutes(<span class="hljs-number">2</span>);
+</code></pre>
+<table>
+<thead>
+<tr><th>Default Value</th><th>Acceptable Values</th></tr>
+</thead>
+<tbody>
+<tr><td>1 Minute</td><td>Minimum of 10 milliseconds</td></tr>
+</tbody>
+</table>
+<p>The amount of time an individual query will be given to run to completion before being abandoned and canceled by the runtime.</p>
+<h3><a class="anchor" aria-hidden="true" id="awaiteachrequestedfield"></a><a href="#awaiteachrequestedfield" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>AwaitEachRequestedField</h3>
+<pre><code class="hljs css language-csharp"><span class="hljs-comment">// usage examples</span>
+schemaOptions.ExecutionOptions.AwaitEachRequestedField = <span class="hljs-literal">false</span>;
+</code></pre>
+<table>
+<thead>
+<tr><th>Default Value</th><th>Acceptable Values</th></tr>
+</thead>
+<tbody>
+<tr><td><code>false</code></td><td><code>true</code>, <code>false</code></td></tr>
+</tbody>
+</table>
+<p>When true, each field and each list member of each field will be executed sequentially rather than asynchronously. This option will greatly impact performance and should only be enabled for <a href="../development/debugging">debugging</a>.</p>
+<h3><a class="anchor" aria-hidden="true" id="maxquerydepth"></a><a href="#maxquerydepth" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>MaxQueryDepth</h3>
+<pre><code class="hljs css language-csharp"><span class="hljs-comment">// usage examples</span>
+schemaOptions.ExecutionOptions.MaxQueryDepth = <span class="hljs-number">15</span>;
+</code></pre>
+<table>
+<thead>
+<tr><th>Default Value</th><th>Acceptable Values</th></tr>
+</thead>
+<tbody>
+<tr><td>-<em>not set</em>-</td><td>Integer Greater than 0</td></tr>
+</tbody>
+</table>
+<p>The allowed <a href="../execution/malicious-queries">field depth</a> of any child field within a given query. If a child is nested deeper than this value the query will be rejected.</p>
+<h3><a class="anchor" aria-hidden="true" id="maxquerycomplexity"></a><a href="#maxquerycomplexity" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>MaxQueryComplexity</h3>
+<pre><code class="hljs css language-csharp"><span class="hljs-comment">// usage examples</span>
+schemaOptions.ExecutionOptions.MaxQueryComplexity = <span class="hljs-number">50.0f</span>;
+</code></pre>
+<table>
+<thead>
+<tr><th>Default Value</th><th>Acceptable Values</th></tr>
+</thead>
+<tbody>
+<tr><td>-<em>not set</em>-</td><td>Float Greater Than 0</td></tr>
+</tbody>
+</table>
+<p>The maximum allowed <a href="../execution/malicious-queries">complexity</a> value of a query. If a query is scored higher than this value it will be rejected.</p>
+<h2><a class="anchor" aria-hidden="true" id="response-options"></a><a href="#response-options" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Response Options</h2>
+<h3><a class="anchor" aria-hidden="true" id="exposeexceptions"></a><a href="#exposeexceptions" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>ExposeExceptions</h3>
+<pre><code class="hljs css language-csharp"><span class="hljs-comment">// usage examples</span>
+schemaOptions.ResponseOptions.ExposeExceptions = <span class="hljs-literal">false</span>;
+</code></pre>
+<table>
+<thead>
+<tr><th>Default Value</th><th>Acceptable Values</th></tr>
+</thead>
+<tbody>
+<tr><td><code>false</code></td><td><code>true</code>, <code>false</code></td></tr>
+</tbody>
+</table>
+<p>When true, exception details including message, type and stack trace will be sent to the requestor as part of any error messages. Setting this value to true can expose sensitive server details and is considered a security risk. Disable in any production environments.</p>
+<h3><a class="anchor" aria-hidden="true" id="exposemetrics"></a><a href="#exposemetrics" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>ExposeMetrics</h3>
+<pre><code class="hljs css language-csharp"><span class="hljs-comment">// usage examples</span>
+schemaOptions.ResponseOptions.ExposeMetrics = <span class="hljs-literal">false</span>;
+</code></pre>
+<table>
+<thead>
+<tr><th>Default Value</th><th>Acceptable Values</th></tr>
+</thead>
+<tbody>
+<tr><td><code>false</code></td><td><code>true</code>, <code>false</code></td></tr>
+</tbody>
+</table>
+<p>When true, the full Apollo trace gathered when a query is executed is sent to the requestor. This value is disregarded unless <code>ExecutionOptions.EnableMetrics</code> is set to true.</p>
+<h3><a class="anchor" aria-hidden="true" id="appendserverheader"></a><a href="#appendserverheader" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>AppendServerHeader</h3>
+<pre><code class="hljs css language-csharp"><span class="hljs-comment">// usage examples</span>
+schemaOptions.ResponseOptions.AppendServerHeader = <span class="hljs-literal">true</span>;
+</code></pre>
+<table>
+<thead>
+<tr><th>Default Value</th><th>Acceptable Values</th></tr>
+</thead>
+<tbody>
+<tr><td><code>true</code></td><td><code>true</code>, <code>false</code></td></tr>
+</tbody>
+</table>
+<p>When true, an <code>X-PoweredBy</code> header is added to the outgoing response to indicate it was generated from graphql. This option has no effect when a custom <code>HttpProcessorType</code> is declared.</p>
+<h3><a class="anchor" aria-hidden="true" id="messageseveritylevel"></a><a href="#messageseveritylevel" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>MessageSeverityLevel</h3>
+<pre><code class="hljs css language-csharp"><span class="hljs-comment">// usage examples</span>
+schemaOptions.ResponseOptions.AppendServerHeader = GraphMessageSeverity.Information;
+</code></pre>
+<table>
+<thead>
+<tr><th>Default Value</th><th>Acceptable Values</th></tr>
+</thead>
+<tbody>
+<tr><td><code>GraphMessageSeverity.Information</code></td><td>-<em>any <code>GraphMessageSeverity</code> value</em>-</td></tr>
+</tbody>
+</table>
+<p>Indicates which messages generated during a query should be sent to the requestor. Any message with a value at or above the provided level will be delivered.</p>
+<h3><a class="anchor" aria-hidden="true" id="timestamplocalizer"></a><a href="#timestamplocalizer" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>TimeStampLocalizer</h3>
+<pre><code class="hljs css language-csharp"><span class="hljs-comment">// usage examples</span>
+schemaOptions.ResponseOptions.TimeStampLocalizer = (dtos) =&gt; dtos.DateTime;
+</code></pre>
+<table>
+<thead>
+<tr><th>Func&lt;DateTimeOffset, DateTime&gt;</th></tr>
+</thead>
+<tbody>
+<tr><td><code>(dtOffset) =&gt; dtOffset.DateTime</code></td></tr>
+</tbody>
+</table>
+<p>A function to convert any timestamps present in the output into a value of a given timezone. By default no localization occurs and all times are delivered in their native <code>UTC-0</code>. This localizer does not effect any query data values, only those messaging related components.</p>
+<h2><a class="anchor" aria-hidden="true" id="queryhandler-options"></a><a href="#queryhandler-options" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>QueryHandler Options</h2>
+<h3><a class="anchor" aria-hidden="true" id="disabledefaultroute"></a><a href="#disabledefaultroute" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>DisableDefaultRoute</h3>
+<pre><code class="hljs css language-csharp"><span class="hljs-comment">// usage examples</span>
+schemaOptions.QueryHandler.DisableDefaultRoute = <span class="hljs-literal">false</span>;
+</code></pre>
+<table>
+<thead>
+<tr><th>Default Value</th><th>Acceptable Values</th></tr>
+</thead>
+<tbody>
+<tr><td><code>false</code></td><td><code>true</code>, <code>false</code></td></tr>
+</tbody>
+</table>
+<p>When set to true the default handler and query processor will not be registered with the ASP.NET runtime when the application starts.</p>
+<h3><a class="anchor" aria-hidden="true" id="route"></a><a href="#route" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Route</h3>
+<pre><code class="hljs css language-csharp"><span class="hljs-comment">// usage examples</span>
+schemaOptions.QueryHandler.Route = <span class="hljs-string">"/graphql"</span>;
+</code></pre>
+<table>
+<thead>
+<tr><th>Default Value</th></tr>
+</thead>
+<tbody>
+<tr><td><code>/graphql</code></td></tr>
+</tbody>
+</table>
+<p>Represents the http end point where GraphQL will listen for new requests. In multi-schema configurations this value will need to be unique per schema type.</p>
+<h3><a class="anchor" aria-hidden="true" id="authenticatedrequestsonly"></a><a href="#authenticatedrequestsonly" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>AuthenticatedRequestsOnly</h3>
+<pre><code class="hljs css language-csharp"><span class="hljs-comment">// usage examples</span>
+schemaOptions.QueryHandler.AuthenticatedRequestsOnly = <span class="hljs-literal">false</span>;
+</code></pre>
+<table>
+<thead>
+<tr><th>Default Value</th><th>Acceptable Values</th></tr>
+</thead>
+<tbody>
+<tr><td><code>false</code></td><td><code>true</code>, <code>false</code></td></tr>
+</tbody>
+</table>
+<p>When true, only those requests that are successfully authenticated by the ASP.NET runtime will be passed to graphQL. Should an unauthenticated request make it to the graphql query processor it will be immediately rejected. This option has no effect when a custom <code>HttpProcessorType</code> is declared.</p>
+<h3><a class="anchor" aria-hidden="true" id="httpprocessortype"></a><a href="#httpprocessortype" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>HttpProcessorType</h3>
+<pre><code class="hljs css language-csharp"><span class="hljs-comment">// usage examples</span>
+schemaOptions.QueryHandler.HttpProcessorType = <span class="hljs-keyword">typeof</span>(MyProcessorType);
+</code></pre>
+<table>
+<thead>
+<tr><th>Default Value</th></tr>
+</thead>
+<tbody>
+<tr><td><code>null</code></td></tr>
+</tbody>
+</table>
+<p>When set to a type, GraphQL will attempt to load the provided type from the configured DI container in order to handle graphql requests. Any class wishing to act as an Http Processor must inherit from <code>IGraphQLHttpProcessor</code>. It is perhaps easier to extend <code>DefaultGraphQLHttpProcessor&lt;TSchema&gt;</code> for most small operations such as handling metrics.</p>
+</span></div></article></div><div class="docs-prevnext"><a class="docs-prev button" href="/docs/reference/how-it-works"><span class="arrow-prev">← </span><span>How it Works</span></a><a class="docs-next button" href="/docs/reference/attributes"><span>Attributes</span><span class="arrow-next"> →</span></a></div></div></div><nav class="onPageNav"><ul class="toc-headings"><li><a href="#builder-options">Builder Options</a><ul class="toc-headings"><li><a href="#addgraphtype">AddGraphType</a></li><li><a href="#addschemaassembly">AddSchemaAssembly</a></li><li><a href="#addgraphassembly">AddGraphAssembly</a></li><li><a href="#autoregisterlocalgraphentities">AutoRegisterLocalGraphEntities</a></li></ul></li><li><a href="#declaration-options">Declaration Options</a><ul class="toc-headings"><li><a href="#disableintrospection">DisableIntrospection</a></li><li><a href="#fielddeclarationrequirements">FieldDeclarationRequirements</a></li><li><a href="#graphnamingformatter">GraphNamingFormatter</a></li></ul></li><li><a href="#execution-options">Execution Options</a><ul class="toc-headings"><li><a href="#enablemetrics">EnableMetrics</a></li><li><a href="#querytimeout">QueryTimeout</a></li><li><a href="#awaiteachrequestedfield">AwaitEachRequestedField</a></li><li><a href="#maxquerydepth">MaxQueryDepth</a></li><li><a href="#maxquerycomplexity">MaxQueryComplexity</a></li></ul></li><li><a href="#response-options">Response Options</a><ul class="toc-headings"><li><a href="#exposeexceptions">ExposeExceptions</a></li><li><a href="#exposemetrics">ExposeMetrics</a></li><li><a href="#appendserverheader">AppendServerHeader</a></li><li><a href="#messageseveritylevel">MessageSeverityLevel</a></li><li><a href="#timestamplocalizer">TimeStampLocalizer</a></li></ul></li><li><a href="#queryhandler-options">QueryHandler Options</a><ul class="toc-headings"><li><a href="#disabledefaultroute">DisableDefaultRoute</a></li><li><a href="#route">Route</a></li><li><a href="#authenticatedrequestsonly">AuthenticatedRequestsOnly</a></li><li><a href="#httpprocessortype">HttpProcessorType</a></li></ul></li></ul></nav></div><footer class="nav-footer" id="footer"><section class="sitemap"><div><h5>Docs</h5><a href="/docs/introduction/made-for-aspnet-developers">Made for ASP.NET Developers</a><a href="/docs/quick/code-examples">Code Examples</a></div><div></div><div><h5>More</h5><a class="github-button" href="https://github.com/graphql-aspnet/graphql-aspnet" data-show-count="true" data-count-href="/graphql-aspnet/graphql-aspnet/stargazers" aria-label="Star this project on GitHub">Star on GitHub</a><a href="https://graphql.org">GraphQL.org</a><a href="https://dotnet.microsoft.com/learn/aspnet">Learn ASP.NET</a></div></section><section class="copyright">Copyright © 2019 GraphQL ASP.NET</section></footer></div><script>window.twttr=(function(d,s, id){var js,fjs=d.getElementsByTagName(s)[0],t=window.twttr||{};if(d.getElementById(id))return t;js=d.createElement(s);js.id=id;js.src='https://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js, fjs);t._e = [];t.ready = function(f) {t._e.push(f);};return t;}(document, 'script', 'twitter-wjs'));</script></body></html>

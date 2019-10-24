@@ -1,0 +1,479 @@
+<!DOCTYPE html><html lang="en"><head><meta charSet="utf-8"/><meta http-equiv="X-UA-Compatible" content="IE=edge"/><title>Attributes · GraphQL ASP.NET</title><meta name="viewport" content="width=device-width"/><meta name="generator" content="Docusaurus"/><meta name="description" content="This document contains an alphabetical reference of each of the class, property and method attributes used by GraphQL ASP.NET."/><meta name="docsearch:language" content="en"/><meta property="og:title" content="Attributes · GraphQL ASP.NET"/><meta property="og:type" content="website"/><meta property="og:url" content="https://graphql-aspnet.github.io/"/><meta property="og:description" content="This document contains an alphabetical reference of each of the class, property and method attributes used by GraphQL ASP.NET."/><meta property="og:image" content="https://graphql-aspnet.github.io/img/undraw_online.svg"/><meta name="twitter:card" content="summary"/><meta name="twitter:image" content="https://graphql-aspnet.github.io/img/undraw_tweetstorm.svg"/><link rel="shortcut icon" href="/img/logo-64.png"/><link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/hybrid.min.css"/><script>
+              (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+              (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+              m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+              })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+              ga('create', 'UA-150856900-1', 'auto');
+              ga('send', 'pageview');
+            </script><script type="text/javascript" src="https://buttons.github.io/buttons.js"></script><script src="/js/scrollSpy.js"></script><link rel="stylesheet" href="/css/main.css"/><script src="/js/codetabs.js"></script></head><body class="sideNavVisible separateOnPageNav"><div class="fixedHeaderContainer"><div class="headerWrapper wrapper"><header><a href="/"><img class="logo" src="/img/logo-64.png" alt="GraphQL ASP.NET"/><h2 class="headerTitleWithLogo">GraphQL ASP.NET</h2></a><div class="navigationWrapper navigationSlider"><nav class="slidingNav"><ul class="nav-site nav-site-internal"><li class="siteNavGroupActive"><a href="/docs/quick/overview" target="_self">Documentation</a></li><li class=""><a href="https://github.com/graphql-aspnet/graphql-aspnet" target="_self">Source Code</a></li></ul></nav></div></header></div></div><div class="navPusher"><div class="docMainWrapper wrapper"><div class="docsNavContainer" id="docsNav"><nav class="toc"><div class="toggleNav"><section class="navWrapper wrapper"><div class="navBreadcrumb wrapper"><div class="navToggle" id="navToggler"><div class="hamburger-menu"><div class="line1"></div><div class="line2"></div><div class="line3"></div></div></div><h2><i>›</i><span>References</span></h2><div class="tocToggler" id="tocToggler"><i class="icon-toc"></i></div></div><div class="navGroups"><div class="navGroup"><h3 class="navGroupCategoryTitle">Jump In!</h3><ul class=""><li class="navListItem"><a class="navItem" href="/docs/quick/overview">Overview</a></li><li class="navListItem"><a class="navItem" href="/docs/quick/quick-start">Quick Start</a></li><li class="navListItem"><a class="navItem" href="/docs/quick/code-examples">Code Examples</a></li></ul></div><div class="navGroup"><h3 class="navGroupCategoryTitle">Introduction</h3><ul class=""><li class="navListItem"><a class="navItem" href="/docs/introduction/what-is-graphql">What is GraphQL?</a></li><li class="navListItem"><a class="navItem" href="/docs/introduction/made-for-aspnet-developers">Made for ASP.NET Developers</a></li></ul></div><div class="navGroup"><h3 class="navGroupCategoryTitle">Controllers &amp; Actions</h3><ul class=""><li class="navListItem"><a class="navItem" href="/docs/controllers/actions">Actions</a></li><li class="navListItem"><a class="navItem" href="/docs/controllers/model-state">Model State</a></li><li class="navListItem"><a class="navItem" href="/docs/controllers/field-paths">Field Paths</a></li><li class="navListItem"><a class="navItem" href="/docs/controllers/authorization">Authorization</a></li><li class="navListItem"><a class="navItem" href="/docs/controllers/type-extensions">Type Extensions</a></li><li class="navListItem"><a class="navItem" href="/docs/controllers/batch-operations">Batch Operations</a></li></ul></div><div class="navGroup"><h3 class="navGroupCategoryTitle">Graph Type Definitions</h3><ul class=""><li class="navListItem"><a class="navItem" href="/docs/types/objects">Objects</a></li><li class="navListItem"><a class="navItem" href="/docs/types/input-objects">Input Objects</a></li><li class="navListItem"><a class="navItem" href="/docs/types/interfaces">Interfaces</a></li><li class="navListItem"><a class="navItem" href="/docs/types/unions">Unions</a></li><li class="navListItem"><a class="navItem" href="/docs/types/enums">Enums</a></li><li class="navListItem"><a class="navItem" href="/docs/types/scalars">Scalars</a></li><li class="navListItem"><a class="navItem" href="/docs/types/list-non-null">List &amp; Non-Null</a></li></ul></div><div class="navGroup"><h3 class="navGroupCategoryTitle">Logging</h3><ul class=""><li class="navListItem"><a class="navItem" href="/docs/logging/structured-logging">Structured Logging</a></li><li class="navListItem"><a class="navItem" href="/docs/logging/standard-events">Standard Events</a></li></ul></div><div class="navGroup"><h3 class="navGroupCategoryTitle">Query Execution</h3><ul class=""><li class="navListItem"><a class="navItem" href="/docs/execution/metrics">Query Profiling</a></li><li class="navListItem"><a class="navItem" href="/docs/execution/malicious-queries">Malicious Queries</a></li></ul></div><div class="navGroup"><h3 class="navGroupCategoryTitle">Advanced</h3><ul class=""><li class="navListItem"><a class="navItem" href="/docs/advanced/subscriptions">Subscriptions</a></li><li class="navListItem"><a class="navItem" href="/docs/advanced/type-expressions">Type Expressions</a></li><li class="navListItem"><a class="navItem" href="/docs/advanced/directives">Directives</a></li><li class="navListItem"><a class="navItem" href="/docs/advanced/custom-scalars">Custom Scalars</a></li><li class="navListItem"><a class="navItem" href="/docs/advanced/graph-action-results">Action Results</a></li><li class="navListItem"><a class="navItem" href="/docs/advanced/middleware">Pipelines &amp; Middleware</a></li><li class="navListItem"><a class="navItem" href="/docs/advanced/query-cache">Query Caching</a></li><li class="navListItem"><a class="navItem" href="/docs/advanced/multi-schema-support">Multi-Schema Support</a></li></ul></div><div class="navGroup"><h3 class="navGroupCategoryTitle">Development Concerns</h3><ul class=""><li class="navListItem"><a class="navItem" href="/docs/development/debugging">Debugging</a></li><li class="navListItem"><a class="navItem" href="/docs/development/unit-testing">Unit Testing</a></li></ul></div><div class="navGroup"><h3 class="navGroupCategoryTitle">References</h3><ul class=""><li class="navListItem"><a class="navItem" href="/docs/reference/how-it-works">How it Works</a></li><li class="navListItem"><a class="navItem" href="/docs/reference/schema-configuration">Schema Configuration</a></li><li class="navListItem navListItemActive"><a class="navItem" href="/docs/reference/attributes">Attributes</a></li><li class="navListItem"><a class="navItem" href="/docs/reference/graph-controller">GraphController</a></li><li class="navListItem"><a class="navItem" href="/docs/reference/graph-directive">GraphDirective</a></li><li class="navListItem"><a class="navItem" href="/docs/reference/http-processor">HTTP Processor</a></li><li class="navListItem"><a class="navItem" href="/docs/reference/demo-projects">Demo Projects</a></li><li class="navListItem"><a class="navItem" href="/docs/reference/performance">Benchmarks</a></li><li class="navListItem"><a class="navItem" href="/docs/reference/contributing">Contributing</a></li></ul></div></div></section></div><script>
+            var coll = document.getElementsByClassName('collapsible');
+            var checkActiveCategory = true;
+            for (var i = 0; i < coll.length; i++) {
+              var links = coll[i].nextElementSibling.getElementsByTagName('*');
+              if (checkActiveCategory){
+                for (var j = 0; j < links.length; j++) {
+                  if (links[j].classList.contains('navListItemActive')){
+                    coll[i].nextElementSibling.classList.toggle('hide');
+                    coll[i].childNodes[1].classList.toggle('rotate');
+                    checkActiveCategory = false;
+                    break;
+                  }
+                }
+              }
+
+              coll[i].addEventListener('click', function() {
+                var arrow = this.childNodes[1];
+                arrow.classList.toggle('rotate');
+                var content = this.nextElementSibling;
+                content.classList.toggle('hide');
+              });
+            }
+
+            document.addEventListener('DOMContentLoaded', function() {
+              createToggler('#navToggler', '#docsNav', 'docsSliderActive');
+              createToggler('#tocToggler', 'body', 'tocActive');
+
+              var headings = document.querySelector('.toc-headings');
+              headings && headings.addEventListener('click', function(event) {
+                var el = event.target;
+                while(el !== headings){
+                  if (el.tagName === 'A') {
+                    document.body.classList.remove('tocActive');
+                    break;
+                  } else{
+                    el = el.parentNode;
+                  }
+                }
+              }, false);
+
+              function createToggler(togglerSelector, targetSelector, className) {
+                var toggler = document.querySelector(togglerSelector);
+                var target = document.querySelector(targetSelector);
+
+                if (!toggler) {
+                  return;
+                }
+
+                toggler.onclick = function(event) {
+                  event.preventDefault();
+
+                  target.classList.toggle(className);
+                };
+              }
+            });
+        </script></nav></div><div class="container mainContainer"><div class="wrapper"><div class="post"><header class="postHeader"><h1 class="postHeaderTitle">Attributes</h1></header><article><div><span><p>This document contains an alphabetical reference of each of the class, property and method attributes used by GraphQL ASP.NET.</p>
+<h2><a class="anchor" aria-hidden="true" id="batchtypeextension"></a><a href="#batchtypeextension" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>BatchTypeExtension</h2>
+<p>Declares a controller action method as a field on another graph type rather than a query or mutation action. All source items needing this field resolved will be resolved in a single field request.
+The batch method must declare a parameter of <code>IEnumerable&lt;TypeToExtend&gt;</code>.</p>
+<h4><a class="anchor" aria-hidden="true" id="batchtypeextensiontypetoextend-fieldname"></a><a href="#batchtypeextensiontypetoextend-fieldname" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a><code>[BatchTypeExtension(typeToExtend, fieldName)]</code></h4>
+<ul>
+<li><code>typeToExtend</code> - The graph type to which this field will be added</li>
+<li><code>fieldName</code> - The name to give to this field.</li>
+</ul>
+<p>Declares a batch type extension with the given field name. The return type of this field will be taken from the return type of the method. The return type of the method must be <code>IDictionary&lt;TypeToExtend, ReturnFieldType&gt;</code></p>
+<pre><code class="hljs css language-csharp"><span class="hljs-comment">// C# Controller</span>
+<span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title">HeroController</span> : <span class="hljs-title">GraphController</span>
+{
+    [<span class="hljs-meta">BatchTypeExtension(typeof(Human), <span class="hljs-meta-string">"droids"</span>)</span>]
+    <span class="hljs-keyword">public</span> IDictionary&lt;Human, IEnumerable&lt;Droid&gt;&gt; Hero(IEnumerable&lt;Human&gt; humans)
+    {
+        <span class="hljs-comment">//....</span>
+    }
+}
+</code></pre>
+<h4><a class="anchor" aria-hidden="true" id="batchtypeextensiontypetoextend-fieldname-returntype"></a><a href="#batchtypeextensiontypetoextend-fieldname-returntype" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a><code>[BatchTypeExtension(typeToExtend, fieldName, returnType)]</code></h4>
+<ul>
+<li><code>typeToExtend</code> - The graph type to which this field will be added</li>
+<li><code>fieldName</code> - The name to give to this field.</li>
+<li><code>returnType</code> - The type of data returned from this field</li>
+</ul>
+<p>Declares a batch type extension return type explicitly allowing use of <code>IGraphActionResult</code> and more importantly, <code>this.StartBatch()</code> for generating
+a batch collection result.</p>
+<pre><code class="hljs css language-csharp"><span class="hljs-comment">// C# Controller</span>
+<span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title">HeroController</span> : <span class="hljs-title">GraphController</span>
+{
+    [<span class="hljs-meta">BatchTypeExtension(typeof(Human), <span class="hljs-meta-string">"droids"</span>, typeof(IEnumerable&lt;Droid&gt;))</span>]
+    <span class="hljs-function"><span class="hljs-keyword">public</span> IGraphActionResult <span class="hljs-title">Hero</span>(<span class="hljs-params">IEnumerable&lt;Human&gt; humans</span>)</span>
+    {
+        <span class="hljs-comment">//....</span>
+    }
+}
+</code></pre>
+<h4><a class="anchor" aria-hidden="true" id="batchtypeextensiontypetoextend-fieldname-unionname-uniontypea-uniontypeb-additionaluniontypes"></a><a href="#batchtypeextensiontypetoextend-fieldname-unionname-uniontypea-uniontypeb-additionaluniontypes" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a><code>[BatchTypeExtension(typeToExtend, fieldName, unionName, unionTypeA, unionTypeB, additionalUnionTypes)]</code></h4>
+<ul>
+<li><code>typeToExtend</code> - The graph type to which this field will be added</li>
+<li><code>fieldName</code> - The name to give to this field.</li>
+<li><code>unionName</code> - The name to give to the union in the object graph</li>
+<li><code>unionTypeA</code> - The first member type of the union (must be an object, not an interface)</li>
+<li><code>unionTypeB</code> - The second member type of the union (must be an object, not an interface)</li>
+<li><code>additionalUnionTypes</code> - N additional union types to declare as part of this union</li>
+</ul>
+<p>Declares the batch type extension as returning a union rather than a single specific data type.</p>
+<pre><code class="hljs css language-csharp"><span class="hljs-comment">// C# Controller</span>
+<span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title">HeroController</span> : <span class="hljs-title">GraphController</span>
+{
+    [<span class="hljs-meta">BatchTypeExtension(typeof(Human), <span class="hljs-meta-string">"bestFriend"</span>, <span class="hljs-meta-string">"DroidOrHuman"</span>, typeof(Droid), typeof(Human))</span>]
+    <span class="hljs-function"><span class="hljs-keyword">public</span> IGraphActionResult <span class="hljs-title">Hero</span>(<span class="hljs-params">IEnumerable&lt;Human&gt; humans</span>)</span>
+    {
+        <span class="hljs-comment">//....</span>
+    }
+}
+</code></pre>
+<h2><a class="anchor" aria-hidden="true" id="deprecated"></a><a href="#deprecated" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Deprecated</h2>
+<p>Indicates to any introspection queries that the field or action method is deprecated and due to be removed.</p>
+<h4><a class="anchor" aria-hidden="true" id="deprecated-1"></a><a href="#deprecated-1" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a><code>[Deprecated]</code></h4>
+<h4><a class="anchor" aria-hidden="true" id="deprecatedreasontext"></a><a href="#deprecatedreasontext" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a><code>[Deprecated(reasonText)]</code></h4>
+<ul>
+<li><code>reasonText</code> - The reason for the deprecation that is displayed in an introspection query.</li>
+</ul>
+<pre><code class="hljs css language-csharp"><span class="hljs-comment">// C# Controller</span>
+<span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title">CharacterController</span> : <span class="hljs-title">GraphController</span>
+{
+    [<span class="hljs-meta">Query</span>]
+    [<span class="hljs-meta">Deprecated(<span class="hljs-meta-string">"Use the field SuperHero, this field will be removed soon"</span>)</span>]
+    <span class="hljs-function"><span class="hljs-keyword">public</span> IGraphActionResult <span class="hljs-title">Hero</span>(<span class="hljs-params">Episode episode = Episode.EMPIRE</span>)</span>
+    {
+        <span class="hljs-comment">//....</span>
+    }
+}
+</code></pre>
+<h2><a class="anchor" aria-hidden="true" id="description"></a><a href="#description" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Description</h2>
+<p>Adds a human-readable description to any type, interface, field, parameter, enum value etc.</p>
+<h4><a class="anchor" aria-hidden="true" id="descriptiontext"></a><a href="#descriptiontext" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a><code>[Description(text)]</code></h4>
+<ul>
+<li><code>text</code> - The text to display in an introspection query.</li>
+</ul>
+<pre><code class="hljs css language-csharp"><span class="hljs-comment">// C# Controller</span>
+[<span class="hljs-meta">Description(<span class="hljs-meta-string">"A field containing information related to the characters of Star Wars"</span>)</span>]
+<span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title">CharacterController</span> : <span class="hljs-title">GraphController</span>
+{
+    [<span class="hljs-meta">Query</span>]
+    [<span class="hljs-meta">Description(<span class="hljs-meta-string">"The hero of a given Star Wars Episode (Default: EMPIRE)"</span>)</span>]
+    <span class="hljs-function"><span class="hljs-keyword">public</span> IGraphActionResult <span class="hljs-title">Hero</span>(<span class="hljs-params">Episode episode = Episode.EMPIRE</span>)</span>
+    {
+        <span class="hljs-comment">//....</span>
+    }
+}
+</code></pre>
+<h2><a class="anchor" aria-hidden="true" id="directivelocations"></a><a href="#directivelocations" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>DirectiveLocations</h2>
+<p>A set of flags indicating where in a query document the given directive can be declared.</p>
+<h4><a class="anchor" aria-hidden="true" id="directivelocationsdirectivelocation"></a><a href="#directivelocationsdirectivelocation" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a><code>[DirectiveLocations(directiveLocation)]</code></h4>
+<ul>
+<li><code>directiveLocation</code> - A set of <code>ExecutableDirectiveLocation</code> values indicating where the directives allowed locations.</li>
+</ul>
+<pre><code class="hljs css language-csharp">    [<span class="hljs-meta">DirectiveLocations(ExecutableDirectiveLocation.FRAGMENT_SPREAD | ExecutableDirectiveLocation.INLINE_FRAGMENT)</span>]
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">sealed</span> <span class="hljs-keyword">class</span> <span class="hljs-title">AllowFragment</span> : <span class="hljs-title">GraphDirective</span>
+    {
+        <span class="hljs-function"><span class="hljs-keyword">public</span> IGraphActionResult <span class="hljs-title">BeforeFieldResolution</span>(<span class="hljs-params">[FromGraphQL(<span class="hljs-string">"if"</span></span>)] <span class="hljs-keyword">bool</span> ifArgument)</span>
+        {
+            <span class="hljs-keyword">return</span> ifArgument ? <span class="hljs-keyword">this</span>.Ok() : <span class="hljs-keyword">this</span>.Cancel();
+        }
+    }
+</code></pre>
+<h2><a class="anchor" aria-hidden="true" id="fromgraphql"></a><a href="#fromgraphql" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>FromGraphQL</h2>
+<p>Indicates additional or non-standard settings related to the method parameter its attached to.</p>
+<h4><a class="anchor" aria-hidden="true" id="fromgraphqlargumentname"></a><a href="#fromgraphqlargumentname" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a><code>[FromGraphQL(argumentName)]</code></h4>
+<ul>
+<li><code>argumentName</code>: The name of this parameter in the object graph</li>
+</ul>
+<pre><code class="hljs css language-csharp"><span class="hljs-comment">// C# Controller</span>
+<span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title">CharacterController</span> : <span class="hljs-title">GraphController</span>
+{
+    [<span class="hljs-meta">Query</span>]
+    <span class="hljs-function"><span class="hljs-keyword">public</span> IGraphActionResult <span class="hljs-title">Hero</span>(<span class="hljs-params">[FromGraphQL(<span class="hljs-string">"id"</span></span>)] <span class="hljs-keyword">int</span> heroId)</span>
+    {
+        <span class="hljs-comment">//....</span>
+    }
+}
+</code></pre>
+<h4><a class="anchor" aria-hidden="true" id="fromgraphqltypeexpression"></a><a href="#fromgraphqltypeexpression" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a><code>[FromGraphQL(typeExpression)]</code></h4>
+<ul>
+<li><code>typeExpression</code>: A custom type expression to declare explicit nullability and list rules for this method parameter.</li>
+</ul>
+<pre><code class="hljs css language-csharp"><span class="hljs-comment">// C# Controller</span>
+<span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title">CharacterController</span> : <span class="hljs-title">GraphController</span>
+{
+
+    [<span class="hljs-meta">Query</span>]
+    <span class="hljs-function"><span class="hljs-keyword">public</span> IGraphActionResult <span class="hljs-title">Hero</span>(<span class="hljs-params">
+        [FromGraphQL(TypeExpressions.IsNotNull</span>)] <span class="hljs-keyword">string</span> heroId)</span>
+    {
+        <span class="hljs-comment">//....</span>
+    }
+}
+</code></pre>
+<p><strong>Other Properties</strong></p>
+<ul>
+<li><code>TypeDefinition</code> - Allows direct access to declare a custom set of meta types.</li>
+</ul>
+<h2><a class="anchor" aria-hidden="true" id="graphenumvalue"></a><a href="#graphenumvalue" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>GraphEnumValue</h2>
+<p>Acts to explicitly declare an enumeration value as being exposed on the enumeration graph type.</p>
+<h4><a class="anchor" aria-hidden="true" id="graphenumvalue-1"></a><a href="#graphenumvalue-1" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a><code>[GraphEnumValue]</code></h4>
+<h4><a class="anchor" aria-hidden="true" id="graphenumvaluename"></a><a href="#graphenumvaluename" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a><code>[GraphEnumValue(name)]</code></h4>
+<ul>
+<li><code>name</code>: the name to use in the object graph for this enum value.</li>
+</ul>
+<pre><code class="hljs css language-csharp"><span class="hljs-keyword">public</span> <span class="hljs-keyword">enum</span> Episode
+{
+    NewHope,
+    Empire,
+
+    [<span class="hljs-meta">GraphEnumValue(<span class="hljs-meta-string">"Jedi"</span>)</span>]
+    ReturnOfTheJedi,
+}
+</code></pre>
+<h2><a class="anchor" aria-hidden="true" id="graphfield"></a><a href="#graphfield" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>GraphField</h2>
+<p>Acts to explicitly declare a method or property as being part of a graph type.</p>
+<h4><a class="anchor" aria-hidden="true" id="graphfield-1"></a><a href="#graphfield-1" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a><code>[GraphField]</code></h4>
+<h4><a class="anchor" aria-hidden="true" id="graphfieldname"></a><a href="#graphfieldname" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a><code>[GraphField(name)]</code></h4>
+<ul>
+<li><code>name</code> - The name of this field as it should appear in the object graph to be queried</li>
+</ul>
+<pre><code class="hljs css language-csharp"><span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title">Human</span>
+{
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">int</span> Id{<span class="hljs-keyword">get</span>; <span class="hljs-keyword">set</span>; }
+
+    [<span class="hljs-meta">GraphField(<span class="hljs-meta-string">"name"</span>)</span>]
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">string</span> FullName { <span class="hljs-keyword">get</span>; <span class="hljs-keyword">set</span>; }
+}
+</code></pre>
+<h2><a class="anchor" aria-hidden="true" id="graphroot"></a><a href="#graphroot" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>GraphRoot</h2>
+<p>Indicates that the controller should not attempt to register a virtual field for itself and that all methods should be extended off the their respective root types.</p>
+<h4><a class="anchor" aria-hidden="true" id="graphroot-1"></a><a href="#graphroot-1" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a><code>[GraphRoot]</code></h4>
+<div class="sideBySideCode hljs">
+<div>
+<pre><code class="hljs css language-csharp">[<span class="hljs-meta">GraphRoot</span>]
+<span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title">HeroController</span> : <span class="hljs-title">GraphController</span>
+{
+    [<span class="hljs-meta">Query</span>]
+    <span class="hljs-function"><span class="hljs-keyword">public</span> Human <span class="hljs-title">Hero</span>(<span class="hljs-params">Episode episode</span>)</span>
+    {
+        <span class="hljs-comment">//..</span>
+    }
+}
+</code></pre>
+</div>
+<div>
+<pre><code class="hljs css language-js"># GraphQL Query
+query {
+    hero(episode: EMPIRE) {
+        name
+        homePlanet
+    }
+}
+</code></pre>
+</div>
+</div>
+<h2><a class="anchor" aria-hidden="true" id="graphroute"></a><a href="#graphroute" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>GraphRoute</h2>
+<p>Indicates a field path in each root graph type where this controller should append its action methods.</p>
+<h4><a class="anchor" aria-hidden="true" id="graphroutetemplate"></a><a href="#graphroutetemplate" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>[GraphRoute(template)]</h4>
+<ul>
+<li><code>template</code> - A set of <code>/</code> separated path segments representing a nested set of fields where the controller should reside.
+<ul>
+<li>The <code>&quot;[controller]&quot;</code> meta tag can be used and will be replaced by the controller name at runtime.</li>
+</ul></li>
+</ul>
+<div class="sideBySideCode hljs">
+<div>
+<pre><code class="hljs css language-csharp">[<span class="hljs-meta">GraphRoute(<span class="hljs-meta-string">"starWars/characters"</span>)</span>]
+<span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title">HeroController</span> : <span class="hljs-title">GraphController</span>
+{
+    [<span class="hljs-meta">Query</span>]
+    <span class="hljs-function"><span class="hljs-keyword">public</span> Human <span class="hljs-title">Hero</span>(<span class="hljs-params">Episode episode</span>)</span>
+    {
+        <span class="hljs-comment">//..</span>
+    }
+}
+</code></pre>
+</div>
+<div>
+<pre><code class="hljs css language-js"><span class="hljs-comment">// GraphQL Query</span>
+query {
+    starWars {
+        characters {
+            hero(episode: EMPIRE) {
+                name
+                homePlanet
+            }
+        }
+    }
+}
+</code></pre>
+</div>
+</div>
+<h2><a class="anchor" aria-hidden="true" id="graphskip"></a><a href="#graphskip" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>GraphSkip</h2>
+<p>Indicates that the entity to which its attached should be skipped and not included in a schema. GraphSkip can be defined on any controller, method, property, interface, enum or enum value.</p>
+<h4><a class="anchor" aria-hidden="true" id="graphskip-1"></a><a href="#graphskip-1" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a><code>[GraphSkip]</code></h4>
+<pre><code class="hljs css language-csharp"><span class="hljs-comment">// C# Controller</span>
+<span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title">CharacterController</span> : <span class="hljs-title">GraphController</span>
+{
+    [<span class="hljs-meta">Query</span>]
+    [<span class="hljs-meta">GraphSkip</span>]
+    <span class="hljs-function"><span class="hljs-keyword">public</span> IGraphActionResult <span class="hljs-title">Hero</span>(<span class="hljs-params">[FromGraphQL(<span class="hljs-string">"id"</span></span>)] <span class="hljs-keyword">int</span> heroId)</span>
+    {
+        <span class="hljs-comment">// this method will not be included in the graph</span>
+    }
+}
+</code></pre>
+<h2><a class="anchor" aria-hidden="true" id="graphtype"></a><a href="#graphtype" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>GraphType</h2>
+<p>Indicates additional or non-standard settings for the the class, interface or enum to which its attached. Also indicates the item is explicitly declared as a graph type and should be included in a schema.</p>
+<h4><a class="anchor" aria-hidden="true" id="graphtypename"></a><a href="#graphtypename" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>[GraphType(name)]</h4>
+<ul>
+<li><code>name</code> : The name of graph type as it should appear in the object graph</li>
+</ul>
+<h4><a class="anchor" aria-hidden="true" id="graphtypename-inputname"></a><a href="#graphtypename-inputname" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>[GraphType(name, inputName)]</h4>
+<ul>
+<li><code>name</code> : The name of graph type as it should appear in the object graph</li>
+<li><code>inputName</code>: The name of the graph type in the schema, when used as an <code>INPUT_OBJECT</code> in the object graph.</li>
+</ul>
+<pre><code class="hljs css language-csharp">[<span class="hljs-meta">GraphType(<span class="hljs-meta-string">"person"</span>, <span class="hljs-meta-string">"personModel"</span>)</span>]
+<span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title">Human</span>
+{
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">int</span> Id{<span class="hljs-keyword">get</span>; <span class="hljs-keyword">set</span>; }
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">string</span> FullName { <span class="hljs-keyword">get</span>; <span class="hljs-keyword">set</span>; }
+}
+</code></pre>
+<h2><a class="anchor" aria-hidden="true" id="mutation-mutationroot-query-queryroot"></a><a href="#mutation-mutationroot-query-queryroot" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Mutation, MutationRoot, Query, QueryRoot</h2>
+<p>Controller action method attributes that indicate the method belongs to the specified operation type (query or mutation). When declared as &quot;Root&quot; (i.e. <code>QueryRoot</code>), it indicates that the action method should be declared directly on its operation graph type and not nested underneath a controller's virtual field.</p>
+<blockquote>
+<p>All 4 action method attributes have identical constructor options</p>
+</blockquote>
+<h4><a class="anchor" aria-hidden="true" id="querytemplate"></a><a href="#querytemplate" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>[Query(template)]</h4>
+<ul>
+<li><code>template</code> - The field path template to use for this method.</li>
+</ul>
+<pre><code class="hljs css language-csharp"><span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title">CharacterController</span> : <span class="hljs-title">GraphController</span>
+{
+    [<span class="hljs-meta">Query(<span class="hljs-meta-string">"hero"</span>)</span>]
+    <span class="hljs-function"><span class="hljs-keyword">public</span> Human <span class="hljs-title">RetrieveTheHero</span>(<span class="hljs-params">Episode episode</span>)</span>
+    {
+        <span class="hljs-comment">// ....</span>
+    }
+}
+</code></pre>
+<h4><a class="anchor" aria-hidden="true" id="queryreturntype-params-othertypes"></a><a href="#queryreturntype-params-othertypes" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>[Query(returnType, params otherTypes)]</h4>
+<ul>
+<li><code>returnType</code>: the expected return type of this field.
+<ul>
+<li>must be used when this field returns an <code>IGraphActionResult</code></li>
+</ul></li>
+<li><code>otherTypes</code>: additional possible types this field could return.
+<ul>
+<li>Can be used to declare possible concrete types when this field returns an interface.</li>
+</ul></li>
+</ul>
+<pre><code class="hljs css language-csharp"><span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title">CharacterController</span> : <span class="hljs-title">GraphController</span>
+{
+    [<span class="hljs-meta">Query(typeof(Droid), typeof(Human))</span>]
+    <span class="hljs-function"><span class="hljs-keyword">public</span> ICharacter <span class="hljs-title">Hero</span>(<span class="hljs-params">Episode episode</span>)</span>
+    {
+        <span class="hljs-comment">// ....</span>
+    }
+}
+</code></pre>
+<h4><a class="anchor" aria-hidden="true" id="querytemplate-returntype"></a><a href="#querytemplate-returntype" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>[Query(template, returnType)]</h4>
+<ul>
+<li><code>template</code> - The field path template to use for this method.</li>
+<li><code>returnType</code>: the expected return type of this field.
+<ul>
+<li>must be used when this field returns an <code>IGraphActionResult</code></li>
+</ul></li>
+</ul>
+<pre><code class="hljs css language-csharp"><span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title">CharacterController</span> : <span class="hljs-title">GraphController</span>
+{
+    [<span class="hljs-meta">Query(<span class="hljs-meta-string">"hero"</span>, typeof(Human))</span>]
+    <span class="hljs-function"><span class="hljs-keyword">public</span> IGraphActionResult <span class="hljs-title">RetrieveTheHero</span>(<span class="hljs-params">Episode episode</span>)</span>
+    {
+        <span class="hljs-comment">// ....</span>
+    }
+}
+</code></pre>
+<h4><a class="anchor" aria-hidden="true" id="querytemplate-unionname-uniontypea-uniontypeb-additionaluniontypes"></a><a href="#querytemplate-unionname-uniontypea-uniontypeb-additionaluniontypes" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a><code>[Query(template, unionName, unionTypeA, unionTypeB, additionalUnionTypes)]</code></h4>
+<ul>
+<li><code>template</code> - The field path template to use for this method.</li>
+<li><code>unionName</code> - The name to give to the union in the object graph</li>
+<li><code>unionTypeA</code> - The first member type of the union (must be an object, not an interface)</li>
+<li><code>unionTypeB</code> - The second member type of the union (must be an object, not an interface)</li>
+<li><code>additionalUnionTypes</code> - N additional union types to declare as part of this union</li>
+</ul>
+<pre><code class="hljs css language-csharp"><span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title">CharacterController</span> : <span class="hljs-title">GraphController</span>
+{
+    [<span class="hljs-meta">Query(<span class="hljs-meta-string">"hero"</span>, <span class="hljs-meta-string">"DroidOrHuman"</span>, typeof(Droid), typeof(Human))</span>]
+    <span class="hljs-function"><span class="hljs-keyword">public</span> IGraphActionResult <span class="hljs-title">RetrieveCharacter</span>(<span class="hljs-params"><span class="hljs-keyword">int</span> id</span>)</span>
+    {
+        <span class="hljs-comment">// ....</span>
+    }
+}
+</code></pre>
+<p>** Additional Properties **</p>
+<ul>
+<li><code>TypeExpression</code>: Allows assignment of a non-standard type expression to declare explicit nullability and list rules for this field.</li>
+<li><code>TypeDefinition</code> - Allows direct access to declare a custom set of meta types when <code>TypeExpression</code> is insufficient.</li>
+</ul>
+<pre><code class="hljs css language-csharp"><span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title">CharacterController</span> : <span class="hljs-title">GraphController</span>
+{
+    <span class="hljs-comment">// declare that this field must return a value (a null human is not allowed)</span>
+    [<span class="hljs-meta">Query(<span class="hljs-meta-string">"hero"</span>, typeof(Human), TypeExpression = TypeExpressions.IsNotNull)</span>]
+    <span class="hljs-function"><span class="hljs-keyword">public</span> IGraphActionResult <span class="hljs-title">RetrieveTheHero</span>(<span class="hljs-params">Episode episode</span>)</span>
+    {
+        <span class="hljs-comment">// ....</span>
+    }
+}
+</code></pre>
+<h2><a class="anchor" aria-hidden="true" id="typeextension"></a><a href="#typeextension" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>TypeExtension</h2>
+<p>Declares a controller action method as a field on another graph type rather than a query or mutation action.</p>
+<h4><a class="anchor" aria-hidden="true" id="typeextensiontypetoextend-fieldname"></a><a href="#typeextensiontypetoextend-fieldname" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a><code>[TypeExtension(typeToExtend, fieldName)]</code></h4>
+<ul>
+<li><code>typeToExtend</code> - The graph type to which this field will be added</li>
+<li><code>fieldName</code> - The name to give to this field.</li>
+</ul>
+<p>Declares a type extension with the given field name. The return type of this field will be taken from the return type of the method.</p>
+<pre><code class="hljs css language-csharp"><span class="hljs-comment">// C# Controller</span>
+<span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title">DroidController</span> : <span class="hljs-title">GraphController</span>
+{
+    [<span class="hljs-meta">TypeExtension(typeof(Droid), <span class="hljs-meta-string">"ownedBy"</span>)</span>]
+    <span class="hljs-function"><span class="hljs-keyword">public</span> Human <span class="hljs-title">RetrieveDroidOwner</span>(<span class="hljs-params">Droid droid</span>)</span>
+    {
+        <span class="hljs-comment">//....</span>
+    }
+}
+</code></pre>
+<h4><a class="anchor" aria-hidden="true" id="typeextensiontypetoextend-fieldname-returntype"></a><a href="#typeextensiontypetoextend-fieldname-returntype" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a><code>[TypeExtension(typeToExtend, fieldName, returnType)]</code></h4>
+<ul>
+<li><code>typeToExtend</code> - The graph type to which this field will be added</li>
+<li><code>fieldName</code> - The name to give to this field.</li>
+<li><code>returnType</code> - The type of data returned from this field</li>
+</ul>
+<p>Declares a type extension with an explicit return type. useful when returning <code>IGraphActionResult</code>.</p>
+<pre><code class="hljs css language-csharp"><span class="hljs-comment">// C# Controller</span>
+<span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title">HeroController</span> : <span class="hljs-title">GraphController</span>
+{
+    [<span class="hljs-meta">TypeExtension(typeof(Human), <span class="hljs-meta-string">"ownedBy"</span>, typeof(Droid))</span>]
+    <span class="hljs-function"><span class="hljs-keyword">public</span> IGraphActionResult <span class="hljs-title">RetrieveDroidOwner</span>(<span class="hljs-params">Droid droid</span>)</span>
+    {
+        <span class="hljs-comment">//....</span>
+    }
+}
+</code></pre>
+<h4><a class="anchor" aria-hidden="true" id="typeextensiontypetoextend-fieldname-unionname-uniontypea-uniontypeb-additionaluniontypes"></a><a href="#typeextensiontypetoextend-fieldname-unionname-uniontypea-uniontypeb-additionaluniontypes" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a><code>[TypeExtension(typeToExtend, fieldName, unionName, unionTypeA, unionTypeB, additionalUnionTypes)]</code></h4>
+<ul>
+<li><code>typeToExtend</code> - The graph type to which this field will be added</li>
+<li><code>fieldName</code> - The name to give to this field.</li>
+<li><code>unionName</code> - The name to give to the union in the object graph</li>
+<li><code>unionTypeA</code> - The first member type of the union (must be an object, not an interface)</li>
+<li><code>unionTypeB</code> - The second member type of the union (must be an object, not an interface)</li>
+<li><code>additionalUnionTypes</code> - N additional union types to declare as part of this union</li>
+</ul>
+<p>Declares the type extension as returning a union rather than a specific data type.</p>
+<pre><code class="hljs css language-csharp"><span class="hljs-comment">// C# Controller</span>
+<span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title">HeroController</span> : <span class="hljs-title">GraphController</span>
+{
+    [<span class="hljs-meta">TypeExtension(typeof(Droid), <span class="hljs-meta-string">"bestFriend"</span>, <span class="hljs-meta-string">"DroidOrHuman"</span>, typeof(Droid), typeof(Human))</span>]
+    <span class="hljs-function"><span class="hljs-keyword">public</span> IGraphActionResult <span class="hljs-title">RetrieveDroidsBestFriend</span>(<span class="hljs-params">Droid droid</span>)</span>
+    {
+        <span class="hljs-comment">//....</span>
+    }
+}
+</code></pre>
+</span></div></article></div><div class="docs-prevnext"><a class="docs-prev button" href="/docs/reference/schema-configuration"><span class="arrow-prev">← </span><span>Schema Configuration</span></a><a class="docs-next button" href="/docs/reference/graph-controller"><span class="function-name-prevnext">GraphController</span><span class="arrow-next"> →</span></a></div></div></div><nav class="onPageNav"><ul class="toc-headings"><li><a href="#batchtypeextension">BatchTypeExtension</a></li><li><a href="#deprecated">Deprecated</a></li><li><a href="#description">Description</a></li><li><a href="#directivelocations">DirectiveLocations</a></li><li><a href="#fromgraphql">FromGraphQL</a></li><li><a href="#graphenumvalue">GraphEnumValue</a></li><li><a href="#graphfield">GraphField</a></li><li><a href="#graphroot">GraphRoot</a></li><li><a href="#graphroute">GraphRoute</a></li><li><a href="#graphskip">GraphSkip</a></li><li><a href="#graphtype">GraphType</a></li><li><a href="#mutation-mutationroot-query-queryroot">Mutation, MutationRoot, Query, QueryRoot</a></li><li><a href="#typeextension">TypeExtension</a></li></ul></nav></div><footer class="nav-footer" id="footer"><section class="sitemap"><div><h5>Docs</h5><a href="/docs/introduction/made-for-aspnet-developers">Made for ASP.NET Developers</a><a href="/docs/quick/code-examples">Code Examples</a></div><div></div><div><h5>More</h5><a class="github-button" href="https://github.com/graphql-aspnet/graphql-aspnet" data-show-count="true" data-count-href="/graphql-aspnet/graphql-aspnet/stargazers" aria-label="Star this project on GitHub">Star on GitHub</a><a href="https://graphql.org">GraphQL.org</a><a href="https://dotnet.microsoft.com/learn/aspnet">Learn ASP.NET</a></div></section><section class="copyright">Copyright © 2019 GraphQL ASP.NET</section></footer></div><script>window.twttr=(function(d,s, id){var js,fjs=d.getElementsByTagName(s)[0],t=window.twttr||{};if(d.getElementById(id))return t;js=d.createElement(s);js.id=id;js.src='https://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js, fjs);t._e = [];t.ready = function(f) {t._e.push(f);};return t;}(document, 'script', 'twitter-wjs'));</script></body></html>

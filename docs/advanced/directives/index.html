@@ -1,0 +1,163 @@
+<!DOCTYPE html><html lang="en"><head><meta charSet="utf-8"/><meta http-equiv="X-UA-Compatible" content="IE=edge"/><title>Directives · GraphQL ASP.NET</title><meta name="viewport" content="width=device-width"/><meta name="generator" content="Docusaurus"/><meta name="description" content="In GraphQL ASP.NET directives are implemented in much the same way as `GraphController` but where you&#x27;d indicate a a graph controller method as being for a query or mutation, directives must indicate where they can be declared and when they should execute."/><meta name="docsearch:language" content="en"/><meta property="og:title" content="Directives · GraphQL ASP.NET"/><meta property="og:type" content="website"/><meta property="og:url" content="https://graphql-aspnet.github.io/"/><meta property="og:description" content="In GraphQL ASP.NET directives are implemented in much the same way as `GraphController` but where you&#x27;d indicate a a graph controller method as being for a query or mutation, directives must indicate where they can be declared and when they should execute."/><meta property="og:image" content="https://graphql-aspnet.github.io/img/undraw_online.svg"/><meta name="twitter:card" content="summary"/><meta name="twitter:image" content="https://graphql-aspnet.github.io/img/undraw_tweetstorm.svg"/><link rel="shortcut icon" href="/img/logo-64.png"/><link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/hybrid.min.css"/><script>
+              (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+              (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+              m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+              })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+              ga('create', 'UA-150856900-1', 'auto');
+              ga('send', 'pageview');
+            </script><script type="text/javascript" src="https://buttons.github.io/buttons.js"></script><script src="/js/scrollSpy.js"></script><link rel="stylesheet" href="/css/main.css"/><script src="/js/codetabs.js"></script></head><body class="sideNavVisible separateOnPageNav"><div class="fixedHeaderContainer"><div class="headerWrapper wrapper"><header><a href="/"><img class="logo" src="/img/logo-64.png" alt="GraphQL ASP.NET"/><h2 class="headerTitleWithLogo">GraphQL ASP.NET</h2></a><div class="navigationWrapper navigationSlider"><nav class="slidingNav"><ul class="nav-site nav-site-internal"><li class="siteNavGroupActive"><a href="/docs/quick/overview" target="_self">Documentation</a></li><li class=""><a href="https://github.com/graphql-aspnet/graphql-aspnet" target="_self">Source Code</a></li></ul></nav></div></header></div></div><div class="navPusher"><div class="docMainWrapper wrapper"><div class="docsNavContainer" id="docsNav"><nav class="toc"><div class="toggleNav"><section class="navWrapper wrapper"><div class="navBreadcrumb wrapper"><div class="navToggle" id="navToggler"><div class="hamburger-menu"><div class="line1"></div><div class="line2"></div><div class="line3"></div></div></div><h2><i>›</i><span>Advanced</span></h2><div class="tocToggler" id="tocToggler"><i class="icon-toc"></i></div></div><div class="navGroups"><div class="navGroup"><h3 class="navGroupCategoryTitle">Jump In!</h3><ul class=""><li class="navListItem"><a class="navItem" href="/docs/quick/overview">Overview</a></li><li class="navListItem"><a class="navItem" href="/docs/quick/quick-start">Quick Start</a></li><li class="navListItem"><a class="navItem" href="/docs/quick/code-examples">Code Examples</a></li></ul></div><div class="navGroup"><h3 class="navGroupCategoryTitle">Introduction</h3><ul class=""><li class="navListItem"><a class="navItem" href="/docs/introduction/what-is-graphql">What is GraphQL?</a></li><li class="navListItem"><a class="navItem" href="/docs/introduction/made-for-aspnet-developers">Made for ASP.NET Developers</a></li></ul></div><div class="navGroup"><h3 class="navGroupCategoryTitle">Controllers &amp; Actions</h3><ul class=""><li class="navListItem"><a class="navItem" href="/docs/controllers/actions">Actions</a></li><li class="navListItem"><a class="navItem" href="/docs/controllers/model-state">Model State</a></li><li class="navListItem"><a class="navItem" href="/docs/controllers/field-paths">Field Paths</a></li><li class="navListItem"><a class="navItem" href="/docs/controllers/authorization">Authorization</a></li><li class="navListItem"><a class="navItem" href="/docs/controllers/type-extensions">Type Extensions</a></li><li class="navListItem"><a class="navItem" href="/docs/controllers/batch-operations">Batch Operations</a></li></ul></div><div class="navGroup"><h3 class="navGroupCategoryTitle">Graph Type Definitions</h3><ul class=""><li class="navListItem"><a class="navItem" href="/docs/types/objects">Objects</a></li><li class="navListItem"><a class="navItem" href="/docs/types/input-objects">Input Objects</a></li><li class="navListItem"><a class="navItem" href="/docs/types/interfaces">Interfaces</a></li><li class="navListItem"><a class="navItem" href="/docs/types/unions">Unions</a></li><li class="navListItem"><a class="navItem" href="/docs/types/enums">Enums</a></li><li class="navListItem"><a class="navItem" href="/docs/types/scalars">Scalars</a></li><li class="navListItem"><a class="navItem" href="/docs/types/list-non-null">List &amp; Non-Null</a></li></ul></div><div class="navGroup"><h3 class="navGroupCategoryTitle">Logging</h3><ul class=""><li class="navListItem"><a class="navItem" href="/docs/logging/structured-logging">Structured Logging</a></li><li class="navListItem"><a class="navItem" href="/docs/logging/standard-events">Standard Events</a></li></ul></div><div class="navGroup"><h3 class="navGroupCategoryTitle">Query Execution</h3><ul class=""><li class="navListItem"><a class="navItem" href="/docs/execution/metrics">Query Profiling</a></li><li class="navListItem"><a class="navItem" href="/docs/execution/malicious-queries">Malicious Queries</a></li></ul></div><div class="navGroup"><h3 class="navGroupCategoryTitle">Advanced</h3><ul class=""><li class="navListItem"><a class="navItem" href="/docs/advanced/subscriptions">Subscriptions</a></li><li class="navListItem"><a class="navItem" href="/docs/advanced/type-expressions">Type Expressions</a></li><li class="navListItem navListItemActive"><a class="navItem" href="/docs/advanced/directives">Directives</a></li><li class="navListItem"><a class="navItem" href="/docs/advanced/custom-scalars">Custom Scalars</a></li><li class="navListItem"><a class="navItem" href="/docs/advanced/graph-action-results">Action Results</a></li><li class="navListItem"><a class="navItem" href="/docs/advanced/middleware">Pipelines &amp; Middleware</a></li><li class="navListItem"><a class="navItem" href="/docs/advanced/query-cache">Query Caching</a></li><li class="navListItem"><a class="navItem" href="/docs/advanced/multi-schema-support">Multi-Schema Support</a></li></ul></div><div class="navGroup"><h3 class="navGroupCategoryTitle">Development Concerns</h3><ul class=""><li class="navListItem"><a class="navItem" href="/docs/development/debugging">Debugging</a></li><li class="navListItem"><a class="navItem" href="/docs/development/unit-testing">Unit Testing</a></li></ul></div><div class="navGroup"><h3 class="navGroupCategoryTitle">References</h3><ul class=""><li class="navListItem"><a class="navItem" href="/docs/reference/how-it-works">How it Works</a></li><li class="navListItem"><a class="navItem" href="/docs/reference/schema-configuration">Schema Configuration</a></li><li class="navListItem"><a class="navItem" href="/docs/reference/attributes">Attributes</a></li><li class="navListItem"><a class="navItem" href="/docs/reference/graph-controller">GraphController</a></li><li class="navListItem"><a class="navItem" href="/docs/reference/graph-directive">GraphDirective</a></li><li class="navListItem"><a class="navItem" href="/docs/reference/http-processor">HTTP Processor</a></li><li class="navListItem"><a class="navItem" href="/docs/reference/demo-projects">Demo Projects</a></li><li class="navListItem"><a class="navItem" href="/docs/reference/performance">Benchmarks</a></li><li class="navListItem"><a class="navItem" href="/docs/reference/contributing">Contributing</a></li></ul></div></div></section></div><script>
+            var coll = document.getElementsByClassName('collapsible');
+            var checkActiveCategory = true;
+            for (var i = 0; i < coll.length; i++) {
+              var links = coll[i].nextElementSibling.getElementsByTagName('*');
+              if (checkActiveCategory){
+                for (var j = 0; j < links.length; j++) {
+                  if (links[j].classList.contains('navListItemActive')){
+                    coll[i].nextElementSibling.classList.toggle('hide');
+                    coll[i].childNodes[1].classList.toggle('rotate');
+                    checkActiveCategory = false;
+                    break;
+                  }
+                }
+              }
+
+              coll[i].addEventListener('click', function() {
+                var arrow = this.childNodes[1];
+                arrow.classList.toggle('rotate');
+                var content = this.nextElementSibling;
+                content.classList.toggle('hide');
+              });
+            }
+
+            document.addEventListener('DOMContentLoaded', function() {
+              createToggler('#navToggler', '#docsNav', 'docsSliderActive');
+              createToggler('#tocToggler', 'body', 'tocActive');
+
+              var headings = document.querySelector('.toc-headings');
+              headings && headings.addEventListener('click', function(event) {
+                var el = event.target;
+                while(el !== headings){
+                  if (el.tagName === 'A') {
+                    document.body.classList.remove('tocActive');
+                    break;
+                  } else{
+                    el = el.parentNode;
+                  }
+                }
+              }, false);
+
+              function createToggler(togglerSelector, targetSelector, className) {
+                var toggler = document.querySelector(togglerSelector);
+                var target = document.querySelector(targetSelector);
+
+                if (!toggler) {
+                  return;
+                }
+
+                toggler.onclick = function(event) {
+                  event.preventDefault();
+
+                  target.classList.toggle(className);
+                };
+              }
+            });
+        </script></nav></div><div class="container mainContainer"><div class="wrapper"><div class="post"><header class="postHeader"><h1 class="postHeaderTitle">Directives</h1></header><article><div><span><p>In GraphQL ASP.NET directives are implemented in much the same way as <code>GraphController</code> but where you'd indicate a a graph controller method as being for a query or mutation, directives must indicate where they can be declared and when they should execute.</p>
+<h2><a class="anchor" aria-hidden="true" id="anatomy-of-a-directive"></a><a href="#anatomy-of-a-directive" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Anatomy of a Directive</h2>
+<p>All directives must:</p>
+<ul>
+<li>Inherit from <code>GraphQL.AspNet.Directives.GraphDirective</code></li>
+<li>Provide at least one appropriate life cycle action method definition</li>
+</ul>
+<p>All directive action methods must:</p>
+<ul>
+<li>Share the same method signature</li>
+<li>Return <code>IGraphActionResult</code></li>
+</ul>
+<p>This is the code for the built in <code>@include</code> directive:</p>
+<pre><code class="hljs css language-csharp">    [<span class="hljs-meta">GraphType(<span class="hljs-meta-string">"include"</span>)</span>]
+    [<span class="hljs-meta">DirectiveLocations(ExecutableDirectiveLocation.AllFieldSelections)</span>]
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">sealed</span> <span class="hljs-keyword">class</span> <span class="hljs-title">IncludeDirective</span> : <span class="hljs-title">GraphDirective</span>
+    {
+        <span class="hljs-function"><span class="hljs-keyword">public</span> IGraphActionResult <span class="hljs-title">BeforeFieldResolution</span>(<span class="hljs-params">[FromGraphQL(<span class="hljs-string">"if"</span></span>)] <span class="hljs-keyword">bool</span> ifArgument)</span>
+        {
+            <span class="hljs-keyword">return</span> ifArgument ? <span class="hljs-keyword">this</span>.Ok() : <span class="hljs-keyword">this</span>.Cancel();
+        }
+    }
+</code></pre>
+<p>This Directive:</p>
+<ul>
+<li>Declares its name using the <code>[GraphType]</code> attribute
+<ul>
+<li>The name will be derived from the class name if the attribute is omitted</li>
+</ul></li>
+<li>Defines that it can be included in a query document at all applicable field selection locations using the <code>[DirectiveLocations]</code> attribute
+<ul>
+<li>This is the default behavior and will be set automatically if the attribute is omitted.</li>
+</ul></li>
+<li>Declares a life cycle method of <code>BeforeFieldResolution</code> and provides one required input argument</li>
+<li>Uses the <code>[FromGraphQL]</code> attribute to declare the input argument's name in the schema</li>
+</ul>
+<h3><a class="anchor" aria-hidden="true" id="directive-life-cycle-methods"></a><a href="#directive-life-cycle-methods" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Directive Life Cycle Methods</h3>
+<p>GraphQL ASP.NET offers two points in the field pipeline at which a directive could be invoked. By declaring your methods as one of these two method names (or both), you can invoke the directive at that point in the lifecycle:</p>
+<ul>
+<li><code>BeforeFieldResolution</code>
+<ul>
+<li>This method is executed before a controller method is called.</li>
+</ul></li>
+<li><code>AfterFieldResolution</code>
+<ul>
+<li>The method is executed after the controller method is called.</li>
+</ul></li>
+</ul>
+<blockquote>
+<p>Directive life cycle methods must have an identical signature</p>
+</blockquote>
+<p>While a directive may declare both life cycle methods independently, it is only a single entity in a schema. As a result both life cycle methods must share a common signature. The runtime will throw an exception when your schema is created if the signatures differ.</p>
+<h3><a class="anchor" aria-hidden="true" id="returning-data-from-a-directive"></a><a href="#returning-data-from-a-directive" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Returning Data from a Directive</h3>
+<p>Directives can't directly return data or resolve a field but they can influence the field data using <code>this.Request.DataSource</code>. This property gives you direct access to the data items the field is currently resolving as well as the resolved values and current item state if executing <code>AfterFieldResolution</code>. You're free to manipulate this data as necessary and can change the resolved value, cancel a specific item etc.</p>
+<p><strong>Directives Must Return IGraphActionResult</strong></p>
+<p>Since directives don't directly return data, they must always return a <code>IGraphActionResult</code> to fully declare their intent. In the include directive, we're returning <code>this.Ok()</code> and <code>this.Cancel()</code> which allows us to affect the pipeline processing status, signaling for it to continue or cancel.</p>
+<h2><a class="anchor" aria-hidden="true" id="how-directives-are-executed"></a><a href="#how-directives-are-executed" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>How Directives are Executed</h2>
+<p>Directives are executed as a middleware component in the field execution pipeline. If the request supplies any directives to be ran, they are executed in the pipeline and depending on the result, the pipeline is allowed to continue or not.</p>
+<p>The include directive above is very simple. Depending on the input argument it either returns <code>this.Ok()</code> indicating everything executed fine and processing of the pipeline should continue, or it returns <code>this.Cancel()</code> to end the request. The include directive does not attempt to influence or filter the incoming data items, its an &quot;all or nothing&quot; directive.</p>
+<h2><a class="anchor" aria-hidden="true" id="directive-execution-order"></a><a href="#directive-execution-order" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Directive Execution Order</h2>
+<p>When more than one directive is encountered for a single field they are executed in sequence in the order declared in the source text. No directive has precedence over another and all will be executed.</p>
+<h2><a class="anchor" aria-hidden="true" id="working-with-fragments"></a><a href="#working-with-fragments" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Working with Fragments</h2>
+<p>Directives attached to spreads and named fragments are executed for each of the top level fields in the fragment.</p>
+<p>In this example :</p>
+<pre><code class="hljs css language-javascript">query {
+    bakery {
+        allPastries @directive1 {
+            id
+            name
+            ...donutData @directiveA
+        }
+    }
+}
+
+fragment donutData on Donut @directiveB {
+    flavor @directiveC
+    size {
+        length @directiveD
+        width
+    }
+}
+</code></pre>
+<p>The directives executed, in order, for each field are:</p>
+<ul>
+<li><p><strong><code>allPasteries</code></strong>: <code>@directive1</code></p></li>
+<li><p><strong><code>flavor</code></strong>: <code>@directiveA</code>, <code>@directiveB</code>, <code>@directiveC</code></p></li>
+</ul>
+<ul>
+<li><p><strong><code>size</code></strong>: <code>@directiveA</code>, <code>@directiveB</code></p></li>
+<li><p><strong><code>length</code></strong>: <code>@directiveD</code></p></li>
+<li><p><strong><code>id</code>, <code>name</code>, <code>width</code></strong>: <em>-no directives-</em></p></li>
+</ul>
+<p>Since the <code>donutData</code> fragment is spread into the <code>allPastries</code> field its directives are also spread into the fields at the &quot;top-level&quot; of the fragment.</p>
+<h2><a class="anchor" aria-hidden="true" id="sharing-data-with-fields"></a><a href="#sharing-data-with-fields" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Sharing Data with Fields</h2>
+<p>It is recommended that your directives act independently and be self contained. But if your use case calls for a need to share data with the fields they are targeting, the key-value pair collection <code>Items</code> that can be used:</p>
+<ul>
+<li><code>this.Request.Items</code> is a collection scoped to the current field execution. These values are available to all executing directives as well as the field resolver within the current pipeline.</li>
+</ul>
+</span></div></article></div><div class="docs-prevnext"><a class="docs-prev button" href="/docs/advanced/type-expressions"><span class="arrow-prev">← </span><span>Type Expressions</span></a><a class="docs-next button" href="/docs/advanced/custom-scalars"><span>Custom Scalars</span><span class="arrow-next"> →</span></a></div></div></div><nav class="onPageNav"><ul class="toc-headings"><li><a href="#anatomy-of-a-directive">Anatomy of a Directive</a><ul class="toc-headings"><li><a href="#directive-life-cycle-methods">Directive Life Cycle Methods</a></li><li><a href="#returning-data-from-a-directive">Returning Data from a Directive</a></li></ul></li><li><a href="#how-directives-are-executed">How Directives are Executed</a></li><li><a href="#directive-execution-order">Directive Execution Order</a></li><li><a href="#working-with-fragments">Working with Fragments</a></li><li><a href="#sharing-data-with-fields">Sharing Data with Fields</a></li></ul></nav></div><footer class="nav-footer" id="footer"><section class="sitemap"><div><h5>Docs</h5><a href="/docs/introduction/made-for-aspnet-developers">Made for ASP.NET Developers</a><a href="/docs/quick/code-examples">Code Examples</a></div><div></div><div><h5>More</h5><a class="github-button" href="https://github.com/graphql-aspnet/graphql-aspnet" data-show-count="true" data-count-href="/graphql-aspnet/graphql-aspnet/stargazers" aria-label="Star this project on GitHub">Star on GitHub</a><a href="https://graphql.org">GraphQL.org</a><a href="https://dotnet.microsoft.com/learn/aspnet">Learn ASP.NET</a></div></section><section class="copyright">Copyright © 2019 GraphQL ASP.NET</section></footer></div><script>window.twttr=(function(d,s, id){var js,fjs=d.getElementsByTagName(s)[0],t=window.twttr||{};if(d.getElementById(id))return t;js=d.createElement(s);js.id=id;js.src='https://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js, fjs);t._e = [];t.ready = function(f) {t._e.push(f);};return t;}(document, 'script', 'twitter-wjs'));</script></body></html>

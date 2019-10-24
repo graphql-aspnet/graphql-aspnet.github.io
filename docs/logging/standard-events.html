@@ -1,0 +1,349 @@
+<!DOCTYPE html><html lang="en"><head><meta charSet="utf-8"/><meta http-equiv="X-UA-Compatible" content="IE=edge"/><title>Standard Events · GraphQL ASP.NET</title><meta name="viewport" content="width=device-width"/><meta name="generator" content="Docusaurus"/><meta name="description" content="GraphQL ASP.NET tracks 19 standard events. Most of these are recorded during the execution of a query. Some, such as those around field resolution, can be recorded many times in the course of a single request."/><meta name="docsearch:language" content="en"/><meta property="og:title" content="Standard Events · GraphQL ASP.NET"/><meta property="og:type" content="website"/><meta property="og:url" content="https://graphql-aspnet.github.io/"/><meta property="og:description" content="GraphQL ASP.NET tracks 19 standard events. Most of these are recorded during the execution of a query. Some, such as those around field resolution, can be recorded many times in the course of a single request."/><meta property="og:image" content="https://graphql-aspnet.github.io/img/undraw_online.svg"/><meta name="twitter:card" content="summary"/><meta name="twitter:image" content="https://graphql-aspnet.github.io/img/undraw_tweetstorm.svg"/><link rel="shortcut icon" href="/img/logo-64.png"/><link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/hybrid.min.css"/><script>
+              (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+              (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+              m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+              })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+              ga('create', 'UA-150856900-1', 'auto');
+              ga('send', 'pageview');
+            </script><script type="text/javascript" src="https://buttons.github.io/buttons.js"></script><script src="/js/scrollSpy.js"></script><link rel="stylesheet" href="/css/main.css"/><script src="/js/codetabs.js"></script></head><body class="sideNavVisible separateOnPageNav"><div class="fixedHeaderContainer"><div class="headerWrapper wrapper"><header><a href="/"><img class="logo" src="/img/logo-64.png" alt="GraphQL ASP.NET"/><h2 class="headerTitleWithLogo">GraphQL ASP.NET</h2></a><div class="navigationWrapper navigationSlider"><nav class="slidingNav"><ul class="nav-site nav-site-internal"><li class="siteNavGroupActive"><a href="/docs/quick/overview" target="_self">Documentation</a></li><li class=""><a href="https://github.com/graphql-aspnet/graphql-aspnet" target="_self">Source Code</a></li></ul></nav></div></header></div></div><div class="navPusher"><div class="docMainWrapper wrapper"><div class="docsNavContainer" id="docsNav"><nav class="toc"><div class="toggleNav"><section class="navWrapper wrapper"><div class="navBreadcrumb wrapper"><div class="navToggle" id="navToggler"><div class="hamburger-menu"><div class="line1"></div><div class="line2"></div><div class="line3"></div></div></div><h2><i>›</i><span>Logging</span></h2><div class="tocToggler" id="tocToggler"><i class="icon-toc"></i></div></div><div class="navGroups"><div class="navGroup"><h3 class="navGroupCategoryTitle">Jump In!</h3><ul class=""><li class="navListItem"><a class="navItem" href="/docs/quick/overview">Overview</a></li><li class="navListItem"><a class="navItem" href="/docs/quick/quick-start">Quick Start</a></li><li class="navListItem"><a class="navItem" href="/docs/quick/code-examples">Code Examples</a></li></ul></div><div class="navGroup"><h3 class="navGroupCategoryTitle">Introduction</h3><ul class=""><li class="navListItem"><a class="navItem" href="/docs/introduction/what-is-graphql">What is GraphQL?</a></li><li class="navListItem"><a class="navItem" href="/docs/introduction/made-for-aspnet-developers">Made for ASP.NET Developers</a></li></ul></div><div class="navGroup"><h3 class="navGroupCategoryTitle">Controllers &amp; Actions</h3><ul class=""><li class="navListItem"><a class="navItem" href="/docs/controllers/actions">Actions</a></li><li class="navListItem"><a class="navItem" href="/docs/controllers/model-state">Model State</a></li><li class="navListItem"><a class="navItem" href="/docs/controllers/field-paths">Field Paths</a></li><li class="navListItem"><a class="navItem" href="/docs/controllers/authorization">Authorization</a></li><li class="navListItem"><a class="navItem" href="/docs/controllers/type-extensions">Type Extensions</a></li><li class="navListItem"><a class="navItem" href="/docs/controllers/batch-operations">Batch Operations</a></li></ul></div><div class="navGroup"><h3 class="navGroupCategoryTitle">Graph Type Definitions</h3><ul class=""><li class="navListItem"><a class="navItem" href="/docs/types/objects">Objects</a></li><li class="navListItem"><a class="navItem" href="/docs/types/input-objects">Input Objects</a></li><li class="navListItem"><a class="navItem" href="/docs/types/interfaces">Interfaces</a></li><li class="navListItem"><a class="navItem" href="/docs/types/unions">Unions</a></li><li class="navListItem"><a class="navItem" href="/docs/types/enums">Enums</a></li><li class="navListItem"><a class="navItem" href="/docs/types/scalars">Scalars</a></li><li class="navListItem"><a class="navItem" href="/docs/types/list-non-null">List &amp; Non-Null</a></li></ul></div><div class="navGroup"><h3 class="navGroupCategoryTitle">Logging</h3><ul class=""><li class="navListItem"><a class="navItem" href="/docs/logging/structured-logging">Structured Logging</a></li><li class="navListItem navListItemActive"><a class="navItem" href="/docs/logging/standard-events">Standard Events</a></li></ul></div><div class="navGroup"><h3 class="navGroupCategoryTitle">Query Execution</h3><ul class=""><li class="navListItem"><a class="navItem" href="/docs/execution/metrics">Query Profiling</a></li><li class="navListItem"><a class="navItem" href="/docs/execution/malicious-queries">Malicious Queries</a></li></ul></div><div class="navGroup"><h3 class="navGroupCategoryTitle">Advanced</h3><ul class=""><li class="navListItem"><a class="navItem" href="/docs/advanced/subscriptions">Subscriptions</a></li><li class="navListItem"><a class="navItem" href="/docs/advanced/type-expressions">Type Expressions</a></li><li class="navListItem"><a class="navItem" href="/docs/advanced/directives">Directives</a></li><li class="navListItem"><a class="navItem" href="/docs/advanced/custom-scalars">Custom Scalars</a></li><li class="navListItem"><a class="navItem" href="/docs/advanced/graph-action-results">Action Results</a></li><li class="navListItem"><a class="navItem" href="/docs/advanced/middleware">Pipelines &amp; Middleware</a></li><li class="navListItem"><a class="navItem" href="/docs/advanced/query-cache">Query Caching</a></li><li class="navListItem"><a class="navItem" href="/docs/advanced/multi-schema-support">Multi-Schema Support</a></li></ul></div><div class="navGroup"><h3 class="navGroupCategoryTitle">Development Concerns</h3><ul class=""><li class="navListItem"><a class="navItem" href="/docs/development/debugging">Debugging</a></li><li class="navListItem"><a class="navItem" href="/docs/development/unit-testing">Unit Testing</a></li></ul></div><div class="navGroup"><h3 class="navGroupCategoryTitle">References</h3><ul class=""><li class="navListItem"><a class="navItem" href="/docs/reference/how-it-works">How it Works</a></li><li class="navListItem"><a class="navItem" href="/docs/reference/schema-configuration">Schema Configuration</a></li><li class="navListItem"><a class="navItem" href="/docs/reference/attributes">Attributes</a></li><li class="navListItem"><a class="navItem" href="/docs/reference/graph-controller">GraphController</a></li><li class="navListItem"><a class="navItem" href="/docs/reference/graph-directive">GraphDirective</a></li><li class="navListItem"><a class="navItem" href="/docs/reference/http-processor">HTTP Processor</a></li><li class="navListItem"><a class="navItem" href="/docs/reference/demo-projects">Demo Projects</a></li><li class="navListItem"><a class="navItem" href="/docs/reference/performance">Benchmarks</a></li><li class="navListItem"><a class="navItem" href="/docs/reference/contributing">Contributing</a></li></ul></div></div></section></div><script>
+            var coll = document.getElementsByClassName('collapsible');
+            var checkActiveCategory = true;
+            for (var i = 0; i < coll.length; i++) {
+              var links = coll[i].nextElementSibling.getElementsByTagName('*');
+              if (checkActiveCategory){
+                for (var j = 0; j < links.length; j++) {
+                  if (links[j].classList.contains('navListItemActive')){
+                    coll[i].nextElementSibling.classList.toggle('hide');
+                    coll[i].childNodes[1].classList.toggle('rotate');
+                    checkActiveCategory = false;
+                    break;
+                  }
+                }
+              }
+
+              coll[i].addEventListener('click', function() {
+                var arrow = this.childNodes[1];
+                arrow.classList.toggle('rotate');
+                var content = this.nextElementSibling;
+                content.classList.toggle('hide');
+              });
+            }
+
+            document.addEventListener('DOMContentLoaded', function() {
+              createToggler('#navToggler', '#docsNav', 'docsSliderActive');
+              createToggler('#tocToggler', 'body', 'tocActive');
+
+              var headings = document.querySelector('.toc-headings');
+              headings && headings.addEventListener('click', function(event) {
+                var el = event.target;
+                while(el !== headings){
+                  if (el.tagName === 'A') {
+                    document.body.classList.remove('tocActive');
+                    break;
+                  } else{
+                    el = el.parentNode;
+                  }
+                }
+              }, false);
+
+              function createToggler(togglerSelector, targetSelector, className) {
+                var toggler = document.querySelector(togglerSelector);
+                var target = document.querySelector(targetSelector);
+
+                if (!toggler) {
+                  return;
+                }
+
+                toggler.onclick = function(event) {
+                  event.preventDefault();
+
+                  target.classList.toggle(className);
+                };
+              }
+            });
+        </script></nav></div><div class="container mainContainer"><div class="wrapper"><div class="post"><header class="postHeader"><h1 class="postHeaderTitle">Standard Events</h1></header><article><div><span><p>GraphQL ASP.NET tracks 19 standard events. Most of these are recorded during the execution of a query. Some, such as those around field resolution, can be recorded many times in the course of a single request.</p>
+<p><em><strong>Common Event Properties</strong></em></p>
+<p>All events share a common set of properties inherited from <code>GraphLogEntry</code>.</p>
+<table>
+<thead>
+<tr><th>Property</th><th>Description</th></tr>
+</thead>
+<tbody>
+<tr><td><em>EventId</em></td><td>The numeric constant assigned to the event.</td></tr>
+<tr><td><em>EventName</em></td><td>The human-friendly name of the event.</td></tr>
+<tr><td><em>DateTimeUTC</em></td><td>A date and time, in UTC-0, when the event was <em>created</em>.</td></tr>
+</tbody>
+</table>
+<p><em>Constants for event names and ids can be found at</em> <code>GraphQL.AspNet.Logging.LogEventIds</code></p>
+<p><em>Constants for all log entry properties can be found at</em> <code>GraphQL.AspNet.Logging.LogPropertyNames</code></p>
+<h2><a class="anchor" aria-hidden="true" id="startup-events"></a><a href="#startup-events" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Startup Events</h2>
+<h3><a class="anchor" aria-hidden="true" id="schema-route-registered"></a><a href="#schema-route-registered" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Schema Route Registered</h3>
+<p>This event is recorded when GraphQL successfully registers an entry in the ASP.NET MVC's route table to accept requests for a target schema. This event is raised once per application instance.</p>
+<p><strong>Important Properties</strong></p>
+<table>
+<thead>
+<tr><th>Property</th><th>Description</th></tr>
+</thead>
+<tbody>
+<tr><td><em>SchemaTypeName</em></td><td>The full name of your your schema type. For most single schema applications this will be <code>GraphQL.AspNet.Schemas.GraphSchema</code>.</td></tr>
+<tr><td><em>RoutePath</em></td><td>The relative URL that was registered for the schema type, e.g. <code>'/graphql</code></td></tr>
+</tbody>
+</table>
+<h3><a class="anchor" aria-hidden="true" id="schema-instance-created"></a><a href="#schema-instance-created" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Schema Instance Created</h3>
+<p>This event is recorded each time an instance of your schema is created. By default, schema's are stored as singleton instances so this event should be recorded once per application instance.</p>
+<p><strong>Important Properties</strong></p>
+<table>
+<thead>
+<tr><th>Property</th><th>Description</th></tr>
+</thead>
+<tbody>
+<tr><td><em>SchemaTypeName</em></td><td>The full name of your your schema type. For most single schema applications this will be <code>GraphQL.AspNet.Schemas.GraphSchema</code>.</td></tr>
+<tr><td><em>SupportedOperationTypes</em></td><td>A comma separated list of the operations the schema is tracking (e.g. query, mutation and/or subscription)</td></tr>
+<tr><td><em>GraphTypes</em></td><td>A collection of objects containing each registered graph type's name, type kind, .NET type association and number of fields (if any)</td></tr>
+</tbody>
+</table>
+<h3><a class="anchor" aria-hidden="true" id="schema-pipeline-registered"></a><a href="#schema-pipeline-registered" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Schema Pipeline Registered</h3>
+<p>This event is recorded each time an instance of a schema pipeline is created by your DI container. Like schemas, field middleware pipelines are stored as singleton instances so this event should be recorded once per pipleline per application instance.</p>
+<p><strong>Important Properties</strong></p>
+<table>
+<thead>
+<tr><th>Property</th><th>Description</th></tr>
+</thead>
+<tbody>
+<tr><td><em>PipelineName</em></td><td>The human friendly name of the pipeline that was created</td></tr>
+<tr><td><em>MiddlewareComponents</em></td><td>An array of the registered names of the components in your schema's field pipeline. The names are ordered according to their position in the pipeline.</td></tr>
+</tbody>
+</table>
+<h2><a class="anchor" aria-hidden="true" id="request-level-events"></a><a href="#request-level-events" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Request Level Events</h2>
+<h3><a class="anchor" aria-hidden="true" id="request-received"></a><a href="#request-received" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Request Received</h3>
+<p>This is event is recorded when the query execution pipeline first receives a new query to process.</p>
+<p><strong>Important Properties</strong></p>
+<table>
+<thead>
+<tr><th>Property</th><th>Description</th></tr>
+</thead>
+<tbody>
+<tr><td><em>Username</em></td><td>the value of <code>this.User.Identity.Name</code> or null</td></tr>
+<tr><td><em>OperationRequestId</em></td><td>A unique id identifying the overall request that was received.</td></tr>
+<tr><td><em>QueryText</em></td><td>The query provided by the user.</td></tr>
+</tbody>
+</table>
+<h3><a class="anchor" aria-hidden="true" id="query-plan-generated"></a><a href="#query-plan-generated" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Query Plan Generated</h3>
+<p>This is event is recorded when the runtime generates a new query plan. This event may or may not be recorded on each request if you are making use of the query cache.</p>
+<p><strong>Important Properties</strong></p>
+<table>
+<thead>
+<tr><th>Property</th><th>Description</th></tr>
+</thead>
+<tbody>
+<tr><td><em>QueryPlanId</em></td><td>A unique id assigned to the created query plan.</td></tr>
+<tr><td><em>SchemaTypeName</em></td><td>the full .NET type name of the schema type this plan targets</td></tr>
+<tr><td><em>IsValid</em></td><td>A boolean value indicating if the query document resulted in a valid plan</td></tr>
+<tr><td><em>MaxDepth*</em></td><td>The maximum nested depth of any given field in the plan</td></tr>
+<tr><td><em>EstimatedComplexity*</em></td><td>The complexity score assigned to the query plan by the runtime</td></tr>
+</tbody>
+</table>
+<p>* See the section on dealing with <a href="../execution/malicious-queries">malicious queries</a> for more details on <code>MaxDepth</code> and <code>EstimatedComplexity</code>.</p>
+<h3><a class="anchor" aria-hidden="true" id="query-cache-hit"></a><a href="#query-cache-hit" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Query Cache Hit</h3>
+<p>This event is recorded when the runtime is able to pull an existing instance of a Query Plan from the query cache for the received query document. This event is only recorded if the query cache is enabled.</p>
+<p><strong>Important Properties</strong></p>
+<table>
+<thead>
+<tr><th>Property</th><th>Description</th></tr>
+</thead>
+<tbody>
+<tr><td><em>QueryPlanHashCode</em></td><td>The unique hash key generated from the query document and used to search for an existing plan in the query cache.</td></tr>
+<tr><td><em>SchemaTypeName</em></td><td>the full .NET type name of the schema type this plan targets</td></tr>
+</tbody>
+</table>
+<h3><a class="anchor" aria-hidden="true" id="query-cache-miss"></a><a href="#query-cache-miss" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Query Cache Miss</h3>
+<p>This event is recorded when the runtime is unable to pull an existing instance of a Query Plan from the query cache for the received query document. This event is only recorded if the query cache is enabled.</p>
+<p><strong>Important Properties</strong></p>
+<table>
+<thead>
+<tr><th>Property</th><th>Description</th></tr>
+</thead>
+<tbody>
+<tr><td><em>QueryPlanHashCode</em></td><td>The unique hash key generated from the query document and used to search for an existing plan in the query cache.</td></tr>
+<tr><td><em>SchemaTypeName</em></td><td>the full .NET type name of the schema type this plan targets</td></tr>
+</tbody>
+</table>
+<h3><a class="anchor" aria-hidden="true" id="query-cache-add"></a><a href="#query-cache-add" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Query Cache Add</h3>
+<p>This is event is recorded when the runtime successfully stores an instance of a Query Plan into the query cache. This event is only recorded if the query cache is enabled.</p>
+<p><strong>Important Properties</strong></p>
+<table>
+<thead>
+<tr><th>Property</th><th>Description</th></tr>
+</thead>
+<tbody>
+<tr><td><em>QueryPlanHashCode</em></td><td>The unique hash key generated from the query document and used to search for an existing plan in the query cache.</td></tr>
+<tr><td><em>SchemaTypeName</em></td><td>the full .NET type name of the schema type this plan targets</td></tr>
+<tr><td><em>QueryPlanId</em></td><td>The unique query plan Id created when it was generated. Can be used to cross link this event to the <code>Query Plan Generated</code> event for further details.</td></tr>
+</tbody>
+</table>
+<h3><a class="anchor" aria-hidden="true" id="request-completed"></a><a href="#request-completed" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Request Completed</h3>
+<p>This is event is recorded when the final result for the request is generated and is returned from the runtime to be serialized. No actual data values are recorded to the logs to prevent leaks of potentially sensitive information.</p>
+<p><strong>Important Properties</strong></p>
+<table>
+<thead>
+<tr><th>Property</th><th>Description</th></tr>
+</thead>
+<tbody>
+<tr><td><em>OperationRequestId</em></td><td>A unique id identifying the overall request.</td></tr>
+<tr><td><em>HasData</em></td><td><code>true</code> or <code>false</code> indicating if at least one data value was included in the result</td></tr>
+<tr><td><em>HasErrors</em></td><td><code>true</code> or <code>false</code> indicating if at least one error message was included in the result</td></tr>
+</tbody>
+</table>
+<h2><a class="anchor" aria-hidden="true" id="field-level-events"></a><a href="#field-level-events" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Field Level Events</h2>
+<p>After a query plan has been created GraphQL ASP.NET begins resolving each field needed to fulfill the request. This group of events is raised for each item of each field that is processed. Since all fields are executed asynchronously (even if the resolvers themselves are synchronous) the order in which the events are recorded can be unpredictable and overlap between fields can occur. Using the recorded date along with the <code>PipelineRequestId</code> can help to filter the noise.</p>
+<h3><a class="anchor" aria-hidden="true" id="field-resolution-started"></a><a href="#field-resolution-started" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Field Resolution Started</h3>
+<p>This event is raised when a new field is queued for resolution.</p>
+<p><strong>Important Properties</strong></p>
+<table>
+<thead>
+<tr><th>Property</th><th>Description</th></tr>
+</thead>
+<tbody>
+<tr><td><em>PipelineRequestId</em></td><td>A unique id identifying the individual field request.</td></tr>
+<tr><td><em>FieldExecutionMode</em></td><td>Indicates if this pipeline is being executed for a <code>single source item</code> or as a <code>batch</code></td></tr>
+<tr><td><em>FieldPath</em></td><td>The path of the field being resolved, e.g. <code>[type]/Donut/id</code></td></tr>
+</tbody>
+</table>
+<h3><a class="anchor" aria-hidden="true" id="field-authorization-started"></a><a href="#field-authorization-started" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Field Authorization Started</h3>
+<p>This is event is raised when a field is sent for authorization prior to being resolved.</p>
+<p><strong>Important Properties</strong></p>
+<table>
+<thead>
+<tr><th>Property</th><th>Description</th></tr>
+</thead>
+<tbody>
+<tr><td><em>PipelineRequestId</em></td><td>A unique id identifying the individual field request.</td></tr>
+<tr><td><em>FieldPath</em></td><td>The path of the field being resolved, e.g. <code>[type]/Donut/id</code></td></tr>
+<tr><td><em>Username</em></td><td>the value of <code>this.User.Identity.Name</code> or null</td></tr>
+</tbody>
+</table>
+<h3><a class="anchor" aria-hidden="true" id="field-authorization-completed"></a><a href="#field-authorization-completed" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Field Authorization Completed</h3>
+<p>This is event is raised after a field authorization has completed.</p>
+<p><strong>Important Properties</strong></p>
+<table>
+<thead>
+<tr><th>Property</th><th>Description</th></tr>
+</thead>
+<tbody>
+<tr><td><em>PipelineRequestId</em></td><td>A unique id identifying the individual field request.</td></tr>
+<tr><td><em>FieldPath</em></td><td>The path of the field being resolved, e.g. <code>[type]/Donut/id</code></td></tr>
+<tr><td><em>Username</em></td><td>the value of <code>this.User.Identity.Name</code> or null</td></tr>
+<tr><td><em>AuthorizationStatus</em></td><td><code>Skipped</code>, <code>Authorized</code> or <code>Unauthorized</code></td></tr>
+<tr><td><em>LogMessage</em></td><td>An internal message containing an explanation of why authorization failed.</td></tr>
+</tbody>
+</table>
+<h3><a class="anchor" aria-hidden="true" id="field-resolution-completed"></a><a href="#field-resolution-completed" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Field Resolution Completed</h3>
+<p>This is event is raised when a field completes its execution pipeline and a result is generated. No actual data values are recorded to the logs to prevent leaks of potentially sensitive information.</p>
+<p><strong>Important Properties</strong></p>
+<table>
+<thead>
+<tr><th>Property</th><th>Description</th></tr>
+</thead>
+<tbody>
+<tr><td><em>PipelineRequestId</em></td><td>A unique id identifying the individual field request.</td></tr>
+<tr><td><em>FieldPath</em></td><td>The path of the field being resolved, e.g. <code>[type]/Donut/id</code></td></tr>
+<tr><td><em>HasData</em></td><td><code>true</code> or <code>false</code> indicating if at least one data value was included in the result</td></tr>
+</tbody>
+</table>
+<h2><a class="anchor" aria-hidden="true" id="controller-level-events"></a><a href="#controller-level-events" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Controller Level Events</h2>
+<p>After the security challenge has completed, but before field resolution is completed, if the pipeline executes a controller method to resolve the field these events will be raised. If the target resolver of the field is a property or POCO method, these events are skipped.</p>
+<h3><a class="anchor" aria-hidden="true" id="action-invocation-started"></a><a href="#action-invocation-started" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Action Invocation Started</h3>
+<p>This event is raised when a controller begins processing a request to execute an action method.</p>
+<p><strong>Important Properties</strong></p>
+<table>
+<thead>
+<tr><th>Property</th><th>Description</th></tr>
+</thead>
+<tbody>
+<tr><td><em>PipelineRequestId</em></td><td>A unique id identifying the individual field request.</td></tr>
+<tr><td><em>ControllerTypeName</em></td><td>The full .NET type of the controller being invoked</td></tr>
+<tr><td><em>ActionName</em></td><td>The name of the method (not the field) that was being invoked when the exception occurred</td></tr>
+<tr><td><em>FieldPath</em></td><td>The schema field path that represents the action method</td></tr>
+<tr><td><em>SourceObjectType</em></td><td>The .NET type name of the input source to the action.</td></tr>
+<tr><td><em>IsAsync</em></td><td><code>true</code> or <code>false</code> indicating if the controller is going to invoke the action asynchronously or not</td></tr>
+</tbody>
+</table>
+<h3><a class="anchor" aria-hidden="true" id="action-model-state-validated"></a><a href="#action-model-state-validated" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Action Model State Validated</h3>
+<p>This event occurs after the controller has processed the input objects and validated the state of the model being passed to the action method.</p>
+<p><strong>Important Properties</strong></p>
+<table>
+<thead>
+<tr><th>Property</th><th>Description</th></tr>
+</thead>
+<tbody>
+<tr><td><em>PipelineRequestId</em></td><td>A unique id identifying the individual field request.</td></tr>
+<tr><td><em>ControllerTypeName</em></td><td>The full .NET type of the controller being invoked</td></tr>
+<tr><td><em>ActionName</em></td><td>The name of the method (not the field) that was being invoked when the exception occurred</td></tr>
+<tr><td><em>FieldPath</em></td><td>The schema field path that represents the action method</td></tr>
+<tr><td><em>ModelIsValid</em></td><td><code>true</code> or <code>false</code> indicating if the all model items completed validation successfully</td></tr>
+<tr><td><em>ModelItems</em></td><td>A list of items, one for each item that was invalid, indicating the parameter name and the string messages generated indicating the errors.</td></tr>
+</tbody>
+</table>
+<h3><a class="anchor" aria-hidden="true" id="action-invocation-completed"></a><a href="#action-invocation-completed" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Action Invocation Completed</h3>
+<p>This event is raised when a controller completes the invocation of an action method and a result is created.</p>
+<p><strong>Important Properties</strong></p>
+<table>
+<thead>
+<tr><th>Property</th><th>Description</th></tr>
+</thead>
+<tbody>
+<tr><td><em>PipelineRequestId</em></td><td>A unique id identifying the individual field request.</td></tr>
+<tr><td><em>ControllerTypeName</em></td><td>The full .NET type of the controller being invoked</td></tr>
+<tr><td><em>ActionName</em></td><td>The name of the method (not the field) that was being invoked when the exception occurred</td></tr>
+<tr><td><em>FieldPath</em></td><td>The schema field path that represents the action method</td></tr>
+<tr><td><em>ResultTypeName</em></td><td>The .NET type name of the data returned from the action. The may be an actual field value or an <code>IGraphActionResult</code> type.</td></tr>
+</tbody>
+</table>
+<h3><a class="anchor" aria-hidden="true" id="action-invocation-exception"></a><a href="#action-invocation-exception" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Action Invocation Exception</h3>
+<p>This event is raised by the controller if it is unable to invoke the target action method. This usually indicates some sort of data corruption or failed conversion of source data to the requested parameter types of the target action method. This can happen if the query plan or variables collection is altered by a 3rd party outside of the normal pipeline. Should this event occur the field will be abandoned and a null value returned as the field result. Child fields to this instance will not be processed but the operation will continue to attempt to resolve other sibling fields and their children.</p>
+<p><strong>Important Properties</strong></p>
+<table>
+<thead>
+<tr><th>Property</th><th>Description</th></tr>
+</thead>
+<tbody>
+<tr><td><em>PipelineRequestId</em></td><td>A unique id identifying the individual field request.</td></tr>
+<tr><td><em>ControllerTypeName</em></td><td>The full .NET type of the controller being invoked</td></tr>
+<tr><td><em>ActionName</em></td><td>The name of the method (not the field) that was being invoked when the exception occurred</td></tr>
+<tr><td><em>ExceptionMessage</em></td><td>The message on the exception that was thrown</td></tr>
+<tr><td><em>ExceptionTypeName</em></td><td>The .NET type name of the exception that was thrown</td></tr>
+<tr><td><em>StackTrace</em></td><td>The complete stack trace text of the exception</td></tr>
+</tbody>
+</table>
+<h3><a class="anchor" aria-hidden="true" id="action-unhandled-exception"></a><a href="#action-unhandled-exception" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Action Unhandled Exception</h3>
+<p>This event is raised if an unhandled exception occurs within the controller action method body. Should this event occur the field will be abandoned and a null value returned as the result of the field. Child fields will not be processed but the operation will continue to attempt to resolve other sibling fields and their children.</p>
+<p><strong>Important Properties</strong></p>
+<table>
+<thead>
+<tr><th>Property</th><th>Description</th></tr>
+</thead>
+<tbody>
+<tr><td><em>PipelineRequestId</em></td><td>A unique id identifying the individual field request.</td></tr>
+<tr><td><em>ControllerTypeName</em></td><td>The full .NET type of the controller being invoked</td></tr>
+<tr><td><em>ActionName</em></td><td>The name of the method (not the field) that was being invoked when the exception occurred</td></tr>
+<tr><td><em>ExceptionMessage</em></td><td>The message on the exception that was thrown</td></tr>
+<tr><td><em>ExceptionTypeName</em></td><td>The .NET type name of the exception that was thrown</td></tr>
+<tr><td><em>StackTrace</em></td><td>The complete stack trace text of the exception</td></tr>
+</tbody>
+</table>
+<h2><a class="anchor" aria-hidden="true" id="other-events"></a><a href="#other-events" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Other Events</h2>
+<h3><a class="anchor" aria-hidden="true" id="unhandled-exception"></a><a href="#unhandled-exception" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Unhandled Exception</h3>
+<p>This event is raised if any pipeline invocation is unable to recover from an error. If this is event is raised the request is abandoned and an error status is returned to the requestor. This event is always raised at a <code>Critical</code> log level. This event will be immediately followed by a <code>Request Completed</code> event.</p>
+<p><strong>Important Properties</strong></p>
+<table>
+<thead>
+<tr><th>Property</th><th>Description</th></tr>
+</thead>
+<tbody>
+<tr><td><em>ExceptionMessage</em></td><td>The message on the exception that was thrown</td></tr>
+<tr><td><em>ExceptionTypeName</em></td><td>The .NET type name of the exception that was thrown</td></tr>
+<tr><td><em>StackTrace</em></td><td>The complete stack trace text of the exception</td></tr>
+</tbody>
+</table>
+</span></div></article></div><div class="docs-prevnext"><a class="docs-prev button" href="/docs/logging/structured-logging"><span class="arrow-prev">← </span><span>Structured Logging</span></a><a class="docs-next button" href="/docs/execution/metrics"><span>Query Profiling</span><span class="arrow-next"> →</span></a></div></div></div><nav class="onPageNav"><ul class="toc-headings"><li><a href="#startup-events">Startup Events</a><ul class="toc-headings"><li><a href="#schema-route-registered">Schema Route Registered</a></li><li><a href="#schema-instance-created">Schema Instance Created</a></li><li><a href="#schema-pipeline-registered">Schema Pipeline Registered</a></li></ul></li><li><a href="#request-level-events">Request Level Events</a><ul class="toc-headings"><li><a href="#request-received">Request Received</a></li><li><a href="#query-plan-generated">Query Plan Generated</a></li><li><a href="#query-cache-hit">Query Cache Hit</a></li><li><a href="#query-cache-miss">Query Cache Miss</a></li><li><a href="#query-cache-add">Query Cache Add</a></li><li><a href="#request-completed">Request Completed</a></li></ul></li><li><a href="#field-level-events">Field Level Events</a><ul class="toc-headings"><li><a href="#field-resolution-started">Field Resolution Started</a></li><li><a href="#field-authorization-started">Field Authorization Started</a></li><li><a href="#field-authorization-completed">Field Authorization Completed</a></li><li><a href="#field-resolution-completed">Field Resolution Completed</a></li></ul></li><li><a href="#controller-level-events">Controller Level Events</a><ul class="toc-headings"><li><a href="#action-invocation-started">Action Invocation Started</a></li><li><a href="#action-model-state-validated">Action Model State Validated</a></li><li><a href="#action-invocation-completed">Action Invocation Completed</a></li><li><a href="#action-invocation-exception">Action Invocation Exception</a></li><li><a href="#action-unhandled-exception">Action Unhandled Exception</a></li></ul></li><li><a href="#other-events">Other Events</a><ul class="toc-headings"><li><a href="#unhandled-exception">Unhandled Exception</a></li></ul></li></ul></nav></div><footer class="nav-footer" id="footer"><section class="sitemap"><div><h5>Docs</h5><a href="/docs/introduction/made-for-aspnet-developers">Made for ASP.NET Developers</a><a href="/docs/quick/code-examples">Code Examples</a></div><div></div><div><h5>More</h5><a class="github-button" href="https://github.com/graphql-aspnet/graphql-aspnet" data-show-count="true" data-count-href="/graphql-aspnet/graphql-aspnet/stargazers" aria-label="Star this project on GitHub">Star on GitHub</a><a href="https://graphql.org">GraphQL.org</a><a href="https://dotnet.microsoft.com/learn/aspnet">Learn ASP.NET</a></div></section><section class="copyright">Copyright © 2019 GraphQL ASP.NET</section></footer></div><script>window.twttr=(function(d,s, id){var js,fjs=d.getElementsByTagName(s)[0],t=window.twttr||{};if(d.getElementById(id))return t;js=d.createElement(s);js.id=id;js.src='https://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js, fjs);t._e = [];t.ready = function(f) {t._e.push(f);};return t;}(document, 'script', 'twitter-wjs'));</script></body></html>

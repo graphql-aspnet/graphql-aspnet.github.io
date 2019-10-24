@@ -1,0 +1,215 @@
+<!DOCTYPE html><html lang="en"><head><meta charSet="utf-8"/><meta http-equiv="X-UA-Compatible" content="IE=edge"/><title>Pipelines and Custom Middleware · GraphQL ASP.NET</title><meta name="viewport" content="width=device-width"/><meta name="generator" content="Docusaurus"/><meta name="description" content="At the heart of GraphQL ASP.NET are 3 middleware pipelines; chains of components executed in a specific order to produce a result."/><meta name="docsearch:language" content="en"/><meta property="og:title" content="Pipelines and Custom Middleware · GraphQL ASP.NET"/><meta property="og:type" content="website"/><meta property="og:url" content="https://graphql-aspnet.github.io/"/><meta property="og:description" content="At the heart of GraphQL ASP.NET are 3 middleware pipelines; chains of components executed in a specific order to produce a result."/><meta property="og:image" content="https://graphql-aspnet.github.io/img/undraw_online.svg"/><meta name="twitter:card" content="summary"/><meta name="twitter:image" content="https://graphql-aspnet.github.io/img/undraw_tweetstorm.svg"/><link rel="shortcut icon" href="/img/logo-64.png"/><link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/hybrid.min.css"/><script>
+              (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+              (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+              m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+              })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+              ga('create', 'UA-150856900-1', 'auto');
+              ga('send', 'pageview');
+            </script><script type="text/javascript" src="https://buttons.github.io/buttons.js"></script><script src="/js/scrollSpy.js"></script><link rel="stylesheet" href="/css/main.css"/><script src="/js/codetabs.js"></script></head><body class="sideNavVisible separateOnPageNav"><div class="fixedHeaderContainer"><div class="headerWrapper wrapper"><header><a href="/"><img class="logo" src="/img/logo-64.png" alt="GraphQL ASP.NET"/><h2 class="headerTitleWithLogo">GraphQL ASP.NET</h2></a><div class="navigationWrapper navigationSlider"><nav class="slidingNav"><ul class="nav-site nav-site-internal"><li class="siteNavGroupActive"><a href="/docs/quick/overview" target="_self">Documentation</a></li><li class=""><a href="https://github.com/graphql-aspnet/graphql-aspnet" target="_self">Source Code</a></li></ul></nav></div></header></div></div><div class="navPusher"><div class="docMainWrapper wrapper"><div class="docsNavContainer" id="docsNav"><nav class="toc"><div class="toggleNav"><section class="navWrapper wrapper"><div class="navBreadcrumb wrapper"><div class="navToggle" id="navToggler"><div class="hamburger-menu"><div class="line1"></div><div class="line2"></div><div class="line3"></div></div></div><h2><i>›</i><span>Advanced</span></h2><div class="tocToggler" id="tocToggler"><i class="icon-toc"></i></div></div><div class="navGroups"><div class="navGroup"><h3 class="navGroupCategoryTitle">Jump In!</h3><ul class=""><li class="navListItem"><a class="navItem" href="/docs/quick/overview">Overview</a></li><li class="navListItem"><a class="navItem" href="/docs/quick/quick-start">Quick Start</a></li><li class="navListItem"><a class="navItem" href="/docs/quick/code-examples">Code Examples</a></li></ul></div><div class="navGroup"><h3 class="navGroupCategoryTitle">Introduction</h3><ul class=""><li class="navListItem"><a class="navItem" href="/docs/introduction/what-is-graphql">What is GraphQL?</a></li><li class="navListItem"><a class="navItem" href="/docs/introduction/made-for-aspnet-developers">Made for ASP.NET Developers</a></li></ul></div><div class="navGroup"><h3 class="navGroupCategoryTitle">Controllers &amp; Actions</h3><ul class=""><li class="navListItem"><a class="navItem" href="/docs/controllers/actions">Actions</a></li><li class="navListItem"><a class="navItem" href="/docs/controllers/model-state">Model State</a></li><li class="navListItem"><a class="navItem" href="/docs/controllers/field-paths">Field Paths</a></li><li class="navListItem"><a class="navItem" href="/docs/controllers/authorization">Authorization</a></li><li class="navListItem"><a class="navItem" href="/docs/controllers/type-extensions">Type Extensions</a></li><li class="navListItem"><a class="navItem" href="/docs/controllers/batch-operations">Batch Operations</a></li></ul></div><div class="navGroup"><h3 class="navGroupCategoryTitle">Graph Type Definitions</h3><ul class=""><li class="navListItem"><a class="navItem" href="/docs/types/objects">Objects</a></li><li class="navListItem"><a class="navItem" href="/docs/types/input-objects">Input Objects</a></li><li class="navListItem"><a class="navItem" href="/docs/types/interfaces">Interfaces</a></li><li class="navListItem"><a class="navItem" href="/docs/types/unions">Unions</a></li><li class="navListItem"><a class="navItem" href="/docs/types/enums">Enums</a></li><li class="navListItem"><a class="navItem" href="/docs/types/scalars">Scalars</a></li><li class="navListItem"><a class="navItem" href="/docs/types/list-non-null">List &amp; Non-Null</a></li></ul></div><div class="navGroup"><h3 class="navGroupCategoryTitle">Logging</h3><ul class=""><li class="navListItem"><a class="navItem" href="/docs/logging/structured-logging">Structured Logging</a></li><li class="navListItem"><a class="navItem" href="/docs/logging/standard-events">Standard Events</a></li></ul></div><div class="navGroup"><h3 class="navGroupCategoryTitle">Query Execution</h3><ul class=""><li class="navListItem"><a class="navItem" href="/docs/execution/metrics">Query Profiling</a></li><li class="navListItem"><a class="navItem" href="/docs/execution/malicious-queries">Malicious Queries</a></li></ul></div><div class="navGroup"><h3 class="navGroupCategoryTitle">Advanced</h3><ul class=""><li class="navListItem"><a class="navItem" href="/docs/advanced/subscriptions">Subscriptions</a></li><li class="navListItem"><a class="navItem" href="/docs/advanced/type-expressions">Type Expressions</a></li><li class="navListItem"><a class="navItem" href="/docs/advanced/directives">Directives</a></li><li class="navListItem"><a class="navItem" href="/docs/advanced/custom-scalars">Custom Scalars</a></li><li class="navListItem"><a class="navItem" href="/docs/advanced/graph-action-results">Action Results</a></li><li class="navListItem navListItemActive"><a class="navItem" href="/docs/advanced/middleware">Pipelines &amp; Middleware</a></li><li class="navListItem"><a class="navItem" href="/docs/advanced/query-cache">Query Caching</a></li><li class="navListItem"><a class="navItem" href="/docs/advanced/multi-schema-support">Multi-Schema Support</a></li></ul></div><div class="navGroup"><h3 class="navGroupCategoryTitle">Development Concerns</h3><ul class=""><li class="navListItem"><a class="navItem" href="/docs/development/debugging">Debugging</a></li><li class="navListItem"><a class="navItem" href="/docs/development/unit-testing">Unit Testing</a></li></ul></div><div class="navGroup"><h3 class="navGroupCategoryTitle">References</h3><ul class=""><li class="navListItem"><a class="navItem" href="/docs/reference/how-it-works">How it Works</a></li><li class="navListItem"><a class="navItem" href="/docs/reference/schema-configuration">Schema Configuration</a></li><li class="navListItem"><a class="navItem" href="/docs/reference/attributes">Attributes</a></li><li class="navListItem"><a class="navItem" href="/docs/reference/graph-controller">GraphController</a></li><li class="navListItem"><a class="navItem" href="/docs/reference/graph-directive">GraphDirective</a></li><li class="navListItem"><a class="navItem" href="/docs/reference/http-processor">HTTP Processor</a></li><li class="navListItem"><a class="navItem" href="/docs/reference/demo-projects">Demo Projects</a></li><li class="navListItem"><a class="navItem" href="/docs/reference/performance">Benchmarks</a></li><li class="navListItem"><a class="navItem" href="/docs/reference/contributing">Contributing</a></li></ul></div></div></section></div><script>
+            var coll = document.getElementsByClassName('collapsible');
+            var checkActiveCategory = true;
+            for (var i = 0; i < coll.length; i++) {
+              var links = coll[i].nextElementSibling.getElementsByTagName('*');
+              if (checkActiveCategory){
+                for (var j = 0; j < links.length; j++) {
+                  if (links[j].classList.contains('navListItemActive')){
+                    coll[i].nextElementSibling.classList.toggle('hide');
+                    coll[i].childNodes[1].classList.toggle('rotate');
+                    checkActiveCategory = false;
+                    break;
+                  }
+                }
+              }
+
+              coll[i].addEventListener('click', function() {
+                var arrow = this.childNodes[1];
+                arrow.classList.toggle('rotate');
+                var content = this.nextElementSibling;
+                content.classList.toggle('hide');
+              });
+            }
+
+            document.addEventListener('DOMContentLoaded', function() {
+              createToggler('#navToggler', '#docsNav', 'docsSliderActive');
+              createToggler('#tocToggler', 'body', 'tocActive');
+
+              var headings = document.querySelector('.toc-headings');
+              headings && headings.addEventListener('click', function(event) {
+                var el = event.target;
+                while(el !== headings){
+                  if (el.tagName === 'A') {
+                    document.body.classList.remove('tocActive');
+                    break;
+                  } else{
+                    el = el.parentNode;
+                  }
+                }
+              }, false);
+
+              function createToggler(togglerSelector, targetSelector, className) {
+                var toggler = document.querySelector(togglerSelector);
+                var target = document.querySelector(targetSelector);
+
+                if (!toggler) {
+                  return;
+                }
+
+                toggler.onclick = function(event) {
+                  event.preventDefault();
+
+                  target.classList.toggle(className);
+                };
+              }
+            });
+        </script></nav></div><div class="container mainContainer"><div class="wrapper"><div class="post"><header class="postHeader"><h1 class="postHeaderTitle">Pipelines and Custom Middleware</h1></header><article><div><span><p>At the heart of GraphQL ASP.NET are 3 middleware pipelines; chains of components executed in a specific order to produce a result.</p>
+<ul>
+<li><code>Query Execution Pipeline</code> : Invoked once per request this pipeline is responsible for validating the incoming package on the POST request, parsing the data and executing a query plan.</li>
+<li><code>Field Execution Pipeline</code> : Invoked once per requested field, this pipeline attempts to generate the requested data by calling the various controller actions and property resolvers.</li>
+<li><code>Field Authorization Pipeline</code>: This pipeline can be invoked as part of query execution or field execution depending on your schema's configuration. It will perform field authorization checks for each field context.</li>
+</ul>
+<h2><a class="anchor" aria-hidden="true" id="creating-new-middleware"></a><a href="#creating-new-middleware" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Creating New Middleware</h2>
+<p>Each new middleware component must implement one of the three middleware interfaces depending on the type of component you are creating; much in the way you'd define a filter or middleware component for ASP.NET MVC. The three middleware interfaces are:</p>
+<ul>
+<li><code>IQueryExecutionMiddleware</code></li>
+<li><code>IFieldExecutionMiddleware</code></li>
+<li><code>IFieldAuthorizationMiddleware</code></li>
+</ul>
+<p>The interfaces define one method, <code>InvokeAsync</code>, with identical signatures save for the type of data context accepted by each.</p>
+<pre><code class="hljs css language-csharp"><span class="hljs-comment">// The Query Execution Middleware Component definition.</span>
+<span class="hljs-keyword">public</span> <span class="hljs-keyword">interface</span> <span class="hljs-title">IQueryExecutionMiddleware</span>
+{
+    <span class="hljs-function">Task <span class="hljs-title">InvokeAsync</span>(<span class="hljs-params">
+        GraphQueryExecutionContext context,
+        GraphMiddlewareInvocationDelegate next,
+        CancellationToken cancelToken</span>)</span>;
+}
+</code></pre>
+<p>GraphQL ASP.NET will invoke your component at the appropriate time and pass to it the active data context. Once you have performed any necessary work involving the context invoke the <code>next</code> delegate (the second parameter)to pass the context to the next component in the chain.</p>
+<pre><code class="hljs css language-csharp"><span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title">MyQueryMiddleware</span> : <span class="hljs-title">IQueryExecutionMiddleware</span>
+{
+    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">async</span> Task <span class="hljs-title">InvokeAsync</span>(<span class="hljs-params">
+        GraphQueryExecutionContext context,
+        GraphMiddlewareInvocationDelegate next,
+        CancellationToken cancelToken</span>)</span>
+    {
+        <span class="hljs-comment">// Do any necessary work with the context</span>
+        <span class="hljs-keyword">if</span>(context.Request.QueryText == <span class="hljs-literal">null</span>)
+        {
+            context.Messages.Critical(<span class="hljs-string">"No Query Text Provided"</span>);
+            context.Cancel();
+        }
+
+        <span class="hljs-comment">// invoke the next component in the chain</span>
+        <span class="hljs-keyword">await</span> next(context, cancelToken);
+    }
+}
+</code></pre>
+<h2><a class="anchor" aria-hidden="true" id="the-context-object"></a><a href="#the-context-object" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>The Context Object</h2>
+<p>Each context object has specific data fields required for it to perform its work (detailed below). However, all contexts share a common set of items to govern the flow of work.</p>
+<ul>
+<li><code>Messages</code>: A collection of messages that will be added to the query result.</li>
+<li><code>Cancel()</code>: Marks the context as cancelled and sets the <code>IsCancelled</code> property to true. It is up to each middleware component to interpret the meaning of cancelled for its own purposes. A canceled field execution context, for instance, will be discarded and not rendered to the output whereas a canceled query context may or may not generate a result depending on when its cancelled.</li>
+<li><code>IsValid</code>: Determines if the context is in a valid and runnable state. Most middleware components will not attempt to process the component if its not in a valid state and will simply forward the request on. By default, a context is automatically invalidated if an error message is added in a <code>Critical</code> state.</li>
+<li><code>User</code>: The ClaimsPrincipal provided by ASP.NET containing the active user's credentials. May be null if user authentication is not setup for your application.</li>
+<li><code>Metrics</code>: The metrics package performing any profiling of the query. Various middleware components will stop/start phases of execution using this object. If metrics are not enabled this object will be null.</li>
+<li><code>Items</code>: A key/value pair collection of items. This field is user driven and not used by the runtime.</li>
+<li><code>Logger</code>: An <code>IGraphLogger</code> instance scoped to the the current query.</li>
+</ul>
+<h2><a class="anchor" aria-hidden="true" id="registering-new-middleware"></a><a href="#registering-new-middleware" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Registering New Middleware</h2>
+<p>Each pipeline can be extended using the <code>SchemaBuilder</code> returned from calling <code>.AddGraphQL()</code> at startup. Each schema that is added to GraphQL will generate its own builder with its own set of pipelines and components. They can be configured independently as needed.</p>
+<pre><code class="hljs css language-csharp"><span class="hljs-comment">// Startup.cs</span>
+<span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">ConfigureServices</span>(<span class="hljs-params">IServiceCollection services</span>)</span>
+{
+    <span class="hljs-comment">// obtain a reference to the builder after adding</span>
+    <span class="hljs-comment">// graphql for your schema</span>
+    <span class="hljs-keyword">var</span> schemaBuilder = services.AddGraphQL(options =&gt;
+        {
+            options.ExecutionOptions.MaxQueryDepth = <span class="hljs-number">15</span>;
+        });
+
+    <span class="hljs-comment">// add new middleware components to any pipeline</span>
+    schemaBuilder.QueryExecutionPipeline.AddMiddleware&lt;MyQueryMiddleware&gt;();
+}
+</code></pre>
+<p>Instead of adding to the end of the existing pipeline you can also call <code>.Clear()</code> to remove the default components and rebuild the pipeline from scratch. See below for the list of default middleware components and their order of execution. This can be handy when needing to inject a new component into the middle of the execution chain.</p>
+<h4><a class="anchor" aria-hidden="true" id="middleware-is-served-from-the-di-container"></a><a href="#middleware-is-served-from-the-di-container" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Middleware is served from the DI Container</h4>
+<p>Each pipeline is registered as a singleton instance in your service provider but the components within the pipeline are invoked according to the service lifetime you supply when you register them allowing you to setup dependencies as necessary.</p>
+<blockquote>
+<p>Register your middleware components with the <code>Singleton</code> lifetime scope whenever possible.</p>
+</blockquote>
+<p>It is recommended that your middleware components be singleton in nature if possible. The field pipelines can be invoked many dozens (or hundreds) of times per request and fetching new middleware instances for each invocation could impact performance. The internal pipeline manager will retain references to any singleton middleware components once they are generated and avoid this bottleneck whenever possible. All default components are registered as a singletons.</p>
+<h2><a class="anchor" aria-hidden="true" id="query-execution-pipeline"></a><a href="#query-execution-pipeline" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Query Execution Pipeline</h2>
+<p>The query execution pipeline is invoked once per request. It is supplied with the raw query text from the user and orchestrates the necessary calls to generate a a valid GraphQL result than can be returned to the client. It contains 9 components, in order of execution they are:</p>
+<ol>
+<li><code>ValidQueryRequestMiddleware</code> : Ensures that the data request recieved is valid and runnable (i.e. was a request provided, is query text defined etc.).</li>
+<li><code>RecordQueryMetricsMiddleware</code>: Governs the query profiling for the context. It will start the recording and terminate it after all other components have completed their operations.</li>
+<li><code>QueryPlanCacheMiddleware</code> : When the query cache is enabled for the schema this component will analyze the incoming query text and attempt to fetch a pre-cached query plan from storage.</li>
+<li><code>ParseQueryPlanMiddleware</code>: When required, this component will lex/parse the query text into a usable document from which a query plan can be created.</li>
+<li><code>GenerateQueryPlanMiddleware</code>: When required, this component will attempt to generate a fully qualified query plan for its target schema using a parsed document on the context.</li>
+<li><code>AssignQueryOperationMiddleware</code> : Marries the operation on the request with the operations in the active query plan and selects the appropriate one to be invoked.</li>
+<li><code>AuthorizeQueryOperationMiddleware</code>: If the schema is configured for <code>PerRequest</code> authorization this component will invoke the field authorization pipeline for each field of the selected operation that has security requirements and assign authorization results as appropriate.</li>
+<li><code>ExecuteQueryOperationMiddleware</code> : Uses the active operation and dispatches field execution contexts to resolve each field of the operation.</li>
+<li><code>PackageQueryResultMiddleware</code>: Performs a final set of checks on the resolved field data and generates an <code>IGraphOperationResult</code> for the query.</li>
+</ol>
+<h4><a class="anchor" aria-hidden="true" id="graphqueryexecutioncontext"></a><a href="#graphqueryexecutioncontext" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>GraphQueryExecutionContext</h4>
+<p>In addition to the common properties defined above, the query execution context defines a number of useful fields:</p>
+<pre><code class="hljs css language-csharp"><span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title">GraphQueryExecutionContext</span>
+{
+    <span class="hljs-keyword">public</span> IGraphOperationRequest Request { <span class="hljs-keyword">get</span>; }
+    <span class="hljs-keyword">public</span> IGraphOperationResult Result { <span class="hljs-keyword">get</span>; <span class="hljs-keyword">set</span>; }
+    <span class="hljs-keyword">public</span> IGraphQueryPlan QueryPlan { <span class="hljs-keyword">get</span>; <span class="hljs-keyword">set</span>; }
+    <span class="hljs-keyword">public</span> IList&lt;GraphDataItem&gt; FieldResults { <span class="hljs-keyword">get</span>; }
+
+    <span class="hljs-comment">// common properties omitted for brevity</span>
+}
+</code></pre>
+<ul>
+<li><code>Request</code>: The raw request data received on the HTTP request. Provides access to the query text, requested operation and any passed variable data.</li>
+<li><code>Result</code>: The created <code>IGraphOperationResult</code>. This property will be null until the result is created.</li>
+<li><code>QueryPlan</code>: the created (or retrieved from cache) query plan for the current query.</li>
+<li><code>FieldResults</code>: The individual, top-level data fields resolved for the selected operation. These fields are eventually packaged into the result object.</li>
+</ul>
+<h2><a class="anchor" aria-hidden="true" id="field-execution-pipeline"></a><a href="#field-execution-pipeline" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Field Execution Pipeline</h2>
+<p>The field execution pipeline is executed once for each field of data that needs to be resolved. Its primary job is to turn a request for a field into a data value that can be returned to the client. It contains 5 components, in order of execution they are:</p>
+<ol>
+<li><code>ValidateFieldExecutionMiddleware</code> : Validates that the context and required invocation data has been correctly supplied.</li>
+<li><code>AuthorizeFieldMiddleware</code> : If the schema is configured for <code>PerField</code> authorization this component will invoke the field authorization pipeline for the current field and assign authorization results as appropriate.</li>
+<li><code>InvokeDirectiveResolversMiddleware</code> : Any directives that were attached to the active field are executed and their results acted on accordingly.</li>
+<li><code>InvokeFieldResolverMiddleware</code> : The field resolver is called and a data value is created for the active context. This middleware component is ultimately responsible for invoking your controller actions.</li>
+<li><code>ProcessChildFieldsMiddleware</code> : If any child fields were registered with the invocation context for this field they are dispatched using the context's field result as the new source object.</li>
+</ol>
+<h4><a class="anchor" aria-hidden="true" id="graphfieldexecutioncontext"></a><a href="#graphfieldexecutioncontext" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>GraphFieldExecutionContext</h4>
+<p>In addition to the common properties defined above the field execution context defines a number of useful properties:</p>
+<pre><code class="hljs css language-csharp"><span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title">GraphFieldExecutionContext</span>
+{
+    <span class="hljs-keyword">public</span> IGraphFieldRequest Request { <span class="hljs-keyword">get</span>; }
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">object</span> Result { <span class="hljs-keyword">get</span>; <span class="hljs-keyword">set</span>; }
+
+    <span class="hljs-comment">// common properties omitted for brevity</span>
+}
+</code></pre>
+<ul>
+<li><code>Request</code>: The field request containing any source data, a reference to the metadata for the field as defined by the schema and a reference to the invocation requirements determined by the query plan.</li>
+<li><code>Result</code>: The raw data object produced from the field resolver. This value is passed as the source value to any child fields.</li>
+</ul>
+<h2><a class="anchor" aria-hidden="true" id="field-authorization-pipeline"></a><a href="#field-authorization-pipeline" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Field Authorization Pipeline</h2>
+<p>The field authorization pipeline can be invoked as part of query execution or field execution depending on your schema's configuration. It contains 1 component:</p>
+<ol>
+<li><code>FieldAuthorizationCheckMiddleware</code>: Inspects the active <code>ClaimsPrincipal</code> against the security requirements of the field on the context and generates a <code>FieldAuthorizationResult</code> indicating if the user is authorized or not. This component makes no decisions in regards to the authorization state. It is up to the other pipelines to act on the authorization results that are generated.</li>
+</ol>
+<h4><a class="anchor" aria-hidden="true" id="graphfieldauthorizationcontext"></a><a href="#graphfieldauthorizationcontext" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>GraphFieldAuthorizationContext</h4>
+<p>In addition to the common properties defined above the field authorization context defines a number of useful properties:</p>
+<pre><code class="hljs css language-csharp"> <span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title">GraphFieldAuthorizationContext</span>
+{
+    <span class="hljs-keyword">public</span> IGraphFieldAuthorizationRequest Request { <span class="hljs-keyword">get</span>; }
+    <span class="hljs-keyword">public</span> FieldAuthorizationResult Result { <span class="hljs-keyword">get</span>; <span class="hljs-keyword">set</span>; }
+
+    <span class="hljs-comment">// common properties omitted for brevity</span>
+}
+</code></pre>
+<ul>
+<li><code>Request</code>: Contains the field metadata for this context, including the security rules that need to be checked.</li>
+<li><code>Result</code>: The generated authorization result indicating if the user is authorized or unauthorized for the field. This result will contain additional detailed information as to why a request was not authorized. This information is automatically added to any generated log events.</li>
+</ul>
+</span></div></article></div><div class="docs-prevnext"><a class="docs-prev button" href="/docs/advanced/graph-action-results"><span class="arrow-prev">← </span><span>Action Results</span></a><a class="docs-next button" href="/docs/advanced/query-cache"><span>Query Caching</span><span class="arrow-next"> →</span></a></div></div></div><nav class="onPageNav"><ul class="toc-headings"><li><a href="#creating-new-middleware">Creating New Middleware</a></li><li><a href="#the-context-object">The Context Object</a></li><li><a href="#registering-new-middleware">Registering New Middleware</a></li><li><a href="#query-execution-pipeline">Query Execution Pipeline</a></li><li><a href="#field-execution-pipeline">Field Execution Pipeline</a></li><li><a href="#field-authorization-pipeline">Field Authorization Pipeline</a></li></ul></nav></div><footer class="nav-footer" id="footer"><section class="sitemap"><div><h5>Docs</h5><a href="/docs/introduction/made-for-aspnet-developers">Made for ASP.NET Developers</a><a href="/docs/quick/code-examples">Code Examples</a></div><div></div><div><h5>More</h5><a class="github-button" href="https://github.com/graphql-aspnet/graphql-aspnet" data-show-count="true" data-count-href="/graphql-aspnet/graphql-aspnet/stargazers" aria-label="Star this project on GitHub">Star on GitHub</a><a href="https://graphql.org">GraphQL.org</a><a href="https://dotnet.microsoft.com/learn/aspnet">Learn ASP.NET</a></div></section><section class="copyright">Copyright © 2019 GraphQL ASP.NET</section></footer></div><script>window.twttr=(function(d,s, id){var js,fjs=d.getElementsByTagName(s)[0],t=window.twttr||{};if(d.getElementById(id))return t;js=d.createElement(s);js.id=id;js.src='https://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js, fjs);t._e = [];t.ready = function(f) {t._e.push(f);};return t;}(document, 'script', 'twitter-wjs'));</script></body></html>
