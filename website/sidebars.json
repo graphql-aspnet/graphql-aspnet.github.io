@@ -1,0 +1,60 @@
+{
+    "docs": {
+        "Jump In!": [
+            "quick/overview",
+            "quick/quick-start",
+            "quick/code-examples"
+        ],
+        "Introduction": [
+            "introduction/what-is-graphql",
+            "introduction/made-for-aspnet-developers"
+        ],
+        "Controllers & Actions": [
+            "controllers/actions",
+            "controllers/model-state",
+            "controllers/field-paths",
+            "controllers/authorization",
+            "controllers/type-extensions",
+            "controllers/batch-operations"
+        ],
+        "Graph Type Definitions": [
+            "types/objects",
+            "types/input-objects",
+            "types/interfaces",
+            "types/unions",
+            "types/enums",
+            "types/scalars",
+            "types/list-non-null"
+        ],
+        "Logging": ["logging/structured-logging", "logging/standard-events"],
+        "Query Execution": ["execution/metrics", "execution/malicious-queries"],
+        "Advanced": [
+            "advanced/subscriptions",
+            "advanced/type-expressions",
+            "advanced/directives",
+            "advanced/custom-scalars",
+            "advanced/graph-action-results",
+            "advanced/middleware",
+            "advanced/query-cache",
+            "advanced/multi-schema-support"
+        ],
+        "Development Concerns": [
+            "development/debugging",
+            "development/unit-testing"
+        ],
+        "References": [
+            "reference/how-it-works",
+            "reference/schema-configuration",
+            "reference/attributes",
+            "reference/graph-controller",
+            "reference/graph-directive",
+            "reference/http-processor",
+            "reference/demo-projects",
+            "reference/performance",
+            "reference/contributing"
+        ]
+    },
+    "docs-other": {
+        "First Category": []
+    }
+}

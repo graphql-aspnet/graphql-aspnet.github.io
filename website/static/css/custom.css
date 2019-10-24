@@ -1,0 +1,90 @@
+/* your custom css */
+
+@media only screen and (min-device-width: 360px) and (max-device-width: 736px) {
+}
+
+@media only screen and (min-width: 1024px) {
+}
+
+@media only screen and (max-width: 1023px) {
+}
+
+@media only screen and (min-width: 1400px) {
+}
+
+@media only screen and (min-width: 1500px) {
+}
+
+.hljs {
+    background-color: #2e2e2e;
+}
+
+.projectTitle {
+    color: White;
+}
+
+div.sideBySideCode {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+}
+
+a {
+    color: #304369;
+}
+
+body {
+    background-color: #1e1e1e;
+    color: rgb(227, 227, 227);
+}
+
+a.navItem {
+    color: #d9dcdf !important;
+}
+
+.navGroupCategoryTitle {
+    color: #949494 !important;
+}
+
+div.sideBySideCode > :first-child {
+    border-right: solid 5px #404040;
+}
+
+a {
+    color: #c6cbd3;
+}
+
+code {
+    color: rgb(218, 218, 218);
+    padding-left: 1px;
+    padding-right: 1px;
+    padding-top: 1px;
+    padding-bottom: 1px;
+    background-color: rgb(90, 90, 90);
+}
+
+blockquote {
+    background-color: #103f5ff6;
+    border-left: 8px solid rgb(80, 80, 80);
+    color: rgb(218, 218, 218);
+}
+
+table tr:nth-child(odd) {
+    background-color: rgb(39, 39, 39);
+}
+
+table tr:nth-child(even) {
+    background-color: rgb(39, 39, 39);
+}
+
+a {
+    color: rgb(94, 92, 92);
+}
+
+a:hover {
+}
+
+a.button {
+    color: white;
+    border-color: white;
+}
