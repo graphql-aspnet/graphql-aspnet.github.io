@@ -56,11 +56,10 @@ const siteConfig = {
         secondaryColor: '#212e49',
     },
 
-    twitterUsername: 'graphql_aspnet',
-
     // This copyright info is used in /core/Footer.js and blog RSS/Atom feeds.
     copyright: `Copyright © ${new Date().getFullYear()} GraphQL ASP.NET`,
 
+    gaGtag: true,
     gaTrackingId: 'UA-150856900-1',
 
     highlight: {
