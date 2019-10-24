@@ -5,7 +5,7 @@ sidebar_label: Overview
 hide_title: true
 ---
 
-> **This project is currently in open beta beta.**
+> **This project is currently in open beta and subject to change.**
 >
 > Some features of the library may change prior to a final release.
 
