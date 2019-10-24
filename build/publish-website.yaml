@@ -28,7 +28,6 @@ steps:
 
     - script: |
           cp ./README.md ./website/static/README.md
-          cp ./build/CNAME ./website/static/CNAME
           git config --global user.email "$(deployment.gitHubUser)@users.noreply.github.com"
           git config --global user.name "GraphQL ASPNET Bot"
           echo "machine github.com login $(deployment.gitHubUser) password $(deployment.gitHubToken)" > ~/.netrc
