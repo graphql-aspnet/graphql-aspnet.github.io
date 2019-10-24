@@ -30,7 +30,7 @@ const siteConfig = {
     //   baseUrl: '/test-site/',
 
     // Used for publishing and more
-    projectName: 'graphql-aspnet',
+    projectName: 'graphql-aspnet.github.io',
     organizationName: 'graphql-aspnet',
 
     // For no header links in the top nav bar -> headerLinks: [],
