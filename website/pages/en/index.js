@@ -31,7 +31,7 @@ class HomeSplash extends React.Component {
             <h2 className="projectTitle">
                 {<span>GraphQL ASP.NET </span>}
                 {/*<small>{siteConfig.tagline}</small>*/}
-                <small>v0.4.6-beta</small>
+                <small>v0.4.7-beta</small>
             </h2>
         );
 
