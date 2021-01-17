@@ -50,8 +50,7 @@
             "reference/graph-directive",
             "reference/http-processor",
             "reference/demo-projects",
-            "reference/performance",
-            "reference/contributing"
+            "reference/performance"
         ]
     },
     "docs-other": {

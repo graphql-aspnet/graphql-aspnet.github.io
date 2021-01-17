@@ -304,3 +304,113 @@ schemaOptions.QueryHandler.HttpProcessorType = typeof(MyProcessorType);
 | `null` |
 
 When set to a type, GraphQL will attempt to load the provided type from the configured DI container in order to handle graphql requests. Any class wishing to act as an Http Processor must inherit from `IGraphQLHttpProcessor`. It is perhaps easier to extend `DefaultGraphQLHttpProcessor<TSchema>` for most small operations such as handling metrics.
+
+## Subscription Server Options
+These options are available to configure a subscription server for a given schema via `.AddSubscriptions(serverOptions)` or `AddSubscriptionServer(serverOptions)`
+
+### DisableDefaultRoute 
+
+```csharp
+// usage examples
+serverOptions.DisableDefaultRoute = false;
+```
+| Default Value | Acceptable Values |
+| ------------- | ----------------- |
+| `false `       | `true`, `false`   |
+
+When true, GraphQL will not register a component to listen for web socket requests. You must handle the acceptance of web sockets yourself and inform the subscription server that a new one exists. If you wish to implement your own web socket middleware handler, viewing `DefaultGraphQLHttpSubscriptionMiddleware<TSchema>` may help.
+
+
+### Route
+
+Similar to the query/mutation query handler route this represents the path the default subscription middleware will look for when accepting new web sockets
+
+```csharp
+// usage examples
+serverOptions.Route = "/graphql";
+```
+
+| Default Value |
+| ------------- |
+| `/graphql`    |
+
+
+Represents the http end point where GraphQL will listen for new requests. In multi-schema configurations this value will need to be unique per schema type.
+
+### Route
+
+Similar to the query/mutation query handler route this represents the path the default subscription middleware will look for when accepting new web sockets
+
+```csharp
+// usage examples
+serverOptions.HttpMiddlewareComponentType = typeof(MyMiddleware);
+```
+
+| Default Value |
+| ------------- |
+| `null`    |
+
+The middleware component GraphQL will inject into the ASP.NET pipeline to listen for new web socket connections. This value is only used if `DisableDefaultRoute` is set to false.  When null, `DefaultGraphQLHttpSubscriptionMiddleware<TSchema>` is used.
+
+### KeepAliveInterval
+
+The interval at which the subscription server will send a message to a connected client informing it the connection is still open. 
+
+```csharp
+// usage examples
+serverOptions.KeepAliveInterval = TimeSpan.FromMinutes(2);
+```
+
+| Default Value |
+| ------------- |
+| `2 minutes`    |
+
+This is a different keep alive than the websocket-level keep alive interval. The default apollo subscription server implementation uses this value to know when to send its "CONNECTION_KEEP_ALIVE" message type to a client.
+
+### MessageBufferSize
+
+The size of the message buffer, in bytes used to extract and deserialize a message being received from a connected client.
+
+```csharp
+// usage examples
+serverOptions.MessageBufferSize = 4 * 1024;
+```
+
+| Default Value |
+| ------------- |
+| `4kb`    |
+
+
+### MaxConcurrentClientNotifications
+
+The maximum number of connected clients a server will attempt to communicate with at one time. 
+
+```csharp
+// usage examples
+serverOptions.MaxConcurrentClientNotifications = 50;
+```
+
+| Default Value | Minimum Value |
+| ------------- | ----------------- |
+| `50`       | `1`   |
+
+If for instance, there are 100 connected clients, all of which are subscribed to the same event, the subscription server will attempt to communicate new data to at most 50 of them at one time with remaining clients being queued and notified as the original 50 acknowledge the event. This can help throttle resources and prevent a subscription server from being overloaded.
+
+### RequireAuthenticatedConnection
+
+Deteremines if a web socket request will be accepted in an unauthenticated state or not.
+
+```csharp
+// usage examples
+serverOptions.RequiredAuthenticatedConnection = false;
+```
+
+| Default Value | Acceptable Values |
+| ------------- | ----------------- |
+| `false `       | `true`, `false`   |
+
+When set to true, the subscription middleware will immediately reject any websocket requests from un-authenticated sources. This option does not include query authorization (i.e. can the user access the fields they are requesting). That occurs after the websocket is established.
+
+When set to false, the subscription middleware will initially accept all web socket requests.
+
+
