@@ -228,3 +228,13 @@ Hopefully we've given you a bit of insight into how the library works under the 
 
     -   Inject your own `IGraphResponseWriter` to serialize your results to XML or CSV.
     -   Build your own `IOperationComplexityCalculator` to intercept and alter how a query plan generates its [complexity values](../execution/malicious-queries) to be more suitable to your needs.
+
+## Architectural Diagrams
+
+<span style="font-size:20px;vertical-align: center;">&#128204;</span>&nbsp; [Structural Diagrams](../assets/2021-01-graphql-aspnet-structural-diagrams.pdf)
+
+A set of diagrams outlining the major interfaces and classes that make up GraphQL Asp.Net. 
+
+<span style="font-size:20px;vertical-align: center;">&#128204;</span>&nbsp; [Execution Diagrams](../assets/2021-01-graphql-aspnet-execution-diagrams.pdf)
+
+A set of flowcharts and relational diagrams showing how various aspects of the library fit together at run time, including the query execution and field execution pipelines.
