@@ -337,9 +337,9 @@ serverOptions.Route = "/graphql";
 
 Represents the http end point where GraphQL will listen for new requests. In multi-schema configurations this value will need to be unique per schema type.
 
-### Route
+### HttpMiddlewareComponentType
 
-Similar to the query/mutation query handler route this represents the path the default subscription middleware will look for when accepting new web sockets
+The middleware component GraphQL will inject into the ASP.NET pipeline to intercept new web socket connection requests.
 
 ```csharp
 // usage examples
@@ -350,7 +350,7 @@ serverOptions.HttpMiddlewareComponentType = typeof(MyMiddleware);
 | ------------- |
 | `null`    |
 
-The middleware component GraphQL will inject into the ASP.NET pipeline to listen for new web socket connections. This value is only used if `DisableDefaultRoute` is set to false.  When null, `DefaultGraphQLHttpSubscriptionMiddleware<TSchema>` is used.
+When null, `DefaultGraphQLHttpSubscriptionMiddleware<TSchema>` is used.
 
 ### KeepAliveInterval
 
