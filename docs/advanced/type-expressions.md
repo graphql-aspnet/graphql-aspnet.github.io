@@ -92,7 +92,7 @@ public IEnumerable<Donut> RetrieveDonut(string id)
 {/*...*/}
 ```
 
-> The `TypeExpression` property is available on `[Query]`, `[QueryRoot]`, `[Mutation]`, `[MutationRoot]` and `[GraphField]`
+> The `TypeExpression` property is available on `[Query]`, `[QueryRoot]`, `[Mutation]`, `[MutationRoot]`, `[Subscription]`, `[SubscriptionRoot]` and `[GraphField]`
 
 ## Declaring a TypeDefinition
 
@@ -138,7 +138,7 @@ public IEnumerable<IEnumerable<IEnumerable<string>>> GenerateNames(int seed)
 {/*...*/}
 ```
 
-> The `TypeDefinition` property is available on `[Query]`, `[QueryRoot]`, `[Mutation]`, `[MutationRoot]` and `[GraphField]`
+> The `TypeDefinition` property is available on `[Query]`, `[QueryRoot]`, `[Mutation]`, `[MutationRoot]`, `[Subscription]`, `[SubscriptionRoot]` and `[GraphField]`
 
 **Warning**: When declared, the runtime will accept your `TypeDefinition` or `TypeExpression` as law. You can setup a scenario where by you could return data that the runtime could never validate and GraphQL will happily process it and cause an error every time. For instance returning a single integer but declaring a `TypeDefinition` of a list of integers.
 

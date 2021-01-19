@@ -11,7 +11,7 @@ This document contains a list of each property available during schema configura
 public void ConfigureServices(IServiceCollection services)
 {
     // other code omitted for brevity
-    
+
     services.AddGraphQL(schemaOptions =>
     {
         // *************************
@@ -67,6 +67,26 @@ schemaOptions.AutoRegisterLocalGraphEntities = true;
 | `true`        | `true`, `false`   |
 
 When true those graph entities (controllers, types, enums etc.) that are declared in the entry assembly for the application are automatically registered to the schema.
+
+## Authorization Options
+
+### Method
+```csharp
+// usage examples
+schemaOptions.AuthorizationOptions.Method = AuthorizationMethod.PerField;
+```
+
+| Default Value | Acceptable Values |
+| ------------- | ----------------- |
+| `null`        | `PerField`, `PerRequest`   |
+
+Controls how the graphql execution pipeline will authorize a request.
+
+* `PerField`: Each field of a query is evaluated individually allowing a data response to be generated that includes data the user can access and `null` values for those fields the user cannot access.  Any unauthorized fields will also register an error in the response.
+
+* `PerRequest`: All fields of a query are validated BEFORE execution. If the current user does not have access to 1 or more fields the entire request is denied and an error message generated.
+
+> See [Subscription Security](../advanced/subscriptions#security--query-authorization) for additional considerations regarding authorization and subscriptions.
 
 ## Declaration Options
 
@@ -306,9 +326,9 @@ schemaOptions.QueryHandler.HttpProcessorType = typeof(MyProcessorType);
 When set to a type, GraphQL will attempt to load the provided type from the configured DI container in order to handle graphql requests. Any class wishing to act as an Http Processor must inherit from `IGraphQLHttpProcessor`. It is perhaps easier to extend `DefaultGraphQLHttpProcessor<TSchema>` for most small operations such as handling metrics.
 
 ## Subscription Server Options
-These options are available to configure a subscription server for a given schema via `.AddSubscriptions(serverOptions)` or `AddSubscriptionServer(serverOptions)`
+These options are available to configure a subscription server for a given schema via `.AddSubscriptions(serverOptions)` or `.AddSubscriptionServer(serverOptions)`
 
-### DisableDefaultRoute 
+### DisableDefaultRoute
 
 ```csharp
 // usage examples
@@ -354,7 +374,7 @@ When null, `DefaultGraphQLHttpSubscriptionMiddleware<TSchema>` is used.
 
 ### KeepAliveInterval
 
-The interval at which the subscription server will send a message to a connected client informing it the connection is still open. 
+The interval at which the subscription server will send a message to a connected client informing it the connection is still open.
 
 ```csharp
 // usage examples
@@ -383,7 +403,7 @@ serverOptions.MessageBufferSize = 4 * 1024;
 
 ### MaxConcurrentClientNotifications
 
-The maximum number of connected clients a server will attempt to communicate with at one time. 
+The maximum number of connected clients a server will attempt to communicate with at one time.
 
 ```csharp
 // usage examples
