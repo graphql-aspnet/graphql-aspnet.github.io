@@ -118,7 +118,7 @@ namespace GraphQLDemo
 
 In an MVC controller, we'd generate a data object and pass it off to our Razor View for rendering. In GraphQL, we return the object back to GraphQL and let it handle which properties to render to the requestor based on their query.
 
-For an REST endpoint we'd use `[Route("person")]`, `[HttpGet("person")]` or similar attributes to specify the url template and HTTP verb for our action. In GraphQL, we have to specify if the action is a `[Query]` or a `[Mutation]` operation. Here we've chosen to use the special`[QueryRoot]` attribute to indicate that the action is both a query and exists at the top most level of our object graph. See the section on [declaring field paths](../controllers/declaring-field-paths) for a complete set of options and recommendations.
+For an REST endpoint we'd use `[Route("person")]`, `[HttpGet("person")]` or similar attributes to specify the url template and HTTP verb for our action. In GraphQL, we have to specify if the action is a `[Query]` or a `[Mutation]` operation. Here we've chosen to use the special`[QueryRoot]` attribute to indicate that the action is both a query and exists at the top most level of our object graph. See the section on [declaring field paths](../controllers/field-paths) for a complete set of options and recommendations.
 
 ## Step 4: Startup.cs
 
