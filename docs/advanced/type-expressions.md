@@ -37,7 +37,7 @@ public class BakeryController : GraphController
 <div>
 
 ```javascript
-mutation {
+query {
     donut(id: 15){
         name
         flavor
@@ -49,13 +49,13 @@ mutation {
 </div>
 <br/>
 
-This action method could return a `Donut` or return `null`. But should the `donut` field allow a null value? The code certainly does and the rules above say fields that return a reference type can be null...but that's not what's important. Its ultimately your decision to decide if a null donut is allowed, not the .NET compiler and not the assumptions made by the library.
+This action method could return a `Donut` or return `null`. But should the `donut` field allow a null value? The code certainly does and the rules above say fields that return a reference type can be null...but that's not what's important. Its ultimately your decision to decide if a null donut is allowed, not the C# compiler and not the assumptions made by the library.
 
 On one hand, if a null value is returned, regardless of it being valid, the _outcome_ of the field is the same. When we return a null no child fields are processed. On the other hand, if null is not allowed we need to tell someone, let them know its nulled out not because it simply _is_ null but because a schema violation occurred.
 
 ## Using an Alternate Type Expression
 
-Most of the time, using the `TypeExpression` property of a field declaration attribute is sufficient to tell GraphQL ASP.NET your intentions.
+Most of the time, using the `TypeExpression` property of a field declaration attribute is sufficient to indicate your intentions.
 
 ```csharp
 
@@ -140,7 +140,7 @@ public IEnumerable<IEnumerable<IEnumerable<string>>> GenerateNames(int seed)
 
 > The `TypeDefinition` property is available on `[Query]`, `[QueryRoot]`, `[Mutation]`, `[MutationRoot]`, `[Subscription]`, `[SubscriptionRoot]` and `[GraphField]`
 
-**Warning**: When declared, the runtime will accept your `TypeDefinition` or `TypeExpression` as law. You can setup a scenario where by you could return data that the runtime could never validate and GraphQL will happily process it and cause an error every time. For instance returning a single integer but declaring a `TypeDefinition` of a list of integers.
+**Warning**: When declared, the runtime will accept your `TypeDefinition` or `TypeExpression` as law. You can setup a scenario where by you could return data that the runtime could never validate and GraphQL will happily process it and cause an error every time. For instance returning a single integer but declaring a `TypeDefinition` of a list of integers or declaring a list of donuts but only returning a single instance.
 
 ```csharp
 // ERROR

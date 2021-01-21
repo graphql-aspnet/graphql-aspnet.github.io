@@ -76,7 +76,7 @@ query {
 </div>
 </div>
 
-**Did you notice** that in the query the hero field is `camelCased` but in C# the method is `ProperCased`? GraphQL ASP.NET automatically translates your names appropriately to standard GraphQL conventions. The same goes for your graph type names, enum values etc. 
+**Did you notice** that in the query the hero field is `camelCased` but in C# the method is `ProperCased`? GraphQL ASP.NET automatically translates your names appropriately to standard GraphQL conventions. The same goes for your graph type names, enum values etc.
 
 You can implement your own `GraphNameFormatter` and alter the name formats across the board for a single schema or all of them. GraphQL ASP.NET supports multiple schemas running on the same server out of the box.
 
@@ -310,7 +310,7 @@ public class PersonsController
     /* constructor hidden for brevity */
 
     [MutationRoot("joinTheResistance")]
-    public async Human CreatePerson(Human model)
+    public async Task<Human> CreatePerson(Human model)
     {
         // ***************************
         // Check if the model passed validation

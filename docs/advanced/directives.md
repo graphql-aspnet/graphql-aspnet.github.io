@@ -52,7 +52,7 @@ GraphQL ASP.NET offers two points in the field pipeline at which a directive cou
 
 > Directive life cycle methods must have an identical signature
 
-While a directive may declare both life cycle methods independently, it is only a single entity in a schema. As a result both life cycle methods must share a common signature. The runtime will throw an exception when your schema is created if the signatures differ.
+While a directive may declare both life cycle methods independently, it is only a single entity in a schema. As a result both life cycle methods must share a common signature (i.e. the same input parameters and return type). The runtime will throw an exception when your schema is created if the signatures differ.
 
 ### Returning Data from a Directive
 

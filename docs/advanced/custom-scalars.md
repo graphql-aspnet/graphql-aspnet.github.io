@@ -65,6 +65,7 @@ The query supplies the data as a quoted string, `"$18.45"`, but our action metho
 To create a scalar graph type we need to implement `IScalarGraphType` and register it with GraphQL. The methods and properties of `IScalarGraphType` are as follows:
 
 ```csharp
+namespace GraphQL.AspNet.Interfaces.TypeSystem
 {
     public interface IScalarGraphType
     {
@@ -97,8 +98,8 @@ To create a scalar graph type we need to implement `IScalarGraphType` and regist
 ### IScalarGraphType Members
 
 -   `Name`: The name of this scalar in GraphQL. This is the name that will be displayed in introspection queries.
--   `InternalName`: An alternative name representing the scalar in server side code. This name is commonly used in logging messages and exceptions to identify the scalar in terms of the server. Its common to use the fully qualified name, i.e. `System.String`.
--   `Description`: The phrase that will be displayed describing the scalar in introspection queries.
+-   `InternalName`: An alternative name representing the scalar in server side code. This name is commonly used in logging messages and exceptions to identify the scalar in terms of the server. Its common to use the fully qualified name, i.e. `"MyNameSpace.Money"`.
+-   `Description`: The phrase that will used to describe the scalar in introspection queries.
 -   `Kind`: Scalars must always be declared as `TypeKind.SCALAR`.
 -   `Publish`: Indicates if the scalar should be published for introspection queries. Unless there is a very strong reason not to, scalars should always be published. Set this value to `true`.
 -   `ValueType`: A set of flags indicating what type of source data, read from a query, this scalar is capable of processing (string, number or boolean). GraphQL will do a preemptive check and if the query document does not supply the data in the correct format it will not attempt to resolve the scalar. Most custom scalars will use `ScalarValueType.String`.
@@ -143,7 +144,7 @@ If you throw `UnresolvedValueException` your error message will be delivered ver
 -   `Serialize(object)`: A serializer that converts the internal representation of the scalar to a [graphql compliant scalar value](https://graphql.github.io/graphql-spec/June2018/#sec-Scalars); a `number`, `string`, `bool` or `null`.
     -   When converting to a number this can be any number value type (int, float, decimal etc.).
 
-> An `IScalarValueSerializer` must return a valid graphql scalar type.
+> `Serialize(object)` must return a valid graphql scalar type.
 
 Taking a look at the at the serializer for the `Guid` scalar type we can see that while internally the `System.Guid` struct represents the value we convert it to a string when serializing it. Most scalar implementations will serialize to a string.
 
@@ -245,15 +246,14 @@ Since our scalar is, internally, represented by a class, if we don't pre-registe
 
 A few points about designing your scalar:
 
--   Scalar types must be thread safe.
--   Scalar types should work in isolation.
-    -   The `ReadOnlySpan<char>` provided to the `Resolve()` method should be all the data needed to generate a value. If you find yourself fetching data or doing key lookups, chances are that logic belongs in your controller methods or your scalar is too complex.
--   Scalar types should be simple.
+-   Scalar types are expected to be thread safe.
+-   Scalar types should be simple and work in isolation.
+    -   The `ReadOnlySpan<char>` provided to the `Resolve()` method should be all the data needed to generate a value, there should be no need to perform side effects or fetch additional data.
     -   If you have a lot of logic to unpack a string to create your scalar consider using a regular object graph type instead.
 -   A scalar type is a singleton instance.
     -   Scalar types exist for the lifetime of the server instance.
     -   Scalar types should not track any state or depend on any stateful objects.
--   `IScalarValueResolver.Resolve` must be fast! Since your resolver is used to construct a query plan, it'll be called much more often than any controller action method.
+-   `IScalarValueResolver.Resolve` must be **FAST**! Since your resolver is used to construct an initial query plan, it'll be called orders of magnitude more often than any controller action method.
 
 ## Aim for Fewer Scalars
 

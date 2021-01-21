@@ -19,8 +19,8 @@ For example, we would say:
 
 We can even describe complex scenarios:
 
--   "A field that may return a collection of `persons` but when returned, each person must be a valid reference."
--   "An input argument that must be a list of a list of `integers`."
+-   "A field that might return a collection of `persons` but when returned, each person must be a valid reference."
+-   "An input argument that must be a list that contains lists of `integers`."
     -   e.g. `[[1, 2], [5, 15]]`
 
 ## Type Expressions
@@ -32,19 +32,21 @@ GraphQL ASP.NET makes the following assumptions about your data when creating ty
 -   Reference types **can be** null
 -   Value types **cannot be** null
 -   Nullable value types (e.g. `int?`) **can be** be null
--   When a reference type implements `IEnumerable<TType>` it will be expressed as a "list of `TType`".
+-   When a reference type implements `IEnumerable<TType>` it will be expressed as a "list of `TType`"
 
 Type Expressions are commonly shown in the GraphQL schema syntax for field definitions. Here are a few examples of a .NET type and its equivalent type expression in schema syntax.
-The `!` indicates NON_NULL and `[]` for a list.
 
 | .NET Type                               | Type Expression |
 | --------------------------------------- | --------------- |
-| `int`                                   | `Int!`          |
-| `float?`                                | `Float`         |
-| `IEnumerable<Person>`                   | `[Person]`      |
-| `List<bool>`                            | `[Boolean!]`    |
-| `IReadOnlyList<long?>`                  | `[Long]`        |
-| `IEnumerable<List<ICollection<Donut>>>` | `[[[Donut]]]`   |
+| int                                   | Int!          |
+| float?                                | Float         |
+| IEnumerable&lt;Person&gt;                   | [Person]      |
+| List&lt;bool&gt;                            | [Boolean!]    |
+| IReadOnlyList&lt;long&gt;                  | [Long!]        |
+| IReadOnlyList&lt;long?&gt;                  | [Long]        |
+| IEnumerable&lt;List&lt;ICollection&lt;Donut&gt;&gt;&gt; | [[[Donut]]]   |
+
+##### The `!` indicates NON_NULL and `[]` for a LIST.
 
 #### Overriding Type Expressions
 
