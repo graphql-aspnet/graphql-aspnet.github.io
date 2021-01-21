@@ -105,7 +105,8 @@
 <p>The query supplies the data as a quoted string, <code>&quot;$18.45&quot;</code>, but our action method receives a <code>Money</code> object. Internally, GraphQL senses that the value should be <code>Money</code> from the schema definition and invokes the correct graph type to resolve the value and generate the .NET object that can be passed to our action method.</p>
 <h2><a class="anchor" aria-hidden="true" id="implement-iscalargraphtype"></a><a href="#implement-iscalargraphtype" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Implement IScalarGraphType</h2>
 <p>To create a scalar graph type we need to implement <code>IScalarGraphType</code> and register it with GraphQL. The methods and properties of <code>IScalarGraphType</code> are as follows:</p>
-<pre><code class="hljs css language-csharp">{
+<pre><code class="hljs css language-csharp"><span class="hljs-keyword">namespace</span> <span class="hljs-title">GraphQL.AspNet.Interfaces.TypeSystem</span>
+{
     <span class="hljs-keyword">public</span> <span class="hljs-keyword">interface</span> <span class="hljs-title">IScalarGraphType</span>
     {
         <span class="hljs-keyword">string</span> Name { <span class="hljs-keyword">get</span>; }
@@ -136,8 +137,8 @@
 <h3><a class="anchor" aria-hidden="true" id="iscalargraphtype-members"></a><a href="#iscalargraphtype-members" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>IScalarGraphType Members</h3>
 <ul>
 <li><code>Name</code>: The name of this scalar in GraphQL. This is the name that will be displayed in introspection queries.</li>
-<li><code>InternalName</code>: An alternative name representing the scalar in server side code. This name is commonly used in logging messages and exceptions to identify the scalar in terms of the server. Its common to use the fully qualified name, i.e. <code>System.String</code>.</li>
-<li><code>Description</code>: The phrase that will be displayed describing the scalar in introspection queries.</li>
+<li><code>InternalName</code>: An alternative name representing the scalar in server side code. This name is commonly used in logging messages and exceptions to identify the scalar in terms of the server. Its common to use the fully qualified name, i.e. <code>&quot;MyNameSpace.Money&quot;</code>.</li>
+<li><code>Description</code>: The phrase that will used to describe the scalar in introspection queries.</li>
 <li><code>Kind</code>: Scalars must always be declared as <code>TypeKind.SCALAR</code>.</li>
 <li><code>Publish</code>: Indicates if the scalar should be published for introspection queries. Unless there is a very strong reason not to, scalars should always be published. Set this value to <code>true</code>.</li>
 <li><code>ValueType</code>: A set of flags indicating what type of source data, read from a query, this scalar is capable of processing (string, number or boolean). GraphQL will do a preemptive check and if the query document does not supply the data in the correct format it will not attempt to resolve the scalar. Most custom scalars will use <code>ScalarValueType.String</code>.</li>
@@ -180,7 +181,7 @@
 </ul></li>
 </ul>
 <blockquote>
-<p>An <code>IScalarValueSerializer</code> must return a valid graphql scalar type.</p>
+<p><code>Serialize(object)</code> must return a valid graphql scalar type.</p>
 </blockquote>
 <p>Taking a look at the at the serializer for the <code>Guid</code> scalar type we can see that while internally the <code>System.Guid</code> struct represents the value we convert it to a string when serializing it. Most scalar implementations will serialize to a string.</p>
 <pre><code class="hljs css language-csharp"><span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title">GuidScalarSerializer</span> : <span class="hljs-title">IScalarValueSerializer</span>
@@ -269,13 +270,10 @@
 <h2><a class="anchor" aria-hidden="true" id="when-developing-a-scalar"></a><a href="#when-developing-a-scalar" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>When Developing a Scalar</h2>
 <p>A few points about designing your scalar:</p>
 <ul>
-<li>Scalar types must be thread safe.</li>
-<li>Scalar types should work in isolation.
+<li>Scalar types are expected to be thread safe.</li>
+<li>Scalar types should be simple and work in isolation.
 <ul>
-<li>The <code>ReadOnlySpan&lt;char&gt;</code> provided to the <code>Resolve()</code> method should be all the data needed to generate a value. If you find yourself fetching data or doing key lookups, chances are that logic belongs in your controller methods or your scalar is too complex.</li>
-</ul></li>
-<li>Scalar types should be simple.
-<ul>
+<li>The <code>ReadOnlySpan&lt;char&gt;</code> provided to the <code>Resolve()</code> method should be all the data needed to generate a value, there should be no need to perform side effects or fetch additional data.</li>
 <li>If you have a lot of logic to unpack a string to create your scalar consider using a regular object graph type instead.</li>
 </ul></li>
 <li>A scalar type is a singleton instance.
@@ -283,7 +281,7 @@
 <li>Scalar types exist for the lifetime of the server instance.</li>
 <li>Scalar types should not track any state or depend on any stateful objects.</li>
 </ul></li>
-<li><code>IScalarValueResolver.Resolve</code> must be fast! Since your resolver is used to construct a query plan, it'll be called much more often than any controller action method.</li>
+<li><code>IScalarValueResolver.Resolve</code> must be <strong>FAST</strong>! Since your resolver is used to construct an initial query plan, it'll be called orders of magnitude more often than any controller action method.</li>
 </ul>
 <h2><a class="anchor" aria-hidden="true" id="aim-for-fewer-scalars"></a><a href="#aim-for-fewer-scalars" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Aim for Fewer Scalars</h2>
 <p>Avoid the urge to start declaring a lot of custom scalars. In fact, chances are that you'll never need to create one. In our example we could have represented our money scalar as an object graph type:</p>

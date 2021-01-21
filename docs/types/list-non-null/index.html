@@ -73,8 +73,8 @@
 </ul>
 <p>We can even describe complex scenarios:</p>
 <ul>
-<li>&quot;A field that may return a collection of <code>persons</code> but when returned, each person must be a valid reference.&quot;</li>
-<li>&quot;An input argument that must be a list of a list of <code>integers</code>.&quot;
+<li>&quot;A field that might return a collection of <code>persons</code> but when returned, each person must be a valid reference.&quot;</li>
+<li>&quot;An input argument that must be a list that contains lists of <code>integers</code>.&quot;
 <ul>
 <li>e.g. <code>[[1, 2], [5, 15]]</code></li>
 </ul></li>
@@ -86,23 +86,24 @@
 <li>Reference types <strong>can be</strong> null</li>
 <li>Value types <strong>cannot be</strong> null</li>
 <li>Nullable value types (e.g. <code>int?</code>) <strong>can be</strong> be null</li>
-<li>When a reference type implements <code>IEnumerable&lt;TType&gt;</code> it will be expressed as a &quot;list of <code>TType</code>&quot;.</li>
+<li>When a reference type implements <code>IEnumerable&lt;TType&gt;</code> it will be expressed as a &quot;list of <code>TType</code>&quot;</li>
 </ul>
-<p>Type Expressions are commonly shown in the GraphQL schema syntax for field definitions. Here are a few examples of a .NET type and its equivalent type expression in schema syntax.
-The <code>!</code> indicates NON_NULL and <code>[]</code> for a list.</p>
+<p>Type Expressions are commonly shown in the GraphQL schema syntax for field definitions. Here are a few examples of a .NET type and its equivalent type expression in schema syntax.</p>
 <table>
 <thead>
 <tr><th>.NET Type</th><th>Type Expression</th></tr>
 </thead>
 <tbody>
-<tr><td><code>int</code></td><td><code>Int!</code></td></tr>
-<tr><td><code>float?</code></td><td><code>Float</code></td></tr>
-<tr><td><code>IEnumerable&lt;Person&gt;</code></td><td><code>[Person]</code></td></tr>
-<tr><td><code>List&lt;bool&gt;</code></td><td><code>[Boolean!]</code></td></tr>
-<tr><td><code>IReadOnlyList&lt;long?&gt;</code></td><td><code>[Long]</code></td></tr>
-<tr><td><code>IEnumerable&lt;List&lt;ICollection&lt;Donut&gt;&gt;&gt;</code></td><td><code>[[[Donut]]]</code></td></tr>
+<tr><td>int</td><td>Int!</td></tr>
+<tr><td>float?</td><td>Float</td></tr>
+<tr><td>IEnumerable&lt;Person&gt;</td><td>[Person]</td></tr>
+<tr><td>List&lt;bool&gt;</td><td>[Boolean!]</td></tr>
+<tr><td>IReadOnlyList&lt;long&gt;</td><td>[Long!]</td></tr>
+<tr><td>IReadOnlyList&lt;long?&gt;</td><td>[Long]</td></tr>
+<tr><td>IEnumerable&lt;List&lt;ICollection&lt;Donut&gt;&gt;&gt;</td><td>[[[Donut]]]</td></tr>
 </tbody>
 </table>
+<h5><a class="anchor" aria-hidden="true" id="the--indicates-non_null-and--for-a-list"></a><a href="#the--indicates-non_null-and--for-a-list" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>The <code>!</code> indicates NON_NULL and <code>[]</code> for a LIST.</h5>
 <h4><a class="anchor" aria-hidden="true" id="overriding-type-expressions"></a><a href="#overriding-type-expressions" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Overriding Type Expressions</h4>
 <p>You may need to override the default behavior from time to time. For instance, a <code>string</code>, which is a reference type, is nullable by default but you may need to require a string be supplied in an input argument.</p>
 <p>You can override the default behavior by defining a <a href="../advanced/type-expressions">custom type expression</a> when needed.</p>
