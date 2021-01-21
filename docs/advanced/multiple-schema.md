@@ -27,6 +27,20 @@ public class CustomerSchema : GraphSchema
 Each schema can be registered using an overload of `.AddGraphQL()` during startup.
 
 ```csharp
+services.AddGraphQL<SchemaType>(options);
+```
+
+### Disable Local Graph Entity Registration
+
+You'll most likely want to disable registering of local graph entities (the entities in the startup assembly) on one or both schemas lest you want each schema contain those controllers and graph types.
+
+### Give Each Schema its Own HTTP Route
+
+The query handler will attempt to register a schema to `/graphql` for it to receive POST requests. You'll want to ensure that each schema has its own endpoint by updating the individual routes.
+
+#### adding multiple schemas to start.cs
+
+```csharp
 // Startup.cs
 public void ConfigureServices(IServiceCollection services)
 {
@@ -47,11 +61,3 @@ public void ConfigureServices(IServiceCollection services)
         });
 }
 ```
-
-#### Disable Local Graph Entity Registration
-
-You'll most likely want to disable registering of local graph entities (the entities in the startup assembly) on one or both schemas lest you want each schema contain those controllers and graph types.
-
-#### Give Each Schema its Own HTTP Route
-
-GraphQL ASP.NET will attempt to register a schema to `/graphql` for it to receive POST requests. You'll want to ensure that each schema has its own endpoint by updating the individual routes.

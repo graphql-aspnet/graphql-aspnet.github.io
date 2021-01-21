@@ -4,7 +4,7 @@ title: Directives
 sidebar_label: Directives
 ---
 
-In GraphQL ASP.NET directives are implemented in much the same way as `GraphController` but where you'd indicate a a graph controller method as being for a query or mutation, directives must indicate where they can be declared and when they should execute.
+Directives are implemented in much the same way as `GraphController` but where you'd indicate a a graph controller method as being for a query or mutation, directives must indicate where they can be declared and when they should execute.
 
 ## Anatomy of a Directive
 

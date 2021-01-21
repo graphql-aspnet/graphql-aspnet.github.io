@@ -4,7 +4,7 @@ title: Action Results
 sidebar_label: Action Results
 ---
 
-Controllers in GraphQL ASP.NET work like they do with ASP.NET MVC.
+Controllers work like they do with ASP.NET MVC.
 
 In ASP.NET MVC you may do things like this:
 
