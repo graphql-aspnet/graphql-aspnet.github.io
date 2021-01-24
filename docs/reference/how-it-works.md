@@ -228,6 +228,7 @@ Hopefully we've given you a bit of insight into how the library works under the 
 
     -   Inject your own `IGraphResponseWriter` to serialize your results to XML or CSV.
     -   Build your own `IOperationComplexityCalculator` to intercept and alter how a query plan generates its [complexity values](../execution/malicious-queries) to be more suitable to your needs.
+    -   On and on and on...
 
 ## Architectural Diagrams
 

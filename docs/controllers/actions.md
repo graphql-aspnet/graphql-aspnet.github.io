@@ -63,7 +63,7 @@ query {
 </div>
 <br/>
 
-In the above example, it makes sense these these methods would exist on different controllers, `HeroController` and `DroidController`. Unlike with a REST API request, which will usually invokes one action method and returns the data generated, GraphQL will automatically invoke every action method requested and aggregate the results. Each action is executed asynchronously and in isolation**\***. If one fails, the other may not and the results of both the errors generated and the data retrieved would be returned.
+In the above example, it makes sense these these methods would exist on different controllers, `HeroController` and `DroidController`. Unlike with a REST API request, which will usually invokes one action method and returns the data generated, GraphQL will automatically invoke every action method requested and aggregates the results. Each action is executed asynchronously and in isolation**\***. If one fails, the other may not and the results of both the errors generated and the data retrieved would be returned.
 
 The data returned by your action methods then return their requested child fields, those data items to their children and so on. In many cases this is just a selection of the appropriate properties on a model object, but more complex scenarios involving child objects, [type extensions](./type-extensions) or directly executing POCO methods can also occur.
 
@@ -87,9 +87,9 @@ See below for more detail of the [input](./actions#method-parameters) and [retur
 
 ## Declaring An Operation Type
 
-`GraphQL.AspNet.Attributes.QueryAttribute`  
-`GraphQL.AspNet.Attributes.QueryRootAttribute`  
-`GraphQL.AspNet.Attributes.MutationAttribute`  
+`GraphQL.AspNet.Attributes.QueryAttribute`
+`GraphQL.AspNet.Attributes.QueryRootAttribute`
+`GraphQL.AspNet.Attributes.MutationAttribute`
 `GraphQL.AspNet.Attributes.MutationRootAttribute`
 
 These four attributes are used to declare your action methods. Usage of the mutation and query attributes are exactly the same, they differ only in which of the root graph types to place a field reference. Lets look at the most common ways to use them:
@@ -344,7 +344,7 @@ public interface IGraphActionResult
 }
 ```
 
-It accepts the raw field resolution context that you can manipulate as needed. Combine this with any data you supply to your action result when you instantiate it and you have the ability to generate any response type with any data value or any number and type of error messages etc.  
+It accepts the raw field resolution context that you can manipulate as needed. Combine this with any data you supply to your action result when you instantiate it and you have the ability to generate any response type with any data value or any number and type of error messages etc.
 
 ## Method Parameters
 
