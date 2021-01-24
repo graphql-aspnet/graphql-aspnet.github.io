@@ -30,35 +30,31 @@ Here are some good starting points for learning more about GraphQL or ASP.NET MV
 
 [**Comparing GraphQL and REST**](https://blog.apollographql.com/graphql-vs-rest-5d425123e34b) - A helpful comparison by the Apollo Team
 
-[**Getting started with ASP.NET Core MVC**](https://docs.microsoft.com/en-us/aspnet/core/tutorials/first-mvc-app/start-mvc?view=aspnetcore-3.0&tabs=visual-studio) - Scaffolding a ASP.NET Core MVC app from the ground up.
+[**Getting started with ASP.NET Core MVC**](https://docs.microsoft.com/en-us/aspnet/core/tutorials/first-mvc-app/start-mvc?view=aspnetcore-5.0&tabs=visual-studio) - Scaffolding a .NET ASP.NET Core MVC app from the ground up.
 
 ## Key Terms
 
 This documentation uses a number of terms to refer to the various pieces of the library:
 
 ### Schema
-This is the collective set of fields their data types, input arguments etc. that are exposed on an object graph. When you write a graphql query to return data the fields you request, their arguments and their children must all be defined on a schema that graphql will validate your query against.  
+This is the set of data types, their fields, input arguments etc. that are exposed on an object graph. When you write a graphql query to return data the fields you request, their arguments and their children must all be defined on a schema that graphql will validate your query against.  
 
-> In GraphQL ASP.NET the schema is a virtual entity created from your C# code.
+> In GraphQL ASP.NET the schema is generated at runtime directly from your C# code, there is no boilerplate code necessary to define up a schema.
 
 Your schema is "generated" at runtime by analyzing your model classes, controllers and action methods then populating a `GraphSchema` container with the appropriate graph types to map graphql requests to your controllers. 
 
-### Field Resolver 
-In GraphQL terms, a field resolver fulfills the request for data from a schema field. It takes in a set of input arguments and produces a piece of data that is returned to the client. In GraphQL ASP.NET your controller methods are, by in large, your field resolvers.
-
-**_AKA_**: `Action Method`, `Controller Method`
+### Fields & Resolvers
+In GraphQL terms, a field is any requested piece of data (such as an id or  name).  A resolver fulfills the request for data from a schema field. It takes in a set of input arguments and produces a piece of data that is returned to the client. In GraphQL ASP.NET your controller methods act as resolvers for top level fields in any query.
 
 ### Graph Type
 
 A graph type is an entity on your object graph; a droid, a donut, a string, a number etc.  In GraphQL ASP.NET your model classes, interfaces, enums, controllers etc. are compiled into the various graph types required by the runtime.
 
-#### Root Graph Type
-There are three root graph types in GraphQL: Query, Mutation, Subscription. Whenever you make a graphql request, you always specify which query root you are targeting. This documentation will usually refer to all operations as "queries" but this includes mutations as well.
-
-**_AKA_**:  `root operation`, `operation type`
+#### Root Graph Types
+There are three root graph types in GraphQL: Query, Mutation, Subscription. Whenever you make a graphql request, you always specify which query root you are targeting. This documentation will usually refer to all operations as "queries" but this includes mutations and subscriptions as well.
 
 ### Query Document
 This is the raw query string submitted by a client. When GraphQL accepts a query it is converted from a string to an internal document format that is parsed and used to fulfill the request.  
 
-**_AKA_**  `query text`, `query string`.
+> Queries, Mutations and Subscriptions are all types of query documents.
 

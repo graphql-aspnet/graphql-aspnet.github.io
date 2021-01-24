@@ -11,9 +11,9 @@ This guide will help you get a GraphQL project up and running so you can start e
 3.  Write some code to create a `Person` model object and a `PersonController` to deliver it.
 4.  Register GraphQL ASP.NET in `Startup.cs`.
 
-This guide uses [Visual Studio 2019](https://visualstudio.microsoft.com/) but the steps are similar for other IDEs, including JetBrains [Rider](https://www.jetbrains.com/rider/).
+This guide uses [Visual Studio 2019](https://visualstudio.microsoft.com/) but the steps are similar for other IDEs, including [JetBrains Rider](https://www.jetbrains.com/rider/).
 
-The goal is to be able to open any GraphQL query tool such as [GraphiQL](https://electronjs.org/apps/graphiql) or [Altair](https://altair.sirmuel.design/), point it at our server and execute this query:
+The goal is to be able to open any GraphQL query tool such as [GraphiQL](https://electronjs.org/apps/graphiql), [Altair](https://altair.sirmuel.design/) or [GraphQL Playground](https://github.com/graphql/graphql-playground), point it at our server and execute this query:
 
 ```javascript
 query {
@@ -50,8 +50,9 @@ From the Visual Studio 2019 start screen:
 1. Choose `Create new Project`
 2. Select `ASP.NET Core Web Application`.
     - Enter your project's name and choose a location.
-3. Choose `API` when prompted to select a project type.
+3. Choose `ASP.NET Core Web API` when prompted to select a project type.
     - GraphQL ASP.NET has no view layer so we can forgo including Razor and other related options.
+    - Here we've chosen .NET 5 as our target, however; GraphQL ASP.NET is a `netstandard 2.0` library and will work with .NET Core 3.1 and 2.1 as well as .NET 4.7+.
 
 ![Create an API Project](assets/quick-start-1-choose-api.png)
 
@@ -118,7 +119,7 @@ namespace GraphQLDemo
 
 In an MVC controller, we'd generate a data object and pass it off to our Razor View for rendering. In GraphQL, we return the object back to GraphQL and let it handle which properties to render to the requestor based on their query.
 
-For an REST endpoint we'd use `[Route("person")]`, `[HttpGet("person")]` or similar attributes to specify the url template and HTTP verb for our action. In GraphQL, we have to specify if the action is a `[Query]` or a `[Mutation]` operation. Here we've chosen to use the special`[QueryRoot]` attribute to indicate that the action is both a query and exists at the top most level of our object graph. See the section on [declaring field paths](../controllers/field-paths) for a complete set of options and recommendations.
+For a REST endpoint we'd use `[Route("person")]`, `[HttpGet("person")]` or similar attributes to specify the url template and HTTP verb for our action. In GraphQL, we have to specify if the action is a `[Query]` or a `[Mutation]` operation. Here we've chosen to use the special`[QueryRoot]` attribute to indicate that the action is both a query and exists at the top most level of our object graph. See the section on [declaring field paths](../controllers/field-paths) for a complete set of options and recommendations.
 
 ## Step 4: Startup.cs
 
