@@ -31,7 +31,7 @@ public interface IQueryExecutionMiddleware
 }
 ```
 
-GraphQL ASP.NET will invoke your component at the appropriate time and pass to it the active data context. Once you have performed any necessary work involving the context invoke the `next` delegate (the second parameter)to pass the context to the next component in the chain.
+The library will invoke your component at the appropriate time and pass to it the active data context. Once you have performed any necessary work involving the context invoke the `next` delegate (the second parameter)to pass the context to the next component in the chain.
 
 ```csharp
 public class MyQueryMiddleware : IQueryExecutionMiddleware

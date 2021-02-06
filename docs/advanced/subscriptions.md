@@ -238,7 +238,7 @@ The following more granular configuration options are available:
 
 ## Security & Query Authorization
 
-Because subscriptions are long running and registered before a any data is processed, the subscription server requires a [query authorization method](../reference/schema-configuration#authorization-options) of `PerRequest` allowing the subscription request to be fully validated before its registered with the server. This authorization method is set globally by the subscription server at startup and will apply to queries and mutations as well.
+Because subscriptions are long running and registered before a any data is processed, the subscription server requires a [query authorization method](../reference/schema-configuration#authorization-options) of `PerRequest`. This allows the subscription query to be fully validated before its registered with the server. This authorization method is set globally at startup and will apply to queries and mutations as well.
 
 This is different than the default behavior when subscriptions are not enabled.  Queries and mutations, by default, will follow a `PerField` method allowing for partial query resolutions.
 
