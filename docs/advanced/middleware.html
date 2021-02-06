@@ -82,7 +82,7 @@
         CancellationToken cancelToken</span>)</span>;
 }
 </code></pre>
-<p>GraphQL ASP.NET will invoke your component at the appropriate time and pass to it the active data context. Once you have performed any necessary work involving the context invoke the <code>next</code> delegate (the second parameter)to pass the context to the next component in the chain.</p>
+<p>The library will invoke your component at the appropriate time and pass to it the active data context. Once you have performed any necessary work involving the context invoke the <code>next</code> delegate (the second parameter)to pass the context to the next component in the chain.</p>
 <pre><code class="hljs css language-csharp"><span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title">MyQueryMiddleware</span> : <span class="hljs-title">IQueryExecutionMiddleware</span>
 {
     <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">async</span> Task <span class="hljs-title">InvokeAsync</span>(<span class="hljs-params">
