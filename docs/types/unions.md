@@ -96,7 +96,7 @@ Under the hood, GraphQL ASP.NET looks at the returned object type at runtime to 
 
 ## Union Proxies
 
-If you need to reuse your unions in multiple methods you'll want to create a class that implements `IGraphUnionProxy` to encapsulate the details, then add that as a reference in your controller methods instead of the individual types. This can also be handy for uncluttering your code if you have a lot of possible types for the union. The return type of your method will still need to be `IGraphActionResult`. You cannot return a `IGraphUnionProxy` as a value.
+If you need to reuse your unions in multiple methods you'll want to create a class that implements `IGraphUnionProxy` (or inherits from `GraphUnionProxy`) to encapsulate the details, then add that as a reference in your controller methods instead of the individual types. This can also be handy for uncluttering your code if you have a lot of possible types for the union. The return type of your method will still need to be `IGraphActionResult`. You cannot return a `IGraphUnionProxy` as a value.
 
 ```csharp
 public class KitchenController : GraphController
@@ -107,16 +107,127 @@ public class KitchenController : GraphController
 }
 
 // SaladOrBread.cs
-using GraphQL.AspNet.Interfaces.TypeSystem;
-public class SaladOrBread : IGraphUnionProxy
+using GraphQL.AspNet.Schemas.TypeSystem;
+public class SaladOrBread : GraphUnionProxy
 {
-    public string Name { get; } = "SaladOrBread";
-    public string Description { get; } string.Empty;
-    public HashSet<Type> Types { get; } = new HashSet<Type>(new [] { typeof(Salad), typeof(Bread)});
-    public bool Publish { get; } = true;
+     public SaladOrBread()
+        : base(typeof(Salad), typeof(Bread))
+    {}
 }
 ```
+
+>  You can create a union proxy by inheriting from `GraphUnionProxy` or directly implementing `IGraphUnionProxy`
 
 ## Union Name Uniqueness
 
 Union names must be unique in a schema. If you do declare a union in multiple action methods without a proxy, GraphQL will attempt to validate the references by name and included types. As long as all declarations are the same, that is the name and the set of types match, then there is no issue. Otherwise, a `GraphTypeDeclarationException` will be thrown.
+
+## Liskov Substitutions
+
+[Liskov substitutions](https://en.wikipedia.org/wiki/Liskov_substitution_principle) (the L in [SOLID](https://en.wikipedia.org/wiki/SOLID)) are an important part of object oriented programming and .NET. To be able to have one class masquerade as another allows us to easily extend our code's capabilities without any rework.
+
+
+```csharp
+public class Bread
+{}
+
+public class Roll : Bread
+{}
+
+public class Bagel : Roll
+{}
+
+public class Oven 
+{
+    public void Bake(Bread bread)
+    {
+        // We can pass in Bread, Roll or Bagel and the oven
+        // will happily bake it.
+    }
+}
+```
+<br/>
+
+However, this presents a problem when when dealing with UNIONs and GraphQL.
+<div class="sideBySideCode hljs">
+<div>
+
+```csharp
+public class BakeryController : GraphController
+{
+    [QueryRoot("searchFood", 
+               "RollOrBread", 
+                typeof(Roll), typeof(Bread))]
+    public IGraphActionResult SearchFood(
+            string name)
+    {
+        return new Bagel();
+    }
+}
+```
+
+</div>
+<div>
+
+```js
+query {
+    searchFood(name: "Everything"){
+        ... on Bread { 
+                name, 
+                type 
+        }
+        ... on Roll { 
+                name, 
+                hardness 
+        }
+    }
+}
+```
+
+</div>
+</div>
+<br/>
+
+Most of the time, GraphQL ASP.NET can correctly interpret which type it should match on to allow the query to progress. However, in the above example, we declare a union, `RollOrBread`, that is of types `Roll` and `Bread`  yet we return a `Bagel` from the action method. 
+
+Since `Bagel` inherits from `Roll` and subsequently from `Bread` which type should we match against when executing the following query?
+
+The bagel is both the type `Roll` AND the type `Bread`, it could be used as either. GraphQL ASP.NET will be unable to determine which type to use and can't advance the query to select the appropriate fields. The query result is said to be indeterminate. 
+
+GraphQL ASP.NET offers a way to allow you to take control of your unions and make the determination on your own. The `ResolveType` method of `IGraphUnionProxy` will be called whenever a query result is indeterminate, allowing you to choose which of your UNION's allowed types should be used. 
+
+> Note: `IGraphUnionProxy.ResolveType` is not based on the explicit value being inspected, but only on the `System.Type`.  The results for a given field are cached for speedier type resolution on subsequent queries.
+
+```csharp
+// RollOrBread.cs
+public class RollOrBread : GraphUnionProxy
+{
+    public RollOrBread()
+        : base(typeof(Roll), typeof(Bread))
+    {}
+
+    public override Type ResolveType(Type runtimeObjectType)
+    {
+        if (runtimeObjectType == typeof(Bagel))
+            return typeof(Roll);
+        else
+            return typeof(Bread);
+    }
+}
+
+// BakeryController.cs
+public class BakeryController : GraphController
+{
+    [QueryRoot("searchFood", typeof(RollOrBread))]
+    public IGraphActionResult SearchFood(string name)
+    {
+        return new Bagel();
+    }
+}
+```
+
+The query will now interpret all `Bagels` as `Rolls` and be able to process the query correctly.
+
+If, via your logic you are unable to determine which of your Union's types to return then return null and GraphQL will supply the caller with an appropriate error message stating the query was indeterminate. Also, returning any type other than one that was formally declared as part of your Union will result in the same indeterminate state.
+
+**Note:** Most of the time GraphQL ASP.NET will never call the `ResolveType` method on your UNION. If your union types do not share an inheritance chain, for instance, the method will never be called. If your types do share an inheritance chain, such as in the example above, considering using an interface graph type along with specific fragments instead of a UNION, to avoid the issue altogether.
