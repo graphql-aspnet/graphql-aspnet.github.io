@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charSet="utf-8"/><meta http-equiv="X-UA-Compatible" content="IE=edge"/><title>Unions · GraphQL ASP.NET</title><meta name="viewport" content="width=device-width"/><meta name="generator" content="Docusaurus"/><meta name="description" content="## Unions"/><meta name="docsearch:language" content="en"/><meta property="og:title" content="Unions · GraphQL ASP.NET"/><meta property="og:type" content="website"/><meta property="og:url" content="https://graphql-aspnet.github.io/"/><meta property="og:description" content="## Unions"/><meta property="og:image" content="https://graphql-aspnet.github.io/img/undraw_online.svg"/><meta name="twitter:card" content="summary"/><meta name="twitter:image" content="https://graphql-aspnet.github.io/img/undraw_tweetstorm.svg"/><link rel="shortcut icon" href="/img/logo-64.png"/><link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/hybrid.min.css"/><script async="" src="https://www.googletagmanager.com/gtag/js?id=UA-150856900-1"></script><script>
+<!DOCTYPE html><html lang="en"><head><meta charSet="utf-8"/><meta http-equiv="X-UA-Compatible" content="IE=edge"/><title>Unions · GraphQL ASP.NET</title><meta name="viewport" content="width=device-width, initial-scale=1.0"/><meta name="generator" content="Docusaurus"/><meta name="description" content="## Unions"/><meta name="docsearch:language" content="en"/><meta property="og:title" content="Unions · GraphQL ASP.NET"/><meta property="og:type" content="website"/><meta property="og:url" content="https://graphql-aspnet.github.io/"/><meta property="og:description" content="## Unions"/><meta property="og:image" content="https://graphql-aspnet.github.io/img/undraw_online.svg"/><meta name="twitter:card" content="summary"/><meta name="twitter:image" content="https://graphql-aspnet.github.io/img/undraw_tweetstorm.svg"/><link rel="shortcut icon" href="/img/logo-64.png"/><link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/hybrid.min.css"/><script async="" src="https://www.googletagmanager.com/gtag/js?id=UA-150856900-1"></script><script>
               window.dataLayer = window.dataLayer || [];
               function gtag(){dataLayer.push(arguments); }
               gtag('js', new Date());
@@ -132,7 +132,7 @@ query {
 </code></pre>
 <p>Under the hood, GraphQL ASP.NET looks at the returned object type at runtime to evaluate the graph type reference then continues on in that scope with the returned value.</p>
 <h2><a class="anchor" aria-hidden="true" id="union-proxies"></a><a href="#union-proxies" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Union Proxies</h2>
-<p>If you need to reuse your unions in multiple methods you'll want to create a class that implements <code>IGraphUnionProxy</code> to encapsulate the details, then add that as a reference in your controller methods instead of the individual types. This can also be handy for uncluttering your code if you have a lot of possible types for the union. The return type of your method will still need to be <code>IGraphActionResult</code>. You cannot return a <code>IGraphUnionProxy</code> as a value.</p>
+<p>If you need to reuse your unions in multiple methods you'll want to create a class that implements <code>IGraphUnionProxy</code> (or inherits from <code>GraphUnionProxy</code>) to encapsulate the details, then add that as a reference in your controller methods instead of the individual types. This can also be handy for uncluttering your code if you have a lot of possible types for the union. The return type of your method will still need to be <code>IGraphActionResult</code>. You cannot return a <code>IGraphUnionProxy</code> as a value.</p>
 <pre><code class="hljs css language-csharp"><span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title">KitchenController</span> : <span class="hljs-title">GraphController</span>
 {
     [<span class="hljs-meta">QueryRoot(<span class="hljs-meta-string">"searchFood"</span>, typeof(SaladOrBread))</span>]
@@ -141,15 +141,107 @@ query {
 }
 
 <span class="hljs-comment">// SaladOrBread.cs</span>
-<span class="hljs-keyword">using</span> GraphQL.AspNet.Interfaces.TypeSystem;
-<span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title">SaladOrBread</span> : <span class="hljs-title">IGraphUnionProxy</span>
+<span class="hljs-keyword">using</span> GraphQL.AspNet.Schemas.TypeSystem;
+<span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title">SaladOrBread</span> : <span class="hljs-title">GraphUnionProxy</span>
 {
-    <span class="hljs-keyword">public</span> <span class="hljs-keyword">string</span> Name { <span class="hljs-keyword">get</span>; } = <span class="hljs-string">"SaladOrBread"</span>;
-    <span class="hljs-keyword">public</span> <span class="hljs-keyword">string</span> Description { <span class="hljs-keyword">get</span>; } <span class="hljs-keyword">string</span>.Empty;
-    <span class="hljs-keyword">public</span> HashSet&lt;Type&gt; Types { <span class="hljs-keyword">get</span>; } = <span class="hljs-keyword">new</span> HashSet&lt;Type&gt;(<span class="hljs-keyword">new</span> [] { <span class="hljs-keyword">typeof</span>(Salad), <span class="hljs-keyword">typeof</span>(Bread)});
-    <span class="hljs-keyword">public</span> <span class="hljs-keyword">bool</span> Publish { <span class="hljs-keyword">get</span>; } = <span class="hljs-literal">true</span>;
+     <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-title">SaladOrBread</span>(<span class="hljs-params"></span>)
+        : <span class="hljs-title">base</span>(<span class="hljs-params"><span class="hljs-keyword">typeof</span>(Salad</span>), <span class="hljs-title">typeof</span>(<span class="hljs-params">Bread</span>))</span>
+    {}
 }
 </code></pre>
+<blockquote>
+<p>You can create a union proxy by inheriting from <code>GraphUnionProxy</code> or directly implementing <code>IGraphUnionProxy</code></p>
+</blockquote>
 <h2><a class="anchor" aria-hidden="true" id="union-name-uniqueness"></a><a href="#union-name-uniqueness" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Union Name Uniqueness</h2>
 <p>Union names must be unique in a schema. If you do declare a union in multiple action methods without a proxy, GraphQL will attempt to validate the references by name and included types. As long as all declarations are the same, that is the name and the set of types match, then there is no issue. Otherwise, a <code>GraphTypeDeclarationException</code> will be thrown.</p>
-</span></div></article></div><div class="docs-prevnext"><a class="docs-prev button" href="/docs/types/interfaces"><span class="arrow-prev">← </span><span>Interfaces</span></a><a class="docs-next button" href="/docs/types/enums"><span>Enums</span><span class="arrow-next"> →</span></a></div></div></div><nav class="onPageNav"><ul class="toc-headings"><li><a href="#unions">Unions</a></li><li><a href="#declaring-a-union">Declaring a Union</a><ul class="toc-headings"><li><a href="#what-to-return-for-a-union">What to Return for a Union</a></li></ul></li><li><a href="#union-proxies">Union Proxies</a></li><li><a href="#union-name-uniqueness">Union Name Uniqueness</a></li></ul></nav></div><footer class="nav-footer" id="footer"><section class="sitemap"><div><h5>Docs</h5><a href="/docs/introduction/made-for-aspnet-developers">Made for ASP.NET Developers</a><a href="/docs/quick/code-examples">Code Examples</a></div><div></div><div><h5>More</h5><a class="github-button" href="https://github.com/graphql-aspnet/graphql-aspnet" data-show-count="true" data-count-href="/graphql-aspnet/graphql-aspnet/stargazers" aria-label="Star this project on GitHub">Star on GitHub</a><a href="https://graphql.org">GraphQL.org</a><a href="https://dotnet.microsoft.com/learn/aspnet">Learn ASP.NET</a></div></section><section class="copyright">Copyright © 2021 GraphQL ASP.NET</section></footer></div></body></html>
+<h2><a class="anchor" aria-hidden="true" id="liskov-substitutions"></a><a href="#liskov-substitutions" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Liskov Substitutions</h2>
+<p><a href="https://en.wikipedia.org/wiki/Liskov_substitution_principle">Liskov substitutions</a> (the L in <a href="https://en.wikipedia.org/wiki/SOLID">SOLID</a>) are an important part of object oriented programming and .NET. To be able to have one class masquerade as another allows us to easily extend our code's capabilities without any rework.</p>
+<pre><code class="hljs css language-csharp"><span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title">Bread</span>
+{}
+
+<span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title">Roll</span> : <span class="hljs-title">Bread</span>
+{}
+
+<span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title">Bagel</span> : <span class="hljs-title">Roll</span>
+{}
+
+<span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title">Oven</span> 
+{
+    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">Bake</span>(<span class="hljs-params">Bread bread</span>)</span>
+    {
+        <span class="hljs-comment">// We can pass in Bread, Roll or Bagel and the oven</span>
+        <span class="hljs-comment">// will happily bake it.</span>
+    }
+}
+</code></pre>
+<p><br/></p>
+<p>However, this presents a problem when when dealing with UNIONs and GraphQL.</p>
+<div class="sideBySideCode hljs">
+<div>
+<pre><code class="hljs css language-csharp"><span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title">BakeryController</span> : <span class="hljs-title">GraphController</span>
+{
+    [<span class="hljs-meta">QueryRoot(<span class="hljs-meta-string">"searchFood"</span>, 
+               <span class="hljs-meta-string">"RollOrBread"</span>, 
+                typeof(Roll), typeof(Bread))</span>]
+    <span class="hljs-function"><span class="hljs-keyword">public</span> IGraphActionResult <span class="hljs-title">SearchFood</span>(<span class="hljs-params">
+            <span class="hljs-keyword">string</span> name</span>)</span>
+    {
+        <span class="hljs-keyword">return</span> <span class="hljs-keyword">new</span> Bagel();
+    }
+}
+</code></pre>
+</div>
+<div>
+<pre><code class="hljs css language-js">query {
+    searchFood(name: <span class="hljs-string">"Everything"</span>){
+        ... on Bread { 
+                name, 
+                type 
+        }
+        ... on Roll { 
+                name, 
+                hardness 
+        }
+    }
+}
+</code></pre>
+</div>
+</div>
+<br/>
+<p>Most of the time, GraphQL ASP.NET can correctly interpret which type it should match on to allow the query to progress. However, in the above example, we declare a union, <code>RollOrBread</code>, that is of types <code>Roll</code> and <code>Bread</code>  yet we return a <code>Bagel</code> from the action method.</p>
+<p>Since <code>Bagel</code> inherits from <code>Roll</code> and subsequently from <code>Bread</code> which type should we match against when executing the following query?</p>
+<p>The bagel is both the type <code>Roll</code> AND the type <code>Bread</code>, it could be used as either. GraphQL ASP.NET will be unable to determine which type to use and can't advance the query to select the appropriate fields. The query result is said to be indeterminate.</p>
+<p>GraphQL ASP.NET offers a way to allow you to take control of your unions and make the determination on your own. The <code>ResolveType</code> method of <code>IGraphUnionProxy</code> will be called whenever a query result is indeterminate, allowing you to choose which of your UNION's allowed types should be used.</p>
+<blockquote>
+<p>Note: <code>IGraphUnionProxy.ResolveType</code> is not based on the explicit value being inspected, but only on the <code>System.Type</code>.  The results for a given field are cached for speedier type resolution on subsequent queries.</p>
+</blockquote>
+<pre><code class="hljs css language-csharp"><span class="hljs-comment">// RollOrBread.cs</span>
+<span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title">RollOrBread</span> : <span class="hljs-title">GraphUnionProxy</span>
+{
+    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-title">RollOrBread</span>(<span class="hljs-params"></span>)
+        : <span class="hljs-title">base</span>(<span class="hljs-params"><span class="hljs-keyword">typeof</span>(Roll</span>), <span class="hljs-title">typeof</span>(<span class="hljs-params">Bread</span>))</span>
+    {}
+
+    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">override</span> Type <span class="hljs-title">ResolveType</span>(<span class="hljs-params">Type runtimeObjectType</span>)</span>
+    {
+        <span class="hljs-keyword">if</span> (runtimeObjectType == <span class="hljs-keyword">typeof</span>(Bagel))
+            <span class="hljs-keyword">return</span> <span class="hljs-keyword">typeof</span>(Roll);
+        <span class="hljs-keyword">else</span>
+            <span class="hljs-keyword">return</span> <span class="hljs-keyword">typeof</span>(Bread);
+    }
+}
+
+<span class="hljs-comment">// BakeryController.cs</span>
+<span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title">BakeryController</span> : <span class="hljs-title">GraphController</span>
+{
+    [<span class="hljs-meta">QueryRoot(<span class="hljs-meta-string">"searchFood"</span>, typeof(RollOrBread))</span>]
+    <span class="hljs-function"><span class="hljs-keyword">public</span> IGraphActionResult <span class="hljs-title">SearchFood</span>(<span class="hljs-params"><span class="hljs-keyword">string</span> name</span>)</span>
+    {
+        <span class="hljs-keyword">return</span> <span class="hljs-keyword">new</span> Bagel();
+    }
+}
+</code></pre>
+<p>The query will now interpret all <code>Bagels</code> as <code>Rolls</code> and be able to process the query correctly.</p>
+<p>If, via your logic you are unable to determine which of your Union's types to return then return null and GraphQL will supply the caller with an appropriate error message stating the query was indeterminate. Also, returning any type other than one that was formally declared as part of your Union will result in the same indeterminate state.</p>
+<p><strong>Note:</strong> Most of the time GraphQL ASP.NET will never call the <code>ResolveType</code> method on your UNION. If your union types do not share an inheritance chain, for instance, the method will never be called. If your types do share an inheritance chain, such as in the example above, considering using an interface graph type along with specific fragments instead of a UNION, to avoid the issue altogether.</p>
+</span></div></article></div><div class="docs-prevnext"><a class="docs-prev button" href="/docs/types/interfaces"><span class="arrow-prev">← </span><span>Interfaces</span></a><a class="docs-next button" href="/docs/types/enums"><span>Enums</span><span class="arrow-next"> →</span></a></div></div></div><nav class="onPageNav"><ul class="toc-headings"><li><a href="#unions">Unions</a></li><li><a href="#declaring-a-union">Declaring a Union</a><ul class="toc-headings"><li><a href="#what-to-return-for-a-union">What to Return for a Union</a></li></ul></li><li><a href="#union-proxies">Union Proxies</a></li><li><a href="#union-name-uniqueness">Union Name Uniqueness</a></li><li><a href="#liskov-substitutions">Liskov Substitutions</a></li></ul></nav></div><footer class="nav-footer" id="footer"><section class="sitemap"><div><h5>Docs</h5><a href="/docs/introduction/made-for-aspnet-developers">Made for ASP.NET Developers</a><a href="/docs/quick/code-examples">Code Examples</a></div><div></div><div><h5>More</h5><a class="github-button" href="https://github.com/graphql-aspnet/graphql-aspnet" data-show-count="true" data-count-href="/graphql-aspnet/graphql-aspnet/stargazers" aria-label="Star this project on GitHub">Star on GitHub</a><a href="https://graphql.org">GraphQL.org</a><a href="https://dotnet.microsoft.com/learn/aspnet">Learn ASP.NET</a></div></section><section class="copyright">Copyright © 2021 GraphQL ASP.NET</section></footer></div></body></html>
