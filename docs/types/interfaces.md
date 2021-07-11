@@ -4,11 +4,11 @@ title: Interfaces
 sidebar_label: Interfaces
 ---
 
-Interfaces in GraphQL work like interfaces in C#. They provide a contract for a set of common fields of different objects. In regards to declarations, the `INTERFACE` graph type work exactly like [object types](./objects).
+Interfaces in GraphQL work like interfaces in C#. They provide a contract for a set of common fields of different objects. In regards to declarations, the `INTERFACE` graph type works exactly like [object types](./objects).
 
 By Default, when creating an interface graph type GraphQL:
 
--   Will name the interface the same as its class name.
+-   Will name the interface the same as its C# type name.
 -   Will include all properties that have a getter.
 -   Will ignore any methods.
 

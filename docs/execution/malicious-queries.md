@@ -75,7 +75,7 @@ It would not be far fetched to assume that this phone manufacturer has at least 
 
 While this query only has a field depth of 3, `allParts -> suppliers -> name`, the performance implications are much more impactful than the bakery in the first example because of the type of data involved. (Side note, this is a perfect example where a [batch operation](../controllers/batch-operations) would improve performance exponentially.)
 
-GraphQL will assign a score to every query plan, its `estimated complexity`, to help gauge the load its likely to incur on the server when trying to execute. As you might expect you can set a maximum allowed complexity value and reject any queries that exceed your limit:
+GraphQL will assign an `estimated complexity` score to each query plan to help gauge the load its likely to incur on the server when trying to execute. As you might expect you can set a maximum allowed complexity value and reject any queries that exceed your limit:
 
 ```csharp
 // Startup.cs
@@ -91,7 +91,7 @@ public void ConfigureServices(IServiceCollection services)
 
 > The default value for `MaxQueryComplexity` is `null` or no limit.
 
-There is no magic bullet for choosing a maximum value as its going to be largely dependent on your data and how customers query it. When logging is enabled, the estimated complexity is written along with the `Query Plan Generated` event. Analyzing the values your queries are producing during development will help you get a feel for things in order to make a good decision for production limitations.
+There is no magic bullet for choosing a maximum value as its going to be largely dependent on your data and how customers query it. When logging is enabled the estimated complexity is written to the `Query Plan Generated` event. Analyzing the values your queries are producing during development will help you get a feel for things in order to make a good decision for production limitations.
 
 ## Calculating Query Complexity
 
@@ -133,7 +133,7 @@ public class BakeryController : GraphController
 
 -   A factor greater than 1 will increase the weight applied to this field
 -   A factor less than 1 will decrease the weight
--   The minimum value is 0 and the default value is `1`
+-   The minimum value is `0` and the default value is `1`
 
 ## Implement Your Own Complexity Calculation
 
