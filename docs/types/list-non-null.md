@@ -41,6 +41,7 @@ Type Expressions are commonly shown in the GraphQL schema syntax for field defin
 | int                                   | Int!          |
 | float?                                | Float         |
 | IEnumerable&lt;Person&gt;                   | [Person]      |
+| Person[]                               | [Person]      |
 | List&lt;bool&gt;                            | [Boolean!]    |
 | IReadOnlyList&lt;long&gt;                  | [Long!]        |
 | IReadOnlyList&lt;long?&gt;                  | [Long]        |
