@@ -302,14 +302,14 @@ It certainly can, but there are risks to arbitrarily grabbing class references n
 To combat this GraphQL will only ingest types that are:
 
 -   Referenced in a `GraphController`
--   Attributed with with at least once instance of `[GraphType]` or `[GraphField]`
--   Added directly at startup.
+-   Attributed with at least once instance attribute of `[GraphType]` or `[GraphField]`somewhere within the type definition.
+-   Added at startup during `.AddGraphQL()`.
 
-This behavior is controlled with your schema's declaration configuration to make it more or less restrictive based on your needs. Ultimately you are in control of how aggressive or restrictive GraphQL should be even going so far as declaring that every type be declared with `[GraphType]` and every field with `[GraphField]` lest it be ignored completely. The amount of automatic vs. manual wire up required will vary from use case to use case but you should be able to achieve the result you desire.
+This behavior is controlled with your schema's declaration configuration to make it more or less restrictive based on your needs. Ultimately you are in control of how aggressive or restrictive GraphQL should be; even going so far as declaring that every type be declared with `[GraphType]` and every field with `[GraphField]` lest it be ignored completely. The amount of automatic vs. manual wire up will vary from use case to use case but you should be able to achieve the result you desire.
 
 ### Graph Action Results
 
-Graph Action Results provide a clean way to standardize your responses to different conditions across your application. In a Web API controller, if you've ever used `this.OK()` or `this.NotFound()` you've used the concept of an action result before. The full list can be found in the [action results](../advanced/graph-action-results) reference section.
+Action Results provide a clean way to standardize your responses to different conditions across your application. In a Web API controller, if you've ever used `this.OK()` or `this.NotFound()` you've used the concept of an action result before. The full list can be found in the [action results](../advanced/graph-action-results) reference section.
 
 They come with the trade off listed above in regards to interfaces but it can make your code a lot more readable.
 

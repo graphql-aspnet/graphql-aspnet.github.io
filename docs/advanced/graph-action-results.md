@@ -4,7 +4,7 @@ title: Action Results
 sidebar_label: Action Results
 ---
 
-Controllers work like they do with ASP.NET MVC.
+## What is an Action Result?
 
 In ASP.NET MVC you may do things like this:
 
@@ -57,14 +57,14 @@ Built in Controller Action Methods:
 
 -   `this.Ok(fieldValue)` : Return _fieldValue_ as the resolved value of the field and indicate to the runtime that everything completed successfully.
 -   `this.Error(message)`: Indicates a problem. Child fields are not processed and an error message with the given text and error code is added to the response payload.
--   `this.StartBatch()` : Initiates the start a of a new batch. Call `.Complete()` to finish the batch and generate a result for a batch type extension.
--   `this.Unauthorized()`: Indicate the user is not authorized to request the field. A message telling them as such will be added to the result and no child fields will be processed. The field will be returned a `null` value automatically. This is sometimes necessary for data-level validation that can't be readily determined from a validation attribute.
+-   `this.StartBatch()` : Initiates the start a of a new batch. See [batch operations](../controllers/batch-operations.md) for details.
+-   `this.Unauthorized()`: Indicate the user is not authorized to request the field. A message telling them as such will be added to the result and no child fields will be processed. The field will be returned a `null` value automatically. This is sometimes necessary for data-level validation that can't be readily determined from an `[Authorize]` attribute or query level validation.
 -   `this.BadRequest()`: Commonly used in conjunction with `this.ModelState`. This result indicates the data supplied to the method is not valid for the operation. If given the model state collection an error for each validation error is rendered.
 -   `this.InternalServerError()`: Indicates an unintended error, such as an exception occurred. The supplied message will be added to the response and no child fields will be resolved.
 
 [Directives](../directives) have one Additional Action Result:
 
--   `this.Cancel()`: When returned as part of a method that executes before field resolution, will cancel the pipeline. No error is returned, but the field is dropped from the request.
+-   `this.Cancel()`: When returned as part of a method that executes before field resolution, this action will cancel the field execution pipeline. No error is returned, but the field is dropped from the request.
 
 ## Custom Graph Action Results
 
@@ -81,7 +81,7 @@ public interface IGraphActionResult
 
 `ResolutionContext` is the data context used to resolve the field or directive. For controller actions this can be cast to `FieldResolutionContext` to obtain access to the `Result` property. Setting this property sets the resolved value for the field.
 
-> `FieldResolutionContext` contains a `Result` property, the final resolved value for the field.
+> `FieldResolutionContext` contains a `Result` property which indicates the final resolved value for the field.
 
 Looking at the `UnauthorizedGraphActionResult` is a great example of how to implement your own:
 

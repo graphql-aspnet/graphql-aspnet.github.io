@@ -4,7 +4,7 @@ title: How it Works
 sidebar_label: How it Works
 ---
 
-> This document is a high level overview how GraphQL ASP.NET ultimately generates a response to a query with some insight into core details. Its assumes a working knowledge of both ASP.NET MVC and GraphQL. If you are only interested in the "how to" for using the library, feel free to skip this.
+> This document is a high level overview how GraphQL ASP.NET ultimately generates a response to a query with some insight into core details. Its assumes a working knowledge of both ASP.NET and the GraphQL specification. If you are only interested in the "how to" for using the library, feel free to skip this.
 
 ## Schema Generation
 
@@ -20,21 +20,21 @@ From this collection of metadata, GraphQL then generates the appropriate `IGraph
 
 **How does it know what objects to include?**
 
-GraphQL ASP.NET has a few methods of determining what objects to include in your schema. By default, it will inspect your application (the entry assembly) for any public `GraphController` classes and work from there. It checks every tagged query and mutation method, looks at every return value and every method parameter to find relevant scalars, enums and object types then inspects each one in turn to create a full map. It will even inspect the arbitrary interfaces implemented on each of your consumed objects. If that interface is ever used as a return type on an action method or a property, its automatically promoted to a graph type and included in the schema.
+GraphQL ASP.NET has a few methods of determining what objects to include in your schema. By default, it will inspect your application (the entry assembly) for any public classes that inherit from `GraphController` and work from there. It checks every tagged query and mutation method, looks at every return value and every method parameter to find relevant scalars, enums and object types then inspects each one in turn, deeper and deeper down your object chain, to create a full map. It will even inspect the arbitrary interfaces implemented on each of your consumed objects. If that interface is ever used as a return type on an action method or a property, its automatically promoted to a graph type and included in the schema.
 
 You have complete control of what to include. Be that including additional assemblies, preventing the inclusion of the startup assembly, manually specifying each model class and controller etc. Attributes exist such as `[GraphSkip]` to exclude certain properties, methods or entire classes and limit the scope of the inclusion. On the other side of the fence, you can configure it to only accept classes with an explicitly declared `[GraphType]` attribute, ignoring everything else. And for the most control, disable everything and manually call `.AddGraphType<T>()` at startup for each class you want to have in your schema (controllers included). GraphQL will then happily generate declaration errors when it can't find a reference declared in your controllers. This can be an effective technique in spotting data leaks or rogue methods that slipped through a code review. Configure a unit test to generate a schema with different inclusion rules per environment and you now have an automatic CI/CD check in place to give your developers more freedom to write code during a sprint and only have to worry about configurations when submitting a PR.
 
-You can even go so far as to add a class to the schema but prevent its publication in introspection queries which can provide some helpful obfuscation. Alternatively, just disable introspection queries altogether. While this does cause client tooling to complain endlessly and makes front-end development much harder; if you and a private 3rd party can agree ahead of time on the query syntax then there is no issue.
+You can even go so far as to add a class to the schema but prevent its publication in introspection queries which can provide some helpful obfuscation. Alternatively, just disable introspection queries altogether. While this does cause client tooling to complain endlessly and makes front-end development much harder; if you and a private 3rd party can agree ahead of time on the query syntax then there is no issue. 
 
 #### Middleware Pipelines
 
-Similar to how ASP.NET MVC utilizes a middleware pipeline to fulfill an HTTP request, GraphQL follows suit to fulfill a graphQL request. Major tasks like validation, parsing, field resolution and result packaging are just [middleware components](../advanced/middleware) added to a chain of tasks and executed to complete the operation.
+Similar to how ASP.NET utilizes a middleware pipeline to fulfill an HTTP request, GraphQL ASP.NET follows suit to fulfill a graphQL request. Major tasks like validation, parsing, field resolution and result packaging are just [middleware components](../advanced/middleware) added to a chain of tasks and executed to complete the operation.
 
 At the same time as its constructing your schema, GraphQL sets up the 3 primary pipelines and store them in the DI container as an `ISchemaPipeline<TSchema, TContext>`. Each pipeline can be extended, reworked or completely replaced as needed for your use case.
 
 ## Query Execution
 
-Query execution is performed in a phased approach. For the sake of brevity we've left out the HTTP request steps required to invoke the GraphQL runtime but you can inspect the `DefaultGraphQLHttpProcessor` to read through the code.
+Query execution is performed in a phased approach. For the sake of brevity we've left out the HTTP request steps required to invoke the GraphQL runtime but you can inspect the `DefaultGraphQLHttpProcessor` and read through the code.
 
 ### Phase 1: Parsing & Validation
 
@@ -100,9 +100,9 @@ query {
 
 _Sample query used as a reference example in this section_
 
-The supplied query document (top right in the example) is ran through a compilation cycle to generate an `IGraphQueryPlan`. It is first lexed into a series of tokens representing the various parts; things like curly braces, colons, strings etc. Then it parses those tokens into a collection of `SyntaxNodes` (an Abstract Syntax Tree) representing concepts like `FieldNode`, `InputValueNode`, and `OperationTypeNode` following the [graphql specification rules for source text documents](https://graphql.github.io/graphql-spec/June2018/#sec-Source-Text).
+The supplied query document (top right in the example) is ran through a compilation cycle to generate an `IGraphQueryPlan`. It is first lexed into a series of tokens representing the various parts; things like curly braces, colons, strings etc. Then it parses those tokens into a collection of `SyntaxNodes` (creating an Abstract Syntax Tree) representing concepts like `FieldNode`, `InputValueNode`, and `OperationTypeNode` following the [graphql specification rules for source text documents](https://spec.graphql.org/June2018/#sec-Source-Text).
 
-Once parsed, the runtime will execute its internal rules engine against the generated `ISyntaxTree`, using the targeted `ISchema`, to create a query plan where it marries the AST with concrete structures such as controllers, action methods and POCOs. It is at this stage where the `hero` field in the example is matched to the `HeroController` with its appropriate `IGraphFieldResolver` to invoke the `RetrieveHero` method.
+Once parsed, the runtime will execute its internal rules engine against the generated `ISyntaxTree`, using the targeted `ISchema`, to create a query plan where it marries the AST with concrete structures such as controllers, action methods and POCOs. It is at this stage where the `hero` field in the example is matched to the `HeroController` with its appropriate `IGraphFieldResolver` to invoke the `RetrieveHero` action method.
 
 While generating a query plan the rules engine will do its best to complete an analysis of the entire document and return to the requestor every error it finds. Depending on the errors though, it may or may not be able to catch them all. For instance, a syntax error, like a missing `}`, will preclude generating a query plan so errors centered around invalid field names or a type expression mismatch won't be caught until the syntax error is fixed (just like any other compiler).
 
@@ -112,7 +112,7 @@ While generating a query plan the rules engine will do its best to complete an a
 
 The engine now has a completed query plan that describes:
 
--   The named operations declared in the document (or the anonymous operation in the example above)
+-   The named operations declared in the document (or the single anonymous operation in the example above)
 -   The top level fields and every child field for each operation
 
 **Its successfully validated that:**
@@ -141,7 +141,7 @@ At startup, GraphQL ASP.NET automatically creates resolver references for your c
 
 **Concerning the N+1 Problem**
 
-If you're reading this document you're probably aware of the [N+1 problem](https://itnext.io/what-is-the-n-1-problem-in-graphql-dd4921cb3c1a) and the concept of Data Loaders as they relate to GraphQL. The section in this documentation on [batch operations](../controllers/batch-operations) covers it in detail, but suffice it to say this library can handle 1:1, 1:N and N:N relationships with no trouble. These are implemented as type extensions through controller methods.
+If you're reading this document you're probably aware of the [N+1 problem](https://itnext.io/what-is-the-n-1-problem-in-graphql-dd4921cb3c1a) and the concept of Data Loaders as they relate to other GraphQL implementations. The section in this documentation on [batch operations](../controllers/batch-operations) covers it in detail, but suffice it to say this library can handle 1:1, 1:N and N:N relationships with no trouble. These are implemented as type extensions through controller methods.
 
 Lets use a scenario where we query a set of managers and for each manager, their employees; setting up a 1:N concern. Using a `[BatchTypeExtension]` we can query all the needed children at once then split them out to the individual managers.
 
@@ -200,6 +200,13 @@ public class ManagersController : GraphController
     }
 }
 ```
+
+
+**Concerning Proxy Libraries (e.g. EF Core Proxies)**
+
+As of version `0.6.0-beta` GraphQL ASP.NET natively supports Liskov substitutions for all graph types opening up the possibility for using libraries such as EF Proxies that can provide a tremendously powerful and easy to setup graph structure. By lazy loading any child collections you can expose access to your entire domain model with very little work.
+
+Be careful though, [EF Core Proxies](https://docs.microsoft.com/en-us/ef/core/querying/related-data/lazy) and like libraries suffer from the same N + 1 problem as GraphQL libraries do. By choosing to use such lazy loading techniques you are circumventing GraphQL ASP.NET's provided mechanisms for handling such situations and need to be exceptionally careful to manage the issue yourself.
 
 ### Phase 3: Response Generation
 

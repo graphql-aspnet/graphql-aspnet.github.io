@@ -17,9 +17,9 @@ The first step to using subscriptions is to install the subscription server pack
 
 This adds the necessary components to create a subscription server for a given schema such as communicating with web sockets, parsing subscription queries and responding to events.
 
-### Configure the GraphQL Instance
+### Configure the Server Instance
 
-You must configure web socket support for your Asp.Net server instance separately. The ways in which you perform this configuration will vary widely depending on your needs. CORS requirements, keep -alive support etc. will be different for each scenario.
+You must configure web socket support for your Asp.Net server instance separately. The ways in which you perform this configuration will vary widely depending on your needs. CORS requirements, keep-alive support etc. will be different for each scenario.
 
 After web sockets are added to your server, add subscription support to the graphql registration.
 
@@ -238,7 +238,7 @@ The following more granular configuration options are available:
 
 ## Security & Query Authorization
 
-Because subscriptions are long running and registered before a any data is processed, the subscription server requires a [query authorization method](../reference/schema-configuration#authorization-options) of `PerRequest`. This allows the subscription query to be fully validated before its registered with the server. This authorization method is set globally at startup and will apply to queries and mutations as well.
+Because subscriptions are long running and registered before any data is processed, the subscription server requires a [query authorization method](../reference/schema-configuration#authorization-options) of `PerRequest`. This allows the subscription query to be fully validated before its registered with the server. This authorization method is set globally at startup and will apply to queries and mutations as well.
 
 This is different than the default behavior when subscriptions are not enabled.  Queries and mutations, by default, will follow a `PerField` method allowing for partial query resolutions.
 

@@ -8,7 +8,7 @@ At the heart of GraphQL ASP.NET are 3 middleware pipelines; chains of components
 
 -   `Query Execution Pipeline` : Invoked once per request this pipeline is responsible for validating the incoming package on the POST request, parsing the data and executing a query plan.
 -   `Field Execution Pipeline` : Invoked once per requested field, this pipeline attempts to generate the requested data by calling the various controller actions and property resolvers.
--   `Field Authorization Pipeline`: This pipeline can be invoked as part of query execution or field execution depending on your schema's configuration. It will perform field authorization checks for each field context.
+-   `Field Authorization Pipeline`: Ensures the user on the request can perform the action requested. This pipeline is invoked once for the whole query or for each field depending on your schema's configuration.
 
 ## Creating New Middleware
 
@@ -31,7 +31,7 @@ public interface IQueryExecutionMiddleware
 }
 ```
 
-The library will invoke your component at the appropriate time and pass to it the active data context. Once you have performed any necessary work involving the context invoke the `next` delegate (the second parameter)to pass the context to the next component in the chain.
+The library will invoke your component at the appropriate time and pass to it the active data context. Once you have performed any necessary work involving the context invoke the `next` delegate (the second parameter) to pass the context to the next component in the chain.
 
 ```csharp
 public class MyQueryMiddleware : IQueryExecutionMiddleware
@@ -60,10 +60,10 @@ Each context object has specific data fields required for it to perform its work
 
 -   `Messages`: A collection of messages that will be added to the query result.
 -   `Cancel()`: Marks the context as cancelled and sets the `IsCancelled` property to true. It is up to each middleware component to interpret the meaning of cancelled for its own purposes. A canceled field execution context, for instance, will be discarded and not rendered to the output whereas a canceled query context may or may not generate a result depending on when its cancelled.
--   `IsValid`: Determines if the context is in a valid and runnable state. Most middleware components will not attempt to process the component if its not in a valid state and will simply forward the request on. By default, a context is automatically invalidated if an error message is added in a `Critical` state.
+-   `IsValid`: Determines if the context is in a valid and runnable state. Most middleware components will not attempt to process the context if its not in a valid state and will simply forward the request on. By default, a context is automatically invalidated if an error message is added with the `Critical` severity.
 -   `User`: The ClaimsPrincipal provided by ASP.NET containing the active user's credentials. May be null if user authentication is not setup for your application.
 -   `Metrics`: The metrics package performing any profiling of the query. Various middleware components will stop/start phases of execution using this object. If metrics are not enabled this object will be null.
--   `Items`: A key/value pair collection of items. This field is user driven and not used by the runtime.
+-   `Items`: A key/value pair collection of items. This field is developer driven and not used by the runtime.
 -   `Logger`: An `IGraphLogger` instance scoped to the the current query.
 
 ## Registering New Middleware
@@ -94,7 +94,7 @@ Each pipeline is registered as a singleton instance in your service provider but
 
 > Register your middleware components with the `Singleton` lifetime scope whenever possible.
 
-It is recommended that your middleware components be singleton in nature if possible. The field pipelines can be invoked many dozens (or hundreds) of times per request and fetching new middleware instances for each invocation could impact performance. The internal pipeline manager will retain references to any singleton middleware components once they are generated and avoid this bottleneck whenever possible. All default components are registered as a singletons.
+It is recommended that your middleware components be singleton in nature if possible. The two field pipelines can be invoked many dozens (or hundreds) of times per request and fetching new middleware instances for each invocation could impact performance. The internal pipeline manager will retain references to any singleton middleware components once they are generated and avoid this bottleneck whenever possible. All default components are registered as a singletons.
 
 ## Query Execution Pipeline
 

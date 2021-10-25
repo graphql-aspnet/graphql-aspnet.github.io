@@ -252,6 +252,9 @@ public class SuperSensitiveData
 
 This rule is enforced at the template level and is applied to any .NET `System.Type` across the board. Its not specific to the `OBJECT` graph type. If you tag an `interface` or an `enum` with `[GraphSkip]` it will cause the same failure.
 
-## Classes as Input Objects
+## Structs as Objects
+The usage of `struct` types as an `OBJECT` graph type is fully supported. The same rules listed above that apply to `class` types also apply to `struct` types. 
 
-A class can be used as both an `INPUT_OBJECT` and an output `OBJECT` graph type. See the section on [input objects](./input-objects) for some of the key differences and requirements.
+## Reuse as Input Objects
+
+Both `class` and `struct` types can be used as an `INPUT_OBJECT` and an output `OBJECT` graph type. See the section on [input objects](./input-objects) for some of the key differences and requirements.
