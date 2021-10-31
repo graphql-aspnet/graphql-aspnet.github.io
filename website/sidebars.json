@@ -40,7 +40,8 @@
         ],
         "Development Concerns": [
             "development/debugging",
-            "development/unit-testing"
+            "development/unit-testing",
+            "development/entity-framework"
         ],
         "References": [
             "reference/how-it-works",

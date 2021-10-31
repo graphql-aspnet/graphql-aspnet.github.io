@@ -166,18 +166,31 @@ schemaOptions.ExecutionOptions.QueryTimeout = TimeSpan.FromMinutes(2);
 
 The amount of time an individual query will be given to run to completion before being abandoned and canceled by the runtime.
 
-### AwaitEachRequestedField
+### DebugMode
 
 ```csharp
 // usage examples
-schemaOptions.ExecutionOptions.AwaitEachRequestedField = false;
+schemaOptions.ExecutionOptions.DebugMode = true;
 ```
 
 | Default Value | Acceptable Values |
 | ------------- | ----------------- |
 | `false`       | `true`, `false`   |
 
-When true, each field and each list member of each field will be executed sequentially rather than asynchronously. This option will greatly impact performance and should only be enabled for [debugging](../development/debugging).
+When true, each field and each list member of each field will be executed sequentially rather than asynchronously. All asynchronous methods will be individually awaited and allowed to throw immediately. A single encountered exception will halt the entire query process. This can be very helpful in preventing a jumping debug cursor as queries are normally executed in parallel.  This option will greatly impact performance and should only be enabled for [debugging](../development/debugging).
+
+### ResolverIsolation
+
+```csharp
+// usage examples
+schemaOptions.ExecutionOptions.ResolverIsolation = ResolverIsolationOptions.ControllerActions | ResolverIsolation.Properties;
+```
+
+| Default Value | 
+| ------------- | 
+| `ResolverIsolation.None` |
+
+Resolver types identified in `ResolverIsolation` are guaranteed to be executed independently. This is different than `DebugMode`. In Debug mode a single encountered error will end the request whereas errors encountered in isolated resolvers will still be aggregated. This allows the returning partial results which can be useful in some use cases. 
 
 ### MaxQueryDepth
 
@@ -434,3 +447,51 @@ When set to true, the subscription middleware will immediately reject any websoc
 When set to false, the subscription middleware will initially accept all web socket requests.
 
 
+
+## Global Configuration Settings
+Global settings effect the entire server instance, they are not restricted to a single schema registration. Instead they should be set before calling `.AddGraphQL()`
+```csharp
+// Startup.cs
+public void ConfigureServices(IServiceCollection services)
+{
+   // setup any global configuration options before 
+   // calling AddGraphQL()
+   GraphQLProviders.GlobalConfiguration.CONFIG_OPTION_NAME
+
+   services.AddGraphQL();
+}
+```
+### ControllerServiceLifetime
+```csharp
+GraphQLProviders.GlobalConfiguration.ControllerServiceLifetime = ServiceLifetime.Transient
+```
+
+
+| Default Value | Acceptable Values |
+| ------------- | ----------------- |
+| `Transient `       | `Transient`, `Scoped`, `Singleton`   |
+
+The configured service lifetime is what all controllers and directives will be registered as within the DI container during schema setup.
+
+```csharp
+// Startup.cs
+public void ConfigureServices(IServiceCollection services)
+{
+   // All controllers will be registered as Scoped
+   GraphQLProviders.GlobalConfiguration.ControllerServiceLifetime = ServiceLifetime.Scoped;
+   services.AddGraphQL();
+}
+```
+If you need to register only one or two controllers as a different scope add them to the DI container prior to calling `.AddGraphQL()`
+
+```csharp
+// Startup.cs
+public void ConfigureServices(IServiceCollection services)
+{
+   // MyController will be registered as Scoped
+   services.AddScoped<MyController>();
+
+   // all other controllers will be registered as Transient
+   services.AddGraphQL();
+}
+```
