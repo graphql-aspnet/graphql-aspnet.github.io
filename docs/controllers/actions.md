@@ -148,7 +148,7 @@ Dictionary types, such as `Dictionary<TKey,TValue>`, are generally not useful in
 
 When a query executes, if a collection of data is seen, GraphQL will walk the collection when querying for child fields. A dictionary would be treated as `IEnumerable<KeyValuePair<TKey, TValue>>` which could have some unintended consequences for down stream fields. To avoid the confusion altogether GraphQL will throw a declaration exception at startup if it senses a dictionary type used incorrectly.
 
-This isn't to say that dictionaries should be ignored. On the contrary, use them as needed to generate your data and perform your business logic. Just don't return a dictionary from your action. In fact, GraphQL ASP.NET makes heavy use of multiple dictionary types internally.
+This isn't to say that dictionaries should be ignored. On the contrary, use them as needed to generate your data and perform your business logic. Just don't return a dictionary from your action method. In fact, GraphQL ASP.NET makes heavy use of multiple dictionary types internally.
 
 However, there is an exception to the rule. [Batch operations](../controllers/batch-operations), also called `Data Loaders`, are a special type of extension method that uses dictionaries to map child data to multiple parents. Batch operations are incredibly important to the performance of your queries when you start working with large quantities of deeply nested parent/child relationships.
 
@@ -287,8 +287,7 @@ public void ConfigureServices(IServiceCollection services)
     // we can define all our objects in a single assembly, then load it
     Assembly pastryAssembly = Assembly.GetAssembly(typeof(Cake));
 
-    services.AddMvc()
-            .AddGraphQL(options =>
+    services.AddGraphQL(options =>
             {
                 options.AddGraphAssembly(pastryAssembly);
             });
