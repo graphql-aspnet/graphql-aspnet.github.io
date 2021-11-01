@@ -31,10 +31,10 @@ public class FoodController : GraphController
     public FoodController(AppDbContext context){}
 
     [QueryRoot]
-    public IPastry SearchMeat(string name){}
+    public IFood SearchMeat(string name){}
 
     [QueryRoot]
-    public IPastry SearchVeggies(string name){}
+    public IFood SearchVeggies(string name){}
 }
 ```
 
