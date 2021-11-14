@@ -8,7 +8,7 @@ Scalars are the most basic, fundamental unit of content in GraphQL. It is one of
 
 GraphQL ASP.NET has 18 built in scalar types.
 
-| Scalar Name    | .NET Type              | Allowed Input Value\*\* |
+| Scalar Name    | .NET Type              | Allowed Input Value     |
 | -------------- | ---------------------- | ----------------------- |
 | Boolean        | System.Boolean         | Boolean                 |
 | Byte           | System.Byte            | Number                  |
@@ -36,8 +36,9 @@ GraphQL ASP.NET has 18 built in scalar types.
 When a value is resolved it's read from the query document (or variable collection) in one of three ways:
 
 -   **String** : A string of characters, delimited by `"quotes"`
--   **Boolean** The string `true` or `false` with no quotes
--   **Number** A string of numbers with an optional decimal point, negative sign or letter `e`, `-123.456e78`.
+-   **Boolean** The value `true` or `false` with no quotes
+-   **Number** A sequence of numbers with an optional decimal point, negative sign or the letter `e`
+    -   example: `-123.456e78`
     -   GraphQL numbers must conform to the [IEEE 754](https://en.wikipedia.org/wiki/IEEE_754) standard [Spec § [3.5.2](https://graphql.github.io/graphql-spec/June2018/#sec-Float)]
 
 Scalars used as input arguments require that any supplied value match at least one supported input format before they will attempt to convert the value into the related .NET type. If the value read from the document doesn't match an approved format it is rejected before conversion is attempted. See the table above for the list of allowed formats per scalar type.
