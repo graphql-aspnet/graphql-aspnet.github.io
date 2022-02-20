@@ -45,7 +45,9 @@ Adds the single graph entity to the schema. Use this method to add individual ty
 schemaOptions.AddSchemaAssembly()
 ```
 
-When using .`AddGraphQL<TSchema>()` on multi-schema servers, the runtime will scan the assembly where the schema is declared and auto-include any found graph entities (controllers, types enums etc.) on the schema.
+When declaring a new schema with .`AddGraphQL<TSchema>()`, the runtime will scan the assembly where `TSchema` is declared and auto-add any found graph entities (controllers, types enums etc.) to the schema. 
+
+This method has no effect when using `AddGraphQL()`.
 
 ### AddGraphAssembly
 
@@ -54,7 +56,7 @@ When using .`AddGraphQL<TSchema>()` on multi-schema servers, the runtime will sc
 schemaOptions.AddGraphAssembly(Assembly)
 ```
 
-The runtime will scan the referenced assembly and auto-include any found graph entities (controllers, types enums etc.) on the schema.
+The runtime will scan the referenced assembly and auto-add any found graph entities (controllers, types enums etc.) to the schema.
 
 ### AutoRegisterLocalGraphEntities
 ```csharp
@@ -66,7 +68,7 @@ schemaOptions.AutoRegisterLocalGraphEntities = true;
 | ------------- | ----------------- |
 | `true`        | `true`, `false`   |
 
-When true those graph entities (controllers, types, enums etc.) that are declared in the entry assembly for the application are automatically registered to the schema.
+When true, those graph entities (controllers, types, enums etc.) that are declared in the entry assembly for the application are automatically registered to the schema. Typically this is your API project where `Startup.cs` is declared.
 
 ## Authorization Options
 
@@ -84,7 +86,7 @@ Controls how the graphql execution pipeline will authorize a request.
 
 * `PerField`: Each field of a query is evaluated individually allowing a data response to be generated that includes data the user can access and `null` values for those fields the user cannot access.  Any unauthorized fields will also register an error in the response.
 
-* `PerRequest`: All fields of a query are validated BEFORE execution. If the current user does not have access to 1 or more fields the entire request is denied and an error message generated.
+* `PerRequest`: All fields of a query are validated BEFORE execution. Each field is validated individually, using its own authorization and authentication requirements. If the current user does not have access to 1 or more requested fields the entire request is denied and an error message generated.
 
 > See [Subscription Security](../advanced/subscriptions#security--query-authorization) for additional considerations regarding authorization and subscriptions.
 
@@ -138,6 +140,7 @@ An object that will format any internal name of a class or method to an acceptab
 | Enum Values      | All Caps       | `CHOCOLATE`, `FEET`, `PHONE_NUMBER`  |
 _Default formats for the three different entity types_
 
+> To make radical changes to your name formats, beyond the available options, inherit from `GraphNameFormatter` and override the different formatting methods.
 
 ## Execution Options
 
@@ -151,7 +154,7 @@ schemaOptions.ExecutionOptions.EnableMetrics = false;
 | ------------- | ----------------- |
 | `false`       | `true`, `false`   |
 
-When true, metrics / query profiling will be enabled for all queries processed for a given schema.
+When true, metrics and query profiling will be enabled for all queries processed for a given schema.
 
 ### QueryTimeout
 
@@ -170,14 +173,14 @@ The amount of time an individual query will be given to run to completion before
 
 ```csharp
 // usage examples
-schemaOptions.ExecutionOptions.DebugMode = true;
+schemaOptions.ExecutionOptions.DebugMode = false;
 ```
 
 | Default Value | Acceptable Values |
 | ------------- | ----------------- |
 | `false`       | `true`, `false`   |
 
-When true, each field and each list member of each field will be executed sequentially rather than asynchronously. All asynchronous methods will be individually awaited and allowed to throw immediately. A single encountered exception will halt the entire query process. This can be very helpful in preventing a jumping debug cursor as queries are normally executed in parallel.  This option will greatly impact performance and should only be enabled for [debugging](../development/debugging).
+When true, each field and each list member of each field will be executed sequentially rather than asynchronously. All asynchronous methods will be individually awaited and allowed to throw immediately. A single encountered exception will halt the entire query process. This can be very helpful in preventing a jumping debug cursor as query branches are normally executed in parallel.  This option will greatly impact performance and can cause inconsistent query results if used in production. It should only be enabled for [debugging](../development/debugging).
 
 ### ResolverIsolation
 
@@ -203,7 +206,7 @@ schemaOptions.ExecutionOptions.MaxQueryDepth = 15;
 | ------------- | ---------------------- |
 | -_not set_-   | Integer Greater than 0 |
 
-The allowed [field depth](../execution/malicious-queries) of any child field within a given query. If a child is nested deeper than this value the query will be rejected.
+The maximum allowed [field depth](../execution/malicious-queries) of any child field within a given query. If a child is nested deeper than this value the query will be rejected.
 
 ### MaxQueryComplexity
 
@@ -310,7 +313,7 @@ schemaOptions.QueryHandler.Route = "/graphql";
 | ------------- |
 | `/graphql`    |
 
-Represents the http end point where GraphQL will listen for new requests. In multi-schema configurations this value will need to be unique per schema type.
+Represents the REST end point where GraphQL will listen for new POST requests. In multi-schema configurations this value will need to be unique per schema type.
 
 ### AuthenticatedRequestsOnly
 
@@ -323,7 +326,7 @@ schemaOptions.QueryHandler.AuthenticatedRequestsOnly = false;
 | ------------- | ----------------- |
 | `false`       | `true`, `false`   |
 
-When true, only those requests that are successfully authenticated by the ASP.NET runtime will be passed to graphQL. Should an unauthenticated request make it to the graphql query processor it will be immediately rejected. This option has no effect when a custom `HttpProcessorType` is declared.
+When true, only those requests that are successfully authenticated by the ASP.NET runtime will be passed to GraphQL. Should an unauthenticated request make it to the graphql query processor it will be immediately rejected. This option has no effect when a custom `HttpProcessorType` is declared.
 
 ### HttpProcessorType
 
@@ -336,7 +339,7 @@ schemaOptions.QueryHandler.HttpProcessorType = typeof(MyProcessorType);
 | ------------- |
 | `null` |
 
-When set to a type, GraphQL will attempt to load the provided type from the configured DI container in order to handle graphql requests. Any class wishing to act as an Http Processor must inherit from `IGraphQLHttpProcessor`. It is perhaps easier to extend `DefaultGraphQLHttpProcessor<TSchema>` for most small operations such as handling metrics.
+When set to a type, GraphQL will attempt to load the provided type from the configured DI container in order to handle graphql requests. Any class wishing to act as an Http Processor must implement `IGraphQLHttpProcessor`. In most cases it may be easier to extend `DefaultGraphQLHttpProcessor<TSchema>`.
 
 ## Subscription Server Options
 These options are available to configure a subscription server for a given schema via `.AddSubscriptions(serverOptions)` or `.AddSubscriptionServer(serverOptions)`
@@ -351,7 +354,7 @@ serverOptions.DisableDefaultRoute = false;
 | ------------- | ----------------- |
 | `false `       | `true`, `false`   |
 
-When true, GraphQL will not register a component to listen for web socket requests. You must handle the acceptance of web sockets yourself and inform the subscription server that a new one exists. If you wish to implement your own web socket middleware handler, viewing `DefaultGraphQLHttpSubscriptionMiddleware<TSchema>` may help.
+When true, GraphQL will not register a component to listen for web socket requests. You must handle the acceptance of web sockets yourself and inform the subscription server that a new one exists. If you wish to implement your own web socket middleware handler, viewing [DefaultGraphQLHttpSubscriptionMiddleware<TSchema>](https://github.com/graphql-aspnet/graphql-aspnet/blob/master/src/graphql-aspnet-subscriptions/Defaults/DefaultGraphQLHttpSubscriptionMiddleware.cs) may help.
 
 
 ### Route

@@ -210,7 +210,6 @@ Acts to explicitly declare a method or property as being part of a graph type.
 #### `[GraphField(name)]`
 
 -   `name` - The name of this field as it should appear in the object graph to be queried
-
 ```csharp
 public class Human
 {
@@ -218,6 +217,19 @@ public class Human
 
     [GraphField("name")]
     public string FullName { get; set; }
+}
+```
+
+#### `[GraphField(TypeExpression = TypeExpressions.IsNotNull)]`
+-   `TypeExpression` - Define a custom type expression; useful in setting a normally optional input field (such as a string or other object) to being required.
+
+```csharp
+public class Human
+{
+    public int Id{get; set; }
+
+    [GraphField(TypeExpression = TypeExpressions.IsNotNull)]
+    public Employer Boss { get; set; }
 }
 ```
 

@@ -143,7 +143,7 @@ A complete example of single instance subscription server including a react app 
 ## Scaling Subscription Servers
 Using web sockets has a natural limitation in that any each server instance has a maximum number of socket connections that it can handle. Once that limit is reached no additional clients can register subscriptions.
 
-Ok no problem, just scale horizontally, spin up additional ASP.NET server instances and have the new requests open a web socket connection to these additional server instances, right?  Not so fast.
+Ok no problem, just scale horizontally, spin up additional ASP.NET server instances, add a load balancer and have the new requests open a web socket connection to these additional server instances, right?  Not so fast.
 
 With the examples above events published by any mutation using `PublishSubscriptionEvent` are routed internally directly to the local subscription server meaning only those clients connected to the server where the event was raised will receive it. Clients connected to other server instances will never know an event was raised. This represents a big problem for large scale websites, so what do we do?
 
@@ -151,7 +151,7 @@ With the examples above events published by any mutation using `PublishSubscript
 Instead of publishing events internally, within the server instance, we need to publish our events to some intermediate source such that any server can be notified of the change.  There are a variety of technologies to handle this scenario; be it a common database or messaging technologies like RabbitMQ, Azure Service Bus etc.
 
 #### Implement `ISubscriptionEventPublisher`
-Whatever your technology of choice the first step is to create and register a custom publisher such that any raised events are published externally. How your individual class functions will vary widely depending on your implementation.
+Whatever your technology of choice the first step is to create and register a custom publisher. How your individual class functions will vary widely depending on your implementation.
 
 ```C#
     public interface ISubscriptionEventPublisher
