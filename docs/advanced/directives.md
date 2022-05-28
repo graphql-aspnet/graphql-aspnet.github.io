@@ -4,28 +4,107 @@ title: Directives
 sidebar_label: Directives
 ---
 
-Directives are implemented in much the same way as `GraphController` but where you'd indicate a a graph controller method as being for a query or mutation, directives must indicate where they can be declared and when they should execute.
+> Directives were completely reimagined in June 2022, this document represents the new approach to directives.
+
+Directives are implemented in much the same way as a `GraphController` but where you'd indicate an action method as being for a query or mutation, directive action methods must indicate the location(s) they can be applied in either a query document or the type system.
+
+```csharp
+    // an example implementation of the @skip directive
+    public sealed class SkipDirective : GraphDirective
+    {        
+        [DirectiveLocations(DirectiveLocation.FIELD | DirectiveLocation.FRAGMENT_SPREAD | DirectiveLocation.INLINE_FRAGMENT)]
+        public IGraphActionResult Execute([FromGraphQL("if")] bool ifArgument)
+        {
+            return ifArgument ? this.Cancel() : this.Ok();
+        }
+    }
+```
 
 ## Anatomy of a Directive
 
 All directives must:
 
 -   Inherit from `GraphQL.AspNet.Directives.GraphDirective`
--   Provide at least one appropriate life cycle action method definition
+-   Provide at least one action method that indicates at least 1 valid `DirectiveLocation`.
 
 All directive action methods must:
 
 -   Share the same method signature
--   Return `IGraphActionResult`
+-   Return `IGraphActionResult` or `Task<IGraphActionResult>`
+
+
+### Helpful Properties
+
+The following properties are available to all directive action methods:
+
+* `this.DirectiveTarget` - The targeted schema item or resolved field value depending the directive type.
+* `this.Request`  - The invocation request for the currently executing directive. Contains lots of advanced information just as execution phase, the executing location etc.
+
+
+### Directive Arguments
+
+Directives can contain input arguments just like fields. However, its important to note that while a directive may declare multiple action methods for different locations to seperate your logic better, it is only a single entity in the schema. As a result ALL action methods must share a common signature. The runtime will throw an exception while creating your schema if the signatures of each action method differ.
+
+```csharp
+    public class MyValidDirective : GraphDirective
+    {        
+        [DirectiveLocations(DirectiveLocation.FIELD)]
+        public IGraphActionResult Execute(int arg1, string arg2) { /.../ }
+
+        [DirectiveLocations(DirectiveLocation.FRAGMENT_SPREAD)]
+        public Task<IGraphActionResult> Execute(int arg1, string arg2) { /.../ }
+    }
+
+    public class MyInvalidDirective : GraphDirective
+    {        
+        // method parameters MUST match for all directive action methods.
+        [DirectiveLocations(DirectiveLocation.FIELD)]
+        public IGraphActionResult Execute(int arg1, int arg2) { /.../ }
+
+        [DirectiveLocations(DirectiveLocation.FRAGMENT_SPREAD)]
+        public IGraphActionResult Execute(int arg1, string arg2) { /.../ }
+    }
+```
+> Directive arguments must match in name, data type and position for all action methods. Being able to use different methods for different locations is a convenience; to GraphQL there is only one directive with one set of parameters.
+
+
+### Returning Data from a Directive
+
+Directives can't directly return data or resolve a field. They can only indicate success or failure. The following helper methods can help to quickly generate an appropriate `IGraphActionResult`.
+
+* `this.Ok()`:
+    * The directive executed correctly and processing of the current schema item or target field should continue.
+* `this.Cancel()`:
+    * The directive failed and the schema should not be generated or the target field should be dropped.
+
+> throwing an exception within an action method of a directive will cause the current query to fail completely. Use `this.Cancel()` to only drop the single targeted field.
+
+### Directive Target
+The `this.DirectiveTarget` property will contain either an `ISchemaItem` for type system directives or the resolved field value for execution directives. This value is useful in performing additional operations such as extending a field resolver during schema generation or taking further action against a resolved field.
+
+### Directive Lifecycle Phases
+
+Each directive is executed in one of three phases as indicated by `this.DirectivePhase`:
+
+* `SchemaGeneration`
+    * The directive is being applied during schema generation. `this.DirectiveTarget` will be the `ISchemaItem` targeted by the directive. You can make any necessary changes to the schema item during this phase. Once all type system directives have been applied the schema is read-only and should not be changed.
+* `BeforeFieldResolution`
+    * The directive is currently executing BEFORE its target field is resolved. `this.DirectiveTarget` will be null. You must explicitly tell a directive to execute before field resolution via the `[DirectiveInvocation]` attribute. By default this phase will be skipped.
+* `AfterFieldResolution`
+    * The directive is currently executing AFTER its target field is resolved. `this.DirectiveTarget` will contain the resolved field value. This value can be freely edited and the result will be used as the field result.  You are responsible for ensuring type consistancy. Altering the concrete data type of `DirectiveTarget` may cause a query to fail or yield unpredictable results.
+
+## Execution Directives
+
+### Example: @include Directive
 
 This is the code for the built in `@include` directive:
 
 ```csharp
     [GraphType("include")]
-    [DirectiveLocations(ExecutableDirectiveLocation.AllFieldSelections)]
     public sealed class IncludeDirective : GraphDirective
-    {
-        public IGraphActionResult BeforeFieldResolution([FromGraphQL("if")] bool ifArgument)
+    {        
+        [DirectiveLocations(DirectiveLocation.FIELD | DirectiveLocation.FRAGMENT_SPREAD | DirectiveLocation.INLINE_FRAGMENT)]
+        public IGraphActionResult Execute([FromGraphQL("if")] bool ifArgument)
         {
             return ifArgument ? this.Ok() : this.Cancel();
         }
@@ -37,42 +116,19 @@ This Directive:
 -   Declares its name using the `[GraphType]` attribute
     -   The name will be derived from the class name if the attribute is omitted
 -   Defines that it can be included in a query document at all applicable field selection locations using the `[DirectiveLocations]` attribute
-    -   This is the default behavior and will be set automatically if the attribute is omitted.
--   Declares a life cycle method of `BeforeFieldResolution` and provides one required input argument
+    -   This is similar to using the `[Query]` or `[Mutation]` attributes for a controller method. 
+    -   In addition to defining where the directive can be used this attribute also indicates which action method is invoked at that location. You can use multiple action methods as long as they have the same signature.
 -   Uses the `[FromGraphQL]` attribute to declare the input argument's name in the schema
+    - This is because `if` is a keyword in C# and we don't want the argument being named `ifArgument` in the graph.
+-   Is executed once for each field or fragment field its applied to in a query document
 
-### Directive Life Cycle Methods
+> The action method name `Execute` in this example is arbitrary. Method names can be whatever makes the most sense to you.
 
-GraphQL ASP.NET offers two points in the field pipeline at which a directive could be invoked. By declaring your methods as one of these two method names (or both), you can invoke the directive at that point in the lifecycle:
+### Directive Execution Order
 
--   `BeforeFieldResolution`
-    -   This method is executed before a controller method is called.
--   `AfterFieldResolution`
-    -   The method is executed after the controller method is called.
+When more than one directive is encountered for a single field, they are executed in the order encountered, from left to right, in the source text.
 
-> Directive life cycle methods must have an identical signature
-
-While a directive may declare both life cycle methods independently, it is only a single entity in a schema. As a result both life cycle methods must share a common signature (i.e. the same input parameters and return type). The runtime will throw an exception when your schema is created if the signatures differ.
-
-### Returning Data from a Directive
-
-Directives can't directly return data or resolve a field but they can influence the field data using `this.Request.DataSource`. This property gives you direct access to the data items the field is currently resolving as well as the resolved values and current item state if executing `AfterFieldResolution`. You're free to manipulate this data as necessary and can change the resolved value, cancel a specific item etc.
-
-**Directives Must Return IGraphActionResult**
-
-Since directives don't directly return data, they must always return a `IGraphActionResult` to fully declare their intent. In the include directive, we're returning `this.Ok()` and `this.Cancel()` which allows us to affect the pipeline processing status, signaling for it to continue or cancel.
-
-## How Directives are Executed
-
-Directives are executed as a middleware component in the field execution pipeline. If the request supplies any directives to be ran, they are executed in the pipeline and depending on the result, the pipeline is allowed to continue or not.
-
-The include directive above is very simple. Depending on the input argument it either returns `this.Ok()` indicating everything executed fine and processing of the pipeline should continue, or it returns `this.Cancel()` to end the request. The include directive does not attempt to influence or filter the incoming data items, its an "all or nothing" directive.
-
-## Directive Execution Order
-
-When more than one directive is encountered for a single field they are executed in sequence in the order declared in the source text. No directive has precedence over another and all will be executed.
-
-## Working with Fragments
+### Working with Fragments
 
 Directives attached to spreads and named fragments are executed for each of the top level fields in the fragment.
 
@@ -100,20 +156,251 @@ fragment donutData on Donut @directiveB {
 
 The directives executed, in order, for each field are:
 
--   **`allPasteries`**: `@directive1`
+-   **`allPasteries`**: @directive1
 
--   **`flavor`**: `@directiveA`, `@directiveB`, `@directiveC`
+-   **`flavor`**: @directiveA -> @directiveB -> @directiveC
 
-*   **`size`**: `@directiveA`, `@directiveB`
+*   **`size`**: @directiveA -> @directiveB
 
-*   **`length`**: `@directiveD`
+*   **`length`**: @directiveD
 
 *   **`id`, `name`, `width`**: _-no directives-_
 
 Since the `donutData` fragment is spread into the `allPastries` field its directives are also spread into the fields at the "top-level" of the fragment.
 
-## Sharing Data with Fields
+### Sharing Data with Fields
 
 It is recommended that your directives act independently and be self contained. But if your use case calls for a need to share data with the fields they are targeting, the key-value pair collection `Items` that can be used:
 
 -   `this.Request.Items` is a collection scoped to the current field execution. These values are available to all executing directives as well as the field resolver within the current pipeline.
+
+
+## Type System Directives
+### Example: @ToUpper
+
+This directive will extend the resolver of a field to turn any strings into upper case letters.
+
+```csharp
+    public class ToUpperDirective : GraphDirective
+    {
+        [DirectiveLocations(DirectiveLocation.FIELD_DEFINITION)]
+        public IGraphActionResult Execute()
+        {
+            // ensure we are working with a graph field definition and that it returns a string
+            var field = this.DirectiveTarget as IGraphField;
+            if (field != null)
+            {
+                // ObjectType represents the .NET Type of the data returned by the field
+                if (field.ObjectType != typeof(string))
+                    throw new Exception("This directive can only be applied to string fields");
+
+                // update the resolver to execute the orignal
+                // resolver then apply upper caseing to the string result
+                var resolver = field.Resolver.Extend(ConvertToupper);
+                item.UpdateResolver(resolver);
+            }
+
+            return this.Ok();
+        }
+
+        private static Task ConvertToupper(FieldResolutionContext context, CancellationToken token)
+        {
+            if (context.Result is string)
+                context.Result = context.Result?.ToString().ToUpper();
+
+            return Task.CompletedTask;
+        }
+    }
+```
+
+This Directive: 
+
+* Targets a FIELD_DEFINITION and can be applied to any field of any type.
+* Ensures that the target field returns returns a string.
+* Extends the field's resolver to convert the result to an upper case string.
+* The directive is executed once per field its applied to when the schema is created. The extension method is executed on every field resolution.
+    * If an exception is thrown the schema will fail to create and the server will not start.
+    * if the action method returns a cancel result (e.g. `this.Cancel()`) the schema will fail to create and the server will not start.
+
+### Applying Type System Directives
+
+#### Using the `[ApplyDirective]` attribute
+
+If you have access to the source code of a given type and want to apply a directive to it directly use the `[ApplyDirective]` attribute:
+
+<div class="sideBySideCode hljs">
+<div>
+
+```csharp
+// Person.cs
+public class Person 
+{
+    [ApplyDirective(typeof(ToUpperDirective))]
+    public string Name{ get; set; }
+}
+```
+
+</div>
+<div>
+
+```javascript
+// GraphQL Type Definition Equivilant
+type Person  {
+  name: String @toUpper
+}
+```
+
+</div>
+</div>
+<br/>
+<br/>
+If different schemas on your server will use different implementations of the directive you can also specify the directive by name. This name is case sensitive and must match the name of the registered directive in the target schema.
+
+
+<div class="sideBySideCode hljs">
+<div>
+
+```csharp
+// Person.cs
+[ApplyDirective("monitor")]
+public class Person 
+{
+    public string Name{ get; set; }
+}
+```
+
+</div>
+<div>
+
+```javascript
+// GraphQL Type Definition Equivilant
+type Person @monitor  {
+  name: String
+}
+```
+
+</div>
+</div>
+
+<br/>
+<br/>
+**Adding Arguments**
+
+Arguments added to the apply directive attribute will be passed to the directive in the order they are encountered. The supplied values must be coercable into the expected data types for an input parameters.
+
+<div class="sideBySideCode hljs">
+<div>
+
+```csharp
+// Person.cs
+[ApplyDirective("monitor", "trace")]
+public class Person 
+{
+    public string Name{ get; set; }
+}
+```
+
+</div>
+<div>
+
+```javascript
+// GraphQL Type Definition Equivilant
+type Person @monitor(level: "trace")  {
+  name: String
+}
+```
+
+</div>
+</div>
+
+<br/>
+<br/>
+
+#### Using Schema Options
+
+Alternatively, instead of using attributes to apply directives you can apply directives during schema configuration:
+
+```csharp
+// startup.cs
+public void ConfigureServices(IServiceCollection services)
+{
+    // other code ommited for brevity
+
+    services.AddGraphQL(options =>
+    {
+        options.AddGraphType<Person>();
+        options.ApplyDirective("monitor")
+            .ToItems(schemaItem => schemaItem is IObjectGraphType ogt && 
+                                   ogt.ObjectType == typeof(Person));
+    }
+
+}
+```
+
+> The `ToItems` filter can be applied multiple times. A schema item must match all filter criteria in order for the directive to be applied. 
+
+**Adding arguments**
+
+Adding Arguments via schema options is a lot more flexible than via the apply directive attribute. Use the `.WithArguments` method to supply either a static set of arguments for all matched schema items
+or a `Func<ISchemaItem, object[]>` that returns a collection of any parameters you want on a per item basis.
+
+```csharp
+// startup.cs
+public void ConfigureServices(IServiceCollection services)
+{
+    // other code ommited for brevity
+
+    services.AddGraphQL(options =>
+    {
+        options.AddGraphType<Person>();
+        options.ApplyDirective("monitor")
+            .WithArguments("trace")
+            .ToItems(schemaItem => schemaItem is IObjectGraphType ogt && 
+                                   ogt.ObjectType == typeof(Person));
+    }
+
+}
+```
+<br/>
+
+## Directives as Services
+Directives are invoked as services through your DI container when they are executed.  When you add types to your schema during its initial configuration, GraphQL ASP.NET will automatically register any directives it finds as services in your `IServiceCollection` instance. However, there are times when it cannot do this, such as when you apply a directive by its name. These late bound directives may still be discoverable and graphql will attempt to add them to your schema whenever it can.  However, it may do this after the opportunity to register them with the DI container has passed.
+
+When this occurs, if your directive contains a public, parameterless constructor it will still instantiate and use your directive as normal. If the directive contains dependencies in the constructor that it can't resolve, execution of that directive will fail and an exception will be thrown. To be safe, make sure to add any directives you may use to your schema during the `.AddGraphQL()` configuration.  Directives are discoverable and will be included via the `options.AddAssembly()` helper method.
+
+The benefit of ensuring your directives are part of your `IServiceCollection` should be apparent:
+*  The directive instance creation will obey lifetime scopes (transient, scoped, singleton).
+*  The directive can be instantiated with any dependencies or services you wish; making for a much richer experience.
+
+## Understanding the Type System
+GraphQL ASP.NET builds your schema and all of its types from your controllers and objects. In general, you do not need to interact with it, however; when applying type system directives you are affecting the final generated schema at run time, making changes as you see fit. When doing this you are forced to interact with the internal type system. 
+
+Below is a list of interfaces that may prove helpful as you navigate a schema's structure. During the schema generation phase of a directive the `DirectiveTarget` will be an item that will implement one or more of these interfaces depending its nature.
+
+* `ISchemaItem`
+    * all parts of the type system inherit from `ISchemaItem` it contains basic properties such as `Name` and `Description`.
+* `ITypedSchemaItem`
+    * Any schema item derived from a .NET type (controllers, POCOs, scalars etc) implement this interface and expose an `ObjectType` property giving access to the .NET `System.Type` it represents.
+* `ISchema`
+    * The schema itself. Contains a `KnownTypes` collection containing all the graph types registered.
+* `IGraphOperation`
+    * One of three top level operations (query, mutation, subscription). All graph operations are also object graph types.
+* `IGraphType` 
+    * All graph types (scalars, objects, enums, interfaces etc.) implement `IGraphType`.  
+* `IObjectGraphType`
+* `IInputObjectGraphType`
+    * Represents the two complex object types of GraphQL. Defines a `Fields` collection containing all the fields defined on the type.
+    * `IGraphField`
+        * Represents a single field of data on an object or input graph type. Provides direct access to the field `Resolver` as well as the ability to call `UpdateResolver()` to change it entirely. Also has an `Arguments` collection containing all the arguments the field defines.
+    * `IGraphArgument`
+        * A single parameter on a single field of data. Many properties of a graph argument are read-only and for informational purposes only.
+* `IInterfaceGraphType`
+    * Represents the INTERFACE type of GraphQL. Defines a `Fields` collection containing all the fields available via the interface.
+* `IUnionGraphType`
+    * Represents the UNION type of GraphQL. Exposes the `PossibleConcreteTypes` and `PossibleGraphTypeNames` collections containing all the allowed .NET types and schema object graph type names that the union can represent.
+* `IScalarGraphType`
+    * A scalar. Contains low level data items such as `SourceResolver` for parsing data supplied on a query and `Serializer` for serializing out data results.
+* `IEnumGraphType`
+    * Represents the ENUM type of GraphQL. Contains a `Values` collection with all the defined values.
+    * `IEnumValue`
+        * A single valid value within an ENUM graph type.
