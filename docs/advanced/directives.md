@@ -77,7 +77,7 @@ Directives can't directly return data or resolve a field. They can only indicate
 * `this.Cancel()`:
     * The directive failed and the schema should not be generated or the target field should be dropped.
 
-> throwing an exception within an action method of a directive will cause the current query to fail completely. Use `this.Cancel()` to only drop the single targeted field.
+> Throwing an exception within an action method of a directive will cause the current query to fail completely. Use `this.Cancel()` to discard only the currently resolving field. Normal nullability validation rules still apply.
 
 ### Directive Target
 The `this.DirectiveTarget` property will contain either an `ISchemaItem` for type system directives or the resolved field value for execution directives. This value is useful in performing additional operations such as extending a field resolver during schema generation or taking further action against a resolved field.
@@ -176,7 +176,7 @@ It is recommended that your directives act independently and be self contained. 
 
 
 ## Type System Directives
-### Example: @ToUpper
+### Example: @toUpper
 
 This directive will extend the resolver of a field to turn any strings into upper case letters.
 
@@ -215,12 +215,43 @@ This directive will extend the resolver of a field to turn any strings into uppe
 
 This Directive: 
 
-* Targets a FIELD_DEFINITION and can be applied to any field of any type.
+* Targets any FIELD_DEFINITION.
 * Ensures that the target field returns returns a string.
 * Extends the field's resolver to convert the result to an upper case string.
 * The directive is executed once per field its applied to when the schema is created. The extension method is executed on every field resolution.
     * If an exception is thrown the schema will fail to create and the server will not start.
     * if the action method returns a cancel result (e.g. `this.Cancel()`) the schema will fail to create and the server will not start.
+
+### Example: @deprecated
+
+```csharp    
+    public sealed class DeprecatedDirective : GraphDirective
+    {
+        [DirectiveLocations(DirectiveLocation.FIELD_DEFINITION | DirectiveLocation.ENUM_VALUE)]
+        public IGraphActionResult Execute([FromGraphQL("reason")] string reason = "No longer supported")
+        {
+            if (this.DirectiveTarget is IGraphField field)
+            {
+                field.IsDeprecated = true;
+                field.DeprecationReason = reason;
+            }
+            else if (this.DirectiveTarget is IEnumValue enumValue)
+            {
+                enumValue.IsDeprecated = true;
+                enumValue.DeprecationReason = reason;
+            }
+
+            return this.Ok();
+        }
+    }
+```
+
+
+This Directive: 
+
+* Targets a FIELD_DEFINITION or ENUM_VALUE.
+* Marks the field or enum value as deprecated and attaches the provided deprecation reason
+* The directive is executed once per field and enum value its applied to when the schema is created.
 
 ### Applying Type System Directives
 
@@ -284,7 +315,7 @@ type Person @monitor  {
 
 <br/>
 <br/>
-**Adding Arguments**
+**Adding Arguments with [ApplyDirective]**
 
 Arguments added to the apply directive attribute will be passed to the directive in the order they are encountered. The supplied values must be coercable into the expected data types for an input parameters.
 
@@ -293,9 +324,11 @@ Arguments added to the apply directive attribute will be passed to the directive
 
 ```csharp
 // Person.cs
-[ApplyDirective("monitor", "trace")]
 public class Person 
 {
+    [ApplyDirective(
+        "deprecated", 
+        "Names don't matter")]
     public string Name{ get; set; }
 }
 ```
@@ -305,7 +338,47 @@ public class Person
 
 ```javascript
 // GraphQL Type Definition Equivilant
-type Person @monitor(level: "trace")  {
+type Person  {
+  name: String @deprecated("Names don't matter")
+}
+```
+
+</div>
+</div>
+
+<br/>
+
+#### Using Schema Options
+
+Alternatively, instead of using attributes to apply directives you can apply directives during schema configuration:
+
+<div class="sideBySideCode hljs">
+<div>
+
+```csharp
+// startup.cs
+public void ConfigureServices(IServiceCollection services)
+{
+    // other code ommited for brevity
+
+    services.AddGraphQL(options =>
+    {
+        options.AddGraphType<Person>();
+
+        // mark Person.Name as deprecated
+        options.ApplyDirective("monitor")
+            .ToItems(schemaItem => 
+                schemaItem.IsObjectGraphType<Person>());
+    }
+}
+```
+
+</div>
+<div>
+
+```javascript
+// GraphQL Type Definition Equivilant
+type Person  @monitor {
   name: String
 }
 ```
@@ -314,36 +387,18 @@ type Person @monitor(level: "trace")  {
 </div>
 
 <br/>
-<br/>
 
-#### Using Schema Options
+> The `ToItems` filter can be invoked multiple times. A schema item must match all filter criteria in order for the directive to be applied. 
 
-Alternatively, instead of using attributes to apply directives you can apply directives during schema configuration:
-
-```csharp
-// startup.cs
-public void ConfigureServices(IServiceCollection services)
-{
-    // other code ommited for brevity
-
-    services.AddGraphQL(options =>
-    {
-        options.AddGraphType<Person>();
-        options.ApplyDirective("monitor")
-            .ToItems(schemaItem => schemaItem is IObjectGraphType ogt && 
-                                   ogt.ObjectType == typeof(Person));
-    }
-
-}
-```
-
-> The `ToItems` filter can be applied multiple times. A schema item must match all filter criteria in order for the directive to be applied. 
-
-**Adding arguments**
+**Adding arguments via .ApplyDirective()**
 
 Adding Arguments via schema options is a lot more flexible than via the apply directive attribute. Use the `.WithArguments` method to supply either a static set of arguments for all matched schema items
 or a `Func<ISchemaItem, object[]>` that returns a collection of any parameters you want on a per item basis.
 
+
+<div class="sideBySideCode hljs">
+<div>
+
 ```csharp
 // startup.cs
 public void ConfigureServices(IServiceCollection services)
@@ -353,24 +408,48 @@ public void ConfigureServices(IServiceCollection services)
     services.AddGraphQL(options =>
     {
         options.AddGraphType<Person>();
-        options.ApplyDirective("monitor")
-            .WithArguments("trace")
-            .ToItems(schemaItem => schemaItem is IObjectGraphType ogt && 
-                                   ogt.ObjectType == typeof(Person));
+        options.ApplyDirective("deprecated")
+            .WithArguments("Names don't matter")
+            .ToItems(schemaItem => 
+                schemaItem.IsGraphField<Person>("name"));
     }
-
 }
 ```
+
+
+</div>
+<div>
+
+```javascript
+// GraphQL Type Definition Equivilant
+type Person  {
+  name: String @deprecated("Names don't matter")
+}
+```
+
+</div>
+</div>
+
+
 <br/>
 
 ## Directives as Services
-Directives are invoked as services through your DI container when they are executed.  When you add types to your schema during its initial configuration, GraphQL ASP.NET will automatically register any directives it finds as services in your `IServiceCollection` instance. However, there are times when it cannot do this, such as when you apply a directive by its name. These late bound directives may still be discoverable and graphql will attempt to add them to your schema whenever it can.  However, it may do this after the opportunity to register them with the DI container has passed.
+Directives are invoked as services through your DI container when they are executed.  When you add types to your schema during its initial configuration, GraphQL ASP.NET will automatically register any directives it finds attached to your objects and properties as services in your `IServiceCollection` instance. However, there are times when it cannot do this, such as when you apply a directive by its string declared name. These late-bound directives may still be discoverable later and graphql will attempt to add them to your schema whenever it can.  However, it may do this after the opportunity to register them with the DI container has passed.
 
-When this occurs, if your directive contains a public, parameterless constructor it will still instantiate and use your directive as normal. If the directive contains dependencies in the constructor that it can't resolve, execution of that directive will fail and an exception will be thrown. To be safe, make sure to add any directives you may use to your schema during the `.AddGraphQL()` configuration.  Directives are discoverable and will be included via the `options.AddAssembly()` helper method.
+When this occurs, if your directive contains a public, parameterless constructor graphql will still instantiate and use your directive as normal. If the directive contains dependencies in the constructor that it can't resolve, execution of that directive will fail and an exception will be thrown. To be safe, make sure to add any directives you may use to your schema during the `.AddGraphQL()` configuration method.  Directives are directly discoverable and will be included via the `options.AddAssembly()` helper method as well.
 
 The benefit of ensuring your directives are part of your `IServiceCollection` should be apparent:
-*  The directive instance creation will obey lifetime scopes (transient, scoped, singleton).
+*  The directive instance will obey lifetime scopes (transient, scoped, singleton).
 *  The directive can be instantiated with any dependencies or services you wish; making for a much richer experience.
+
+## Directive Security
+Directives are not considered a layer of security by themselves. Instead, they are invoked within the security context of their applied target:
+
+* **Execution Directives** - Execute in the same context as the field to which they are applied. If the requestor can resolve the field, they can also execute the directives attached to that field.
+
+* **Type System Directives** - Are implicitly trusted and executed without a `ClaimsPrincipal` while the schema is being built. No additional security is applied to type system directives.
+
+> WARNING: Only use type system directives that you trust. They will always be executed when applied to one or more schema items.
 
 ## Understanding the Type System
 GraphQL ASP.NET builds your schema and all of its types from your controllers and objects. In general, you do not need to interact with it, however; when applying type system directives you are affecting the final generated schema at run time, making changes as you see fit. When doing this you are forced to interact with the internal type system. 
