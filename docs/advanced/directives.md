@@ -375,32 +375,15 @@ The benefit of ensuring your directives are part of your `IServiceCollection` sh
 ## Understanding the Type System
 GraphQL ASP.NET builds your schema and all of its types from your controllers and objects. In general, you do not need to interact with it, however; when applying type system directives you are affecting the final generated schema at run time, making changes as you see fit. When doing this you are forced to interact with the internal type system. 
 
-Below is a list of interfaces that may prove helpful as you navigate a schema's structure. During the schema generation phase of a directive the `DirectiveTarget` will be an item that will implement one or more of these interfaces depending its nature.
+**UML Diagrams**
 
-* `ISchemaItem`
-    * all parts of the type system inherit from `ISchemaItem` it contains basic properties such as `Name` and `Description`.
-* `ITypedSchemaItem`
-    * Any schema item derived from a .NET type (controllers, POCOs, scalars etc) implement this interface and expose an `ObjectType` property giving access to the .NET `System.Type` it represents.
-* `ISchema`
-    * The schema itself. Contains a `KnownTypes` collection containing all the graph types registered.
-* `IGraphOperation`
-    * One of three top level operations (query, mutation, subscription). All graph operations are also object graph types.
-* `IGraphType` 
-    * All graph types (scalars, objects, enums, interfaces etc.) implement `IGraphType`.  
-* `IObjectGraphType`
-* `IInputObjectGraphType`
-    * Represents the two complex object types of GraphQL. Defines a `Fields` collection containing all the fields defined on the type.
-    * `IGraphField`
-        * Represents a single field of data on an object or input graph type. Provides direct access to the field `Resolver` as well as the ability to call `UpdateResolver()` to change it entirely. Also has an `Arguments` collection containing all the arguments the field defines.
-    * `IGraphArgument`
-        * A single parameter on a single field of data. Many properties of a graph argument are read-only and for informational purposes only.
-* `IInterfaceGraphType`
-    * Represents the INTERFACE type of GraphQL. Defines a `Fields` collection containing all the fields available via the interface.
-* `IUnionGraphType`
-    * Represents the UNION type of GraphQL. Exposes the `PossibleConcreteTypes` and `PossibleGraphTypeNames` collections containing all the allowed .NET types and schema object graph type names that the union can represent.
-* `IScalarGraphType`
-    * A scalar. Contains low level data items such as `SourceResolver` for parsing data supplied on a query and `Serializer` for serializing out data results.
-* `IEnumGraphType`
-    * Represents the ENUM type of GraphQL. Contains a `Values` collection with all the defined values.
-    * `IEnumValue`
-        * A single valid value within an ENUM graph type.
+These [uml diagrams](../assets/2022-05-graphql-aspnet-type-system-interface-diagrams.pdf) details the major interfaces and their most useful properties of the type system. However,
+these diagrams are not exaustive. Look at the [source code](https://github.com/graphql-aspnet/graphql-aspnet/tree/master/src/graphql-aspnet/Interfaces/TypeSystem) for the full definitions.
+
+**Helpful Extensions**
+
+There are a robust set of of built in extensions for `ISchemaItem` that can help you filter your data. See the [full source code](https://github.com/graphql-aspnet/graphql-aspnet/tree/master/src/graphql-aspnet/Configuration/SchemaItemExtensions.cs) for details.
+
+## Demo Project
+See the [Demo Projects](../reference/demo-projects.md) page for a demonstration on creating a type system for extending a field resolver and an execution directives
+ that manipulates a string field result at runtime.

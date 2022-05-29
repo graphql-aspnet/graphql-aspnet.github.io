@@ -20,6 +20,11 @@ Demonstrates fields with authorization requirements and how access denied messag
 
 Demonstrates how to setup a [Firebase](https://firebase.google.com/) project and link a GraphQL ASP.NET project to it.
 
+<span style="font-size:20px;vertical-align: center;">&#128204;</span>&nbsp; [Custom Directives](https://github.com/graphql-aspnet/demo-projects/tree/master/Custom-Directives)
+
+Demostrates creating and applying a type system directive and a custom execution directive.
+
+
 <span style="font-size:20px;vertical-align: center;">&#128204;</span>&nbsp; [Subscriptions w/ Azure Service Bus](https://github.com/graphql-aspnet/demo-projects/tree/master/Subscriptions-AzureServiceBus)
 
 Demonstrates the use of an external subscription event publisher and a consumer to deserialize and route events. Use of this demo project requires your own [Azure Service Bus](https://docs.microsoft.com/en-us/azure/service-bus-messaging/service-bus-messaging-overview) namespace.
@@ -27,3 +32,4 @@ Demonstrates the use of an external subscription event publisher and a consumer 
 <span style="font-size:20px;vertical-align: center;">&#128204;</span>&nbsp; [Subscriptions w/ React & Apollo Client](https://github.com/graphql-aspnet/demo-projects/tree/master/Subscriptions-ReactApolloClient)
 
 A sample react application that makes use of the [apollo client](https://www.apollographql.com/docs/react/) to connect to a GraphQL ASP.NET server.
+
