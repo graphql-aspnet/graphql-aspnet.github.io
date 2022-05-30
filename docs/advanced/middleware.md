@@ -4,19 +4,21 @@ title: Pipelines and Custom Middleware
 sidebar_label: Pipelines & Middleware
 ---
 
-At the heart of GraphQL ASP.NET are 3 middleware pipelines; chains of components executed in a specific order to produce a result.
+At the heart of GraphQL ASP.NET are 4 middleware pipelines; chains of components executed in a specific order to produce a result.
 
 -   `Query Execution Pipeline` : Invoked once per request this pipeline is responsible for validating the incoming package on the POST request, parsing the data and executing a query plan.
 -   `Field Execution Pipeline` : Invoked once per requested field, this pipeline attempts to generate the requested data by calling the various controller actions and property resolvers.
 -   `Field Authorization Pipeline`: Ensures the user on the request can perform the action requested. This pipeline is invoked once for the whole query or for each field depending on your schema's configuration.
+-   `Directive Execution Pipeline`: Executes directives for various phases of schema and query document lifetimes.
 
 ## Creating New Middleware
 
-Each new middleware component must implement one of the three middleware interfaces depending on the type of component you are creating; much in the way you'd define a filter or middleware component for ASP.NET MVC. The three middleware interfaces are:
+Each new middleware component must implement one of the foud middleware interfaces depending on the type of component you are creating; much in the way you'd define a middleware component for ASP.NET. The four middleware interfaces are:
 
 -   `IQueryExecutionMiddleware`
 -   `IFieldExecutionMiddleware`
 -   `IFieldAuthorizationMiddleware`
+-   `IDirectiveExecutionMiddleware`
 
 The interfaces define one method, `InvokeAsync`, with identical signatures save for the type of data context accepted by each.
 
@@ -54,18 +56,6 @@ public class MyQueryMiddleware : IQueryExecutionMiddleware
 }
 ```
 
-## The Context Object
-
-Each context object has specific data fields required for it to perform its work (detailed below). However, all contexts share a common set of items to govern the flow of work.
-
--   `Messages`: A collection of messages that will be added to the query result.
--   `Cancel()`: Marks the context as cancelled and sets the `IsCancelled` property to true. It is up to each middleware component to interpret the meaning of cancelled for its own purposes. A canceled field execution context, for instance, will be discarded and not rendered to the output whereas a canceled query context may or may not generate a result depending on when its cancelled.
--   `IsValid`: Determines if the context is in a valid and runnable state. Most middleware components will not attempt to process the context if its not in a valid state and will simply forward the request on. By default, a context is automatically invalidated if an error message is added with the `Critical` severity.
--   `User`: The ClaimsPrincipal provided by ASP.NET containing the active user's credentials. May be null if user authentication is not setup for your application.
--   `Metrics`: The metrics package performing any profiling of the query. Various middleware components will stop/start phases of execution using this object. If metrics are not enabled this object will be null.
--   `Items`: A key/value pair collection of items. This field is developer driven and not used by the runtime.
--   `Logger`: An `IGraphLogger` instance scoped to the the current query.
-
 ## Registering New Middleware
 
 Each pipeline can be extended using the `SchemaBuilder` returned from calling `.AddGraphQL()` at startup. Each schema that is added to GraphQL will generate its own builder with its own set of pipelines and components. They can be configured independently as needed.
@@ -87,6 +77,19 @@ public void ConfigureServices(IServiceCollection services)
 ```
 
 Instead of adding to the end of the existing pipeline you can also call `.Clear()` to remove the default components and rebuild the pipeline from scratch. See below for the list of default middleware components and their order of execution. This can be handy when needing to inject a new component into the middle of the execution chain.
+
+
+## The Context Object
+
+Each context object has specific data fields required for it to perform its work (detailed below). However, all contexts share a common set of items to govern the flow of work.
+
+-   `Messages`: A collection of messages that will be added to the query result.
+-   `Cancel()`: Marks the context as cancelled and sets the `IsCancelled` property to true. It is up to each middleware component to interpret the meaning of cancelled for its own purposes. A canceled field execution context, for instance, will be discarded and not rendered to the output whereas a canceled query context may or may not generate a result depending on when its cancelled.
+-   `IsValid`: Determines if the context is in a valid and runnable state. Most middleware components will not attempt to process the context if its not in a valid state and will simply forward the request on. By default, a context is automatically invalidated if an error message is added with the `Critical` severity.
+-   `User`: The ClaimsPrincipal provided by ASP.NET containing the active user's credentials. May be null if user authentication is not setup for your application.
+-   `Metrics`: The metrics package performing any profiling of the query. Various middleware components will stop/start phases of execution using this object. If metrics are not enabled this object will be null.
+-   `Items`: A key/value pair collection of items. This field is developer driven and not used by the runtime.
+-   `Logger`: An `IGraphLogger` instance scoped to the the current query.
 
 #### Middleware is served from the DI Container
 
@@ -180,3 +183,26 @@ In addition to the common properties defined above the field authorization conte
 
 -   `Request`: Contains the field metadata for this context, including the security rules that need to be checked.
 -   `Result`: The generated authorization result indicating if the user is authorized or unauthorized for the field. This result will contain additional detailed information as to why a request was not authorized. This information is automatically added to any generated log events.
+
+
+## Directive Execution Pipeline
+The directive execution pipeline will be invoked for each directive applied to each schema item during schema generation and each time the query engine encounters a
+directive at runtime. The directive pipeline contains two components by default:
+
+1. `ValidateDirectiveExecutionMiddleware`: Inspects the execution context against the validation requirements of the given execution phase applying appropriate error messages as necessary.
+2. `InvokeDirectiveResolverMiddleware`: Generates a `DirectiveResolutionContext` and invokes the directive's resolver, calling the correct action methods.
+
+
+#### GraphDirectiveExecutionContext
+```csharp
+public class GraphDirectiveExecutionContext
+{
+    public IGraphDirectiveRequest Request { get; }
+    public IDirective Directive {get;}
+
+    // common properties omitted for brevity
+}
+```
+
+-   `Request`: Contains the directive metadata for this context, including the DirectiveTarget, execution phase and executing location.
+-   `Directive`: The specific `IDirective`, registered to the schema, that is being processed. 
