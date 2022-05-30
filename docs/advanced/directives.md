@@ -466,5 +466,5 @@ these diagrams are not exaustive. Look at the [source code](https://github.com/g
 There are a robust set of of built in extensions for `ISchemaItem` that can help you filter your data. See the [full source code](https://github.com/graphql-aspnet/graphql-aspnet/tree/master/src/graphql-aspnet/Configuration/SchemaItemExtensions.cs) for details.
 
 ## Demo Project
-See the [Demo Projects](../reference/demo-projects.md) page for a demonstration on creating a type system for extending a field resolver and an execution directives
+See the [Demo Projects](../reference/demo-projects.md) page for a demonstration on creating a type system directive for extending a field resolver and an execution directives
  that manipulates a string field result at runtime.
