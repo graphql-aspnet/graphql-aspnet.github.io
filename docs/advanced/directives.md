@@ -390,6 +390,8 @@ type Person  @monitor {
 
 > The `ToItems` filter can be invoked multiple times. A schema item must match all filter criteria in order for the directive to be applied. 
 
+> Type system directives are applied in the order of declaration with the `[ApplyDirective]` attributes taking precedence over the `.ApplyDirective()` method.
+
 **Adding arguments via .ApplyDirective()**
 
 Adding Arguments via schema options is a lot more flexible than via the apply directive attribute. Use the `.WithArguments` method to supply either a static set of arguments for all matched schema items
