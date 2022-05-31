@@ -67,7 +67,7 @@ In the above example, it makes sense these these methods would exist on differen
 
 The data returned by your action methods then return their requested child fields, those data items to their children and so on. In many cases this is just a selection of the appropriate properties on a model object, but more complex scenarios involving child objects, [type extensions](./type-extensions) or directly executing POCO methods can also occur.
 
-_**\***Since mutations may have a shared state or could otherwise produce race conditions in a data store, top level fields in a mutation operation are executed sequentially, in the order they are declared. All child requests there after are dispatched and executed asynchronously_[[Spec § 6.2.2](https://graphql.github.io/graphql-spec/June2018/#sec-Mutation)\].
+_**\***Since mutations may have a shared state or could otherwise produce race conditions in a data store, top level fields in a mutation operation are executed sequentially, in the order they are declared. All child requests there after are dispatched and executed asynchronously_[[Spec § 6.2.2](https://graphql.github.io/graphql-spec/October2021/#sec-Mutation)\].
 
 ---
 
@@ -81,7 +81,7 @@ An Action Method:
     -   `void` is not allowed.
     -   Asynchronous methods **must** return `Task<T>`.
 -   **Must not** return `System.Object`.
--   **Must not** declare, as an input parameter, an object that is some form of `IDictionary`.
+-   **Must not** declare, as an input parameter, an object that implements any variation of `IDictionary`.
 
 See below for more detail of the [input](./actions#method-parameters) and [return](./actions#returning-data) parameter restrictions.
 
@@ -190,11 +190,9 @@ public class PeopleController : GraphController
 }
 ```
 
-Here we've declared the `RetrievePerson` method as returning a `Person` object, yet the method is actually returning a `Celebrity` object. While this is fine from a object-oriented perspective, GraphQL will throw an error stating that it expected a `Person` but got a `Celebrity`.
+Here we've declared the `RetrievePerson` method as returning a `Person` object, yet the method is actually returning a `Celebrity` object. While this is fine from a object-oriented perspective, GraphQL won't know what to do with the `Celebrity`. The returned object will be treated only as a `Person`.
 
-> GraphQL does not recognize inheritance; use interfaces instead
-
-To GraphQL `Person` and `Celebrity` are distinct graph types, there is no recognized inheritance chain. You can get around this, however; by using shared [interfaces](../types/interfaces).
+Even if, in your schema, `Celebrity` is a declared graph type, GraphQL will only interprete the result as a `Person` because that is what the action method declared.
 
 ### Lists and Nulls
 
@@ -204,7 +202,7 @@ Rules concerning GraphQL's two meta graph types, [LIST and NON_NULL](../types/li
 
 Returning an [interface graph type](../types/interfaces) is a great way to deliver heterogeneous data results, especially in search operations. One got'cha is that the runtime must know the possible concrete object types that implement that interface in case a query uses a fragment with a type specification. That is to say that if we return `IPastry`, we must let GraphQL know that `Cake` and `Donut` exist and should be a part of our schema.
 
-> When your action method returns an interface you must let GraphQL know of the OBJECT types that implement that interface in some other way. I.E. if your schema contains `IPastry` it must also contain `Cake` and `Donut`.
+> When your action method returns an interface you must let GraphQL know of the OBJECT types that implement that interface in some other way. i.e. if your schema contains `IPastry` it must also contain `Cake` and `Donut`.
 
 Take this example:
 
@@ -278,7 +276,7 @@ public class BakeryController : GraphController
 
 #### Declare Types at Startup
 
-The [schema configuration](../reference/schema-configuration) contains a host of options for auto-loading graph types. Here we've added our 100s and 1000s of types of pastries at our bakery to a shared assembly, obtained a reference to it through one of the types it contains, then added the whole assembly to our schema. GraphQL will automatically scan the assembly and ingest all the graph types it can find.
+The [schema configuration](../reference/schema-configuration) contains a host of options for auto-loading graph types. Here we've added our 100s and 1000s of types of pastries at our bakery to a shared assembly, obtained a reference to it through one of the types it contains, then added the whole assembly to our schema. GraphQL will automatically scan the assembly and ingest all the graph types mentioned in any controllers it finds as well as any objects marked with the `[GraphType]` attribute.
 
 ```csharp
 // Startup.cs
@@ -289,7 +287,7 @@ public void ConfigureServices(IServiceCollection services)
 
     services.AddGraphQL(options =>
             {
-                options.AddGraphAssembly(pastryAssembly);
+                options.AddAssembly(pastryAssembly);
             });
 }
 ```
@@ -332,18 +330,18 @@ public class BakeryController : GraphController
 }
 ```
 
-Using `this.Error` injects a custom error message into the response providing some additional information other than just a null result (which in this example is valid). Create a class that inherits from `IGraphActionResult` and create your own.
+Using `this.Error()` injects a custom error message into the response providing some additional information other than just a null result (which in this example is valid). Create a class that implements from `IGraphActionResult` and create your own.
 
 `IGraphActionResult` has one method:
 
 ```csharp
 public interface IGraphActionResult
 {
-    Task Complete(ResolutionContext context);
+    Task Complete(BaseResolutionContext context);
 }
 ```
 
-It accepts the raw field resolution context that you can manipulate as needed. Combine this with any data you supply to your action result when you instantiate it and you have the ability to generate any response type with any data value or any number and type of error messages etc.
+It accepts the raw resolution context (either a field resolution context or a directive resolution context) that you can manipulate as needed. Combine this with any data you supply to your action result when you instantiate it and you have the ability to generate any response type with any data value or any number and type of error messages etc. Take a look at the source code for built in in [action results](https://github.com/graphql-aspnet/graphql-aspnet/tree/master/src/graphql-aspnet/Controllers/ActionResults) for some examples.
 
 ## Method Parameters
 
@@ -351,7 +349,7 @@ Method parameters work a lot like return values. GraphQL will inspect your param
 
 ### Naming your Input Arguments
 
-By default, GraphQL will name the input arguments to a field the same as the parameter names in your method. Sometimes you'll want to override this, like when using a C# keyword as a name. Use the `[FromGraphQL]` attribute on the parameter to accomplish this.
+By default, GraphQL will name a field's arguments the same as the parameter names in your method. Sometimes you'll want to override this, like when needin to use a C# keyword as an argument name. Use the `[FromGraphQL]` attribute on the parameter to accomplish this.
 
 ```csharp
 public class BakeryController : GraphController
@@ -375,7 +373,7 @@ query {
 }
 ```
 
-Like with action methods, the meta name `"[parameter]"` can be used to represent the parameter name and at runtime will be dynamically injected.
+Like with action methods, the meta name `"[parameter]"` can be used to represent the C# parameter name and at runtime will be dynamically injected.
 
 ### Optional Parameters
 

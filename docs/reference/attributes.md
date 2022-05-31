@@ -6,6 +6,24 @@ sidebar_label: Attributes
 
 This document contains an alphabetical reference of each of the class, property and method attributes used by GraphQL ASP.NET.
 
+## ApplyDirective
+
+Declares that a given type system directive should be applied to the target schema item (an object, a field, an enum etc.). See the page on [type system directives](../advanced/directives.md#type-system-directives) for complete details on how to build your own. Directives can be applied by type, by name and with or without parameters.
+
+
+```csharp
+public class Person 
+{
+    // apply by registered system type
+    [ApplyDirective(typeof(DeprecatedDirective))]
+    public string FirstName{ get; set; }
+
+     // apply by name, also with a reason parameter
+    [ApplyDirective("deprecated", "Last Name is deprecated")]
+    public string LastName{ get; set; }
+}
+```
+
 ## BatchTypeExtension
 
 Declares a controller action method as a field on another graph type rather than a query or mutation action. All source items needing this field resolved will be resolved in a single field request.
@@ -343,8 +361,8 @@ Indicates additional or non-standard settings for the the class, interface or en
 
 #### [GraphType(name, inputName)]
 
--   `name` : The name of graph type as it should appear in the object graph
--   `inputName`: The name of the graph type in the schema, when used as an `INPUT_OBJECT` in the object graph.
+-   `name` : The name of graph type as it should appear in the schema when used as an `OBJECT`
+-   `inputName`: The name of the graph type in the schema when used as an `INPUT_OBJECT` 
 
 ```csharp
 [GraphType("person", "personModel")]

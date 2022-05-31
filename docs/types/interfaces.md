@@ -96,7 +96,7 @@ Of course if you call `.AddGraphType<IPastry>()` during [schema configuration](.
 
 ## Interfaces are not Input Objects
 
-The GraphQL specification states that "interfaces are never valid inputs" [Spec § [3.7](https://graphql.github.io/graphql-spec/June2018/#sec-Interfaces)]. As a result the runtime will reject any attempts to use an interface as an action method parameter.
+The GraphQL specification states that "interfaces are never valid inputs" [Spec § [3.7](https://graphql.github.io/graphql-spec/October2021/#sec-Interfaces)]. As a result the runtime will reject any attempts to use an interface as an action method parameter.
 
 ```csharp
 public class BakeryController : GraphController

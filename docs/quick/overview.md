@@ -13,10 +13,10 @@ hide_title: true
 
 This documentation is best used as a reference guide for the various features of GraphQL ASP.NET but it helps to read through a few sections to get an understanding of the core concepts.
 
-<span style="font-size:20px;vertical-align: center;">&#9989;</span>&nbsp; [Action Methods](../controllers/actions) -
+<span style="font-size:20px;vertical-align: center;">&#9989;</span>&nbsp; [Controllers](../controllers/actions) -
 An overview on how to build a controller and define an action method.
 
-<span style="font-size:20px;vertical-align: center;">&#9989;</span>&nbsp; [Attributes](../reference/attributes) - A reference to all the attributes supported by GraphQL ASP.NET Attributes are used extensively to configure your controllers and model classes.
+<span style="font-size:20px;vertical-align: center;">&#9989;</span>&nbsp; [Attributes](../reference/attributes) - A reference to all the attributes supported by GraphQL ASP.NET. Attributes are used extensively to annotate and configure your controllers and model classes.
 
 <span style="font-size:20px;vertical-align: center;">&#9989;</span>&nbsp;   [Schema Configuration](../reference/schema-configuration) - A reference to the various configuration options for your schema and how they affect the runtime.
 

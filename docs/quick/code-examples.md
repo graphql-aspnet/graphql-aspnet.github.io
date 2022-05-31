@@ -200,7 +200,7 @@ query {
 
 ## Dependency Injection
 
-At runtime,  GraphQL invokes your graph controllers and injected services with the same dependency scope as the original HTTP Request. Add service to a controller's constructor and it will be automatically resolved with its configured scope.
+At runtime,  GraphQL invokes your graph controllers and injected services with the same dependency scope as the original HTTP Request. Add a service to a controller's constructor and it will be automatically resolved with its configured scope.
 
 <div class="sideBySideCode hljs">
 <div>

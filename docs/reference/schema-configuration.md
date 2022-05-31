@@ -29,34 +29,44 @@ public void Configure(IApplicationBuilder appBuilder)
 
 ## Builder Options
 
-### AddGraphType
+### AddController, AddDirective, AddGraphType, AddType
 
 ```csharp
 // usage examples
-schemaOptions.AddGraphType<Type>()
-schemaOptions.AddGraphType(typeof(MyMiddleware))
+schemaOptions.AddGraphType<Donut>();
+schemaOptions.AddController<BakeryController>();
 ```
-Adds the single graph entity to the schema. Use this method to add individual types, interfaces, directives, controllers or enumerations.
+Adds the single entity of a given type the schema. Use these methods to add individual graph types, directives or controllers. `AddType` acts a catch all and will try to infer the expected action to take against the supplied type. The other entity specific methods will throw an exception should an unqualified type be supplied. For example, trying to supply a controller to `.AddGraphType()` will result in an exception.
 
 ### AddSchemaAssembly
 
 ```csharp
 // usage examples
-schemaOptions.AddSchemaAssembly()
+schemaOptions.AddSchemaAssembly();
 ```
 
-When declaring a new schema with .`AddGraphQL<TSchema>()`, the runtime will scan the assembly where `TSchema` is declared and auto-add any found graph entities (controllers, types enums etc.) to the schema. 
+When declaring a new schema with .`AddGraphQL<TSchema>()`, the runtime will scan the assembly where `TSchema` is declared and auto-add any found required entities (controllers, types, enums, directives etc.) to the schema. 
 
 This method has no effect when using `AddGraphQL()`.
 
-### AddGraphAssembly
+### AddAssembly
 
 ```csharp
 // usage examples
-schemaOptions.AddGraphAssembly(Assembly)
+schemaOptions.AddAssembly(assembly);
 ```
 
-The runtime will scan the referenced assembly and auto-add any found graph entities (controllers, types enums etc.) to the schema.
+The runtime will scan the referenced assembly and auto-add any found required entities (controllers, types, enums, directives etc.) to the schema.
+
+### ApplyDirective
+
+```csharp
+schemaOptions.ApplyDirective("deprecated")
+    .WithArguments("The name field is deprecated.")
+    .ToItems(schemaItem => schemaItem.IsGraphField<Person>("name"));
+```
+
+Allows for the runtime registration of a type system directive to a given schema item. See the [directives](../advanced/directives.md#applying-type-system-directives) for complete details on how to use this method. 
 
 ### AutoRegisterLocalGraphEntities
 ```csharp

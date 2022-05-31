@@ -245,7 +245,7 @@ public class BakeryController : GraphController
 
 We'd pair these methods with different URL fragments and could work out which method to call in a REST request based on the full structure of the URL.
 
-However, the GraphQL specification states that input arguments can be passed in any order [Spec § [2.6](https://graphql.github.io/graphql-spec/June2018/#sec-Language.Arguments)]. GraphQL, by definition, does not supply enough information in its query syntax to decide which overload to invoke. To combat the issue, the runtime will reject any field that it can't uniquely identify.
+However, the GraphQL specification states that input arguments can be passed in any order [Spec § [2.6](https://graphql.github.io/graphql-spec/October2021/#sec-Language.Arguments)]. GraphQL, by definition, does not supply enough information in its query syntax to decide which overload to invoke. To combat the issue, the runtime will reject any field that it can't uniquely identify.
 
 No problem through, there are a number of ways fix the conflict.
 

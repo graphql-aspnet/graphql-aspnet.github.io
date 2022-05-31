@@ -141,7 +141,7 @@ If you throw `UnresolvedValueException` your error message will be delivered ver
 
 ### IScalarValueSerializer Members
 
--   `Serialize(object)`: A serializer that converts the internal representation of the scalar to a [graphql compliant scalar value](https://graphql.github.io/graphql-spec/June2018/#sec-Scalars); a `number`, `string`, `bool` or `null`.
+-   `Serialize(object)`: A serializer that converts the internal representation of the scalar to a [graphql compliant scalar value](https://graphql.github.io/graphql-spec/October2021/#sec-Scalars); a `number`, `string`, `bool` or `null`.
     -   When converting to a number this can be any number value type (int, float, decimal etc.).
 
 > `Serialize(object)` must return a valid graphql scalar type.
