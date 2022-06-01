@@ -139,16 +139,36 @@ public class CharacterController : GraphController
 
 ## DirectiveLocations
 
-A set of flags indicating where in a query document the given directive can be declared.
+A set of flags indicating where in a query document the given directive can be declared. Also serves to indicate which directive action 
+method should be invoked for a particular location.
 
 #### `[DirectiveLocations(directiveLocation)]`
 
--   `directiveLocation` - A set of `ExecutableDirectiveLocation` values indicating where the directives allowed locations.
-
-```csharp
-    [DirectiveLocations(ExecutableDirectiveLocation.FRAGMENT_SPREAD | ExecutableDirectiveLocation.INLINE_FRAGMENT)]
+```csharp    
     public sealed class AllowFragment : GraphDirective
     {
+        [DirectiveLocations(ExecutableDirectiveLocation.FRAGMENT_SPREAD | ExecutableDirectiveLocation.INLINE_FRAGMENT)]
+        public IGraphActionResult BeforeFieldResolution([FromGraphQL("if")] bool ifArgument)
+        {
+            return ifArgument ? this.Ok() : this.Cancel();
+        }
+    }
+```
+
+## DirectiveInvocationPhase
+
+A seldom used attribute to instruct the runtime as to when the directive should be invoked. By default all directives are set to be executable
+during `SchemaGeneration` and `AfterFieldResolution` depending on the allowed target locations.
+
+#### `[DirectiveInvocationPhase(phases)]`
+
+-   `phases` - A bitwise set of `DirectiveInvocationPhase` values indicating when in the execution pipelines this directive should be invoked.
+
+```csharp    
+    [DirectiveInvocationPhase(DirectiveInvocationPhase.AfterFieldResolution)]
+    public sealed class AllowFragment : GraphDirective
+    {
+        [DirectiveLocations(ExecutableDirectiveLocation.FIELD)]
         public IGraphActionResult BeforeFieldResolution([FromGraphQL("if")] bool ifArgument)
         {
             return ifArgument ? this.Ok() : this.Cancel();
@@ -158,7 +178,8 @@ A set of flags indicating where in a query document the given directive can be d
 
 ## FromGraphQL
 
-Indicates additional or non-standard settings related to the method parameter its attached to.
+Indicates additional or non-standard settings related to the method parameter its attached to. Can be used for controller action methods 
+and directive action methods.
 
 #### `[FromGraphQL(argumentName)]`
 
