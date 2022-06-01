@@ -148,7 +148,7 @@ method should be invoked for a particular location.
     public sealed class AllowFragment : GraphDirective
     {
         [DirectiveLocations(ExecutableDirectiveLocation.FRAGMENT_SPREAD | ExecutableDirectiveLocation.INLINE_FRAGMENT)]
-        public IGraphActionResult BeforeFieldResolution([FromGraphQL("if")] bool ifArgument)
+        public IGraphActionResult Execute([FromGraphQL("if")] bool ifArgument)
         {
             return ifArgument ? this.Ok() : this.Cancel();
         }
@@ -169,7 +169,7 @@ during `SchemaGeneration` and `AfterFieldResolution` depending on the allowed ta
     public sealed class AllowFragment : GraphDirective
     {
         [DirectiveLocations(ExecutableDirectiveLocation.FIELD)]
-        public IGraphActionResult BeforeFieldResolution([FromGraphQL("if")] bool ifArgument)
+        public IGraphActionResult Execute([FromGraphQL("if")] bool ifArgument)
         {
             return ifArgument ? this.Ok() : this.Cancel();
         }
