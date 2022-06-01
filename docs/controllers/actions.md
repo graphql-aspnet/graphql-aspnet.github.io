@@ -154,9 +154,9 @@ However, there is an exception to the rule. [Batch operations](../controllers/ba
 
 ### Inheritance and Type Validation
 
-When your action method returns data, GraphQL inspects the result to ensure it matches what the field is expected to return as defined in the target schema. If validation passes, the next level of fields is executed. When it fails validation, the value is rejected and replaced with `null`.
+When your action method returns data, GraphQL validates the data to ensure it can be represented as what the field is declared to return in the target schema. If validation passes, the next level of fields is executed. When it fails validation, the value is rejected and replaced with `null`.
 
-This can cause issues with inheritance. Take this example for instance:
+Take this example for instance:
 
 ```csharp
 // Person.cs
@@ -190,7 +190,7 @@ public class PeopleController : GraphController
 }
 ```
 
-Here we've declared the `RetrievePerson` method as returning a `Person` object, yet the method is actually returning a `Celebrity` object. While this is fine from a object-oriented perspective, GraphQL won't know what to do with the `Celebrity`. The returned object will be treated only as a `Person`.
+Here we've declared the `RetrievePerson` method as returning a `Person` object, yet the method is actually returning a `Celebrity` object. While this is fine from a object-oriented perspective, GraphQL won't know what to do with the `Celebrity`. However, since celebry IS a person via its inheritance chain, graphql will happily treat it as a `Person` when resolving the next level of fields.
 
 Even if, in your schema, `Celebrity` is a declared graph type, GraphQL will only interprete the result as a `Person` because that is what the action method declared.
 
@@ -202,7 +202,7 @@ Rules concerning GraphQL's two meta graph types, [LIST and NON_NULL](../types/li
 
 Returning an [interface graph type](../types/interfaces) is a great way to deliver heterogeneous data results, especially in search operations. One got'cha is that the runtime must know the possible concrete object types that implement that interface in case a query uses a fragment with a type specification. That is to say that if we return `IPastry`, we must let GraphQL know that `Cake` and `Donut` exist and should be a part of our schema.
 
-> When your action method returns an interface you must let GraphQL know of the OBJECT types that implement that interface in some other way. i.e. if your schema contains `IPastry` it must also contain `Cake` and `Donut`.
+> When your action method returns an interface you must let GraphQL know of the OBJECT types that implement that interface in some other way. That is to say, if your schema contains `IPastry` it must also contain `Cake` and `Donut`.
 
 Take this example:
 
@@ -243,9 +243,9 @@ query {
 </div>
 <br/>
 
-No where in our code have we told GraphQL about `Cake` or `Donut`. When it goes to parse the query it will try to validate that graph types exist named `Cake` and `Donut` to ensure the fields in the fragments are valid but won't be able to.
+No where in our code have we told GraphQL about `Cake` or `Donut`. When it goes to parse the fragments declared in the query it will try to validate that graph types exist named `Cake` and `Donut` to ensure the fields in the fragments are valid, since we've never declared those graph types it won't be able to.
 
-In most cases, GraphQL ASP.NET doesn't care specifically about what objects a single method may return, it cares about being able to map `INTERFACE` graph types to `OBJECT` graph types at runtime. There are a number of ways to indicate these relationships in your code in order to generate your schema correctly.
+There are a number of ways to indicate these required relationships in your code in order to generate your schema correctly.
 
 #### Add OBJECT Types Directly to the Action Method
 
@@ -294,12 +294,12 @@ public void ConfigureServices(IServiceCollection services)
 
 You might be wondering, "if I just define `Cake` and `Donut` in my application, why can't GraphQL just include them like it does the controller?".
 
-It certainly can, but there are risks to arbitrarily grabbing class references not exposed via a `GraphController`. With introspection queries, all of those classes and their method/property names could be exposed and pose a security risk. Imagine if a class named `EmployeeDiscountCodeConstants` was accidentally added to your graph.
+It certainly can, but there are risks to arbitrarily grabbing class references not exposed via a `GraphController`. With introspection queries, all of those classes and their method/property names could be exposed and pose a security risk. Imagine if a enum named `EmployeeDiscountCodes` was accidentally added to your graph.
 
 To combat this GraphQL will only ingest types that are:
 
--   Referenced in a `GraphController`
--   Attributed with at least once instance attribute of `[GraphType]` or `[GraphField]`somewhere within the type definition.
+-   Referenced in a `GraphController` OR
+-   Attributed with at least once instance attribute of `[GraphType]` or `[GraphField]`somewhere within the type definition OR
 -   Added at startup during `.AddGraphQL()`.
 
 This behavior is controlled with your schema's declaration configuration to make it more or less restrictive based on your needs. Ultimately you are in control of how aggressive or restrictive GraphQL should be; even going so far as declaring that every type be declared with `[GraphType]` and every field with `[GraphField]` lest it be ignored completely. The amount of automatic vs. manual wire up will vary from use case to use case but you should be able to achieve the result you desire.
