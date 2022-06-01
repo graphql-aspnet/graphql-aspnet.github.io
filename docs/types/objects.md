@@ -6,7 +6,7 @@ sidebar_label: Objects
 
 The `object graph type` is one of six fundamental types defined by GraphQL. We can think of a graph query like a tree and if [scalar values](./scalars), such as `string` and `int`, are the leafs then objects are the branches.
 
-In GraphQL ASP.NET a C# `class` is used to identify an `object` in a schema.
+In GraphQL ASP.NET a C# `class` or `struct` is used to identify an `OBJECT` type in a schema.
 
 Here we've defined a `donut` model class. The runtime will convert it, automatically, into a graph type. If you're familiar with GraphQL's own type definition language the equivalent expression is shown to the right.
 
@@ -40,6 +40,7 @@ type Donut {
 </div>
 </div>
 
+<br/>
 \*The `DonutType` enumeration is covered in the [enum type](./enums) section.
 
 By Default, object graph types:
@@ -211,8 +212,8 @@ GraphQL will follow a cascading model of inclusion rules. Indicating a rule on t
 
 By Default, GraphQL won't include your class in a schema unless:
 
--   Its referenced in a controller.
--   Referenced by a graph type that is referenced in a controller.
+-   Its referenced in a controller OR
+-   Referenced by a graph type that is referenced in a controller OR
 -   Tagged with `[GraphType]`.
 
 But schema configurations can override this behavior and allow GraphQL to greedily include classes that it'll never use. This can expose them in an introspection query unintentionally. You can flag a class such that auto-inclusion will be skipped unless GraphQL can determine that the object is required to fulfill a request to the schema.
@@ -257,4 +258,4 @@ The usage of `struct` types as an `OBJECT` graph type is fully supported. The sa
 
 ## Reuse as Input Objects
 
-Both `class` and `struct` types can be used as an `INPUT_OBJECT` and an output `OBJECT` graph type. See the section on [input objects](./input-objects) for some of the key differences and requirements.
+Both `class` and `struct` types can be used as an `INPUT_OBJECT` and an `OBJECT` graph type. See the section on [input objects](./input-objects) for some of the key differences and requirements.

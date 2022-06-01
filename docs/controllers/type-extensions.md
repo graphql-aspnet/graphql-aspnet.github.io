@@ -68,7 +68,7 @@ Well that's just plain awful. We've over complicated our bakery model and made i
 
 ## The [TypeExtension] Attribute
 
-So what do we do? We've talked in the section on [field paths](./field-paths) about GraphQL maintaining a 1:1 mapping between a field in the graph and a method to retrieve data for it. What prevents us from creating a method to fetch a list of Cake Orders and saying, "Hey, GraphQL! When someone asks for the field `[type]/bakery/orders` call our method instead of a property getter on the `Bakery` class. As it turns out, that is exactly what a `Type Extension` does.
+So what do we do? We've talked in the section on [field paths](./field-paths) about GraphQL maintaining a 1:1 mapping between a field in the graph and a method to retrieve data for it (i.e. its assigned resolver). What prevents us from creating a method to fetch a list of Cake Orders and saying, "Hey, GraphQL! When someone asks for the field `[type]/bakery/orders` call our method instead of a property getter on the `Bakery` class. As it turns out, that is exactly what a `Type Extension` does.
 
 ```csharp
 // Bakery.cs
@@ -101,7 +101,7 @@ There is a lot to unpack here, so lets step through it:
 -   The method returns `List<CakeOrder>` as the type of data it generates.
 -   The method takes in a `Bakery` instance (more on that in a second) as well as an integer, with a default value of `15`, to limit the number of orders to retrieve.
 
-Now we can query the `orders` field from anywhere a bakery is returned in the object graph and GraphQL will invoke our method instead searching for a property named`Bakery.Orders`.
+Now we can query the `orders` field from anywhere a bakery is returned in the object graph and GraphQL will invoke our method instead searching for a property named `Bakery.Orders`.
 
 ```javascript
 query {
@@ -119,7 +119,7 @@ query {
 
 #### But what about the Bakery parameter?
 
-When you declare a `type extension` it will only be invoked in context of the type being extended.
+When you declare a type extension it will only be invoked in context of the type being extended.
 
 When we return a field of data from a property, an instance of the object must to exist in order to retrieve the property value. The same is true for a `type extension` except that instead of calling a property getter on the instance we're handing the entire instance to our method and letting it figure out what it needs to do with the data to resolve the field.
 
