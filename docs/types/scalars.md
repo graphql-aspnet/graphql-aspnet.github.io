@@ -39,7 +39,7 @@ When a value is resolved it's read from the query document (or variable collecti
 -   **Boolean** The value `true` or `false` with no quotes
 -   **Number** A sequence of numbers with an optional decimal point, negative sign or the letter `e`
     -   example: `-123.456e78`
-    -   GraphQL numbers must conform to the [IEEE 754](https://en.wikipedia.org/wiki/IEEE_754) standard [Spec § [3.5.2](https://graphql.github.io/graphql-spec/June2018/#sec-Float)]
+    -   GraphQL numbers must conform to the [IEEE 754](https://en.wikipedia.org/wiki/IEEE_754) standard [Spec § [3.5.2](https://graphql.github.io/graphql-spec/October2021/#sec-Float)]
 
 Scalars used as input arguments require that any supplied value match at least one supported input format before they will attempt to convert the value into the related .NET type. If the value read from the document doesn't match an approved format it is rejected before conversion is attempted. See the table above for the list of allowed formats per scalar type.
 
@@ -57,7 +57,7 @@ For the value types listed above, GraphQL will automatically coerce values into 
 
 GraphQL defines a special scalar value value called `ID` which is defined as:
 
-"_a unique identifier, often used to refetch an object or as the key for a cache_" [Spec § [3.5.5](https://graphql.github.io/graphql-spec/June2018/#sec-ID)].
+"_a unique identifier, often used to refetch an object or as the key for a cache_" [Spec § [3.5.5](https://graphql.github.io/graphql-spec/October2021/#sec-ID)].
 
 GraphQL ASP.NET maintains a struct, `GraphQL.AspNet.GraphId` to hold this value and serializes and deserializes it as a string. You can perform an implicit and explicit conversion between `GraphId` and `System.String`
 

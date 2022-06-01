@@ -100,7 +100,7 @@ query {
 
 _Sample query used as a reference example in this section_
 
-The supplied query document (top right in the example) is ran through a compilation cycle to generate an `IGraphQueryPlan`. It is first lexed into a series of tokens representing the various parts; things like curly braces, colons, strings etc. Then it parses those tokens into a collection of `SyntaxNodes` (creating an Abstract Syntax Tree) representing concepts like `FieldNode`, `InputValueNode`, and `OperationTypeNode` following the [graphql specification rules for source text documents](https://spec.graphql.org/June2018/#sec-Source-Text).
+The supplied query document (top right in the example) is ran through a compilation cycle to generate an `IGraphQueryPlan`. It is first lexed into a series of tokens representing the various parts; things like curly braces, colons, strings etc. Then it parses those tokens into a collection of `SyntaxNodes` (creating an Abstract Syntax Tree) representing concepts like `FieldNode`, `InputValueNode`, and `OperationTypeNode` following the [graphql specification rules for source text documents](https://spec.graphql.org/October2021/#sec-Source-Text).
 
 Once parsed, the runtime will execute its internal rules engine against the generated `ISyntaxTree`, using the targeted `ISchema`, to create a query plan where it marries the AST with concrete structures such as controllers, action methods and POCOs. It is at this stage where the `hero` field in the example is matched to the `HeroController` with its appropriate `IGraphFieldResolver` to invoke the `RetrieveHero` action method.
 
