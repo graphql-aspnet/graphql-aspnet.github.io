@@ -54,7 +54,7 @@ Most of the time GraphQL is smart enough to figure out which object types you're
 
 ## Use It To Include It
 
-When GraphQL ASP.NET starts building a schema it will read the interfaces attached to any model classes it finds and stage them in a special holding area. However, unless an interface is actually referenced as a return value of a field, be it from an action method or a model property, it won't be added to your schema and won't be visible to introspection queries. That is to say that when you register `Donut`, unless you specifically return `IPastry` from your application, GraphQL will leave it out of the schema. This goes a long ways in preventing clutter in your schema with all the interfaces you may declare internally.
+When GraphQL starts building a schema it will read the interfaces attached to any model classes it finds and stage them in a special holding area. However, unless an interface is actually referenced as a return value of a field, be it from an action method or a model property, it won't be added to your schema and won't be visible to introspection queries. That is to say that when you register `Donut`, unless you specifically return `IPastry` from your application, GraphQL will leave it out of the schema. This goes a long ways in preventing clutter in your schema with all the interfaces you may declare internally.
 
 <div class="sideBySideCode hljs">
 <div>
@@ -92,6 +92,7 @@ type Donut {
 </div>
 </div>
 
+<br/>
 Of course if you call `.AddGraphType<IPastry>()` during [schema configuration](../reference/schema-configuration) GraphQL will happily publish the type even if its never used in the graph.
 
 ## Interfaces are not Input Objects
