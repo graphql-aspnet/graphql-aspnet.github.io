@@ -80,7 +80,7 @@ public class BakeryController : GraphController
 
 ## Use of IAuthorizationService
 
-Under the hood, GraphQL taps into your `IServiceProvider` to obtain a reference to the `IAuthorizationService` that gets created when you configure `.AddAuthorization()`. Take a peek at the GraphQL FieldAuthorizer in the source code for the full picture.
+Under the hood, GraphQL taps into your `IServiceProvider` to obtain a reference to the `IAuthorizationService` that gets created when you configure `.AddAuthorization()` for policy enforcement rules. Take a look at the [Field Authorization](https://github.com/graphql-aspnet/graphql-aspnet/blob/master/src/graphql-aspnet/Middleware/FieldSecurity/Components/FieldAuthorizationMiddleware.cs) Middleware Component for the full picture.
 
 ## When does Authorization Occur?
 

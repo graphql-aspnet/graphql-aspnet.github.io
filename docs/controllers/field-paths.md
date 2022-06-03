@@ -1,10 +1,10 @@
 ---
 id: field-paths
-title: Field Paths
-sidebar_label: Field Paths
+title: Virtual Graph Types
+sidebar_label: Virtual Graph Types
 ---
 
-## What is Field Pathing?
+## What is a Virtual Graph Type?
 
 When we reason about ASP.NET MVC, routing comes naturally. We define a URL and perform an HTTP request to fetch data.
 
@@ -223,11 +223,11 @@ public class BakeryController : GraphController
 }
 ```
 
-Since both methods map to a field path of `[mutation]/bakery/orderDonuts` this would cause a `GraphTypeDeclarationException` to be thrown when your application starts.
+From a GraphQL perspective this equivilant to trying to define a `bakery` type with two fields named `orderDonuts`. Since both methods map to a field path of `[mutation]/bakery/orderDonuts` this would cause a `GraphTypeDeclarationException` to be thrown when your application starts. 
 
 With MVC the ASP.NET runtime could inspect any combinations of parameters passed on the query string or the POST body to work out which overload to call. You might be thinking, why can't GraphQL inspect the passed input arguments and make the same determination?
 
-In some cases it probably could. But looking at this example we run into an issue:
+Putting aside that it [violates the specification](http://spec.graphql.org/October2021/#sec-Objects), in some cases it probably could. But looking at this example we run into an issue:
 
 ```csharp
 // C# Controller
