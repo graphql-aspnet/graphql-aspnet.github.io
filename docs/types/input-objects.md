@@ -41,7 +41,7 @@ public class Donut
 
 ```
 // GraphQL Type Definition
-type NewDonutModel {
+input NewDonutModel {
   id: Int!
   name: String
   type: DonutType!
@@ -116,12 +116,9 @@ type Input_Donut {
 </div>
 <br/>
 
-
-> *Note:* `KeyValuePair<T, K>` is a commonly used struct. While it can be safely used as an `OBJECT` type, it should not be used as an `INPUT_OBJECT`. This is because, [by definition](https://github.com/dotnet/runtime/blob/main/src/libraries/System.Private.CoreLib/src/System/Collections/Generic/KeyValuePair.cs), `KeyValuePair<T,K>` does not declare publicly accessible setters on the `Key` and `Value` properties. Attempting to use the struct as an `INPUT_OBJECT` will not fail, but it will also not include any fields making it mostly useless.
-
 ## Methods are Ignored
 
-While its possible to have methods be exposed as fields on regular `OBJECT` types they are ignored for input arguments regardless of the declaration rules applied to the type.
+While its possible to have methods be exposed as fields on regular `OBJECT` types they are ignored for input types regardless of the declaration rules applied to the type.
 
 <div class="sideBySideCode hljs">
 <div>
@@ -146,9 +143,10 @@ public class Donut
 </div>
 <div>
 
-```
-// GraphQL Type Definition
-type Input_Donut {
+```ruby
+# GraphQL Type
+# Definition
+input Input_Donut {
   id: Int!
   name: String
   type: DonutType!
@@ -162,7 +160,7 @@ type Input_Donut {
 
 ## Working With Lists
 
-When constructing a set of items as an input value, GraphQL will instantiate a `List<T>` and fill it with the appropriate data, be that another list, another input object or a scalar. While you can declare a regular array (e.g. `Donut[]`, `int[]` etc.) as your list structure for an input argument, graphql has to rebuild its internal list structure as an array (or nested arrays) to meet the requirements of your method. In some cases, especially with nested lists, this result in an `O(n)` increase in processing time. It is recommended to use `IEnumerable<T>` or `IList<T>` to avoid this performance bottleneck when sending a lot of items as input arguments.
+When constructing a set of items as an input value, GraphQL will instantiate a `List<T>` and fill it with the appropriate data, be that another list, another input object or a scalar. While you can declare a regular array (e.g. `Donut[]`, `int[]` etc.) as your list structure for an input argument, graphql has to rebuild its internal list structure as an array (or nested arrays) to meet the requirements of your method. In some cases, especially with nested lists, this results in a linear increase in processing time. It is recommended to use `IEnumerable<T>` or `IList<T>` to avoid this performance bottleneck when sending a lot of items as input arguments.
 
 This example shows various ways of accepting collections of data as inputs to controller actions.
 

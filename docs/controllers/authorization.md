@@ -4,6 +4,8 @@ title: Authorization
 sidebar_label: Authorization
 ---
 
+## Quick Examples 
+
 If you've wired up ASP.NET authorization before, you'll likely familiar with the `[Authorize]` attribute and how its used to enforce security. GraphQL ASP.NET works the same way.
 
 ```csharp
@@ -43,7 +45,7 @@ public class BakeryController : GraphController
 }
 ```
 
-GraphQL supports nested checks at Controller and Action levels.
+This library supports nested policy and role checks at Controller and Action levels.
 
 ```csharp
 // BakeryController.cs
@@ -76,9 +78,9 @@ public class BakeryController : GraphController
 }
 ```
 
-## GraphQL Uses IAuthorizationService
+## Use of IAuthorizationService
 
-Under the hood, GraphQL taps into the your `IServiceProvider` to obtain a reference to the `IAuthorizationService` that gets created when you configure `.AddAuthorization()`. Take a peek at the GraphQL FieldAuthorizer in the source code for the full picture.
+Under the hood, GraphQL taps into your `IServiceProvider` to obtain a reference to the `IAuthorizationService` that gets created when you configure `.AddAuthorization()` for policy enforcement rules. Take a look at the [Field Authorization](https://github.com/graphql-aspnet/graphql-aspnet/blob/master/src/graphql-aspnet/Middleware/FieldSecurity/Components/FieldAuthorizationMiddleware.cs) Middleware Component for the full picture.
 
 ## When does Authorization Occur?
 
@@ -88,7 +90,7 @@ _The Default "per field" Authorization workflow_
 
 ---
 
-In the diagram above we can see that user authorization in GraphQL ASP.NET makes use of the result from [ASP.NET's security pipeline](https://docs.microsoft.com/en-us/aspnet/core/security/authorization/introduction?view=aspnetcore-3.0) but makes no attempt to interact with it. Whether you use Kerberos tokens, OAUTH2, username/password, API tokens or if you support 2-factor authentication or one-time-use passwords, GraphQL doesn't care. The entirety of your authentication and authorization pipeline is executed completely before GraphQL gets involved.
+In the diagram above we can see that user authorization in GraphQL ASP.NET makes use of the result from [ASP.NET's security pipeline](https://docs.microsoft.com/en-us/aspnet/core/security/authorization/introduction) but makes no attempt to interact with it. Whether you use Kerberos tokens, OAUTH2, username/password, API tokens or if you support 2-factor authentication or one-time-use passwords, GraphQL doesn't care. The entirety of your authentication and authorization pipeline is executed by GraphQL, no special arrangements or configuration is needed.
 
 > GraphQL ASP.NET draws from your configured authentication/authorization solution.
 
@@ -98,7 +100,7 @@ Null propagation rules still apply to unauthorized fields meaning if the field c
 
 By default, a single unauthorized result does not necessarily kill an entire query, it depends on the structure of your object graph. When a field request is terminated any down-stream child fields are discarded immediately but sibling fields or unrelated ancestors continue to execute as normal.
 
-Since this authorization occurs "per field" and not "per controller action" its possible to define the same security chain for POCO properties. This allows you to effectively deny access, by policy, to a single property of a single instantiated object if you wish. Performing security checks for every field of data (especially in parent/child scenarios) has a performance cost though, especially for larger data sets. For most scenarios enforcing security at the controller level is sufficient.
+Since this authorization occurs "per field" and not "per controller action" its possible to define the same security chain for POCO properties. This allows you to effectively deny access, by policy, to a single property of an instantiated object. Performing security checks for every field of data (especially in parent/child scenarios) has a performance cost though, especially for larger data sets. For most scenarios enforcing security at the controller level is sufficient.
 
 ## Authorization Failures are Obfuscated
 

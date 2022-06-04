@@ -8,7 +8,7 @@ sidebar_label: Batch Operations
 
 ## The N+1 Problem
 
-There are plenty of articles on the web discussing the theory behind the N+1 problem (links below) Instead, we'll jump into an into an example to illustrate the issue when it comes to GraphQL.
+There are plenty of articles on the web discussing the theory behind the N+1 problem ([links below](./batch-operations#other-resources)). Instead, we'll jump into an into an example to illustrate the issue when it comes to GraphQL.
 
 Let's build on our example from the discussion on type extensions where we created an extension to retrieve `Cake Orders` for a **single** `Bakery`. What if we're a national chain and need to see the last 50 orders for each of our stores in a region? This seems like a reasonable thing an auditor would do so lets alter our controller to fetch all our bakeries and then let our type extension fetch the cake orders.
 
@@ -51,11 +51,11 @@ Well that was easy, right? Not so fast. The `bakeries` field returns a `List<Bak
 
 This is the N+1 problem. `1 query` for the bakeries + `N queries` for the cake orders, where N is the number of bakeries first retrieved.
 
-If we could _batch_ the cake orders request and fetch all the orders for all the bakeries at once, then assign the `Cake Orders` back to their bakeries, we'd be a lot better off. No matter the number of bakeries retrieved, we'd execute 2 queries; 1 for `bakeries` and 1 for `orders`.
+If we could _batch_ the cake orders request and fetch all the orders for all the bakeries at once, then assign the `Cake Orders` back to their respective bakeries, we'd be a lot better off. No matter the number of bakeries retrieved, we'd execute 2 queries; 1 for `bakeries` and 1 for `orders`.
 
 ## Data Loaders
 
-You'll often hear the term `Data Loaders` when reading about GraphQL implementations. Methods that load the child data being requested as a single operation before assigning to each of the parents. There is no difference with GraphQL ASP.NET. You still have to write that method. But with the ability to capture action method parameters and clever use of an `IGraphActionResult` we can combine the data load phase with the assignment phase into a single `batch operation`, at least on the surface. The aim is to make it easy to read and easier to write.
+You'll often hear the term `Data Loaders` when reading about GraphQL implementations. Methods that load the child data being requested as a single operation before assigning to each of the parents. There is no difference with GraphQL ASP.NET. You still have to write that method. But with the ability to capture action method parameters and clever use of an `IGraphActionResult` we can combine the data load phase with the assignment phase into a single batch operation, at least on the surface. The aim is to make it easy to read and easier to write.
 
 ## The [BatchTypeExtension] Attribute
 

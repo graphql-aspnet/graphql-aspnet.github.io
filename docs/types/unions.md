@@ -121,7 +121,7 @@ public class SaladOrBread : GraphUnionProxy
 
 ## Union Name Uniqueness
 
-Union names must be unique in a schema. If you do declare a union in multiple action methods without a proxy, GraphQL will attempt to validate the references by name and included types. As long as all declarations are the same, that is the name and the set of included types, then there graphql will accept the union. Otherwise, a `GraphTypeDeclarationException` will be thrown at startup.
+Union names must be unique in a schema. If you do declare a union in multiple action methods without a proxy, GraphQL will attempt to validate the references by name and included types. As long as all declarations are the same, that is the name and the set of included types, then graphql will accept the union. Otherwise, a `GraphTypeDeclarationException` will be thrown at startup.
 
 ## Liskov Substitutions
 
@@ -225,7 +225,7 @@ public class BakeryController : GraphController
 ```
 
 > Note: `MapType` is not based on the resolved field value, but only on the `System.Type`. This is by design to guarantee consistency in query execution. 
-> If your returned type causes the query to remain indeterminate a validation error (rule 6.4.3) will be applied to the query.
+> If your returned type causes the query to remain indeterminate a validation error (rule [6.4.3](https://spec.graphql.org/October2021/#sec-Value-Completion)) will be applied to the query.
 
 The query will now interpret all `Bagels` as `Rolls` and be able to process the query correctly.
 
