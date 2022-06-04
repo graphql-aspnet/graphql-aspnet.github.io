@@ -4,7 +4,7 @@ title: Unit Testing
 sidebar_label: Unit Testing
 ---
 
-GraphQL ASP.NET has more than `5000 unit tests and 91% code coverage` of the library proper. Much of this is powered by a test component designed to quickly build a configurable, fully mocked server instance to perform a query. It may be helpful to download the code and extend it for harnessing your own controllers.
+GraphQL ASP.NET has more than `2500 unit tests and 91% code coverage`. Much of this is powered by a test component designed to quickly build a configurable, fully mocked server instance to perform a query. It may be helpful to download the code and extend it for harnessing your own controllers.
 
 The `TestServerBuilder<TSchema>` can be found in the `graphql-aspnet-testframework` project of the primary repo and is dependent on `Moq`. As its part of the core library solution you'll want to remove the project reference to `graphql-aspnet` project and instead add a reference to the nuget package.
 
