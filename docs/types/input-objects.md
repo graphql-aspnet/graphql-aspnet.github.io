@@ -105,7 +105,7 @@ public class Donut
 // GraphQL Type Definition
 // No Id field is included on the INPUT_OBJECT
 
-type Input_Donut {
+input Input_Donut {
   name: String
   type: DonutType!
   price: Decimal!

@@ -4,11 +4,11 @@ title: Multi-Schema Support
 sidebar_label: Multi-Schema Support
 ---
 
-GraphQL ASP.NET supports multiple schemas on the same server out of the box. Each schema is recognized by the runtime by its concrete type. To register multiple schemas you'll need to implement your own type that inherits from `ISchema`
+GraphQL ASP.NET supports multiple schemas on the same server out of the box. Each schema is recognized by the runtime by its concrete type. To register multiple schemas you'll need to create your own type that implements `ISchema`
 
 ## Implement ISchema
 
-While it is possible to implement directly from `ISchema` if you don't require any extra functionality in your schema its easier to just subclass the default schema.
+While it is possible to implement `ISchema` directly, if you don't require any extra functionality in your schema its easier to just subclass the default schema.
 
 ```csharp
 public class EmployeeSchema : GraphSchema

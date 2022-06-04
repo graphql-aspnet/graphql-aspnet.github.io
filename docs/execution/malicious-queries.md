@@ -33,7 +33,7 @@ query SearchGroceryStore {
 }
 ```
 
-This becomes important on large object graphs where its possible for a requestor to submit a query that is 10s or 100s of nodes deep. Running such a large query can have performance implications if ran en masse. A large volume of queries against your server executing a perfectly valid, yet deeply nested query will quickly grind things to a halt.
+This becomes important on large object graphs where its possible for a requestor to submit a query that is 10s or 100s of nodes deep. Running such a large query can have performance implications if ran en masse. Think of large, deeply nested queries run as part of a DDos attack.
 
 To combat this you can set a maximum allowed depth for any query targeting your schema. During the parsing phase, once GraphQL has gathered enough information about the query document, it will inspect the maximum depth and if it violates your constraint, immediately reject the query without executing it.
 
@@ -81,8 +81,7 @@ GraphQL will assign an `estimated complexity` score to each query plan to help g
 // Startup.cs
 public void ConfigureServices(IServiceCollection services)
 {
-    services.AddMvc()
-            .AddGraphQL(options =>
+    services.AddGraphQL(options =>
             {
                 options.ExecutionOptions.MaxQueryComplexity = 50.00;
             });
