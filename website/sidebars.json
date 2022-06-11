@@ -31,6 +31,7 @@
         "Advanced": [
             "advanced/subscriptions",
             "advanced/type-expressions",
+            "advanced/inheritance",
             "advanced/directives",
             "advanced/custom-scalars",
             "advanced/graph-action-results",
