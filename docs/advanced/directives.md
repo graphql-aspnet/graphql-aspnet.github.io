@@ -224,6 +224,8 @@ This Directive:
 
 ### Example: @deprecated
 
+The @deprecated directive is a built in directive provided by graphql to indication deprecation on a field definition or enum value. Below is the code for its implementation.
+
 ```csharp    
     public sealed class DeprecatedDirective : GraphDirective
     {
@@ -435,13 +437,52 @@ type Person  {
 
 <br/>
 
+### Repeatable Directives
+
+GraphQL ASP.NET supports repeatable type system directives. Sometimes it can be helpful to apply your directive to an schema item more than once, especially if you would like to supply different parameters on each application.
+
+Add the `[Repeatable]` attribute to the directive definition and you can the apply it multiple times using the standard methods. GraphQL tools that support this new syntax 
+will be able to properly interprete your schema.
+
+```csharp    
+    // apply repeatable attribute
+    [Repeatable]
+    public sealed class ScanItemDirective : GraphDirective
+    {
+        [DirectiveLocations(DirectiveLocation.OBJECT)]
+        public IGraphActionResult Execute(string scanType)
+        { /* ... */}
+    }
+
+    // Option 1: Apply the directive to the class directly
+    [ApplyDirective("@scanItem", "medium")]
+    [ApplyDirective("@scanItem", "high")]
+    public class Person
+    {
+    }
+
+    // Option 2: Apply the directive at startup
+    services.AddGraphQL(o => {
+        // ...
+        o.ApplyDirective("@scanItem")
+            .WithArguments("medium")
+            .ToItems(item => item.IsObjectGraphType<Person>());
+        o.ApplyDirective("@scanItem")
+            .WithArguments("high")
+            .ToItems(item => item.IsObjectGraphType<Person>());
+    });
+```
+
+> Order matters. The repeated directives will be executed in the order they are encountered with those applied via attribution taking precedence.
+
+
 ## Directives as Services
-Directives are invoked as services through your DI container when they are executed.  When you add types to your schema during its initial configuration, GraphQL ASP.NET will automatically register any directives it finds attached to your objects and properties as services in your `IServiceCollection` instance. However, there are times when it cannot do this, such as when you apply a directive by its string declared name. These late-bound directives may still be discoverable later and graphql will attempt to add them to your schema whenever it can.  However, it may do this after the opportunity to register them with the DI container has passed.
+Directives are invoked as services through your DI container when they are executed.  When you add types to your schema during its initial configuration, GraphQL ASP.NET will automatically register any directives it finds attached to your entities as services in your `IServiceCollection` instance. However, there are times when it cannot do this, such as when you apply a directive by its string declared name. These late-bound directives may still be discoverable later and graphql will attempt to add them to your schema whenever it can.  However, it may do this after the opportunity to register them with the DI container has passed.
 
 When this occurs, if your directive contains a public, parameterless constructor graphql will still instantiate and use your directive as normal. If the directive contains dependencies in the constructor that it can't resolve, execution of that directive will fail and an exception will be thrown. To be safe, make sure to add any directives you may use to your schema during the `.AddGraphQL()` configuration method.  Directives are directly discoverable and will be included via the `options.AddAssembly()` helper method as well.
 
 The benefit of ensuring your directives are part of your `IServiceCollection` should be apparent:
-*  The directive instance will obey lifetime scopes (transient, scoped, singleton).
+*  The directive instance will obey lifetime scopes (e.g. transient, scoped, singleton).
 *  The directive can be instantiated with any dependencies or services you wish; making for a much richer experience.
 
 ## Directive Security
@@ -454,16 +495,16 @@ Directives are not considered a layer of security by themselves. Instead, they a
 > WARNING: Only use type system directives that you trust. They will always be executed when applied to one or more schema items.
 
 ## Understanding the Type System
-GraphQL ASP.NET builds your schema and all of its types from your controllers and objects. In general, you do not need to interact with it, however; when applying type system directives you are affecting the final generated schema at run time, making changes as you see fit. When doing this you are forced to interact with the internal type system. 
+GraphQL ASP.NET builds your schema and all of its types from your controllers and objects. In general, this is done behind the scenes and you do not need to interact with it. However, when applying type system directives you are affecting the final generated schema at run time and need to understand the various parts of it. If you have a question don't be afraid to ask on [github](https://github.com/graphql-aspnet/graphql-aspnet). 
 
 **UML Diagrams**
 
-These [uml diagrams](../assets/2022-05-graphql-aspnet-type-system-interface-diagrams.pdf) details the major interfaces and their most useful properties of the type system. However,
+These [uml diagrams](../assets/2022-05-graphql-aspnet-type-system-interface-diagrams.pdf) detail the major interfaces and their most useful properties of the type system. However,
 these diagrams are not exaustive. Look at the [source code](https://github.com/graphql-aspnet/graphql-aspnet/tree/master/src/graphql-aspnet/Interfaces/TypeSystem) for the full definitions.
 
 **Helpful Extensions**
 
-There are a robust set of of built in extensions for `ISchemaItem` that can help you filter your data. See the [full source code](https://github.com/graphql-aspnet/graphql-aspnet/tree/master/src/graphql-aspnet/Configuration/SchemaItemExtensions.cs) for details.
+There are a robust set of of built in extensions for `ISchemaItem` that can help you filter your data when applying directives. See the [full source code](https://github.com/graphql-aspnet/graphql-aspnet/tree/master/src/graphql-aspnet/Configuration/SchemaItemExtensions.cs) for details.
 
 ## Demo Project
 See the [Demo Projects](../reference/demo-projects.md) page for a demonstration on creating a type system directive for extending a field resolver and an execution directives

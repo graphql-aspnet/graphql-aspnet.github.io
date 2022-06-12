@@ -123,7 +123,7 @@ Like with other graph types use the `[GraphType]` attribute to indicate a custom
 <div>
 
 ```csharp
-// Donut.cs
+// IPastry.cs
 [GraphType("Pastry")]
 public interface IPastry
 {
@@ -145,3 +145,95 @@ interface Pastry {
 
 </div>
 </div>
+
+
+## Inheritance
+
+Interface inheritance in GraphQL works differently than it does in .NET.  Take for example, these two interfaces:
+
+
+```csharp
+public interface IPastry
+{
+    int Id { get; set; }
+    string Name { get; set; }
+}
+
+public interface IDonut : IPastry
+{
+    string Flavor{ get; set; }
+}
+
+```
+
+In .NET `IDonut`, by virtue of implementing `IPastry`, grants "access" to the Id and Name fields for any object that implements IDonut since said object must implement both interfaces to compile correctly. This is not the case in GraphQL. GraphQL does not attempt to walk or parse any interfaces that are not part of the schema. An interface is added to the schema if its expliclty added at start up or indicated as an allowed return type from one of your controller methods or object fields. This allows you to safely manage your internal interfaces like `IList<T>` without worry that GraphQL will see them and try parse them. 
+
+This can create some less than wanted scenarios. For instance, if only `IDonut` is part of the schema, the fields for `Id` and `Name` won't be seen nor made available in the graph, even though its understandable that you'd want them to be.
+
+
+<div class="sideBySideCode hljs">
+<div>
+
+```csharp
+// Startup.cs
+services.AddGraphQL(o => 
+{
+   o.AddGraphType<IDonut>();
+});
+```
+
+</div>
+<div>
+
+```
+# IDonut does NOT contain name or id
+# because IPastry is not part of the schema
+interface IDonut {
+  flavor: String
+}
+```
+</div>
+</div>
+<br/>
+
+However, since the October 2021 update, GraphQL now supports interface inheritance. As a result, as long as both interfaces are included as part of the schema then the fields will wire up as you'd expect.
+
+<div class="sideBySideCode hljs">
+<div>
+
+```csharp
+// Startup.cs
+services.AddGraphQL(o => 
+{
+  o.AddGraphType<IPastry>();
+  o.AddGraphType<IDonut>();
+});
+```
+
+</div>
+<div>
+
+```
+interface IPastry {  
+  id: Int!
+  name: String
+}
+
+// IDonut DOES contain name and id
+// when IPastry is part of the graph
+interface IDonut implements IPastry {  
+  id: Int!
+  name: String
+  flavor: String
+}
+
+
+```
+</div>
+</div>
+<br/>
+
+> GraphQL will NOT attempt to include fields from inherited interfaces unless they are part of the schema.
+
+
+

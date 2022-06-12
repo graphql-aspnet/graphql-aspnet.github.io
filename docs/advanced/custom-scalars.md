@@ -165,7 +165,8 @@ public class GuidScalarSerializer : IScalarValueSerializer
 
 ---
 
-The Completed Money Scalar:
+### Example: Money Scalar
+The completed Money custom scalar type
 
 ```csharp
 
@@ -235,27 +236,60 @@ The last step in declaring a scalar is to register it with the runtime. Scalars 
 public void ConfigureServices(IServiceCollection services)
 {
     // register the scalar type to the global provider
-    // BEFORE a call to .AddGraphQL()
+    // BEFORE calling .AddGraphQL()
     GraphQLProviders.ScalarProvider.RegisterCustomScalar(typeof(MoneyScalarType));
 
-    services.AddMvc()
-            .AddGraphQL();
+    services.AddGraphQL();
 }
 ```
 
-Since our scalar is, internally, represented by a class, if we don't pre-register it GraphQL will attempt to parse the `Money` class as an object graph type. Once registered as a scalar, any attempt to use `Money` as an object graph type will cause an exception.
+Since our scalar is represented by a .NET class, if we don't pre-register it GraphQL will attempt to parse the `Money` class as an object graph type. Once registered as a scalar, any attempt to use `Money` as an object graph type will cause an exception.
+
+## @specifiedBy Directive
+
+GraphQL provides a special, built-in directive called `@specifiedBy` that allows you to supply a URL pointing to a the specification for your custom scalar. This url is used by various tools to additional data to your customers so they know how to interact with your scalar type. It is entirely optional.
+
+The @specifiedBy directive can be applied to a scalar in all the same ways as other type system directives or by use of the special `[SpecifiedBy]` attribute.
+
+```csharp
+// apply the directive to a single schema
+GraphQLProviders.ScalarProvider.RegisterCustomScalar(typeof(MoneyScalarType));
+services.AddGraphQL(o => {
+    o.ApplyDirective("@specifiedBy")
+    .WithArguments("https://myurl.com")
+    .ToItems(item => item.Name == "Money");
+});
+
+// via the ApplyDirective attribute
+// for all schemas
+[ApplyDirective("@specifiedBy", "https://myurl.com")]
+public class MoneyScalarType : IScalarType
+{
+    // ...
+}
+
+// via the special SpecifiedBy attribute
+// for all schemas
+[SpecifiedBy("https://myurl.com")]
+public class MoneyScalarType : IScalarType
+{
+    // ...
+}
+
+```
 
 ## Tips When Developing a Scalar
 
 A few points about designing your scalar:
 
+-   Looking through the [built in scalars](https://github.com/graphql-aspnet/graphql-aspnet/tree/master/src/graphql-aspnet/Schemas/TypeSystem/Scalars) can be helpful when designing your own.
 -   Scalar types are expected to be thread safe.
 -   The runtime will pass a new instance of your scalar graph type to each registered schema. It must be declared with a public, parameterless constructor.
 -   Scalar types should be simple and work in isolation.
-    -   The `ReadOnlySpan<char>` provided to the `Resolve()` method should be all the data needed to generate a value, there should be no need to perform side effects or fetch additional data.
+    -   The `ReadOnlySpan<char>` provided to `ILeafValueResolver.Resolve` should be all the data needed to generate a value, there should be no need to perform side effects or fetch additional data.
     -   If you have a lot of logic to unpack a string, consider using a regular OBJECT graph type instead.
 -   Scalar types should not track any state or depend on any stateful objects.
--   `ILeafValueResolver.Resolve` must be **FAST**! Since your resolver is used to construct an initial query plan, it'll be called #orders of magnitude more often than any controller action method.
+-   `ILeafValueResolver.Resolve` must be **FAST**! Since your resolver is used to construct an initial query plan from a text document, it'll be called orders of magnitude more often than any other method.
 
 ### Aim for Fewer Scalars
 
