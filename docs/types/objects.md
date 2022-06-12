@@ -259,3 +259,59 @@ The usage of `struct` types as an `OBJECT` graph type is fully supported. The sa
 ## Reuse as Input Objects
 
 Both `class` and `struct` types can be used as an `INPUT_OBJECT` and an `OBJECT` graph type. See the section on [input objects](./input-objects) for some of the key differences and requirements.
+
+
+## Inheritance
+
+Class inheritance as we think of it in .NET is not concept in GraphQL.  As a result, there is no association between two objects in the graph even if they share an inheritance structure in .NET.
+
+
+<div class="sideBySideCode hljs">
+<div>
+
+```csharp
+public class Pastry
+{
+    public int Id { get; set; }
+    public string Name { get; set; }
+}
+
+public class Donut : Pastry
+{
+    string Flavor{ get; set; }
+}
+
+
+
+// Startup.cs
+services.AddGraphQL(o => 
+{
+  o.AddGraphType<Pastry>();
+  o.AddGraphType<Donut>();
+});
+```
+
+</div>
+<div>
+
+```
+# Pastry and Donut have similar fields 
+# but are NOT related in the Graph
+type Pastry {  
+  id: Int!
+  name: String
+}
+
+type Donut {  
+  id: Int!
+  name: String
+  flavor: String
+}
+
+
+```
+</div>
+</div>
+<br/>
+
+GraphQL ASP.NET is smart enough to figure out your intent, though. If you return a `Donut` where a `Pastry` is indicated by the graph. The library will happily use your donut as a pastry for any field resolutions.
