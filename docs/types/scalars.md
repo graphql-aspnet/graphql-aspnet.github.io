@@ -6,7 +6,7 @@ sidebar_label: Scalars
 
 Scalars are the most basic, fundamental unit of content in GraphQL. It is one of two leaf types (the other being [enums](./enums)). You can extend GraphQL with your own [custom scalars](../advanced/custom-scalars) when needed.
 
-GraphQL ASP.NET has 18 built in scalar types.
+GraphQL ASP.NET has 19 built in scalar types.
 
 | Scalar Name    | .NET Type              | Allowed Input Value     |
 | -------------- | ---------------------- | ----------------------- |
@@ -20,6 +20,7 @@ GraphQL ASP.NET has 18 built in scalar types.
 | Float          | System.Single          | Number                  |
 | Guid           | System.Guid            | String                  |
 | ID             | GraphQL.AspNet.GraphId | String                  |
+| Short          | System.Int16           | Number                  |
 | Int            | System.Int32           | Number                  |
 | Long           | System.Int64           | Number                  |
 | String         | System.String          | String                  |

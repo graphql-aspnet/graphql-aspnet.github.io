@@ -108,7 +108,7 @@ A complexity score is derived from these attributes:
 
 The `estimated complexity` of the query plan is the operation with the highest individual score.
 
-The code for calculating the value can be seen in [`DefaultOperationComplexityCalculator<TSchema>`](https://github.com/graphql-aspnet/graphql-aspnet/blob/develop/src/graphql-aspnet/Defaults/DefaultOperationComplexityCalculator{TSchema}.cs)
+The code for calculating the value can be seen in [`DefaultOperationComplexityCalculator<TSchema>`](https://github.com/graphql-aspnet/graphql-aspnet/blob/master/src/graphql-aspnet/Defaults/DefaultOperationComplexityCalculator%7BTSchema%7D.cs)
 
 > **_Beta Note_**: The exact calculation used for query complexity is still in flux and likely to change before v1.0 is finalized. If you have expertise in this arena and would like to weigh in on the values chosen or the computation formula in general please reach out on Github! We'd love to hear from you.
 
