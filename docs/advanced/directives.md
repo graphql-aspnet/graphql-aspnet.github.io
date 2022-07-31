@@ -51,8 +51,8 @@ Directives have two build action results that can be returned:
 
 The following properties are available to all directive action methods:
 
-* `this.DirectiveTarget` - The targeted schema item or resolved field value depending the directive type.
-* `this.Request`  - The invocation request for the currently executing directive. Contains lots of advanced information just as execution phase, the executing location etc.
+* `this.DirectiveTarget` - The `ISchemaItem` or `IDocumentPart` to which the directive is being applied.
+* `this.Request`  - The directive invocation request for the currently executing directive. Contains lots of advanced information just as execution phase, the directive type declared on the schema etc.
 
 
 ### Directive Arguments
@@ -186,6 +186,12 @@ For this reason it is possible to apply a 'PostProcessor' directly to an `IField
     }
 
 ```
+
+#### Working with Batch Extensions
+Batch extensions work differently than standard field resolvers; they don't resolve a single item at a time. This means our `@toUpper` example above won't work as `context.Result` won't be a string. Should you employ a post processor that may be applied to a batch extension you'll need to handle the resultant dictionary differently than you would a single field value. The dictionary will always be of the format `IDictionary<TSource, TResult>` where `TSource` is the data type of the field set that owns the field the directive was applied to and `TResult` is the data type or an `IEnumerable` of the data type for the field, depending on the 
+batch extension declaration. The dictionary is always keyed by source item reference.
+
+> Batch Extensions will return a dictionary of data not a single item. Your post processor must be able to handle this dictionary if applied to a field that is a `[BatchExtensionType]`.
 
 ## Type System Directives
 ### Example: @toUpper
@@ -484,6 +490,17 @@ services.AddGraphQL(o => {
 
 > Order matters. The repeated directives will be executed in the order they are encountered with those applied via attribution taking precedence.
 
+### Understanding the Type System
+GraphQL ASP.NET builds your schema and all of its types from your controllers and objects. In general, this is done behind the scenes and you do not need to interact with it. However, when applying type system directives you are affecting the final generated schema and need to understand the various parts of it. If you have a question don't be afraid to ask on [github](https://github.com/graphql-aspnet/graphql-aspnet). 
+
+**UML Diagrams**
+
+These [uml diagrams](../assets/2022-05-graphql-aspnet-type-system-interface-diagrams.pdf) detail the major interfaces and their most useful properties of the type system. However,
+these diagrams are not exaustive. Look at the [source code](https://github.com/graphql-aspnet/graphql-aspnet/tree/master/src/graphql-aspnet/Interfaces/TypeSystem) for the full definitions.
+
+**Helpful Extensions**
+
+There are a robust set of of built in extensions for `ISchemaItem` that can help you filter your data when applying directives. See the [full source code](https://github.com/graphql-aspnet/graphql-aspnet/tree/master/src/graphql-aspnet/Configuration/SchemaItemExtensions.cs) for details.
 
 ## Directives as Services
 Directives are invoked as services through your DI container when they are executed.  When you add types to your schema during its initial configuration, GraphQL ASP.NET will automatically register any directives it finds attached to your entities as services in your `IServiceCollection` instance. However, there are times when it cannot do this, such as when you apply a directive by its string declared name. These late-bound directives may still be discoverable later and graphql will attempt to add them to your schema whenever it can.  However, it may do this after the opportunity to register them with the DI container has passed.
@@ -511,25 +528,13 @@ public sealed class UnRedactDirective : GraphDirective
 
 > A user must be assigned the `admin` policy in order to apply the `@unRedact` directive to a field.  If the user is not part of this policy and they attempt to apply the directive, the query will be rejected.
 
-#### Security Contexts 
+### Security Scenarios 
 
-* **Execution Directives** - These directives execute use the same security context applied to the HTTP request; such as an oAuth token.
+* **Execution Directives** - These directives execute use the same security context applied to the HTTP request; such as an oAuth token. Execution directives are evaluated against the source document while its being constructed, BEFORE it is executed. As a result, if an execution directive fails authorization, the document fails to be constructed and thus no fields are resolved. This is true regardless of the authorization method assigned to the schema.
 
 * **Type System Directives** - Are executed during server startup, WITHOUT a `ClaimsPrincipal`, while the schema is being built. As a result, type system directives should not contain any security requirements, they will fail to execute if any security parameters are defined. 
 
 > Since type system directives execute outside of a specific user context, only apply type system directives that you trust.
-
-## Understanding the Type System
-GraphQL ASP.NET builds your schema and all of its types from your controllers and objects. In general, this is done behind the scenes and you do not need to interact with it. However, when applying type system directives you are affecting the final generated schema at run time and need to understand the various parts of it. If you have a question don't be afraid to ask on [github](https://github.com/graphql-aspnet/graphql-aspnet). 
-
-**UML Diagrams**
-
-These [uml diagrams](../assets/2022-05-graphql-aspnet-type-system-interface-diagrams.pdf) detail the major interfaces and their most useful properties of the type system. However,
-these diagrams are not exaustive. Look at the [source code](https://github.com/graphql-aspnet/graphql-aspnet/tree/master/src/graphql-aspnet/Interfaces/TypeSystem) for the full definitions.
-
-**Helpful Extensions**
-
-There are a robust set of of built in extensions for `ISchemaItem` that can help you filter your data when applying directives. See the [full source code](https://github.com/graphql-aspnet/graphql-aspnet/tree/master/src/graphql-aspnet/Configuration/SchemaItemExtensions.cs) for details.
 
 ## Demo Project
 See the [Demo Projects](../reference/demo-projects.md) page for a demonstration on creating a type system directive for extending a field resolver and an execution directives
