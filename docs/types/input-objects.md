@@ -118,7 +118,7 @@ input Input_Donut {
 
 ## Methods are Ignored
 
-While its possible to have methods be exposed as fields on regular `OBJECT` types they are ignored for input types regardless of the declaration rules applied to the type.
+While its possible to have methods be exposed as resolvable fields on regular `OBJECT` types, they are ignored for input types regardless of the declaration rules applied to the type.
 
 <div class="sideBySideCode hljs">
 <div>
@@ -179,10 +179,16 @@ public class BakeryController : GraphController
     public bool CreateDonuts(List<List<Donut>> donuts)
     {/*....*/}
 
+    // when supplied as a regular array
+    // schema syntax:  [Donut]
+    [Mutation("donutsAsAnArray")]
+    public bool DonutsAsAnArray(Donut[] donuts)
+    {/*....*/}    
+
     // This is a valid nested list
-    // schema syntax:  [[[[Donut]]]]
-    [Mutation("createDonutsBySet")]
-    public bool SoManyDonuts(IEnumerable<List<IEnumerable<List<Donut>>>> donuts)
+    // schema syntax:  [[[Donut]]]
+    [Mutation("mixedDonuts")]
+    public bool MixedDonuts(List<IEnumerable<Donut[]>> donuts)
     {/*....*/}
 
     // when used as a field of another input object
