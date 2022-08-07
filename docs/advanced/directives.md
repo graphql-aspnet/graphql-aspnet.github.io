@@ -13,6 +13,7 @@ Directives decorate, or are attached to, parts of your schema or query document 
 - `@include` : An execution directive that conditionally includes a field or fragment in the results of a graphql query
 - `@skip` : An execution directive conditionally excludes a field or fragment from the results of a graphql query
 - `@deprecated` : A type system directive that marks a field definition or enum value as deprecated, indicating that it may be removed in a future release of your graph.
+- `@specifiedBy` : A type system directive for a custom scalar that adds a URL pointing to documentation about how the scalar is used. This url is returned as part of an introspection query.
 
 Beyond this you can create directives to perform any sort of action against your graph or query document as seems fit to your use case.
 
@@ -48,7 +49,7 @@ All directive action methods must:
 -   Return a `IGraphActionResult` or `Task<IGraphActionResult>`
 
 ### Action Results
-Directives have two build action results that can be returned:
+Directives have two built in action results that can be returned:
 
 * `this.Ok()`
     * Indicates that the directive completed successfully and processing should continue.
@@ -67,26 +68,26 @@ The following properties are available to all directive action methods:
 
 ### Directive Arguments
 
-Directives can contain input arguments just like fields. However, its important to note that while a directive may declare multiple action methods for different locations to seperate your logic better, it is only a single entity in the schema. As a result ALL action methods must share a common signature. The runtime will throw an exception while creating your schema if the signatures of each action method differ.
+Directives may contain input arguments just like fields. However, its important to note that while a directive may declare multiple action methods for different locations to seperate your logic better, it is only a single entity in the schema. As a result, ALL action methods must share a common signature. The runtime will throw an exception while creating your schema if the signatures of each action method differ.
 
 ```csharp
     public class MyValidDirective : GraphDirective
     {        
         [DirectiveLocations(DirectiveLocation.FIELD)]
-        public IGraphActionResult Execute(int arg1, string arg2) { /.../ }
+        public IGraphActionResult ExecuteField(int arg1, string arg2) { /.../ }
 
         [DirectiveLocations(DirectiveLocation.FRAGMENT_SPREAD)]
-        public Task<IGraphActionResult> Execute(int arg1, string arg2) { /.../ }
+        public Task<IGraphActionResult> ExecuteFragSpread(int arg1, string arg2) { /.../ }
     }
 
     public class MyInvalidDirective : GraphDirective
-    {        
-        // method parameters MUST match for all directive action methods.
+    {   
         [DirectiveLocations(DirectiveLocation.FIELD)]
-        public IGraphActionResult Execute(int arg1, int arg2) { /.../ }
+        public IGraphActionResult ExecuteField(int arg1, int arg2) { /.../ }
 
+        // method parameters MUST match for all directive action methods.
         [DirectiveLocations(DirectiveLocation.FRAGMENT_SPREAD)]
-        public IGraphActionResult Execute(int arg1, string arg2) { /.../ }
+        public IGraphActionResult ExecuteFragSpread(int arg1, string arg2) { /.../ }
     }
 ```
 > Directive arguments must match in name, data type and position for all action methods. Being able to use different methods for different locations is a convenience; to GraphQL there is only one directive with one set of parameters.
@@ -148,9 +149,9 @@ The directives attached to the `id` field are executed in order:
  2. @directiveB
 
 ### Influencing Field Resolution
-Execution directives are applied to document parts not schema items. As a result they aren't directly involved in resolving fields but instead influence the document that is eventually converted into a query plan and executed. However, one common use case for execution directives includes augmenting the results of a field after its resolved. For instance, perhaps you had a directive that could conditionally turn a string field into an upper case string when applied (i.e. `@toUpper`).
+Execution directives are applied to document parts, not schema items. As a result they aren't directly involved in resolving fields but instead influence the document that is eventually translated into a query plan and executed. However, one common use case for execution directives includes augmenting the results of a field after its resolved. For instance, perhaps you had a directive that could conditionally turn a string field into an upper case string when applied (i.e. `@toUpper`).
 
-For this reason it is possible to apply a 'PostResolver' directly to an `IFieldDocumentPart`
+For this reason it is possible to apply a 'PostResolver' directly to an `IFieldDocumentPart`. This post resolver is executed immediately after the primary field resolver is executed.
 
 ```csharp
     public class ToUpperDirective : GraphDirective
@@ -197,8 +198,6 @@ batch extension declaration. The dictionary is always keyed by source item refer
 
 This directive will extend the resolver of a field, as its declared in the schema, to turn any strings into lower case letters. 
 
-Notice the slight difference in this type system directive vs. the `@toUpper` execution directive above. Where as toUpper was declared as a PostResolver on the field document part, this directive extends the primary resolver of an `IGraphField` and effects any queries that request this field.
-
 ```csharp
     public class ToLowerDirective : GraphDirective
     {
@@ -233,11 +232,13 @@ Notice the slight difference in this type system directive vs. the `@toUpper` ex
 
 This Directive: 
 
-* Targets any FIELD_DEFINITION.
+* Targets a FIELD_DEFINITION.
 * Ensures that the target field returns a string.
 * Extends the field's resolver to convert the result to an upper case string.
 * The directive is executed once per field definition its applied to when the schema is created. The extension method is executed on every field resolution.
 
+
+>Notice the difference in this type system directive vs. the `@toUpper` execution directive above. Where as toUpper was declared as a PostResolver on the document part, this directive extends the primary resolver of an `IGraphField` and affects ALL queries that request this field.
 ### Example: @deprecated
 
 The `@deprecated` directive is a built in type system directive provided by graphql to indicate deprecation on a field definition or enum value. Below is the code for its implementation.
