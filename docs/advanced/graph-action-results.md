@@ -40,7 +40,7 @@ public class BakeryController : Controller
 
 You can either return the data itself or some alternate `IActionResult` to tell MVC how to render a response.
 
-Common Action Results for MVC:
+Some common ASP.NET MVC action results:
 
 -   `this.Ok()` : Everything worked fine, return status 200.
 -   `this.NotFound()` : The item doesn't exist, return status 404.
@@ -49,7 +49,7 @@ Common Action Results for MVC:
 
 This works the same way in GraphQL ASP.NET. The available actions are slightly different (GraphQL won't stream files) but the usage is the same. You can even write your own action results.
 
-## Common Graph Action Results
+## Common Action Results
 
 Instead of `IActionResult` we use `IGraphActionResult` from a controller action method. Both [directives](../directives) and controller [action methods](../controllers/actions) can return action results.
 
@@ -62,9 +62,13 @@ Built in Controller Action Methods:
 -   `this.BadRequest()`: Commonly used in conjunction with `this.ModelState`. This result indicates the data supplied to the method is not valid for the operation. If given the model state collection an error for each validation error is rendered.
 -   `this.InternalServerError()`: Indicates an unintended error, such as an exception occurred. The supplied message will be added to the response and no child fields will be resolved.
 
-[Directives](../directives) have one Additional Action Result:
+## Directive Action Results
+[Directives](../directives) have two built in Action Results:
 
--   `this.Cancel()`: When returned as part of a method that executes before field resolution, this action will cancel the field execution pipeline. No error is returned, but the field is dropped from the request.
+-   `this.Ok()`: Indicates that the directive completed its expected operation successfully and query processing can continue.
+-   `this.Cancel()`: Indicates that the directive did NOT complete its operation successfully. 
+    - If this is a type system directive, the schema will fail to complete and the server will not start.
+    - If this is an execution directive, the query will be abandoned and the user will receive an error message.
 
 ## Custom Graph Action Results
 
