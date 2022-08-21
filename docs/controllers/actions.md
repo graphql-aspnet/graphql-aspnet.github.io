@@ -418,7 +418,7 @@ query {
 </div>
 <br/>
 
-Note that there is a difference between "nullable" and "not required". If we have a nullable int as an input parameter, without a default value we still have to pass it to the field, even if we pass it as null.
+Note that there is a difference between "nullable" and "not required". If we have a nullable int as an input parameter, without a default value we still have to pass it to the field, even if we pass it as null just like if we were to invoke the method from our C# code.
 
 <div class="sideBySideCode hljs">
 <div>
@@ -491,6 +491,53 @@ query {
 </div>
 </div>
 
+### Working With Lists
+
+When constructing a set of items as an argument to an action method, GraphQL will instantiate a `List<T>` and fill it with the appropriate data, be that another list, another input object, a scalar etc. While you can declare an array (e.g. `Donut[]`, `int[]` etc.) as your list structure for an input argument, graphql has to rebuild its internal representation as an array (or nested arrays) to meet the requirements of your method. In some cases, especially with nested lists, this results in a linear increase in processing time. It is recommended to use `IEnumerable<T>` or `IList<T>` to avoid this performance bottleneck when sending lots of items as input data.
+
+This example shows various ways of accepting collections of data as inputs to controller actions.
+
+```csharp
+public class BakeryController : GraphController
+{
+    // a list of donuts
+    // schema syntax:  [Donut]
+    [Mutation("createDonuts")]
+    public bool CreateDonuts(IEnumerable<Donut> donuts)
+    {/*....*/}
+
+    // when used as a "list of list"
+    // schema syntax:  [[Donut]]
+    [Mutation("createDonutsBySet")]
+    public bool CreateDonuts(List<List<Donut>> donuts)
+    {/*....*/}
+
+    // when supplied as a regular array
+    // schema syntax:  [Donut]
+    [Mutation("donutsAsAnArray")]
+    public bool DonutsAsAnArray(Donut[] donuts)
+    {/*....*/}    
+
+    // This is a valid nested list
+    // schema syntax:  [[[Donut]]]
+    [Mutation("mixedDonuts")]
+    public bool MixedDonuts(List<IEnumerable<Donut[]>> donuts)
+    {/*....*/}
+
+    // when used as a field of another input object
+    [Mutation("createDonutCollection")]
+    public bool CreateDonuts(DonutCollection donutCollection)
+    {/*....*/}
+
+}
+
+public class DonutCollection
+{
+    public List<Donut> Donuts { get; set; }
+}
+
+```
+
 ### Don't Use Dictionaries
 
 You might be tempted to use a dictionary as a parameter to accept arbitrary key value pairs into your methods. GraphQL will reject it and throw a declaration exception when your schema is created:
@@ -501,7 +548,7 @@ You might be tempted to use a dictionary as a parameter to accept arbitrary key 
 ```csharp
 public class BakeryController : GraphController
 {
-    // ERROR, a GraphDeclarationException
+    // ERROR, a GraphTypeDeclarationException
     // will be thrown.
     [QueryRoot]
     public IEnumerable<Donut>
@@ -515,7 +562,7 @@ public class BakeryController : GraphController
 
 ```javascript
 query {
-    searchDonuts(
+    searchDonuts(searchParams: 
             name: "jelly*"
             filled: true
             dayOld: false){
@@ -529,7 +576,7 @@ query {
 </div>
 <br/>
 
-At runtime, GraphQL will try to validate every parameter passed on a query against the type expression it has stored in the target schema. No where have we we declared `filled` to be a boolean or `name` to be a string.
+At runtime, GraphQL will try to validate every parameter passed on a query against the type expression it has stored in the target schema. No where have we declared an argument `filled` to be a boolean or `name` to be a string.
 
 One might think, well it should be passed as an object reference to the dictionary parameter:
 
