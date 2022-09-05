@@ -245,5 +245,16 @@ This is different than the default behavior when subscriptions are not enabled. 
 **Note:** Allowing `PerField` authorization for subscriptions is slated for a future release.
 
 
+## Query Timeouts
+By default GraphQL does not define a timeout for an executed query. The query will run as long as the underlying HTTP connection is open. This is true for subscriptions as well. Given that the websocket connection is never closed, a query executed through a subscriptions will be allowed to run for an infinite amount of time which can have some unintended side effects and consume resources unecessarily. 
 
+Optionally, you can define a query timeout for a given schema, which the subscription server will obey:
 
+```csharp
+// startup.cs
+services.AddGraphQL(o => 
+{
+    // define a 2 minute timeout per query executed.
+    o.ExecutionOptions.QueryTimeout = TimeSpan.FromMinutes(2);
+})
+```
