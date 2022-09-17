@@ -6,29 +6,30 @@ sidebar_label: Scalars
 
 Scalars are the most basic, fundamental unit of content in GraphQL. It is one of two leaf types (the other being [enums](./enums)). You can extend GraphQL with your own [custom scalars](../advanced/custom-scalars) when needed.
 
-GraphQL ASP.NET has 19 built in scalar types.
+GraphQL ASP.NET has 20 built in scalar types.
 
-| Scalar Name    | .NET Type              | Allowed Input Value     |
-| -------------- | ---------------------- | ----------------------- |
-| Boolean        | System.Boolean         | Boolean                 |
-| Byte           | System.Byte            | Number                  |
-| DateOnly       | System.DateOnly        | String or Number        |
-| DateTime       | System.DateTime        | String or Number        |
-| DateTimeOffset | System.DateTimeOffset  | String or Number        |
-| Decimal        | System.Decimal         | Number                  |
-| Double         | System.Double          | Number                  |
-| Float          | System.Single          | Number                  |
-| Guid           | System.Guid            | String                  |
-| ID             | GraphQL.AspNet.GraphId | String                  |
-| Short          | System.Int16           | Number                  |
-| Int            | System.Int32           | Number                  |
-| Long           | System.Int64           | Number                  |
-| String         | System.String          | String                  |
-| SignedByte     | System.SByte           | Number                  |
-| TimeOnly       | System.TimeOnly        | String                  |
-| UInt           | System.UInt32          | Number                  |
-| ULong          | System.UInt64          | Number                  |
-| Uri            | System.Uri             | String                  |
+| Scalar Name    | .NET Type              | Allowed Input Value |
+| -------------- | ---------------------- | ------------------- |
+| Boolean        | System.Boolean         | Boolean             |
+| Byte           | System.Byte            | Number              |
+| DateOnly       | System.DateOnly        | String or Number    |
+| DateTime       | System.DateTime        | String or Number    |
+| DateTimeOffset | System.DateTimeOffset  | String or Number    |
+| Decimal        | System.Decimal         | Number              |
+| Double         | System.Double          | Number              |
+| Float          | System.Single          | Number              |
+| Guid           | System.Guid            | String              |
+| ID             | GraphQL.AspNet.GraphId | String              |
+| Int            | System.Int32           | Number              |
+| Long           | System.Int64           | Number              |
+| Short          | System.Int16           | Number              |
+| String         | System.String          | String              |
+| SignedByte     | System.SByte           | Number              |
+| TimeOnly       | System.TimeOnly        | String              |
+| UInt           | System.UInt32          | Number              |
+| ULong          | System.UInt64          | Number              |
+| Uri            | System.Uri             | String              |
+| UShort         | System.UInt16          | Number              |
 
 > You must target .NET 6.0 or later to use `DateOnly` and `TimeOnly`
 
