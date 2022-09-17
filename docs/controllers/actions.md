@@ -516,7 +516,7 @@ public class BakeryController : GraphController
     // schema syntax:  [Donut]
     [Mutation("donutsAsAnArray")]
     public bool DonutsAsAnArray(Donut[] donuts)
-    {/*....*/}    
+    {/*....*/}
 
     // This is a valid nested list
     // schema syntax:  [[[Donut]]]
@@ -562,7 +562,7 @@ public class BakeryController : GraphController
 
 ```javascript
 query {
-    searchDonuts(searchParams: 
+    searchDonuts(searchParams:
             name: "jelly*"
             filled: true
             dayOld: false){
@@ -580,7 +580,7 @@ At runtime, GraphQL will try to validate every parameter passed on a query again
 
 One might think, well it should be passed as an object reference to the dictionary parameter:
 
-```javascript
+```ruby
 query {
     searchDonuts( searchParams : {name: "jelly*" filled: true dayOld: false }){
         id
@@ -608,8 +608,6 @@ public class DonutSearchParams
 // BakeryController.cs
 public class BakeryController : GraphController
 {
-    // ERROR, a GraphDeclarationException
-    // will be thrown.
     [QueryRoot]
     public IEnumerable<Donut>
         SearchDonuts(DonutSearchParams searchParams)
@@ -626,3 +624,41 @@ query {
 ```
 
 </div>
+
+## Cancellation Tokens
+
+As with REST based ASP.NET action methods, your graph controller action methods can accept an optional cancellation token. This is useful when doing some long running activities such as IO, database queries, API orchestration etc. To make use of a cancellation token simply add it as a parameter to your method. GraphQL will automatically wire up the token for you:
+
+```csharp
+// BakeryController.cs
+public class BakeryController : GraphController
+{
+    // Add a CancellationToken to your controller method
+    [QueryRoot(typeof(IEnumerable<Donut>))]
+    public async Task<IGraphActionResult> SearchDonuts(string name, CancellationToken cancelToken)
+    {/* ... */}
+}
+```
+
+> Depending on your usage of the cancellation token a `TaskCanceledException` may be thrown. GraphQL will not attempt to intercept this exception and will log it as an error-level, unhandled exception if allowed to propegate. The query will still be cancelled as expected.
+
+### Defining a Query Timeout
+
+By default GraphQL does not define a timeout for an executed query. The query will run as long as the underlying HTTP connection is open. In fact, the `CancellationToken` passed to your action methods is the same Cancellation Token offered on the HttpContext when it receives the initial post request.
+
+Optionally, you can define a query timeout for a given schema:
+
+```csharp
+// startup.cs
+services.AddGraphQL(o =>
+{
+    // define a 2 minute timeout per query executed.
+    o.ExecutionOptions.QueryTimeout = TimeSpan.FromMinutes(2);
+})
+```
+
+When a timeout is defined, the token passed to your action methods is a combined token representing the HttpContext as well as the timeout operation. That is to say the token will indicate a cancellation if the alloted query time expires or the http connection is closed which ever comes first. When the timeout expires the caller will receive a response indicating the timeout. However, if the its the HTTP connection that is closed, the operation is simply halted and no result is produced.
+
+### Timeouts and Subscriptions
+
+The same rules for cancellation tokens apply to subscriptions as well. Since the websocket connection is a long running operation it will never be closed until the connection is closed. To prevent some processes from spinning out of control its a good idea to define a query timeout when implementing a subscription server. This way, even though the connection remains open the query will terminate and release resources if something goes awry.

@@ -175,9 +175,9 @@ schemaOptions.ExecutionOptions.QueryTimeout = TimeSpan.FromMinutes(2);
 
 | Default Value | Acceptable Values          |
 | ------------- | -------------------------- |
-| 1 Minute      | Minimum of 10 milliseconds |
+| null          | Minimum of 10 milliseconds |
 
-The amount of time an individual query will be given to run to completion before being abandoned and canceled by the runtime.
+The amount of time an individual query will be given to run before being abandoned and canceled by the runtime. By default, the timeout is disabled and a query will continue to execute as long as the underlying HTTP request is also executing.
 
 ### DebugMode
 
