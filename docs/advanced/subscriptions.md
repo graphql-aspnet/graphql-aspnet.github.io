@@ -109,9 +109,9 @@ public class MutationController : GraphController
 
 > Notice that the event name used in `PublishSubscriptionEvent` is the same as the `EventName` property on the `[SubscriptionRoot]` attribute. The subscription server will use the published event name to match which registered subscriptions need to receive the data being published.
 
-### Subscription Event Source Data
+### Subscription Event Data Source
 
-In the example above, the data sent with `PublishSubscriptionEvent` is the same as the first input parameter called `eventData` which is the same as the field return type of the controller method. By default, the subscription will look for a parameter with the same data type as its field return type and use that as the event data source.
+In the example above, the data sent with `PublishSubscriptionEvent` is the same as the first input parameter called `eventData` on the subscription field, which is the same as the field return type of the controller method. By default, graphql will look for a parameter with the same data type as its field return type and use that as the event data source. It will automatically populate this field with the data from `PublishSubscriptionEvent` and this field is not exposed in the object graph.
 
 You can explicitly flag a different parameter, or a parameter of a different data type to be the expected event source with the `[SubscriptionSource]` attribute.
 
@@ -134,6 +134,8 @@ public class SubscriptionController : GraphController
 ```
 
 Here the subscription expects that an event is published using a `WidgetInternal` data type that it will internally convert to a `Widget` and send to any subscribers. This can be useful if you wish to share internal objects between your mutations and subscriptions that you don't want publicly exposed.
+
+> The data object published with `PublishSubscriptionEvent` must have the same type the `[SubscriptionSource]` on the subscription field.
 
 ### Summary
 
@@ -201,7 +203,7 @@ At this point, we've successfully published our events to some external data sou
 
 Once you rematerialize a `SubscriptionEvent` you need to let GraphQL know that it occurred. this is done using the `ISubscriptionEventRouter`. In general, you won't need to implement your own router, just inject it into your listener service then call `RaiseEvent` and GraphQL will take it from there.
 
-```C#
+```csharp
  public class MyListenerService : BackgroundService
     {
         private readonly ISubscriptionEventRouter _router;
@@ -266,7 +268,57 @@ Optionally, you can define a query timeout for a given schema, which the subscri
 // startup.cs
 services.AddGraphQL(o =>
 {
-    // define a 2 minute timeout per query executed.
+    // define a 2 minute timeout per query or subscription event executed.
     o.ExecutionOptions.QueryTimeout = TimeSpan.FromMinutes(2);
 })
 ```
+
+## Websocket Sub-Protocols
+
+Out of the box, the library supports `graphql-transport-ws`, the modern protocol used by many client libraries as well as the legacy protocol `graphql-ws` (originally maintained by Apollo). A client requesting either protocol will work with no additional configuration.
+
+### Supported Protocols
+
+-   [graphql-transport-ws](https://github.com/enisdenjo/graphql-ws/blob/master/PROTOCOL.md)
+-   [graphql-ws](https://github.com/apollographql/subscriptions-transport-ws/blob/master/PROTOCOL.md) (_legacy_)
+
+### Creating Custom Protocols
+
+If you wish to add support for your own messaging protocol you need to implement `ISubscriptionClientProxyFactory` and create instances
+of a `ISubscriptionClientProxy` that can communicate with a connected client in your chosen protocol.
+
+```csharp
+    public interface ISubscriptionClientProxyFactory
+    {
+        // Use this factory to create a client proxy instance that
+        // acts as an intermediary to communicate server-side events
+        // to your client connection
+        Task<ISubscriptionClientProxy<TSchema>> CreateClient<TSchema>(IClientConnection connection)
+            where TSchema : class, ISchema;
+
+        // The unique name of the sub-protocol. A client requesting your
+        // protocol name will be handed to this
+        // factory to create the appropriate client proxy the server can
+        // communicate with.
+        string Protocol { get; }
+    }
+```
+
+And inject it into your DI container:
+
+```C#
+// startup.cs
+public void ConfigureServices(IServiceCollection services)
+{
+    services.AddSingleton<ISubscriptionClientProxyFactory, MyClientProxyFactory>();
+
+    services.AddGraphQL()
+            .AddSubscriptions();
+}
+```
+
+> `ISubscriptionClientProxyFactory` is expected to be a singleton and is only instantiated once per schema. The `ISubscriptionClientProxy<TSchema>`instances it creates should be unique per `IClientConnection` instance (i.e. transient).
+
+The server will listen for subscription registrations from your client proxy and send back published events when new data is available. It is up to your proxy to interprete these events, generate an appropriate result (including executing queries against the runtime), serialize the data and send it to the connected client on the other end.
+
+The details of implementing a custom graphql client proxy is beyond the scope of this documentation. Take a peek at the subscription library source code for some clues on how to get started.

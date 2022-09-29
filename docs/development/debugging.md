@@ -21,20 +21,3 @@ public void ConfigureServices(IServiceCollection services)
         });
 }
 ```
-
-## Increase the Query Timeout
-
-GraphQL will automatically abandon long running queries to prevent a resource drain. It may be helpful to up this timeout length in development. By default the timeout is `1 minute`.
-
-```csharp
-// Startup.cs
-public void ConfigureServices(IServiceCollection services)
-{
-    // Extending the default query timeout can help
-    // during extended debug sessions
-    services.AddGraphQL(options =>
-        {
-            options.ExecutionOptions.QueryTimeout = TimeSpan.FromMinutes(30);
-        });
-}
-```
