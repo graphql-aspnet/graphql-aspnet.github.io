@@ -6,7 +6,7 @@ sidebar_label: Pipelines & Middleware
 
 At the heart of GraphQL ASP.NET are 4 middleware pipelines; chains of components executed in a specific order to produce a result.
 
--   `Query Execution Pipeline` : Invoked once per request this pipeline is responsible for validating the incoming package on the POST request, parsing the data and executing a query plan.
+-   `Query Execution Pipeline` : Invoked once per request this pipeline is responsible for validating the incoming package on the POST or GET request, parsing the data and executing a query plan.
 -   `Field Execution Pipeline` : Invoked once per requested field, this pipeline attempts to generate the requested data by calling the various controller actions and property resolvers.
 -   `Field Authorization Pipeline`: Ensures the user on the request can perform the action requested. This pipeline is invoked once for the whole query or for each field depending on your schema's configuration.
 -   `Directive Execution Pipeline`: Executes directives for various phases of schema and query document lifetimes.
@@ -78,7 +78,6 @@ public void ConfigureServices(IServiceCollection services)
 
 Instead of adding to the end of the existing pipeline you can also call `.Clear()` to remove the default components and rebuild the pipeline from scratch. See below for the list of default middleware components and their order of execution. This can be handy when needing to inject a new component into the middle of the execution chain.
 
-
 ## The Context Object
 
 Each context object has specific data fields required for it to perform its work (detailed below). However, all contexts share a common set of items to govern the flow of work.
@@ -140,7 +139,7 @@ The field execution pipeline is executed once for each field of data that needs 
 
 1. `ValidateFieldExecutionMiddleware` : Validates that the context and required invocation data has been correctly supplied.
 2. `AuthorizeFieldMiddleware` : If the schema is configured for `PerField` authorization this component will invoke the field authorization pipeline for the current field and assign authorization results as appropriate.
-4. `InvokeFieldResolverMiddleware` : The field resolver is called and a data value is created for the active context. This middleware component is ultimately responsible for invoking your controller actions. It also handles call outs to the directive execution pipeline when required.
+3. `InvokeFieldResolverMiddleware` : The field resolver is called and a data value is created for the active context. This middleware component is ultimately responsible for invoking your controller actions. It also handles call outs to the directive execution pipeline when required.
 4. `ProcessChildFieldsMiddleware` : If any child fields were registered with the invocation context for this field they are dispatched using the context's field result as the new source object.
 
 #### GraphFieldExecutionContext
@@ -164,8 +163,8 @@ public class GraphFieldExecutionContext
 
 The field authorization pipeline can be invoked as part of query execution or field execution depending on your schema's configuration. It contains 1 component:
 
-1. `FieldSecurityRequirementsMiddleware` : Gathers the authentication and authorization requirements for the given field and ensures that the field _can_ be authorized. There are some instances where by 
-nested authorization requirements create a scenario in which no user could ever be authorized.  This generally involves using multiple auth providers with specific authentication scheme requirements.
+1. `FieldSecurityRequirementsMiddleware` : Gathers the authentication and authorization requirements for the given field and ensures that the field _can_ be authorized. There are some instances where by
+   nested authorization requirements create a scenario in which no user could ever be authorized. This generally involves using multiple auth providers with specific authentication scheme requirements.
 2. `FieldAuthenticationMiddleware` : Authenticates the request to the field. This generates a ClaimsPrincipal to be authorized against.
 3. `FieldAuthorizationMiddleware`: Inspects the active `ClaimsPrincipal` against the security requirements of the field on the context and generates a `FieldAuthorizationResult` indicating if the user is authorized or not. This component makes no decisions in regards to the authorization state. It is up to the other pipelines to act on the authorization results that are generated.
 
@@ -183,20 +182,21 @@ In addition to the common properties defined above the field security context de
     // common properties omitted for brevity
 }
 ```
+
 -   `SecurityRequirements`: The security rules that need to be checked to authorize a user.
 -   `Request`: Contains details about the field currently being authed.
 -   `Result`: The generated challenge result indicating if the user is authorized or unauthorized for the field. This result will contain additional detailed information as to why a request was not authorized. This information is automatically added to any generated log events.
 
-
 ## Directive Execution Pipeline
+
 The directive execution pipeline will be invoked for each directive applied to each schema item during schema generation and each time the query engine encounters a
 directive at runtime. The directive pipeline contains two components by default:
 
 1. `ValidateDirectiveExecutionMiddleware`: Inspects the execution context against the validation requirements of the given execution phase applying appropriate error messages as necessary.
 2. `InvokeDirectiveResolverMiddleware`: Generates a `DirectiveResolutionContext` and invokes the directive's resolver, calling the correct action methods.
 
-
 #### GraphDirectiveExecutionContext
+
 ```csharp
 public class GraphDirectiveExecutionContext
 {
@@ -210,7 +210,7 @@ public class GraphDirectiveExecutionContext
 
 -   `Request`: Contains the directive metadata for this context, including the DirectiveTarget, execution phase and executing location.
 -   `Directive`: The specific `IDirective`, registered to the schema, that is being processed.
--   `Schema`: the schema instance where the directive is declared. 
+-   `Schema`: the schema instance where the directive is declared.
 
 > WARNING: Since the directive execution pipeline is used to construct the schema and apply type system directives, middleware components cannot inject a schema instance
-from the DI container. To do so will cause a circular reference.  Instead use the schema instance attached to the `GraphDirectiveExecutionContext`. The state of this schema object is not guaranteed at during schema generation as it will continue to change as type system directives are applied by the pipeline. 
+> from the DI container. To do so will cause a circular reference. Instead use the schema instance attached to the `GraphDirectiveExecutionContext`. The state of this schema object is not guaranteed at during schema generation as it will continue to change as type system directives are applied by the pipeline.
