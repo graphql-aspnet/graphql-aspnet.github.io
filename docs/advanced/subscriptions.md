@@ -273,9 +273,9 @@ services.AddGraphQL(o =>
 })
 ```
 
-## Websocket Sub-Protocols
+## Websocket Protocols
 
-Out of the box, the library supports `graphql-transport-ws`, the modern protocol used by many client libraries as well as the legacy protocol `graphql-ws` (originally maintained by Apollo). A client requesting either protocol will work with no additional configuration.
+Out of the box, the library supports subscriptions over websockets using `graphql-transport-ws`, the modern protocol used by many client libraries as well as the legacy protocol `graphql-ws` (originally maintained by Apollo). A client requesting either protocol over a websocket will work with no additional configuration.
 
 ### Supported Protocols
 
@@ -284,7 +284,7 @@ Out of the box, the library supports `graphql-transport-ws`, the modern protocol
 
 ### Creating Custom Protocols
 
-If you wish to add support for your own messaging protocol you need to implement `ISubscriptionClientProxyFactory` and create instances
+If you wish to add support for your own websocket messaging protocol you need to implement `ISubscriptionClientProxyFactory` and create instances
 of a `ISubscriptionClientProxy` that can communicate with a connected client in your chosen protocol.
 
 ```csharp
@@ -322,3 +322,9 @@ public void ConfigureServices(IServiceCollection services)
 The server will listen for subscription registrations from your client proxy and send back published events when new data is available. It is up to your proxy to interprete these events, generate an appropriate result (including executing queries against the runtime), serialize the data and send it to the connected client on the other end.
 
 The details of implementing a custom graphql client proxy is beyond the scope of this documentation. Take a peek at the subscription library source code for some clues on how to get started.
+
+## Other Communication Options
+
+While websockets is the primary medium for persistant connections its not the only option. Internally, the library supplies an `IClientConnection` interface which encapsulates a raw connection websocket received from .NET. This interface is currently implemented as a `WebSocktClientConnection` which is responsible for reading and writing raw bytes to the socket. Its not a stretch of the imagination to implement your own custom client connection, invent a way to capture said connections and basically rewrite the entire communications layer of the subscriptions module.
+
+Please do a deep dive into the subscription code base to learn about all the intracasies of building your own communications layer and how you might go about registering it with the runtime. If you do try to tackle this very large effort don't hesitate to reach out. We're happy to partner with you and meet you half way on a solution if it makes sense for the rest of the community.
