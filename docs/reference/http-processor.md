@@ -50,7 +50,7 @@ These methods can be overridden to provide custom logic at various points in the
 
 Override this method to supply your own `IGraphOperationRequest` to the runtime.
 
--   `queryData`: The raw data package read from the POST body
+-   `queryData`: The raw data package read from the HttpContext
 
 ### HandleQueryException(exception)
 
