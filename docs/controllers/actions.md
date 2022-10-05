@@ -644,7 +644,7 @@ public class BakeryController : GraphController
 
 ### Defining a Query Timeout
 
-By default GraphQL does not define a timeout for an executed query. The query will run as long as the underlying HTTP connection is open. In fact, the `CancellationToken` passed to your action methods is the same Cancellation Token offered on the HttpContext when it receives the initial post request.
+By default GraphQL does not define a timeout for an executed query. The query will run as long as the underlying HTTP connection is open. In fact, the `CancellationToken` passed to your action methods is the same Cancellation Token offered on the HttpContext when it receives the initial request.
 
 Optionally, you can define a query timeout for a given schema:
 
