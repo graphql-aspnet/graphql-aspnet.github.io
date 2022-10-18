@@ -20,7 +20,7 @@ This adds the necessary components to create a subscription server for a given s
 
 ### Configure the Server Instance
 
-You must configure web socket support for your Asp.Net server instance separately. The ways in which you perform this configuration will vary widely depending on your needs. CORS requirements, keep-alive support etc. will be different for each scenario.
+You must configure web socket support for your Asp.Net server instance separately. The ways in which you perform this configuration will vary widely depending on your CORS requirements, keep-alive support and other needs.
 
 After web sockets are added to your server, add subscription support to the graphql registration.
 
@@ -54,13 +54,22 @@ Declaring a subscription is the same as declaring a query or mutation on a contr
 public class SubscriptionController : GraphController
 {
     // other code not shown for brevity
-    // EventName will default to the subscription field name
+
+    // EventName will default to the method name  (i.e. "OnWidgetChanged")
     // if not supplied
     [SubscriptionRoot("onWidgetChanged", typeof(Widget), EventName = "WIDGET_CHANGED")]
     public IGraphActionResult  OnWidgetChanged(Widget eventData, string filter){
         if(eventData.Name.StartsWith(filter))
+        {
+            // send the data down to the listening client
             return this.Ok(eventData);
-        return this.Ok();
+        }
+        else
+        {
+            // use SkipSubscriptionEvent() to disregard the data
+            // and not communicate anything to the listening client 
+            return this.SkipSubscriptionEvent();
+        }
     }
 }
 ```
@@ -81,11 +90,11 @@ subscription {
 }
 ```
 
-Any updated widgets that start with the phrase "Big" will then be sent to the requestor as they are changed on the server.
+Any updated widgets that start with the phrase "Big" will then be sent to the requestor as they are changed on the server. Any other changed widgets will be skipped/dropped and no data will be sent to the client.
 
 ### Publish a Subscription Event
 
-In order for the subscription server to send data to any subscribers it has to be notified when something changes. It does this via named Subscription Events. These are internal, unique keys that identify when something happened, usually via a mutation. Once the mutation publishes an event, the subscription server will inspect the published data and, assuming the data type matches the expected data for the subscription, it will execute the subscription method for any connected subscribers and deliver the results as necessary.
+In order for the subscription server to send data to any subscribers it has to be notified when something changes. It does this via named Subscription Events. These are internal, schema-unique keys that identify when something happened, usually via a mutation. Once the mutation publishes an event, the subscription server will execute the subscription method for any subscribers, using the supplied data, and deliver the results to the client.
 
 ```C#
 public class MutationController : GraphController
@@ -107,11 +116,11 @@ public class MutationController : GraphController
 }
 ```
 
-> Notice that the event name used in `PublishSubscriptionEvent` is the same as the `EventName` property on the `[SubscriptionRoot]` attribute. The subscription server will use the published event name to match which registered subscriptions need to receive the data being published.
+> Notice that the event name used in `PublishSubscriptionEvent()` is the same as the `EventName` property on the `[SubscriptionRoot]` attribute. The subscription server will use the published event name to match which registered subscriptions need to receive the data being published.
 
 ### Subscription Event Data Source
 
-In the example above, the data sent with `PublishSubscriptionEvent` is the same as the first input parameter called `eventData` on the subscription field, which is the same as the field return type of the controller method. By default, graphql will look for a parameter with the same data type as its field return type and use that as the event data source. It will automatically populate this field with the data from `PublishSubscriptionEvent` and this field is not exposed in the object graph.
+In the example above, the data sent with `PublishSubscriptionEvent()` is the same as the first input parameter called `eventData` on the subscription field, which is the same as the field return type of the subscription controller method. By default, graphql will look for a parameter with the same data type as its return type and use that as the event data source. It will automatically populate this field with the data from `PublishSubscriptionEvent()` and this argument is not exposed in the object graph.
 
 You can explicitly flag a different parameter, or a parameter of a different data type to be the expected event source with the `[SubscriptionSource]` attribute.
 
@@ -119,8 +128,7 @@ You can explicitly flag a different parameter, or a parameter of a different dat
 public class SubscriptionController : GraphController
 {
     // other code not shown for brevity
-    // EventName will default to the subscription field name
-    // if not supplied
+    
     [SubscriptionRoot("onWidgetChanged", typeof(Widget), EventName = "WIDGET_CHANGED")]
     public IGraphActionResult  OnWidgetChanged(
         [SubscriptionSource] WidgetInternal eventData,
@@ -128,14 +136,14 @@ public class SubscriptionController : GraphController
     {
         if(eventData.Name.StartsWith(filter))
             return this.Ok(eventData.ToWidget());
-        return this.Ok();
+        return this.SkipSubscriptionEvent();
     }
 }
 ```
 
 Here the subscription expects that an event is published using a `WidgetInternal` data type that it will internally convert to a `Widget` and send to any subscribers. This can be useful if you wish to share internal objects between your mutations and subscriptions that you don't want publicly exposed.
 
-> The data object published with `PublishSubscriptionEvent` must have the same type the `[SubscriptionSource]` on the subscription field.
+> The data object published with `PublishSubscriptionEvent()` must have the same type as the `[SubscriptionSource]` on the subscription field.
 
 ### Summary
 
@@ -149,13 +157,22 @@ That's all there is for a basic subscription server setup.
 
 A complete example of single instance subscription server including a react app that utilizes the Apollo Client is available in the [demo projects](../reference/demo-projects) section.
 
+## Subscription Action Results
+
+You saw above the special action result `SkipSubscriptionEvent()` used to instruct graphql to skip this event and not tell the client about it; this can be very useful in scenarios where the subscription supplies filter data to only receive some very specific data and not all items published via a specific event.
+
+Here is a complete list of the various subscription action results:
+
+* `SkipSubscriptionEvent()` - Instructs the server to skip the raised event, no data will be sent to the client.
+* `OkAndComplete(data)` - Works just like `this.Ok()` but ends the subscription after the event is completed. This action result does not close the underlying connection.
+
 ## Scaling Subscription Servers
 
 Using web sockets has a natural limitation in that any each server instance has a maximum number of socket connections that it can handle. Once that limit is reached no additional clients can register subscriptions.
 
 Ok no problem, just scale horizontally, spin up additional ASP.NET server instances, add a load balancer and have the new requests open a web socket connection to these additional server instances, right? Not so fast.
 
-With the examples above events published by any mutation using `PublishSubscriptionEvent` are routed internally directly to the local subscription server meaning only those clients connected to the server where the event was raised will receive it. Clients connected to other server instances will never know an event was raised. This represents a big problem for large scale websites, so what do we do?
+With the examples above, events published by any mutation using `PublishSubscriptionEvent()` are routed internally, directly to the local subscription server meaning only those clients connected to the server where the event was raised will receive it. Clients connected to other server instances will never know an event was raised. This represents a big problem for large scale websites, so what do we do?
 
 ### Custom Event Publishing
 
@@ -163,7 +180,7 @@ Instead of publishing events internally, within the server instance, we need to 
 
 #### Implement `ISubscriptionEventPublisher`
 
-Whatever your technology of choice the first step is to create and register a custom publisher. How your individual class functions will vary widely depending on your implementation.
+Whatever your technology of choice the first step is to create and register a custom publisher that implements `ISubscriptionEventPublisher`. How your publisher class functions will vary widely depending on your implementation.
 
 ```C#
     public interface ISubscriptionEventPublisher
@@ -226,29 +243,34 @@ Once you rematerialize a `SubscriptionEvent` you need to let GraphQL know that i
     }
 ```
 
-The router will take care of figuring out which schema the event is destined for, which local subscription servers are registered to receive that event and forward the data as necessary for processing.
+The router will take care of figuring out which schema the event is destined for, which clients have active subscriptions, and forward the data as necessary for processing.
+
+### Diagram
+
+[This diagram](../assets/2022-10-subscription-server.pdf) shows the differences between a the default, single server configuration and a custom scalable solution.
 
 ### Azure Service Bus Example
 
-A complete example of a scalable subscription configuration including serialization and deserialization using the Azure Service Bus is available in the [demo projects](../reference/demo-projects) section.
+A complete example of a bare bones example, including serialization and deserialization using the Azure Service Bus is available in the [demo projects](../reference/demo-projects) section.
+
+> The demo project represents a functional starting point and lacks a lot of the error handling and resilency needs of a production environment.
 
 ## Subscription Server Configuration
 
-> See [schema configuration](../reference/schema-configuration#subscription-server-options) for information on individual subscription server configuration options.
 
 Currently, when using the `.AddSubscriptions()` extension method two seperate operations occur:
 
 1. The subscription server components are registered to the DI container, the graphql execution pipeline is modified to support registering subscriptions and a middleware component is appended to the ASP.NET pipeline to intercept web sockets and forward client connections to the the subscription server component.
 
-2. A middleware component is appended to the end of the graphql execution pipeline to notify the `ISubscriptionEventPublisher` of any events raised by queries or mutations.
+2. A middleware component is appended to the end of the graphql execution pipeline to formally publish any events staged via `PublishSubscriptionEvent()` 
 
 Some applications may wish to split these operations in different server instances for handling load or just splitting different types of traffic. For example, having one set of servers dedicated to query/mutation operations (stateless requests) and others dedicated to handling subscriptions and websockets (stateful requests).
 
-The following more granular configuration options are available:
+The following more granular configuration options are available and may be useful for implementations where you maintain your querys/mutations separate from your websocket-enabled subscription servers:
 
 -   `.AddSubscriptionServer()` :: Only configures the ASP.NET pipeline to intercept websockets and adds the subscription server components to the DI container.
 
--   `.AddSubscriptionPublishing()` :: Only configures the graphql execution pipeline and the `ISubscriptionEventPublisher`. Subscription registration and Websocket support is **NOT** enabled.
+-   `.AddSubscriptionPublishing()` :: Only configures the graphql execution pipeline to publish events. Subscription creation and websocket monitoring is **NOT** enabled.
 
 ## Security & Query Authorization
 

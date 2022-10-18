@@ -24,7 +24,7 @@ GraphQL ASP.NET has a few methods of determining what objects to include in your
 
 You have complete control of what to include. Be that including additional assemblies, preventing the inclusion of the startup assembly, manually specifying each model class and controller etc. Attributes exist such as `[GraphSkip]` to exclude certain properties, methods or entire classes and limit the scope of the inclusion. On the other side of the fence, you can configure it to only accept classes with an explicitly declared `[GraphType]` attribute, ignoring everything else. And for the most control, disable everything and manually call `.AddType<T>()` at startup for each class you want to have in your schema (controllers included). GraphQL will then happily generate declaration errors when it can't find a reference declared in your controllers. This can be an effective technique in spotting data leaks or rogue methods that slipped through a code review. Configure a unit test to generate a schema with different inclusion rules per environment and you now have an automatic CI/CD check in place to give your developers more freedom to write code during a sprint and only have to worry about configurations when submitting a PR.
 
-You can even go so far as to add a class to the schema but prevent its publication in introspection queries which can provide some helpful obfuscation. Alternatively, just disable introspection queries altogether. While this does cause client tooling to complain endlessly and makes front-end development much harder; if you and your consumers (like your UI) can agree ahead of time on the query syntax then there is no issue. 
+You can even go so far as to add a class to the schema but prevent its publication in introspection queries which can provide some helpful obfuscation. Alternatively, just disable introspection queries altogether. While this does cause client tooling to complain endlessly and makes front-end development much harder; if you and your consumers (like your UI) can agree ahead of time on the query syntax then there is no issue.
 
 #### Middleware Pipelines
 
@@ -105,7 +105,6 @@ The supplied query document (top right in the example) is ran through a compilat
 Once parsed, the runtime will execute its internal rules engine against the generated `ISyntaxTree`, using the targeted `ISchema`, to create a query plan where it marries the AST with concrete structures such as controllers, action methods and POCOs. It is at this stage where the `hero` field in the example is matched to the `HeroController` with its appropriate `IGraphFieldResolver` to invoke the `RetrieveHero` action method.
 
 While generating a query plan the rules engine will do its best to complete an analysis of the entire document and return to the requestor every error it finds. Depending on the errors though, it may or may not be able to catch them all. For instance, a syntax error, like a missing `}`, will preclude generating a query plan so errors centered around invalid field names or a type expression mismatch won't be caught until the syntax error is fixed (just like any other compiler).
-
 
 ### Phase 2: Execution
 
@@ -200,7 +199,6 @@ public class ManagersController : GraphController
 }
 ```
 
-
 **Concerning Proxy Libraries (e.g. EF Core Proxies)**
 
 GraphQL ASP.NET natively supports Liskov substitutions for all graph types opening up the possibility for using libraries such as EF Proxies that can provide a tremendously powerful and easy to setup graph structure. By lazy loading any child collections you can expose access to your entire domain model with very little work.
@@ -240,8 +238,8 @@ Hopefully we've given you a bit of insight into how the library works under the 
 
 <span style="font-size:20px;vertical-align: center;">&#128204;</span>&nbsp; [Structural Diagrams](../assets/2021-01-graphql-aspnet-structural-diagrams.pdf)
 
-A set of diagrams outlining the major interfaces and classes that make up GraphQL Asp.Net. 
+A set of diagrams outlining the major interfaces and classes that make up GraphQL Asp.Net.
 
-<span style="font-size:20px;vertical-align: center;">&#128204;</span>&nbsp; [Execution Diagrams](../assets/2021-01-graphql-aspnet-execution-diagrams.pdf)
+<span style="font-size:20px;vertical-align: center;">&#128204;</span>&nbsp; [Execution Diagrams](../assets/2022-10-graphql-aspnet-execution-diagrams.pdf)
 
 A set of flowcharts and relational diagrams showing how various aspects of the library fit together at run time, including the query execution and field execution pipelines.

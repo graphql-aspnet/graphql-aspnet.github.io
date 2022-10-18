@@ -323,7 +323,7 @@ schemaOptions.QueryHandler.Route = "/graphql";
 | ------------- |
 | `/graphql`    |
 
-Represents the REST end point where GraphQL will listen for new POST requests. In multi-schema configurations this value will need to be unique per schema type.
+Represents the REST end point where GraphQL will listen for new POST and GET requests. In multi-schema configurations this value will need to be unique per schema type.
 
 ### AuthenticatedRequestsOnly
 
