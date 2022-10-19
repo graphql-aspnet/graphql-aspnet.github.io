@@ -61,7 +61,7 @@ public class BakeryController : GraphController
 }
 ```
 
-`GraphLogEntry` is an untyped implementation of `IGraphLogEvent` and can be used on the fly for quick operations.
+> `GraphLogEntry` is an untyped implementation of `IGraphLogEvent` and can be used on the fly for quick operations.
 
 ## Custom ILoggers
 

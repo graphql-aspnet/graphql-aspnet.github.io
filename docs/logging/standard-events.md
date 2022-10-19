@@ -20,7 +20,7 @@ _Constants for event names and ids can be found at_ `GraphQL.AspNet.Logging.LogE
 
 _Constants for all log entry properties can be found at_ `GraphQL.AspNet.Logging.LogPropertyNames`
 
-## Startup Events
+## Schema Level Events
 
 ### Schema Route Registered
 
@@ -131,6 +131,121 @@ This is event is recorded when the final result for the request is generated and
 | _OperationRequestId_ | A unique id identifying the overall request.                                          |
 | _HasData_            | `true` or `false` indicating if at least one data value was included in the result    |
 | _HasErrors_          | `true` or `false` indicating if at least one error message was included in the result |
+| _TotalExecutionMs_   | A numerical value indicating the total runtime of the request, in milliseconds.       |
+
+### Request Cancelled
+
+This is event is recorded when the a request is explicitly cancelled, usually by the underlying HTTP connection.
+
+**Important Properties**
+
+| Property             | Description                                                                           |
+| -------------------- | ------------------------------------------------------------------------------------- |
+| _OperationRequestId_ | A unique id identifying the overall request.                                          |
+| _TotalExecutionMs_   | A numerical value indicating the total runtime of the request, in milliseconds.       |
+
+
+### Request Timeout
+
+This is event is recorded when the a request is is cancelled due to reaching a maximum timeout limit defined by the schema.
+
+**Important Properties**
+
+| Property             | Description                                                                           |
+| -------------------- | ------------------------------------------------------------------------------------- |
+| _OperationRequestId_ | A unique id identifying the overall request.                                          |
+| _TotalExecutionMs_   | A numerical value indicating the total runtime of the request, in milliseconds.       |
+
+
+## Directive Level Events
+
+### Execution Directive Applied
+
+This event is recorded when an execution directive is successfully executed against an `IDocumentPart` on an incoming query.
+
+This is event is recorded when the final result for the request is generated and is returned from the runtime to be serialized. No actual data values are recorded to the logs to prevent leaks of potentially sensitive information.
+
+**Important Properties**
+
+| Property                | Description                                                                           |
+| --------------------    | ------------------------------------------------------------------------------------- |
+| _SchemaTypeName_        | The full .NET type name of the schema type this plan targets                          |
+| _DirectiveName_         | The name of the directive as it exists in the target schema                           |
+| _DirectiveInternalName_ | The .NET class name of the  directive                                                 |
+| _DirectiveLocation_     | The target location in the query document (e.g. FIELD, FRAGMENT_SPREAD etc.)          |
+
+### Type System Directive Applied
+
+This event is recorded when a schema is first generated and all known type system directives are applied to the schema items
+to which they are attached. An entry is recorded for each directive applied.
+
+**Important Properties**
+
+| Property                | Description                                                                           |
+| --------------------    | ------------------------------------------------------------------------------------- |
+| _SchemaTypeName_        | The full .NET type name of the schema type this plan targets                          |
+| _SchemaItemPath_        | The path of the item being resolved, e.g. `[type]/Donut/id`                           |
+| _DirectiveName_         | The name of the directive as it exists in the target schema                           |
+| _DirectiveInternalName_ | The .NET class name of the  directive                                                 |
+| _DirectiveLocation_     | The target location in the query document (e.g. FIELD, FRAGMENT_SPREAD etc.)          |
+
+
+## Auth Events
+
+### Item Authentication Started
+
+This is event is raised when a security context on a query is authenticated to determine an 
+appropriate ClaimsPrincipal to use for authorization.
+
+**Important Properties**
+
+| Property            | Description                                                  |
+| ------------------- | ------------------------------------------------------------ |
+| _PipelineRequestId_ | A unique id identifying the individual field request.        |
+| _SchemaItemPath_    | The path of the item being resolved, e.g. `[type]/Donut/id`  |
+
+
+### Item Authentication Completed
+
+This is event is raised after a security context is authenticated and a ClaimsPrincipal was generated (if required).
+
+**Important Properties**
+
+| Property                      | Description                                                  |
+| ----------------------------- | ------------------------------------------------------------ |
+| _PipelineRequestId_           | A unique id identifying the individual field request.        |
+| _SchemaItemPath_              | The path of the item being resolved, e.g. `[type]/Donut/id`  |
+| _Username_                    | The value of the `Name` field on the active Identity  or null|
+| _AuthenticationScheme_        | The key representing the chosen authentication schema (e.g. `Bearer`, `Kerberos` etc.)  |
+| _AuthenticationSchemaSuccess_ | `true` if authentication against the scheme was successful   |
+| _SchemaItemPath_              | The path of the item being resolved, e.g. `[type]/Donut/id`  |
+
+### Item Authorization Started
+
+This is event is raised when an authenticated user is authorized against schema item (typically a Field or Directive).
+
+**Important Properties**
+
+| Property            | Description                                                  |
+| ------------------- | ------------------------------------------------------------ |
+| _PipelineRequestId_ | A unique id identifying the individual field request.        |
+| _SchemaItemPath_    | The path of the item being resolved, e.g. `[type]/Donut/id`  |
+| _Username_          | The value of the `Name` field on the active Identity  or null|
+
+### Item Authorization Completed
+
+This is event is raised after a schema item authorization has completed.
+
+**Important Properties**
+
+| Property              | Description                                                                |
+| --------------------- | -------------------------------------------------------------------------- |
+| _PipelineRequestId_   | A unique id identifying the individual field request.                      |
+| _SchemaItemPath_      | The path of the item being resolved, e.g. `[type]/Donut/id`                |
+| _Username_            | The value of the `Name` field on the active Identity  or null              |
+| _AuthorizationStatus_ | `Skipped`, `Authorized` or `Unauthorized`                                  |
+| _LogMessage_          | An internal message containing an explanation of why authorization failed. |
+
 
 ## Field Level Events
 
@@ -147,32 +262,6 @@ This event is raised when a new field is queued for resolution.
 | _PipelineRequestId_  | A unique id identifying the individual field request.                                   |
 | _FieldExecutionMode_ | Indicates if this pipeline is being executed for a `single source item` or as a `batch` |
 | _FieldPath_          | The path of the field being resolved, e.g. `[type]/Donut/id`                            |
-
-### Field Authorization Started
-
-This is event is raised when a field is sent for authorization prior to being resolved.
-
-**Important Properties**
-
-| Property            | Description                                                  |
-| ------------------- | ------------------------------------------------------------ |
-| _PipelineRequestId_ | A unique id identifying the individual field request.        |
-| _FieldPath_         | The path of the field being resolved, e.g. `[type]/Donut/id` |
-| _Username_          | the value of `this.User.Identity.Name` or null               |
-
-### Field Authorization Completed
-
-This is event is raised after a field authorization has completed.
-
-**Important Properties**
-
-| Property              | Description                                                                |
-| --------------------- | -------------------------------------------------------------------------- |
-| _PipelineRequestId_   | A unique id identifying the individual field request.                      |
-| _FieldPath_           | The path of the field being resolved, e.g. `[type]/Donut/id`               |
-| _Username_            | the value of `this.User.Identity.Name` or null                             |
-| _AuthorizationStatus_ | `Skipped`, `Authorized` or `Unauthorized`                                  |
-| _LogMessage_          | An internal message containing an explanation of why authorization failed. |
 
 ### Field Resolution Completed
 
