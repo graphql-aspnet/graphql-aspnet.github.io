@@ -4,7 +4,7 @@ title: Standard Events
 sidebar_label: Standard Events
 ---
 
-GraphQL ASP.NET tracks 19 standard events. Most of these are recorded during the execution of a query. Some, such as those around field resolution, can be recorded many times in the course of a single request.
+GraphQL ASP.NET tracks many standard events. Most of these are recorded during the execution of a query. Some, such as those around field resolution, can be recorded many times in the course of a single request.
 
 _**Common Event Properties**_
 
@@ -24,7 +24,7 @@ _Constants for all log entry properties can be found at_ `GraphQL.AspNet.Logging
 
 ### Schema Route Registered
 
-This event is recorded when GraphQL successfully registers an entry in the ASP.NET MVC's route table to accept requests for a target schema. This event is raised once per application instance.
+This event is recorded when GraphQL successfully registers an entry in the ASP.NET MVC's route table to accept requests for a target schema. This event is recorded once per application instance.
 
 **Important Properties**
 
@@ -194,7 +194,7 @@ to which they are attached. An entry is recorded for each directive applied.
 
 ### Item Authentication Started
 
-This is event is raised when a security context on a query is authenticated to determine an 
+This is event is record when a security context on a query is authenticated to determine an 
 appropriate ClaimsPrincipal to use for authorization.
 
 **Important Properties**
@@ -207,7 +207,7 @@ appropriate ClaimsPrincipal to use for authorization.
 
 ### Item Authentication Completed
 
-This is event is raised after a security context is authenticated and a ClaimsPrincipal was generated (if required).
+This is event is recorded after a security context is authenticated and a ClaimsPrincipal was generated (if required).
 
 **Important Properties**
 
@@ -222,7 +222,7 @@ This is event is raised after a security context is authenticated and a ClaimsPr
 
 ### Item Authorization Started
 
-This is event is raised when an authenticated user is authorized against schema item (typically a Field or Directive).
+This is event is recorded when an authenticated user is authorized against schema item (typically a Field or Directive).
 
 **Important Properties**
 
@@ -234,7 +234,7 @@ This is event is raised when an authenticated user is authorized against schema 
 
 ### Item Authorization Completed
 
-This is event is raised after a schema item authorization has completed.
+This is event is recorded after a schema item authorization has completed.
 
 **Important Properties**
 
@@ -249,11 +249,11 @@ This is event is raised after a schema item authorization has completed.
 
 ## Field Level Events
 
-After a query plan has been created GraphQL ASP.NET begins resolving each field needed to fulfill the request. This group of events is raised for each item of each field that is processed. Since all fields are executed asynchronously (even if the resolvers themselves are synchronous) the order in which the events are recorded can be unpredictable and overlap between fields can occur. Using the recorded date along with the `PipelineRequestId` can help to filter the noise.
+After a query plan has been created GraphQL ASP.NET begins resolving each field needed to fulfill the request. This group of events is recorded for each item of each field that is processed. Since all fields are executed asynchronously (even if the resolvers themselves are synchronous) the order in which the events are recorded can be unpredictable and overlap between fields can occur. Using the recorded date along with the `PipelineRequestId` can help to filter the noise.
 
 ### Field Resolution Started
 
-This event is raised when a new field is queued for resolution.
+This event is recorded when a new field is queued for resolution.
 
 **Important Properties**
 
@@ -265,7 +265,7 @@ This event is raised when a new field is queued for resolution.
 
 ### Field Resolution Completed
 
-This is event is raised when a field completes its execution pipeline and a result is generated. No actual data values are recorded to the logs to prevent leaks of potentially sensitive information.
+This is event is recorded when a field completes its execution pipeline and a result is generated. No actual data values are recorded to the logs to prevent leaks of potentially sensitive information.
 
 **Important Properties**
 
@@ -277,11 +277,11 @@ This is event is raised when a field completes its execution pipeline and a resu
 
 ## Controller Level Events
 
-After the security challenge has completed, but before field resolution is completed, if the pipeline executes a controller method to resolve the field these events will be raised. If the target resolver of the field is a property or POCO method, these events are skipped.
+After the security challenge has completed, but before field resolution is completed, if the pipeline executes a controller method to resolve the field these events will be recorded. If the target resolver of the field is a property or POCO method, these events are skipped.
 
 ### Action Invocation Started
 
-This event is raised when a controller begins processing a request to execute an action method.
+This event is recorded when a controller begins processing a request to execute an action method.
 
 **Important Properties**
 
@@ -311,7 +311,7 @@ This event occurs after the controller has processed the input objects and valid
 
 ### Action Invocation Completed
 
-This event is raised when a controller completes the invocation of an action method and a result is created.
+This event is recorded when a controller completes the invocation of an action method and a result is created.
 
 **Important Properties**
 
@@ -325,7 +325,7 @@ This event is raised when a controller completes the invocation of an action met
 
 ### Action Invocation Exception
 
-This event is raised by the controller if it is unable to invoke the target action method. This usually indicates some sort of data corruption or failed conversion of source data to the requested parameter types of the target action method. This can happen if the query plan or variables collection is altered by a 3rd party outside of the normal pipeline. Should this event occur the field will be abandoned and a null value returned as the field result. Child fields to this instance will not be processed but the operation will continue to attempt to resolve other sibling fields and their children.
+This event is recorded by the controller if it is unable to invoke the target action method. This usually indicates some sort of data corruption or failed conversion of source data to the requested parameter types of the target action method. This can happen if the query plan or variables collection is altered by a 3rd party outside of the normal pipeline. Should this event occur the field will be abandoned and a null value returned as the field result. Child fields to this instance will not be processed but the operation will continue to attempt to resolve other sibling fields and their children.
 
 **Important Properties**
 
@@ -340,7 +340,7 @@ This event is raised by the controller if it is unable to invoke the target acti
 
 ### Action Unhandled Exception
 
-This event is raised if an unhandled exception occurs within the controller action method body. Should this event occur the field will be abandoned and a null value returned as the result of the field. Child fields will not be processed but the operation will continue to attempt to resolve other sibling fields and their children.
+This event is recorded if an unhandled exception occurs within the controller action method body. Should this event occur the field will be abandoned and a null value returned as the result of the field. Child fields will not be processed but the operation will continue to attempt to resolve other sibling fields and their children.
 
 **Important Properties**
 
@@ -357,7 +357,7 @@ This event is raised if an unhandled exception occurs within the controller acti
 
 ### Unhandled Exception
 
-This event is raised if any pipeline invocation is unable to recover from an error. If this is event is raised the request is abandoned and an error status is returned to the requestor. This event is always raised at a `Critical` log level. This event will be immediately followed by a `Request Completed` event.
+This event is recorded if any pipeline invocation is unable to recover from an error. If this is event is recorded the request is abandoned and an error status is returned to the requestor. This event is always recorded at a `Critical` log level. This event will be immediately followed by a `Request Completed` event.
 
 **Important Properties**
 

@@ -26,8 +26,15 @@
             "types/scalars",
             "types/list-non-null"
         ],
-        "Logging": ["logging/structured-logging", "logging/standard-events"],
-        "Query Execution": ["execution/metrics", "execution/malicious-queries"],
+        "Logging": [
+            "logging/structured-logging",
+            "logging/standard-events",
+            "logging/subscription-events"
+        ],
+        "Query Execution": [
+            "execution/metrics",
+            "execution/malicious-queries"
+        ],
         "Advanced": [
             "advanced/subscriptions",
             "advanced/type-expressions",
