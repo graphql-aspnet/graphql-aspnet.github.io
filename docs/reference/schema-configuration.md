@@ -4,7 +4,7 @@ title: Schema Configuration
 sidebar_label: Schema Configuration
 ---
 
-This document contains a list of each property available during schema configuration when a call to `AddGraphQL()` is made when your application starts:
+This document contains a list of various configuration settings available during schema configuration.
 
 ```csharp
 // Startup.cs
@@ -29,14 +29,15 @@ public void Configure(IApplicationBuilder appBuilder)
 
 ## Builder Options
 
-### AddController, AddDirective, AddGraphType, AddType
+### AddAssembly
 
 ```csharp
 // usage examples
-schemaOptions.AddGraphType<Donut>();
-schemaOptions.AddController<BakeryController>();
+schemaOptions.AddAssembly(assembly);
 ```
-Adds the single entity of a given type the schema. Use these methods to add individual graph types, directives or controllers. `AddType` acts a catch all and will try to infer the expected action to take against the supplied type. The other entity specific methods will throw an exception should an unqualified type be supplied. For example, trying to supply a controller to `.AddGraphType()` will result in an exception.
+
+The runtime will scan the referenced assembly and auto-add any found required entities (controllers, types, enums, directives etc.) to the schema.
+
 
 ### AddSchemaAssembly
 
@@ -49,14 +50,16 @@ When declaring a new schema with .`AddGraphQL<TSchema>()`, the runtime will scan
 
 This method has no effect when using `AddGraphQL()`.
 
-### AddAssembly
+### AddType*
+
+Multiple Options: `AddGraphType`, `AddController`, `AddDirective`, `AddType`
 
 ```csharp
 // usage examples
-schemaOptions.AddAssembly(assembly);
+schemaOptions.AddGraphType<Donut>();
+schemaOptions.AddController<BakeryController>();
 ```
-
-The runtime will scan the referenced assembly and auto-add any found required entities (controllers, types, enums, directives etc.) to the schema.
+Adds a single entity of a given type the schema. Use these methods to add individual graph types, directives or controllers. `AddType` acts a catch all and will try to infer the expected action to take against the supplied type. The other entity-specific methods will throw an exception should an unqualified type be supplied. For example, trying to supply a controller to `.AddGraphType()` will result in an exception.
 
 ### ApplyDirective
 
@@ -68,17 +71,17 @@ schemaOptions.ApplyDirective("deprecated")
 
 Allows for the runtime registration of a type system directive to a given schema item. See the [directives](../advanced/directives.md#applying-type-system-directives) for complete details on how to use this method. 
 
-### AutoRegisterLocalGraphEntities
+### AutoRegisterLocalEntities
 ```csharp
 // usage examples
-schemaOptions.AutoRegisterLocalGraphEntities = true;
+schemaOptions.AutoRegisterLocalEntities = true;
 ```
 
 | Default Value | Acceptable Values |
 | ------------- | ----------------- |
 | `true`        | `true`, `false`   |
 
-When true, those graph entities (controllers, types, enums etc.) that are declared in the entry assembly for the application are automatically registered to the schema. Typically this is your API project where `Startup.cs` is declared.
+When true, the graph entities (controllers, types, enums etc.) that are declared in the application entry assembly for the application are automatically registered to the schema. Typically this is your API project where `Startup.cs` or `Program.cs` is declared.
 
 ## Authorization Options
 
@@ -102,6 +105,22 @@ Controls how the graphql execution pipeline will authorize a request.
 
 ## Declaration Options
 
+### AllowedOperations
+
+```csharp
+// usage examples
+schemaOptions.DeclarationOptions.AllowedOperations.Remove(GraphOperationType.Mutation);
+```
+
+| Default Value    | Acceptable Values |
+| -------------    | ----------------- |
+| `Query, Mutation` | `Query`, `Mutatation`, `Subscription` |
+
+Controls which top level operations are available on your schema. In general, this property is managed internally and you do not need to alter it. An operation not in the list will not be configured at start up.
+
+_Note: Subscriptions are automatically added when the subscription library is configured._ 
+
+
 ### DisableIntrospection
 ```csharp
 // usage examples
@@ -112,7 +131,9 @@ schemaOptions.DeclarationOptions.DisableIntrospection = false;
 | ------------- | ----------------- |
 | `false`       | `true`, `false`   |
 
-When `true`, any attempts to perform an introspection query by making references to the fields `__schema` and `__type` will fail, preventing exposure of type meta data.
+When `true`, any attempts to perform an introspection query by making references to the fields `__schema` and `__type` will fail, preventing exposure of type meta data. 
+
+_Note: Many tools, IDEs and client libraries will fail if you disable introspection data._
 
 ### FieldDeclarationRequirements
 ```csharp
@@ -124,15 +145,15 @@ schemaOptions.DeclarationOptions.FieldDeclarationRequirements = TemplateDeclarat
 | ----------------------------------------- | ----------------- |
 | `TemplateDeclarationRequirements.Default` | _all enum values_ |
 
-Indicates to the runtime which fields and values of POCO classes must be explicitly declared in order to be added to a schema when said POCO class is added.
+Indicates to the runtime which fields and values of POCO classes must be explicitly declared for them to be added to a schema. 
 
 By default:
 
--   All enum values will be included.
+-   All values declared on an `enum` will be included.
 -   All properties of POCOs and interfaces will be included.
--   All methods of POCOs and interfaces will be excluded
+-   All methods of POCOs and interfaces will be excluded.
 
-\* _Controller and Directive action methods are not effected by this setting_
+_NOTE: Controller and Directive action methods are not effected by this setting. Any_ `[GraphField]` _declaration will automatically override these settings._
 
 ### GraphNamingFormatter
 
@@ -154,6 +175,20 @@ _Default formats for the three different entity types_
 
 ## Execution Options
 
+### DebugMode
+
+```csharp
+// usage examples
+schemaOptions.ExecutionOptions.DebugMode = false;
+```
+
+| Default Value | Acceptable Values |
+| ------------- | ----------------- |
+| `false`       | `true`, `false`   |
+
+When true, each field and each list member of each field will be executed sequentially with no parallelization. All asynchronous methods will be individually awaited and allowed to throw immediately. A single encountered exception will halt the entire query process. This can be very helpful in preventing a jumping debug cursor.  This option will greatly impact performance and can cause inconsistent query results if used in production. It should only be enabled for [debugging](../development/debugging).
+
+
 ### EnableMetrics
 ```csharp
 // usage examples
@@ -166,57 +201,7 @@ schemaOptions.ExecutionOptions.EnableMetrics = false;
 
 When true, metrics and query profiling will be enabled for all queries processed for a given schema.
 
-### QueryTimeout
-
-```csharp
-// usage examples
-schemaOptions.ExecutionOptions.QueryTimeout = TimeSpan.FromMinutes(2);
-```
-
-| Default Value | Acceptable Values          |
-| ------------- | -------------------------- |
-| null          | Minimum of 10 milliseconds |
-
-The amount of time an individual query will be given to run before being abandoned and canceled by the runtime. By default, the timeout is disabled and a query will continue to execute as long as the underlying HTTP request is also executing.
-
-### DebugMode
-
-```csharp
-// usage examples
-schemaOptions.ExecutionOptions.DebugMode = false;
-```
-
-| Default Value | Acceptable Values |
-| ------------- | ----------------- |
-| `false`       | `true`, `false`   |
-
-When true, each field and each list member of each field will be executed sequentially rather than asynchronously. All asynchronous methods will be individually awaited and allowed to throw immediately. A single encountered exception will halt the entire query process. This can be very helpful in preventing a jumping debug cursor as query branches are normally executed in parallel.  This option will greatly impact performance and can cause inconsistent query results if used in production. It should only be enabled for [debugging](../development/debugging).
-
-### ResolverIsolation
-
-```csharp
-// usage examples
-schemaOptions.ExecutionOptions.ResolverIsolation = ResolverIsolationOptions.ControllerActions | ResolverIsolation.Properties;
-```
-
-| Default Value | 
-| ------------- | 
-| `ResolverIsolation.None` |
-
-Resolver types identified in `ResolverIsolation` are guaranteed to be executed independently. This is different than `DebugMode`. In Debug mode a single encountered error will end the request whereas errors encountered in isolated resolvers will still be aggregated. This allows the returning partial results which can be useful in some use cases. 
-
-### MaxQueryDepth
-
-```csharp
-// usage examples
-schemaOptions.ExecutionOptions.MaxQueryDepth = 15;
-```
-
-| Default Value | Acceptable Values      |
-| ------------- | ---------------------- |
-| -_not set_-   | Integer Greater than 0 |
-
-The maximum allowed [field depth](../execution/malicious-queries) of any child field within a given query. If a child is nested deeper than this value the query will be rejected.
+_Note: This option DOES NOT control if those metrics are sent to the query requestor, just that they are recorded. See [ExposeMetrics](./schema-configuration#exposemetrics) in the response options for that switch.
 
 ### MaxQueryComplexity
 
@@ -229,9 +214,63 @@ schemaOptions.ExecutionOptions.MaxQueryComplexity = 50.0f;
 | ------------- | -------------------- |
 | -_not set_-   | Float Greater Than 0 |
 
-The maximum allowed [complexity](../execution/malicious-queries) value of a query. If a query is scored higher than this value it will be rejected.
+The maximum allowed [complexity](../execution/malicious-queries#query-complexity) value of a query. If a query is scored higher than this value it will be rejected.
+
+### MaxQueryDepth
+
+```csharp
+// usage examples
+schemaOptions.ExecutionOptions.MaxQueryDepth = 15;
+```
+
+| Default Value | Acceptable Values      |
+| ------------- | ---------------------- |
+| -_not set_-   | Integer Greater than 0 |
+
+The maximum allowed [field depth](../execution/malicious-queries#maximum-allowed-field-depth) of any child field within a given query. If a query contains a child that is nested deeper than this value the query will be rejected.
+
+
+### QueryTimeout
+
+```csharp
+// usage examples
+schemaOptions.ExecutionOptions.QueryTimeout = TimeSpan.FromMinutes(2);
+```
+
+| Default Value | Acceptable Values          |
+| ------------- | -------------------------- |
+| -_not set_-   | > 10 milliseconds          |
+
+The amount of time an individual query will be given to run before being abandoned and canceled by the runtime. By default, the timeout is disabled and a query will continue to execute as long as the underlying HTTP request is also executing. The minimum allowed amount of time for a query to run is 10ms.
+
+### ResolverIsolation
+
+```csharp
+// usage examples
+schemaOptions.ExecutionOptions.ResolverIsolation = ResolverIsolationOptions.ControllerActions | ResolverIsolation.Properties;
+```
+
+| Default Value | 
+| ------------- | 
+| `ResolverIsolation.None` |
+
+Resolver types identified in `ResolverIsolation` are guaranteed to be executed independently. This is different than `DebugMode`. In debug mode a single encountered error will end the request whereas errors encountered in isolated resolvers will still be aggregated. This allows the returning partial results which can be useful in some use cases. 
 
 ## Response Options
+
+### AppendServerHeader
+
+```csharp
+// usage examples
+schemaOptions.ResponseOptions.AppendServerHeader = true;
+```
+
+| Default Value | Acceptable Values |
+| ------------- | ----------------- |
+| `true`        | `true`, `false`   |
+
+When true, an `X-GraphQL-AspNet-Server` header with the current library version (e.g. `v1.0.1`) is added to the outgoing response. This option has no effect when a custom `HttpProcessorType` is declared.
+
 
 ### ExposeExceptions
 
@@ -244,7 +283,9 @@ schemaOptions.ResponseOptions.ExposeExceptions = false;
 | ------------- | ----------------- |
 | `false`       | `true`, `false`   |
 
-When true, exception details including message, type and stack trace will be sent to the requestor as part of any error messages. Setting this value to true can expose sensitive server details and is considered a security risk. Disable in any production environments.
+When true, exception details including message, type and stack trace will be sent to the requestor as part of any error messages. 
+
+> WARNING: Setting this value to true can expose sensitive server details and is considered a security risk.
 
 ### ExposeMetrics
 
@@ -259,18 +300,20 @@ schemaOptions.ResponseOptions.ExposeMetrics = false;
 
 When true, the full Apollo trace gathered when a query is executed is sent to the requestor. This value is disregarded unless `ExecutionOptions.EnableMetrics` is set to true.
 
-### AppendServerHeader
+_Note: Metrics data for large queries can be quite expansive; double or tripling the size of the json data returned._
+
+### IndentDocument
 
 ```csharp
 // usage examples
-schemaOptions.ResponseOptions.AppendServerHeader = true;
+schemaOptions.ResponseOptions.ExposeExceptions = true;
 ```
 
 | Default Value | Acceptable Values |
 | ------------- | ----------------- |
-| `true`        | `true`, `false`   |
+| `true`       | `true`, `false`   |
 
-When true, an `X-PoweredBy` header is added to the outgoing response to indicate it was generated from graphql. This option has no effect when a custom `HttpProcessorType` is declared.
+When true, the default json response writer will indent and "pretty up" the output response to make it more human-readable. Turning off this setting can result in a smaller output response.
 
 ### MessageSeverityLevel
 
@@ -282,7 +325,7 @@ schemaOptions.ResponseOptions.AppendServerHeader = GraphMessageSeverity.Informat
 | ---------------------------------- | -------------------------------------- |
 | `GraphMessageSeverity.Information` | \-_any `GraphMessageSeverity` value_\- |
 
-Indicates which messages generated during a query should be sent to the requestor. Any message with a value at or above the provided level will be delivered.
+Indicates which messages generated during a query should be sent to the requestor. Any message with a value at or higher than the provided level will be delivered.
 
 ### TimeStampLocalizer
 
@@ -293,11 +336,25 @@ schemaOptions.ResponseOptions.TimeStampLocalizer = (dtos) => dtos.DateTime;
 
 | Func<DateTimeOffset, DateTime>    |
 | --------------------------------- |
-| `(dtOffset) => dtOffset.DateTime` |
+| `(dtoffset) => dtoffset.DateTime` |
 
-A function to convert any timestamps present in the output into a value of a given timezone. By default no localization occurs and all times are delivered in their native `UTC-0`. This localizer does not effect any query data values, only those messaging related components.
+A function to convert any timestamps present in the output into a value of a given timezone. By default, no localization occurs and all times are delivered in their native `UTC-0` format. This localizer does not effect any query field date values, only those related to internal messaging.
 
 ## QueryHandler Options
+
+### AuthenticatedRequestsOnly
+
+```csharp
+// usage examples
+schemaOptions.QueryHandler.AuthenticatedRequestsOnly = false;
+```
+
+| Default Value | Acceptable Values |
+| ------------- | ----------------- |
+| `false`       | `true`, `false`   |
+
+When true, only those requests that are successfully authenticated by the ASP.NET runtime will be passed to GraphQL. Should an unauthenticated request make it to the graphql query processor it will be immediately rejected. This setting has no effect when a custom `HttpProcessorType` is declared.
+
 
 ### DisableDefaultRoute
 
@@ -310,7 +367,21 @@ schemaOptions.QueryHandler.DisableDefaultRoute = false;
 | ------------- | ----------------- |
 | `false`       | `true`, `false`   |
 
-When set to true the default handler and query processor will not be registered with the ASP.NET runtime when the application starts.
+When set to true the default route and http query processor will **NOT** be registered with the ASP.NET runtime when the application starts. GraphQL queries will not be processed unless manually invoked.
+
+
+### HttpProcessorType
+
+```csharp
+// usage examples
+schemaOptions.QueryHandler.HttpProcessorType = typeof(MyProcessorType);
+```
+
+| Default Value |
+| ------------- |
+| `null` |
+
+When set to a Type, GraphQL will attempt to load the provided type from the configured DI container in order to handle graphql requests. Any class wishing to act as an Http Processor must implement `IGraphQLHttpProcessor<TSchema>`. In most cases it may be easier to extend `DefaultGraphQLHttpProcessor<TSchema>`.
 
 ### Route
 
@@ -325,34 +396,69 @@ schemaOptions.QueryHandler.Route = "/graphql";
 
 Represents the REST end point where GraphQL will listen for new POST and GET requests. In multi-schema configurations this value will need to be unique per schema type.
 
+## Subscription Server Options
+These options are available to configure a subscription server for a given schema via `.AddSubscriptions(serverOptions)`
+
+
 ### AuthenticatedRequestsOnly
 
 ```csharp
 // usage examples
-schemaOptions.QueryHandler.AuthenticatedRequestsOnly = false;
+serverOptions.AuthenticatedRequestsOnly = false;
 ```
 
 | Default Value | Acceptable Values |
 | ------------- | ----------------- |
 | `false`       | `true`, `false`   |
 
-When true, only those requests that are successfully authenticated by the ASP.NET runtime will be passed to GraphQL. Should an unauthenticated request make it to the graphql query processor it will be immediately rejected. This option has no effect when a custom `HttpProcessorType` is declared.
+When true, only requests that are successfully authenticated by the ASP.NET runtime will be passed to GraphQL and registered as a subscription client. Connections with unauthenticated sources are immediately closed.
 
-### HttpProcessorType
+### ConnectionKeepAliveInterval
+
+The interval at which the subscription server will send a protocol-specific message to a connected graphql client informing it the connection is still open.
 
 ```csharp
 // usage examples
-schemaOptions.QueryHandler.HttpProcessorType = typeof(MyProcessorType);
+serverOptions.ConnectionKeepAliveInterval = TimeSpan.FromMinutes(2);
 ```
 
 | Default Value |
 | ------------- |
-| `null` |
+| `2 minutes`    |
 
-When set to a type, GraphQL will attempt to load the provided type from the configured DI container in order to handle graphql requests. Any class wishing to act as an Http Processor must implement `IGraphQLHttpProcessor`. In most cases it may be easier to extend `DefaultGraphQLHttpProcessor<TSchema>`.
+_Note: Not all messaging protocols support message level keep alives._
 
-## Subscription Server Options
-These options are available to configure a subscription server for a given schema via `.AddSubscriptions(serverOptions)` or `.AddSubscriptionServer(serverOptions)`
+
+### ConnectionInitializationTimeout
+
+When supported by a messaging protocol, represents a timeframe after the connection is initiated in which a successful initialization handshake must occur. 
+
+```csharp
+// usage examples
+serverOptions.ConnectionInitializationTimeout = TimeSpan.FromSeconds(30);
+```
+
+| Default Value |
+| ------------- |
+| `30 seconds`    |
+
+
+_Note: Not all messaging protocols require an explicit timeframe or support an inititalization handshake._
+
+### DefaultMessageProtocol
+
+When set, represents a valid and supported messaging protocol that a client should use if it does not specify which protocols it can communicate in.
+
+```csharp
+// usage examples
+serverOptions.DefaultMessageProtocol = "my-custom-protocol";
+```
+
+| Default Value |
+| ------------- |
+| `null`        |
+
+_Note:  By default, this value is not set and connected clients MUST supply a prioritized protocol list._
 
 ### DisableDefaultRoute
 
@@ -364,28 +470,13 @@ serverOptions.DisableDefaultRoute = false;
 | ------------- | ----------------- |
 | `false `       | `true`, `false`   |
 
-When true, GraphQL will not register a component to listen for web socket requests. You must handle the acceptance of web sockets yourself and inform the subscription server that a new one exists. If you wish to implement your own web socket middleware handler, viewing [DefaultGraphQLHttpSubscriptionMiddleware<TSchema>](https://github.com/graphql-aspnet/graphql-aspnet/blob/master/src/graphql-aspnet-subscriptions/Defaults/DefaultGraphQLHttpSubscriptionMiddleware.cs) may help.
+When true, GraphQL will not register a component to listen for web socket requests. You must handle the acceptance of web sockets yourself and provision client proxies that can interact with the runtime. If you wish to implement your own web socket middleware handler, viewing [DefaultGraphQLHttpSubscriptionMiddleware<TSchema>](https://github.com/graphql-aspnet/graphql-aspnet/blob/master/src/graphql-aspnet-subscriptions/Defaults/DefaultGraphQLHttpSubscriptionMiddleware.cs) may help.
 
 
-### Route
-
-Similar to the query/mutation query handler route this represents the path the default subscription middleware will look for when accepting new web sockets
-
-```csharp
-// usage examples
-serverOptions.Route = "/graphql";
-```
-
-| Default Value |
-| ------------- |
-| `/graphql`    |
-
-
-Represents the http end point where GraphQL will listen for new requests. In multi-schema configurations this value will need to be unique per schema type.
 
 ### HttpMiddlewareComponentType
 
-The middleware component GraphQL will inject into the ASP.NET pipeline to intercept new web socket connection requests.
+When set, represents the custom middleware component GraphQL will inject into the ASP.NET pipeline to intercept new web socket connection requests. 
 
 ```csharp
 // usage examples
@@ -397,50 +488,6 @@ serverOptions.HttpMiddlewareComponentType = typeof(MyMiddleware);
 | `null`    |
 
 When null, `DefaultGraphQLHttpSubscriptionMiddleware<TSchema>` is used.
-
-### KeepAliveInterval
-
-The interval at which the subscription server will send a message to a connected client informing it the connection is still open.
-
-```csharp
-// usage examples
-serverOptions.KeepAliveInterval = TimeSpan.FromMinutes(2);
-```
-
-| Default Value |
-| ------------- |
-| `2 minutes`    |
-
-This is a different keep alive than the websocket-level keep alive interval. The default apollo subscription server implementation uses this value to know when to send its "CONNECTION_KEEP_ALIVE" message type to a client.
-
-### MessageBufferSize
-
-The size of the message buffer, in bytes used to extract and deserialize a message being received from a connected client.
-
-```csharp
-// usage examples
-serverOptions.MessageBufferSize = 4 * 1024;
-```
-
-| Default Value |
-| ------------- |
-| `4kb`    |
-
-
-### MaxConcurrentClientNotifications
-
-The maximum number of connected clients a server will attempt to communicate with at one time.
-
-```csharp
-// usage examples
-serverOptions.MaxConcurrentClientNotifications = 50;
-```
-
-| Default Value | Minimum Value |
-| ------------- | ----------------- |
-| `50`       | `1`   |
-
-If for instance, there are 100 connected clients, all of which are subscribed to the same event, the subscription server will attempt to communicate new data to at most 50 of them at one time with remaining clients being queued and notified as the original 50 acknowledge the event. This can help throttle resources and prevent a subscription server from being overloaded.
 
 ### RequireAuthenticatedConnection
 
@@ -460,51 +507,37 @@ When set to true, the subscription middleware will immediately reject any websoc
 When set to false, the subscription middleware will initially accept all web socket requests.
 
 
+### Route
 
-## Global Configuration Settings
-Global settings effect the entire server instance, they are not restricted to a single schema registration. Instead they should be set before calling `.AddGraphQL()`
-```csharp
-// Startup.cs
-public void ConfigureServices(IServiceCollection services)
-{
-   // setup any global configuration options before 
-   // calling AddGraphQL()
-   GraphQLProviders.GlobalConfiguration.CONFIG_OPTION_NAME
-
-   services.AddGraphQL();
-}
-```
-### ControllerServiceLifetime
-```csharp
-GraphQLProviders.GlobalConfiguration.ControllerServiceLifetime = ServiceLifetime.Transient
-```
-
-
-| Default Value | Acceptable Values |
-| ------------- | ----------------- |
-| `Transient `       | `Transient`, `Scoped`, `Singleton`   |
-
-The configured service lifetime is what all controllers and directives will be registered as within the DI container during schema setup.
+Similar to the query/mutation query handler route this represents the path the default subscription middleware will look for when accepting new web sockets.
 
 ```csharp
-// Startup.cs
-public void ConfigureServices(IServiceCollection services)
-{
-   // All controllers will be registered as Scoped
-   GraphQLProviders.GlobalConfiguration.ControllerServiceLifetime = ServiceLifetime.Scoped;
-   services.AddGraphQL();
-}
+// usage examples
+serverOptions.Route = "/graphql";
 ```
-If you need to register only one or two controllers as a different scope add them to the DI container prior to calling `.AddGraphQL()`
+
+| Default Value |
+| ------------- |
+| `/graphql`    |
+
+
+Represents the http end point where GraphQL will listen for new web socket requests. In multi-schema configurations this value will need to be unique per schema type.
+
+### SupportedMessageProtocols
+
+When populated, represents a list of messaging protocol keys supported by this schema. A connected client MUST be able to communicate in one of the approved 
+values or it will be dropped.
 
 ```csharp
-// Startup.cs
-public void ConfigureServices(IServiceCollection services)
-{
-   // MyController will be registered as Scoped
-   services.AddScoped<MyController>();
-
-   // all other controllers will be registered as Transient
-   services.AddGraphQL();
-}
+// usage examples
+var myProtocols = new Hashset<string>();
+myProtocols.Add("protocol1");
+myProtocols.Add("protocol2");
+serverOptions.SupportedMessageProtocols = myProtocols;
 ```
+
+| Default Value |
+| ------------- |
+| `null`        |
+
+_Note:  By default, this setting is null, meaning any server supported protocol will be usable by the target schema. If set to an empty set, then the schema is effectively disabled as no supported protocols will be matched._

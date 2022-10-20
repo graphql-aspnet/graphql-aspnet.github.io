@@ -53,6 +53,7 @@
         "References": [
             "reference/how-it-works",
             "reference/schema-configuration",
+            "reference/global-configuration",
             "reference/attributes",
             "reference/graph-controller",
             "reference/graph-directive",

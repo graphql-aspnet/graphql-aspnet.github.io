@@ -1,6 +1,6 @@
 ---
 id: subscription-events
-title: Subscription Events
+title: Subscription Logging Events
 sidebar_label: Subscription Events
 ---
 

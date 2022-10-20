@@ -1,6 +1,6 @@
 ---
 id: standard-events
-title: Standard Events
+title: Standard Logging Events
 sidebar_label: Standard Events
 ---
 

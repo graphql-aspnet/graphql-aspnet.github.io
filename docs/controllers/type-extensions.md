@@ -121,16 +121,16 @@ query {
 
 When you declare a type extension it will only be invoked in context of the type being extended.
 
-When we return a field of data from a property, an instance of the object must to exist in order to retrieve the property value. The same is true for a `type extension` except that instead of calling a property getter on the instance we're handing the entire instance to our method and letting it figure out what it needs to do with the data to resolve the field.
+When we return a value from a property, an instance of an object must exist in order to supply that value. That is to say if you want the `Name` property of a bakery, you need a bakery instance to retrieve it from.  The same is true for a `type extension` except that instead of calling a property getter on the instance, graphql hands the entire object to our method and lets us figure out what needs to happen to resolve the field.
 
-GraphQL senses the type being extended and finds a method parameter to match. It captures that parameter, hides it from the object graph and supplies it with the result of the parent field, in this case the resolution of field `bakery(id: 5)`.
+GraphQL inspects the type being extended and finds a parameter on the method to match it. It captures that parameter, hides it from the object graph, and fills it with the result of the parent field, in this case the resolution of field `bakery(id: 5)`.
 
 This is immensely scalable:
 
 -   There are no wasted cycles fetching `CakeOrders` unless the requestor specifically asks for them.
 -   We have full access to [type expression validation](../advanced/type-expressions) and [model validation](./model-state) for our other method parameters.
 -   Since its a controller action we have full access to graph action results and can return `this.Ok()`, `this.Error()` etc. to give a rich developer experience.
--   [Field Authorization](./authorization) is also wired up for us.
+-   [Field Security](./authorization) is also wired up for us.
 -   The bakery model is greatly simplified.
 
 #### Can every field be a type extension?
@@ -138,8 +138,8 @@ This is immensely scalable:
 Theoretically, yes. But take a moment and think about performance. For basic objects with few dozen properties which is faster:
 
 -   One database query to retrieve 24 columns of a single record then only use six in a graph result.
--   Six separate database queries, one for each 10 character string value requested.
+-   Six separate database queries, one for each string value requested.
 
-Type extensions shine in parent-child relationships when preloading data is a concern but be careful not to go isolating every graph field just to avoid retrieving data unless absolutely necessary. Retrieving a few extra bytes of string data is negligible compared to querying a database 20 times. Your REST APIs likely do it as well and they even transmit that data down the wire to the client and the client has to discard it.
+Type extensions shine in parent-child relationships when preloading data is a concern but be careful not to go isolating every graph field just to avoid retrieving data. Fetching a few extra bytes from a database is negligible compared to querying a database 20 individual times. Your REST APIs likely do it as well and they even transmit that data down the wire to the client and the client has to discard it.
 
 It comes down to your use case. There are times when it makes sense to query data separately using type extensions and times when preloading whole objects is better. For many applications, once you've deployed to production, the queries being executed are finite. Design your model objects and extensions to be performant in the ways your data is being requested, not in the ways it _could be_ requested.

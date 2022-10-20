@@ -17,7 +17,7 @@ public void ConfigureServices(IServiceCollection services)
         });
 }
 ```
-This default registration adds the `DbContext` to the DI container is as a `Scoped` service. Meaning one instance is generated per Http request. However, consider the following controller and query:
+This default registration adds the `DbContext` to the DI container is as a `Scoped` service. Meaning one instance is generated per Http request. However, consider the following graph controller and query:
 
 
 <div class="sideBySideCode hljs">
@@ -57,13 +57,13 @@ query {
 </div>
 <br/>
 
-The `FoodController` contains two action methods both of which are executed by the query. While the controller itself is registered with the DI container as transient the `DbContext` is not, it is shared between the controller instances.  This can result in an exception being thrown :
+The `FoodController` contains two action methods both of which are executed by the query. This means two instances of the controller are needed, once for each field resolution, since they are executed in parallel. While the controller itself is registered with the DI container as transient the `DbContext` is not, it is shared between the controller instances.  This can result in an exception being thrown :
 
 ![Ef Core Error](../assets/ef-core-error.png)
 
 This is caused by graphql attempting to execute both controller actions simultaneously. Ef Core will reject multiple active queries. There are a few ways to handle this and each comes with its own trade offs:
 
-## Register DbContext as transient
+## Register DbContext as Transient
 
 One way to correct this problem is to register your DbContext
 as a transient object.

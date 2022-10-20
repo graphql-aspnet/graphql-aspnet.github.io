@@ -75,7 +75,7 @@ Also, if you are integrating into an existing project, you'll find a lot of util
 
 ## Scoped Dependency Injection
 
-Services are injected into graph controllers in the same manner as MVC controllers and with the same scope resolution as the HTTP request. Yes, your HTTP request level Entity Framework `DbContext` will be carried forward through all field resolutions.
+Services are injected into graph controllers in the same manner as MVC controllers and with the same scope resolution as the HTTP request. 
 
 ## User Authorization
 

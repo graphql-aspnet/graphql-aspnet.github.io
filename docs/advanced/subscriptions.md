@@ -218,7 +218,7 @@ Publishing your SubscriptionEvents externally is not trivial. You'll have to dea
 
 At this point, we've successfully published our events to some external data source. Now we need to consume them. How that occurs is, again, implementation specific. Perhaps you run a background hosted service to watch for messages on an Azure Service Bus topic or perhaps you periodically pole a database table to look for new events. The ways in which data may be shared is endless.
 
-Once you rematerialize a `SubscriptionEvent` you need to let GraphQL know that it occurred. this is done using the `ISubscriptionEventRouter`. In general, you won't need to implement your own router, just inject it into your listener service then call `RaiseEvent` and GraphQL will take it from there.
+Once you rematerialize a `SubscriptionEvent` you need to let GraphQL know that it occurred. this is done using the `ISubscriptionEventRouter`. In general, you won't need to implement your own router, just inject it into your listener service then call `RaisePublishedEvent` and GraphQL will take it from there.
 
 ```csharp
  public class MyListenerService : BackgroundService
@@ -237,13 +237,34 @@ Once you rematerialize a `SubscriptionEvent` you need to let GraphQL know that i
             while (_notStopped)
             {
                 SubscriptionEvent eventData = /* Fetch Next Event*/;
-                _router.RaiseEvent(eventData);
+                _router.RaisePublishedEvent(eventData);
             }
         }
     }
 ```
 
 The router will take care of figuring out which schema the event is destined for, which clients have active subscriptions, and forward the data as necessary for processing.
+
+### Event Processing
+
+At scale, its very possible that you may have 10s or 100s of subscription events fired per second (or faster). Its important to understand how the receiving servers will process those events and plan accordingly. 
+
+When you deserialize an event and hand it to the router, the router will look to see which receivers (i.e. clients) are subscribed to that event and spin up a `Task` to process the work. These tasks **ARE NOT** immediately awaited. Instead, they are added to an internal list and executed in the order they are started...up to a server-wide, preset limit. When that limit is reached, additional tasks wait until they are instructed to continue their work. Connected clients do not know of this thottling, they only become aware of the raised event after the throttling check is passed.
+
+Each task should complete in a matter of milliseconds (or less). After all, a client processing an event is, for the most part, a standard query execution. But with 100s of events being delivered on a server satured with socket connections, and those connections potentially having multiple subscriptions each...limits must be imposed otherwise CPU utilization would unreasonably spike. Which, in a cloud environment, may unecessarily cause a scale out event.
+
+By default, the max number of clients the router will communicate with simultaniously is `50`.  This is a global, server-wide pool, shared amongst all registered schemas. You can manually adjust this value by changing it prior to calling `.AddGraphQL()`.   This value defaults to a low number on purpose, use it as a starting point up the max concurrency to a level you feel comfortable with in terms of performance and cost. The only limit here is server resources and other environment limitations outside the control of graphql. 
+
+```csharp
+// Startup.cs
+
+// Adjust the max concurrent communications value
+// BEFORE calling .AddGraphQL()
+SubscriptionServerSettings.MaxConcurrentReceiverCount = 50;
+
+services.AddGraphQL()
+        .AddSubscriptions();
+```
 
 ### Diagram
 
