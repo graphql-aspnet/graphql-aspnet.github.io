@@ -26,8 +26,8 @@ Directives are implemented in much the same way as a `GraphController` but where
         [DirectiveLocations(DirectiveLocation.FIELD | DirectiveLocation.FRAGMENT_SPREAD | DirectiveLocation.INLINE_FRAGMENT)]
         public IGraphActionResult Execute([FromGraphQL("if")] bool ifArgument)
         {
-              if (this.DirectiveTarget is IIncludeableDocumentPart rdp)
-                rdp.IsIncluded = !ifArgument;
+              if (this.DirectiveTarget is IIncludeableDocumentPart docPart)
+                docPart.IsIncluded = !ifArgument;
 
             return this.Ok();
         }
@@ -62,11 +62,11 @@ Directives have two built in action results that can be returned:
 The following properties are available to all directive action methods:
 
 -   `this.DirectiveTarget` - The `ISchemaItem` or `IDocumentPart` to which the directive is being applied.
--   `this.Request` - The directive invocation request for the currently executing directive. Contains lots of advanced information just as execution phase, the directive type declared on the schema etc.
+-   `this.Request` - The directive invocation request for the currently executing directive. Contains lots of advanced information such as execution phase, the directive type declared on the schema etc.
 
 ### Directive Arguments
 
-Directives may contain input arguments just like fields. However, its important to note that while a directive may declare multiple action methods for different locations to seperate your logic better, it is only a single entity in the schema. As a result, ALL action methods must share a common signature. The runtime will throw an exception while creating your schema if the signatures of each action method differ.
+Directives may contain input arguments just like fields. However, its important to note that while a directive may declare multiple action methods for different locations to seperate your logic better, it is only a single entity in the schema. As a result, ALL action methods must share a common signature. The runtime will throw an exception while creating your schema if the signatures of the action methods differ.
 
 ```csharp
     public class MyValidDirective : GraphDirective
@@ -93,7 +93,7 @@ Directives may contain input arguments just like fields. However, its important 
 
 ### Directive Target
 
-The `DirectiveTarget` property available to your directive action methods will contain either an `ISchemaItem` for type system directives or an `IDocumentPart` for execution directives.
+The `DirectiveTarget` property available to your directive will contain either an `ISchemaItem` for type system directives or an `IDocumentPart` for execution directives.
 
 ## Execution Directives
 
@@ -495,12 +495,11 @@ GraphQL ASP.NET builds your schema and all of its types from your controllers an
 
 **UML Diagrams**
 
-These [uml diagrams](../assets/2022-05-graphql-aspnet-type-system-interface-diagrams.pdf) detail the major interfaces and their most useful properties of the type system. However,
-these diagrams are not exaustive. Look at the [source code](https://github.com/graphql-aspnet/graphql-aspnet/tree/master/src/graphql-aspnet/Interfaces/TypeSystem) for the full definitions.
+These [uml diagrams](../assets/2022-10-graphql-aspnet-structural-diagrams.pdf) detail the major interfaces and their most useful properties of the type system. However, these diagrams are not exaustive. Look at the [source code](https://github.com/graphql-aspnet/graphql-aspnet/tree/master/src/graphql-aspnet/Interfaces/TypeSystem) for the full definitions.
 
 **Helpful Extensions**
 
-There are a robust set of of built in extensions for `ISchemaItem` that can help you filter your data when applying directives. See the [full source code](https://github.com/graphql-aspnet/graphql-aspnet/tree/master/src/graphql-aspnet/Configuration/SchemaItemExtensions.cs) for details.
+There are a robust set of of built in extensions for `ISchemaItem` that can help you filter your data when applying directives. See the [full source code](https://github.com/graphql-aspnet/graphql-aspnet/blob/master/src/graphql-aspnet/Configuration/SchemaItemFilterExtensions.cs) for details.
 
 ## Directives as Services
 
