@@ -236,7 +236,7 @@ Hopefully we've given you a bit of insight into how the library works under the 
 
 ## Architectural Diagrams
 
-<span style="font-size:20px;vertical-align: center;">&#128204;</span>&nbsp; [Structural Diagrams](../assets/2021-01-graphql-aspnet-structural-diagrams.pdf)
+<span style="font-size:20px;vertical-align: center;">&#128204;</span>&nbsp; [Structural Diagrams](../assets/2022-10-graphql-aspnet-structural-diagrams.pdf)
 
 A set of diagrams outlining the major interfaces and classes that make up GraphQL Asp.Net.
 

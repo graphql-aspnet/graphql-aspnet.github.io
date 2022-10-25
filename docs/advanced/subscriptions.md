@@ -166,6 +166,8 @@ Here is a complete list of the various subscription action results:
 * `SkipSubscriptionEvent()` - Instructs the server to skip the raised event, no data will be sent to the client.
 * `OkAndComplete(data)` - Works just like `this.Ok()` but ends the subscription after the event is completed. This action result does not close the underlying connection.
 
+> Plan your subscriptions carefully, you can quickly overload a server with only a small number of connected clients.
+
 ## Scaling Subscription Servers
 
 Using web sockets has a natural limitation in that any each server instance has a maximum number of socket connections that it can handle. Once that limit is reached no additional clients can register subscriptions.
@@ -173,6 +175,8 @@ Using web sockets has a natural limitation in that any each server instance has 
 Ok no problem, just scale horizontally, spin up additional ASP.NET server instances, add a load balancer and have the new requests open a web socket connection to these additional server instances, right? Not so fast.
 
 With the examples above, events published by any mutation using `PublishSubscriptionEvent()` are routed internally, directly to the local subscription server meaning only those clients connected to the server where the event was raised will receive it. Clients connected to other server instances will never know an event was raised. This represents a big problem for large scale websites, so what do we do?
+
+[This diagram](../assets/2022-10-subscription-server.pdf) shows a high level differences between the default, single server configuration and a custom scalable solution.
 
 ### Custom Event Publishing
 
@@ -245,30 +249,6 @@ Once you rematerialize a `SubscriptionEvent` you need to let GraphQL know that i
 
 The router will take care of figuring out which schema the event is destined for, which clients have active subscriptions, and forward the data as necessary for processing.
 
-### Event Processing
-
-At scale, its very possible that you may have 10s or 100s of subscription events fired per second (or faster). Its important to understand how the receiving servers will process those events and plan accordingly. 
-
-When you deserialize an event and hand it to the router, the router will look to see which receivers (i.e. clients) are subscribed to that event and spin up a `Task` to process the work. These tasks **ARE NOT** immediately awaited. Instead, they are added to an internal list and executed in the order they are started...up to a server-wide, preset limit. When that limit is reached, additional tasks wait until they are instructed to continue their work. Connected clients do not know of this thottling, they only become aware of the raised event after the throttling check is passed.
-
-Each task should complete in a matter of milliseconds (or less). After all, a client processing an event is, for the most part, a standard query execution. But with 100s of events being delivered on a server satured with socket connections, and those connections potentially having multiple subscriptions each...limits must be imposed otherwise CPU utilization would unreasonably spike. Which, in a cloud environment, may unecessarily cause a scale out event.
-
-By default, the max number of clients the router will communicate with simultaniously is `50`.  This is a global, server-wide pool, shared amongst all registered schemas. You can manually adjust this value by changing it prior to calling `.AddGraphQL()`.   This value defaults to a low number on purpose, use it as a starting point up the max concurrency to a level you feel comfortable with in terms of performance and cost. The only limit here is server resources and other environment limitations outside the control of graphql. 
-
-```csharp
-// Startup.cs
-
-// Adjust the max concurrent communications value
-// BEFORE calling .AddGraphQL()
-SubscriptionServerSettings.MaxConcurrentReceiverCount = 50;
-
-services.AddGraphQL()
-        .AddSubscriptions();
-```
-
-### Diagram
-
-[This diagram](../assets/2022-10-subscription-server.pdf) shows the differences between a the default, single server configuration and a custom scalable solution.
 
 ### Azure Service Bus Example
 
@@ -277,7 +257,6 @@ A complete example of a bare bones example, including serialization and deserial
 > The demo project represents a functional starting point and lacks a lot of the error handling and resilency needs of a production environment.
 
 ## Subscription Server Configuration
-
 
 Currently, when using the `.AddSubscriptions()` extension method two seperate operations occur:
 
@@ -371,3 +350,36 @@ The details of implementing a custom graphql client proxy is beyond the scope of
 While websockets is the primary medium for persistant connections its not the only option. Internally, the library supplies an `IClientConnection` interface which encapsulates a raw connection websocket received from .NET. This interface is currently implemented as a `WebSocktClientConnection` which is responsible for reading and writing raw bytes to the socket. Its not a stretch of the imagination to implement your own custom client connection, invent a way to capture said connections and basically rewrite the entire communications layer of the subscriptions module.
 
 Please do a deep dive into the subscription code base to learn about all the intracasies of building your own communications layer and how you might go about registering it with the runtime. If you do try to tackle this very large effort don't hesitate to reach out. We're happy to partner with you and meet you half way on a solution if it makes sense for the rest of the community.
+
+## Performance Considerations
+
+At scale, its very possible that you may have lots of subscription events fired per second. Its important to understand how the receiving servers will process those events and plan accordingly. 
+
+When the router receives an event it looks to see which receivers (a.k.a. connected clients) are subscribed to that event and queues up a work item for each one. Internally, this work is processed, concurrently if necessary, up to a server-configured maximum. Once this maximum is reached, new work will only begin as other work finishes up.
+
+Each work item is, for the most part, a standard query execution. But with lots of events being delivered on a server saturated with clients, each potentially having multiple subscriptions, along with regular queries and mutations executing as well...limits must be imposed otherwise CPU utilization could unreasonably spike...and it may spike regardless in some use cases. 
+
+By default, the max number of work items the router will deliver simultaniously is `50`.  This is a global, server-wide pool, shared amongst all registered schemas. You can manually adjust this value by changing it prior to calling `.AddGraphQL()`.   This value defaults to a low number on purpose, use it as a starting point to dial up the max concurrency to a level you feel comfortable with in terms of performance and cost. The only limit here is server resources and other environment limitations outside the control of graphql. 
+
+```csharp
+// Startup.cs
+
+// Adjust the max concurrent communications value
+// BEFORE calling .AddGraphQL()
+SubscriptionServerSettings.MaxConcurrentReceiverCount = 50;
+
+services.AddGraphQL()
+        .AddSubscriptions();
+```
+
+### Event Multiplication
+
+Think carefully about your production scenarios when you introduce subscriptions into your application.  For each subscription event raised, each open subscription monitoring that event must execute a standard graphql query, with the supplied event data, to generate a result and send it to its connected client. 
+
+If, for instance, you have `200 clients` connected to a single server, each with just `3 subscriptions` open against the one event, thats `600 individual queries` that must be executed to process the event completely. Suppose your server receives 5 mutations in rapid succession, all of which raise the event, thats a spike of `3,000 queries`, instantaneously, that the server must begin to process. 
+
+Most of the work is queued, yes, but that's only to put a reasonable cap on the resources consumed. You'll still see a rapid and sustained increase in CPU utilization for as long as the queue is being processed. You might see a increase in wait time for new events to be delivered to awaiting clients if mutations keep occuring. If you are running in a cloud environment, think about how your CPU monitors might inadvertantly cause a "scale out" event because of a spike in load. 
+
+Balancing the load can be difficult. Luckily there are some [throttling levers](/docs/reference/global-configuration#subscriptions) you can adjust.
+
+> Raising subscription events can exponentially increase the load on each of your servers. Think carefully when you deploy subscriptions to your application.

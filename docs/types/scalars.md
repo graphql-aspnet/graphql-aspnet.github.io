@@ -35,7 +35,7 @@ GraphQL ASP.NET has 20 built in scalar types.
 
 ## Input Value Resolution
 
-When a value is resolved it's read from the query document (or variable collection) in one of three ways:
+When a value is resolved, it's read from the query document (or variable collection) in one of three ways:
 
 -   **String** : A string of characters, delimited by `"quotes"`
 -   **Boolean** The value `true` or `false` with no quotes
@@ -47,7 +47,7 @@ Scalars used as input arguments require that any supplied value match at least o
 
 ## Scalar Names Are Fixed
 
-Unlike other graph types, scalar names are fixed across all schemas. The name defined above (including casing), is how they appear in your schema's introspection queries. These names conform to the accepted standard for graphql type names.
+Unlike other graph types, scalar names are fixed across all schemas. The name defined above (including casing), is how they appear in your schema's introspection queries. These names conform to the accepted standard for graphql type names. This is true for any custom scalars you may build as well.
 
 #### Nullable\<T\>
 

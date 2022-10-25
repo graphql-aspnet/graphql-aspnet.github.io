@@ -26,15 +26,6 @@
             "types/scalars",
             "types/list-non-null"
         ],
-        "Logging": [
-            "logging/structured-logging",
-            "logging/standard-events",
-            "logging/subscription-events"
-        ],
-        "Query Execution": [
-            "execution/metrics",
-            "execution/malicious-queries"
-        ],
         "Advanced": [
             "advanced/subscriptions",
             "advanced/type-expressions",
@@ -44,6 +35,15 @@
             "advanced/middleware",
             "advanced/query-cache",
             "advanced/multi-schema-support"
+        ],
+        "Logging": [
+            "logging/structured-logging",
+            "logging/standard-events",
+            "logging/subscription-events"
+        ],
+        "Query Execution": [
+            "execution/metrics",
+            "execution/malicious-queries"
         ],
         "Development Concerns": [
             "development/debugging",

@@ -99,6 +99,6 @@ public void ConfigureServices(IServiceCollection services)
 ```
 This will instruct graphql to execute each encountered controller action one after the other. Your scoped `DbContext` would then be able to process the queries without issue.
 
-The tradeoff with this method is a minor decrease in processing time since the queries are called in sequence. All other field resolutions would be executed in parallel.
+The tradeoff with this method is a decrease in processing time since the queries are called in sequence. All other field resolutions would be executed in parallel.
 
-If your application has other resources or services that are not thread safe it can be beneficial to isolate the other resolver types as well. You can add them to the ResolverIsolation configuration option as needed.
+If your application has other resources or services that may have similar restrictions, it can be beneficial to isolate the other resolver types as well. You can add them to the ResolverIsolation configuration option as needed.

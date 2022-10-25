@@ -8,7 +8,7 @@ At the heart of GraphQL ASP.NET are 4 middleware pipelines; chains of components
 
 -   `Query Execution Pipeline` : Invoked once per request this pipeline is responsible for validating the incoming package on the POST or GET request, parsing the data and executing a query plan.
 -   `Field Execution Pipeline` : Invoked once per requested field, this pipeline attempts to generate the requested data by calling the various controller actions and property resolvers.
--   `Field Authorization Pipeline`: Ensures the user on the request can perform the action requested. This pipeline is invoked once for the whole query or for each field depending on your schema's configuration.
+-   `Schema Item Authorization Pipeline`: Ensures the user on the request can access a given schema (field, directive etc.).
 -   `Directive Execution Pipeline`: Executes directives for various phases of schema and query document lifetimes.
 
 ## Creating New Middleware
