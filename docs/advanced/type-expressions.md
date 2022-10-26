@@ -12,7 +12,7 @@ These assumptions are made:
 
 -   Fields that return reference types **can be** null
 -   Fields that return value types **cannot be** null
--   Fields that return Nullable value types (e.g. `int?`) **can be** be null
+-   Fields that return Nullable value types (e.g. `int?`) **can be** be null.
 -   When a field returns an object that implements `IEnumerable<TType>` it will be presented to GraphQL as a "list of `TType`".
 
 Basically, if your method is able to return a value...then its valid as far as GraphQL is concerned.
@@ -49,7 +49,7 @@ query {
 </div>
 <br/>
 
-This action method could return a `Donut` or return `null`. But should the `donut` field allow a null value? The code certainly does and the rules above say fields that return a reference type can be null...but that's not what's important. Its ultimately your decision to decide if a null donut is allowed, not the C# compiler and not the assumptions made by the library.
+This action method could return a `Donut` or returns `null`. But should the donut field, from a GraphQL perspective, allow a null return value? The code certainly does and the rules above say fields that return a reference type can be null...but that's not what's important. Its ultimately your decision to decide if a "null donut" is allowed, not the C# compiler and not the assumptions made by the library.
 
 On one hand, if a null value is returned, regardless of it being valid, the _outcome_ of the field is the same. When we return a null no child fields are processed. On the other hand, if null is not allowed we need to tell someone, let them know its nulled out not because it simply _is_ null but because a schema violation occurred.
 
@@ -59,7 +59,7 @@ Most of the time, using the `TypeExpression` property of a field declaration att
 
 ```csharp
 
-// Declare that an MUST be returned (null is invalid)
+// Declare that a donut MUST be returned (null is invalid)
 // ----
 // Schema Syntax:  Donut!
 [Query("donut", TypeExpression = TypeExpressions.IsNotNull)]

@@ -26,17 +26,22 @@
             "types/scalars",
             "types/list-non-null"
         ],
-        "Logging": ["logging/structured-logging", "logging/standard-events"],
-        "Query Execution": ["execution/metrics", "execution/malicious-queries"],
         "Advanced": [
             "advanced/subscriptions",
             "advanced/type-expressions",
             "advanced/directives",
             "advanced/custom-scalars",
             "advanced/graph-action-results",
-            "advanced/middleware",
-            "advanced/query-cache",
             "advanced/multi-schema-support"
+        ],
+        "Logging": [
+            "logging/structured-logging",
+            "logging/standard-events",
+            "logging/subscription-events"
+        ],
+        "Query Execution": [
+            "execution/metrics",
+            "execution/malicious-queries"
         ],
         "Development Concerns": [
             "development/debugging",
@@ -46,10 +51,13 @@
         "References": [
             "reference/how-it-works",
             "reference/schema-configuration",
+            "reference/global-configuration",
             "reference/attributes",
             "reference/graph-controller",
             "reference/graph-directive",
             "reference/http-processor",
+            "reference/middleware",
+            "reference/query-cache",
             "reference/demo-projects",
             "reference/performance"
         ]

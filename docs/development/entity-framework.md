@@ -17,7 +17,7 @@ public void ConfigureServices(IServiceCollection services)
         });
 }
 ```
-This default registration adds the `DbContext` to the DI container is as a `Scoped` service. Meaning one instance is generated per Http request. However, consider the following controller and query:
+This default registration adds the `DbContext` to the DI container is as a `Scoped` service. Meaning one instance is generated per Http request. However, consider the following graph controller and query:
 
 
 <div class="sideBySideCode hljs">
@@ -57,13 +57,13 @@ query {
 </div>
 <br/>
 
-The `FoodController` contains two action methods both of which are executed by the query. While the controller itself is registered with the DI container as transient the `DbContext` is not, it is shared between the controller instances.  This can result in an exception being thrown :
+The `FoodController` contains two action methods both of which are executed by the query. This means two instances of the controller are needed, once for each field resolution, since they are executed in parallel. While the controller itself is registered with the DI container as transient the `DbContext` is not, it is shared between the controller instances.  This can result in an exception being thrown :
 
 ![Ef Core Error](../assets/ef-core-error.png)
 
 This is caused by graphql attempting to execute both controller actions simultaneously. Ef Core will reject multiple active queries. There are a few ways to handle this and each comes with its own trade offs:
 
-## Register DbContext as transient
+## Register DbContext as Transient
 
 One way to correct this problem is to register your DbContext
 as a transient object.
@@ -99,6 +99,6 @@ public void ConfigureServices(IServiceCollection services)
 ```
 This will instruct graphql to execute each encountered controller action one after the other. Your scoped `DbContext` would then be able to process the queries without issue.
 
-The tradeoff with this method is a minor decrease in processing time since the queries are called in sequence. All other field resolutions would be executed in parallel.
+The tradeoff with this method is a decrease in processing time since the queries are called in sequence. All other field resolutions would be executed in parallel.
 
-If your application has other resources or services that are not thread safe it can be beneficial to isolate the other resolver types as well. You can add them to the ResolverIsolation configuration option as needed.
+If your application has other resources or services that may have similar restrictions, it can be beneficial to isolate the other resolver types as well. You can add them to the ResolverIsolation configuration option as needed.

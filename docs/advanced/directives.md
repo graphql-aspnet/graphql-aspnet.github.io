@@ -4,16 +4,14 @@ title: Directives
 sidebar_label: Directives
 ---
 
-> Directives were completely reimagined in August 2022, this document represents the new approach to directives.
-
 ## What is a directive?
 
-Directives decorate, or are attached to, parts of your schema or query document to perform some sort of custom logic. What that logic is, is entirely up to you.  There are several built in directives:
+Directives decorate, or are attached to, parts of your schema or query document to perform some sort of custom logic. What that logic is, is entirely up to you. There are several built in directives:
 
-- `@include` : An execution directive that conditionally includes a field or fragment in the results of a graphql query
-- `@skip` : An execution directive conditionally excludes a field or fragment from the results of a graphql query
-- `@deprecated` : A type system directive that marks a field definition or enum value as deprecated, indicating that it may be removed in a future release of your graph.
-- `@specifiedBy` : A type system directive for a custom scalar that adds a URL pointing to documentation about how the scalar is used. This url is returned as part of an introspection query.
+-   `@include` : An execution directive that conditionally includes a field or fragment in the results of a graphql query
+-   `@skip` : An execution directive that conditionally excludes a field or fragment from the results of a graphql query
+-   `@deprecated` : A type system directive that marks a field definition or enum value as deprecated, indicating that it may be removed in a future release of your graph.
+-   `@specifiedBy` : A type system directive for a custom scalar that adds a URL pointing to documentation about how the scalar is used. This url is returned as part of an introspection query.
 
 Beyond this you can create directives to perform any sort of action against your graph or query document as seems fit to your use case.
 
@@ -24,12 +22,12 @@ Directives are implemented in much the same way as a `GraphController` but where
 ```csharp
     // an example implementation of the @skip directive
     public sealed class SkipDirective : GraphDirective
-    {        
+    {
         [DirectiveLocations(DirectiveLocation.FIELD | DirectiveLocation.FRAGMENT_SPREAD | DirectiveLocation.INLINE_FRAGMENT)]
         public IGraphActionResult Execute([FromGraphQL("if")] bool ifArgument)
         {
-              if (this.DirectiveTarget is IIncludeableDocumentPart rdp)
-                rdp.IsIncluded = !ifArgument;
+              if (this.DirectiveTarget is IIncludeableDocumentPart docPart)
+                docPart.IsIncluded = !ifArgument;
 
             return this.Ok();
         }
@@ -44,35 +42,35 @@ All directives must:
 All directive action methods must:
 
 -   Share the same method signature
-    - The return type must match exactly
-    - The input arguments must match exactly in name, casing and declaration order.
+    -   The return type must match exactly
+    -   The input arguments must match exactly in name, casing and declaration order.
 -   Return a `IGraphActionResult` or `Task<IGraphActionResult>`
 
 ### Action Results
+
 Directives have two built in action results that can be returned:
 
-* `this.Ok()`
-    * Indicates that the directive completed successfully and processing should continue.
-* `this.Cancel()`
-    * Indicates that the directive did NOT complete successfully and processing should stop. 
-    * If this is a type system directive, the target schema will not be generated and the server will fail to start.
-    * If this is an execution directive, the query will be abandoned and the caller will receive an error result.
+-   `this.Ok()`
+    -   Indicates that the directive completed successfully and processing should continue.
+-   `this.Cancel()`
+    -   Indicates that the directive did NOT complete successfully and processing should stop.
+    -   If this is a type system directive, the target schema will not be generated and the server will fail to start.
+    -   If this is an execution directive, the query will be abandoned and the caller will receive an error result.
 
 ### Helpful Properties
 
 The following properties are available to all directive action methods:
 
-* `this.DirectiveTarget` - The `ISchemaItem` or `IDocumentPart` to which the directive is being applied.
-* `this.Request`  - The directive invocation request for the currently executing directive. Contains lots of advanced information just as execution phase, the directive type declared on the schema etc.
-
+-   `this.DirectiveTarget` - The `ISchemaItem` or `IDocumentPart` to which the directive is being applied.
+-   `this.Request` - The directive invocation request for the currently executing directive. Contains lots of advanced information such as execution phase, the directive type declared on the schema etc.
 
 ### Directive Arguments
 
-Directives may contain input arguments just like fields. However, its important to note that while a directive may declare multiple action methods for different locations to seperate your logic better, it is only a single entity in the schema. As a result, ALL action methods must share a common signature. The runtime will throw an exception while creating your schema if the signatures of each action method differ.
+Directives may contain input arguments just like fields. However, its important to note that while a directive may declare multiple action methods for different locations to seperate your logic better, it is only a single entity in the schema. As a result, ALL action methods must share a common signature. The runtime will throw an exception while creating your schema if the signatures of the action methods differ.
 
 ```csharp
     public class MyValidDirective : GraphDirective
-    {        
+    {
         [DirectiveLocations(DirectiveLocation.FIELD)]
         public IGraphActionResult ExecuteField(int arg1, string arg2) { /.../ }
 
@@ -81,7 +79,7 @@ Directives may contain input arguments just like fields. However, its important 
     }
 
     public class MyInvalidDirective : GraphDirective
-    {   
+    {
         [DirectiveLocations(DirectiveLocation.FIELD)]
         public IGraphActionResult ExecuteField(int arg1, int arg2) { /.../ }
 
@@ -90,10 +88,12 @@ Directives may contain input arguments just like fields. However, its important 
         public IGraphActionResult ExecuteFragSpread(int arg1, string arg2) { /.../ }
     }
 ```
+
 > Directive arguments must match in name, data type and position for all action methods. Being able to use different methods for different locations is a convenience; to GraphQL there is only one directive with one set of parameters.
 
 ### Directive Target
-The `DirectiveTarget` property available to your directive action methods will contain either an `ISchemaItem` for type system directives or an `IDocumentPart` for execution directives. 
+
+The `DirectiveTarget` property available to your directive will contain either an `ISchemaItem` for type system directives or an `IDocumentPart` for execution directives.
 
 ## Execution Directives
 
@@ -104,7 +104,7 @@ This is the code for the built in `@include` directive:
 ```csharp
     [GraphType("include")]
     public sealed class IncludeDirective : GraphDirective
-    {        
+    {
         [DirectiveLocations(DirectiveLocation.FIELD | DirectiveLocation.FRAGMENT_SPREAD | DirectiveLocation.INLINE_FRAGMENT)]
         public IGraphActionResult Execute([FromGraphQL("if")] bool ifArgument)
         {
@@ -122,7 +122,7 @@ This Directive:
     -   The name will be derived from the class name if the attribute is omitted
 -   Declares that it can be applied to a query document at all field selection locations using the `[DirectiveLocations]` attribute
 -   Uses the `[FromGraphQL]` attribute to declare the input argument's name in the schema
-    - This is because `if` is a keyword in C# and we don't want the argument being named `ifArgument` in the graph.
+    -   This is because `if` is a keyword in C# and we don't want the argument being named `ifArgument` in the graph.
 -   Is executed once for each field, fragment spread or inline fragment to which its applied in a query document.
 
 > The action method name `Execute` in this example is arbitrary. Method names can be whatever makes the most sense to you.
@@ -144,11 +144,13 @@ query {
 }
 ```
 
-The directives attached to the `id` field are executed in order:
- 1. @directiveA
- 2. @directiveB
+The directives attached to the `id` field are executed in order from left to right:
+
+1.  @directiveA
+2.  @directiveB
 
 ### Influencing Field Resolution
+
 Execution directives are applied to document parts, not schema items. As a result they aren't directly involved in resolving fields but instead influence the document that is eventually translated into a query plan and executed. However, one common use case for execution directives includes augmenting the results of a field after its resolved. For instance, perhaps you had a directive that could conditionally turn a string field into an upper case string when applied (i.e. `@toUpper`).
 
 For this reason it is possible to apply a 'PostResolver' directly to an `IFieldDocumentPart`. This post resolver is executed immediately after the primary field resolver is executed.
@@ -161,12 +163,12 @@ For this reason it is possible to apply a 'PostResolver' directly to an `IFieldD
         {
             if (this.DirectiveTarget as IFieldDocumentPart fieldPart)
             {
-                // 
+                //
                 if (fieldPart.Field?.ObjectType != typeof(string))
                     throw new GraphExecutionException("ONLY STRINGS!"); // - hulk
 
-                // add a post resolver to the target field document 
-                // part to perform the conversion when the query is 
+                // add a post resolver to the target field document
+                // part to perform the conversion when the query is
                 // ran
                 fieldPart.PostResolver = ConvertToUpper;
             }
@@ -175,7 +177,7 @@ For this reason it is possible to apply a 'PostResolver' directly to an `IFieldD
         }
 
         private static Task ConvertToUpper(
-            FieldResolutionContext context, 
+            FieldResolutionContext context,
             CancellationToken token)
         {
             if (context.Result is string)
@@ -188,15 +190,17 @@ For this reason it is possible to apply a 'PostResolver' directly to an `IFieldD
 ```
 
 #### Working with Batch Extensions
-Batch extensions work differently than standard field resolvers; they don't resolve a single item at a time. This means our `@toUpper` example above won't work as `context.Result` won't be a string. Should you employ a post resolver that may be applied to a batch extension you'll need to handle the resultant dictionary differently than you would a single field value. The dictionary will always be of the format `IDictionary<TSource, TResult>` where `TSource` is the data type of the field set that owns the field the directive was applied to and `TResult` is the data type or an `IEnumerable` of the data type for the field, depending on the 
+
+Batch extensions work differently than standard field resolvers; they don't resolve a single item at a time. This means our `@toUpper` example above won't work as `context.Result` won't be a string. Should you employ a post resolver that may be applied to a batch extension you'll need to handle the resultant dictionary differently than you would a single field value. The dictionary will always be of the format `IDictionary<TSource, TResult>` where `TSource` is the data type of the field set that owns the field the directive was applied to and `TResult` is the data type or an `IEnumerable` of the data type for the field, depending on the
 batch extension declaration. The dictionary is always keyed by source item reference.
 
 > Batch Extensions will return a dictionary of data not a single item. Your post resolver must be able to handle this dictionary if applied to a field that is a `[BatchExtensionType]`.
 
 ## Type System Directives
+
 ### Example: @toLower
 
-This directive will extend the resolver of a field, as its declared in the schema, to turn any strings into lower case letters. 
+This directive will extend the resolver of a field, as its declared in the schema, to turn any strings into lower case letters.
 
 ```csharp
     public class ToLowerDirective : GraphDirective
@@ -230,20 +234,20 @@ This directive will extend the resolver of a field, as its declared in the schem
     }
 ```
 
-This Directive: 
+This Directive:
 
-* Targets a FIELD_DEFINITION.
-* Ensures that the target field returns a string.
-* Extends the field's resolver to convert the result to an upper case string.
-* The directive is executed once per field definition its applied to when the schema is created. The extension method is executed on every field resolution.
+-   Targets a FIELD_DEFINITION.
+-   Ensures that the target field returns a string.
+-   Extends the field's resolver to convert the result to an upper case string.
+-   The directive is executed once per field definition its applied to when the schema is created. The extension method is executed on every field resolution.
 
+> Notice the difference in this type system directive vs. the `@toUpper` execution directive above. Where as toUpper was declared as a PostResolver on the document part, this directive extends the primary resolver of an `IGraphField` and affects ALL queries that request this field.
 
->Notice the difference in this type system directive vs. the `@toUpper` execution directive above. Where as toUpper was declared as a PostResolver on the document part, this directive extends the primary resolver of an `IGraphField` and affects ALL queries that request this field.
 ### Example: @deprecated
 
 The `@deprecated` directive is a built in type system directive provided by graphql to indicate deprecation on a field definition or enum value. Below is the code for its implementation.
 
-```csharp    
+```csharp
     public sealed class DeprecatedDirective : GraphDirective
     {
         [DirectiveLocations(DirectiveLocation.FIELD_DEFINITION | DirectiveLocation.ENUM_VALUE)]
@@ -265,12 +269,11 @@ The `@deprecated` directive is a built in type system directive provided by grap
     }
 ```
 
+This Directive:
 
-This Directive: 
-
-* Targets a FIELD_DEFINITION or ENUM_VALUE.
-* Marks the field or enum value as deprecated and attaches the provided deprecation reason
-* The directive is executed once per field definition and enum value its applied to when the schema is created.
+-   Targets a FIELD_DEFINITION or ENUM_VALUE.
+-   Marks the field or enum value as deprecated and attaches the provided deprecation reason
+-   The directive is executed once per field definition and enum value its applied to when the schema is created.
 
 ### Applying Type System Directives
 
@@ -283,7 +286,7 @@ If you have access to the source code of a given type you can use the `[ApplyDir
 
 ```csharp
 // Person.cs
-public class Person 
+public class Person
 {
     [ApplyDirective(typeof(ToLowerDirective))]
     public string Name{ get; set; }
@@ -306,14 +309,13 @@ type Person  {
 <br/>
 If different schemas on your server will use different implementations of the directive you can also specify the directive by name. This name is case sensitive and must match the name of the registered directive in the target schema. At runtime, the concrete class declared as the directive in each schema will be instantiated and used.
 
-
 <div class="sideBySideCode hljs">
 <div>
 
 ```csharp
 // Person.cs
 [ApplyDirective("monitor")]
-public class Person 
+public class Person
 {
     public string Name{ get; set; }
 }
@@ -343,10 +345,10 @@ Arguments added to the apply directive attribute will be passed to the directive
 
 ```csharp
 // Person.cs
-public class Person 
+public class Person
 {
     [ApplyDirective(
-        "deprecated", 
+        "deprecated",
         "Names don't matter")]
     public string Name{ get; set; }
 }
@@ -386,7 +388,7 @@ public void ConfigureServices(IServiceCollection services)
 
         // mark Person.Name as deprecated
         options.ApplyDirective("monitor")
-            .ToItems(schemaItem => 
+            .ToItems(schemaItem =>
                 schemaItem.IsObjectGraphType<Person>());
     }
 }
@@ -407,7 +409,7 @@ type Person  @monitor {
 
 <br/>
 
-> The `ToItems` filter can be invoked multiple times. A schema item must match all filter criteria in order for the directive to be applied. 
+> The `ToItems` filter can be invoked multiple times. A schema item must match all filter criteria in order for the directive to be applied.
 
 > Type system directives are applied in order of declaration with the `[ApplyDirective]` attributes taking precedence over the `.ApplyDirective()` method.
 
@@ -415,7 +417,6 @@ type Person  @monitor {
 
 Adding Arguments via schema options is a lot more flexible than via attributes. Use the `.WithArguments` method to supply either a static set of arguments for all matched schema items
 or a `Func<ISchemaItem, object[]>` that returns a collection of any parameters you want on a per item basis.
-
 
 <div class="sideBySideCode hljs">
 <div>
@@ -431,11 +432,12 @@ public void ConfigureServices(IServiceCollection services)
         options.AddGraphType<Person>();
         options.ApplyDirective("deprecated")
             .WithArguments("Names don't matter")
-            .ToItems(schemaItem => 
+            .ToItems(schemaItem =>
                 schemaItem.IsGraphField<Person>("name"));
     }
 }
 ```
+
 </div>
 <div>
 
@@ -455,10 +457,10 @@ type Person  {
 
 GraphQL ASP.NET supports repeatable type system directives. Sometimes it can be helpful to apply your directive to an schema item more than once, especially if you supply different parameters on each application.
 
-Add the `[Repeatable]` attribute to the directive definition and you can the apply it multiple times using the standard methods. GraphQL tools that support this the repeatable syntax 
+Add the `[Repeatable]` attribute to the directive definition and you can the apply it multiple times using the standard methods. GraphQL tools that support this the repeatable syntax
 will be able to properly interprete your schema.
 
-```csharp    
+```csharp
 // apply repeatable attribute
 [Repeatable]
 public sealed class ScanItemDirective : GraphDirective
@@ -488,30 +490,33 @@ services.AddGraphQL(o => {
 ```
 
 ### Understanding the Type System
-GraphQL ASP.NET builds your schema and all of its types from your controllers and objects. In general, this is done behind the scenes and you do not need to interact with it. However, when applying type system directives you are affecting the generated schema and need to understand the various parts of it. If you have a question don't be afraid to ask on [github](https://github.com/graphql-aspnet/graphql-aspnet). 
+
+GraphQL ASP.NET builds your schema and all of its types from your controllers and objects. In general, this is done behind the scenes and you do not need to interact with it. However, when applying type system directives you are affecting the generated schema and need to understand the various parts of it. If you have a question don't be afraid to ask on [github](https://github.com/graphql-aspnet/graphql-aspnet).
 
 **UML Diagrams**
 
-These [uml diagrams](../assets/2022-05-graphql-aspnet-type-system-interface-diagrams.pdf) detail the major interfaces and their most useful properties of the type system. However,
-these diagrams are not exaustive. Look at the [source code](https://github.com/graphql-aspnet/graphql-aspnet/tree/master/src/graphql-aspnet/Interfaces/TypeSystem) for the full definitions.
+These [uml diagrams](../assets/2022-10-graphql-aspnet-structural-diagrams.pdf) detail the major interfaces and their most useful properties of the type system. However, these diagrams are not exaustive. Look at the [source code](https://github.com/graphql-aspnet/graphql-aspnet/tree/master/src/graphql-aspnet/Interfaces/TypeSystem) for the full definitions.
 
 **Helpful Extensions**
 
-There are a robust set of of built in extensions for `ISchemaItem` that can help you filter your data when applying directives. See the [full source code](https://github.com/graphql-aspnet/graphql-aspnet/tree/master/src/graphql-aspnet/Configuration/SchemaItemExtensions.cs) for details.
+There are a robust set of of built in extensions for `ISchemaItem` that can help you filter your data when applying directives. See the [full source code](https://github.com/graphql-aspnet/graphql-aspnet/blob/master/src/graphql-aspnet/Configuration/SchemaItemFilterExtensions.cs) for details.
 
 ## Directives as Services
-Directives are invoked as services through your DI container when they are executed.  When you add types to your schema during its initial configuration, GraphQL ASP.NET will automatically register any directives it finds attached to your entities as services in your `IServiceCollection` instance. However, there are times when it cannot do this, such as when you apply a directive by its string declared name. These late-bound directives may still be discoverable later and graphql will attempt to add them to your schema whenever it can.  However, it may do this after the opportunity to register them with the DI container has passed.
 
-When this occurs, if your directive contains a public, parameterless constructor graphql will still instantiate and use your directive as normal. If the directive contains dependencies in the constructor that it can't resolve, execution of that directive will fail and an exception will be thrown. To be safe, make sure to add any directives you may use to your schema during the `.AddGraphQL()` configuration method.  Directives are directly discoverable and will be included via the `options.AddAssembly()` helper method as well.
+Directives are invoked as services through your DI container when they are executed. When you add types to your schema during its initial configuration, GraphQL ASP.NET will automatically register any directives it finds attached to your entities as services in your `IServiceCollection` instance. However, there are times when it cannot do this, such as when you apply a directive by its string declared name. These late-bound directives may still be discoverable later and graphql will attempt to add them to your schema whenever it can. However, it may do this after the opportunity to register them with the DI container has passed.
+
+When this occurs, if your directive contains a public, parameterless constructor graphql will still instantiate and use your directive as normal. If the directive contains dependencies in the constructor that it can't resolve, execution of that directive will fail and an exception will be thrown. To be safe, make sure to add any directives you may use to your schema during the `.AddGraphQL()` configuration method. Directives are directly discoverable and will be included via the `options.AddAssembly()` helper method as well.
 
 The benefit of ensuring your directives are part of your `IServiceCollection` should be apparent:
-*  The directive instance will obey lifetime scopes (e.g. transient, scoped, singleton).
-*  The directive can be instantiated with any dependencies or services you wish; making for a much richer experience.
+
+-   The directive instance will obey lifetime scopes (e.g. transient, scoped, singleton).
+-   The directive can be instantiated with any dependencies or services you wish; making for a much richer experience.
 
 ## Directive Security
+
 Directives can be secured like controller actions. However, where a controller action represents a field in the graph, a directive action does not. Regardless of the number of action methods, there is only one directive definition in your schema. As a result, the directive is secured at the class level not the method level. Any applied security parameters effect ALL action methods equally.
 
-Take for example that the graph schema included a field of data that, by default, was always rendered in a redacted state (meaning it was obsecured) such as social security number.  You could have a directive that, when supplied by the requestor, would unredact the field and allow the value to be displayed. 
+Take for example that the graph schema included a field of data that, by default, was always rendered in a redacted state (meaning it was obsecured) such as social security number. You could have a directive that, when supplied by the requestor, would unredact the field and allow the value to be displayed.
 
 ```
 [Authorize(Policy = "admin")]
@@ -523,16 +528,17 @@ public sealed class UnRedactDirective : GraphDirective
 }
 ```
 
-> A user must adhere to the requirements of the `admin` policy in order to apply the `@unRedact` directive to a field.  If the user is not part of this policy and they attempt to apply the directive, the query will be rejected.
+> A user must adhere to the requirements of the `admin` policy in order to apply the `@unRedact` directive to a field. If the user is not part of this policy and they attempt to apply the directive, the query will be rejected.
 
-### Security Scenarios 
+### Security Scenarios
 
-* **Execution Directives** - These directives execute using the same security context and `ClaimsPrincipal` applied to the HTTP request; such as an oAuth token. Execution directives are evaluated against the source document while its being constructed, BEFORE it is executed. As a result, if an execution directive fails authorization, the document fails to be constructed and no fields are resolved. This is true regardless of the authorization method assigned to the schema.
+-   **Execution Directives** - These directives execute using the same security context and `ClaimsPrincipal` applied to the HTTP request; such as an oAuth token. Execution directives are evaluated against the source document while its being constructed, BEFORE it is executed. As a result, if an execution directive fails authorization, the document fails to be constructed and no fields are resolved. This is true regardless of the authorization method assigned to the schema.
 
-* **Type System Directives** - These directives are executed during server startup, WITHOUT a `ClaimsPrincipal`, while the schema is being built. As a result, type system directives should not contain any security requirements, they will fail to execute if any security parameters are defined. 
+-   **Type System Directives** - These directives are executed during server startup, WITHOUT a `ClaimsPrincipal`, while the schema is being built. As a result, type system directives should not contain any security requirements, they will fail to execute if any security parameters are defined.
 
 > Since type system directives execute outside of a specific user context, only apply type system directives that you trust.
 
 ## Demo Project
+
 See the [Demo Projects](../reference/demo-projects.md) page for a demonstration on creating a type system directive for extending a field resolver and an execution directives
- that manipulates a string field result at runtime.
+that manipulates a string field result at runtime.

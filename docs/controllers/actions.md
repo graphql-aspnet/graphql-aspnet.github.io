@@ -562,12 +562,12 @@ public class BakeryController : GraphController
 
 ```javascript
 query {
-    searchDonuts(searchParams:
-            name: "jelly*"
-            filled: true
-            dayOld: false){
-        id
-        name
+    searchDonuts(
+        name: "jelly*"
+        filled: true
+        dayOld: false){
+            id
+            name
     }
 }
 ```
@@ -609,8 +609,7 @@ public class DonutSearchParams
 public class BakeryController : GraphController
 {
     [QueryRoot]
-    public IEnumerable<Donut>
-        SearchDonuts(DonutSearchParams searchParams)
+    public IEnumerable<Donut> SearchDonuts(DonutSearchParams searchParams)
     {/* ... */}
 }
 
