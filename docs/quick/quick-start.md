@@ -52,8 +52,7 @@ From the Visual Studio 2019 start screen:
     - Enter your project's name and choose a location.
 3. Choose `ASP.NET Core Web API` when prompted to select a project type.
     - GraphQL ASP.NET has no view layer so we can forgo including Razor and other related options.
-    - Here we've chosen .NET 5 as our target, however; GraphQL ASP.NET is a `netstandard 2.0` library and will work with .NET Core 3.1 and 2.1 as well as .NET 4.7+.
-
+    
 ![Create an API Project](assets/quick-start-1-choose-api.png)
 
 ## Step 2: Add the GraphQL ASP.NET Nuget Package
