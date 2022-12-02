@@ -59,6 +59,13 @@ These tests are executed in a labratory environment with the following condition
 * Each user executes 10,000 requests at most 15ms apart
 * This workload acts as a control to compare performance of the baseline web api against the overhead of the graphql library
 
+#### GraphQL Max Throughput Load:
+
+* JMeter script: `graphql-max-load-generator.jmx`
+* Starts 20 new users each second until failure
+* Each user executes a query every 0-15ms until failure
+
+
 ### Memory Profile Test
 
 A qualitative test executed with the server instance running in release mode, harnessed via `dotMemory`. Given the artificial environment restrictions this imposes its difficult to pin down exact KPIs but in general this test is used to monitor:
@@ -83,7 +90,7 @@ A qualitative test executed with the server instance running in release mode, ha
 
 A test with the server executing in release mode, WITHOUT the subscription server attached and with monitoring via passive `dotnet-counters`. This test measures the throughput of queries and mutations through the runtime as well as the load those queries place on the server CPU. Using GraphQL (as opposed to REST) will generate some additional overhead to parse and execute the query on top of the REST request which invokes it. As a result, the metrics of this test are expressed in terms of % increases over a comperable REST workload via a baseline ASP.NET web api controller. 
 
-<span style="color:pink;">NOTE: CPU Utilization is measured via [Process Explorer](https://learn.microsoft.com/en-us/sysinternals/downloads/process-explorer).</span>
+
 
 
 |Metric                    |Expectations|
@@ -93,6 +100,8 @@ A test with the server executing in release mode, WITHOUT the subscription serve
 |Throughput (req/sec)      |Throughput, measured in requests per second, is within 10% of the peak load generated via the REST control load |
 
 > The aim of this test is to ensure adequate single instance throughput and that the overhead for using graphql on top of web api is kept to a minimum.
+
+<span style="color:pink;">NOTE: CPU Utilization is measured via [Process Explorer](https://learn.microsoft.com/en-us/sysinternals/downloads/process-explorer).</span>
 
 **Results**
 
@@ -105,6 +114,21 @@ A test with the server executing in release mode, WITHOUT the subscription serve
 |2022-12-1  |v0.14.0-beta | CPU Utilization  |0.01-2%          |  1-3%              | <span style="color:green;"> +1% </span>        |
 |           |             | GC % Time        |  < 1%           |  < 1%              | <span style="color:green;">+0% </span>         |
 |           |             | Throughput       | 37,360 req/sec  |  36,509 req/sec    | <span style="color:green;">-2k (-2.3%)</span>  |
+
+
+
+### Max Throughput Test
+
+A simple test flooding the test server's with an every increasing amount of traffic until it begins to deny requests. The max throughput just prior to failure is recorded.
+
+**Results**
+
+| Date      |  Version    |  Metric          |GraphQL Query  | 
+|-----------|-------------|------------------|-----------------|
+|2022-12-1  |v0.14.0-beta | Max Throughput   |46,000 req/sec*     |
+
+\* We ran out of resources in the test environment and could not generate any more load against the test server. 
+
 
 
 ### Subscription Event Load Test

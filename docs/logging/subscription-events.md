@@ -10,6 +10,17 @@ _**Common Event Properties**_
 
 The [common event properties](./standard-events.md) outlined on the standard events page apply to all subscription events.
 
+## Server Level Events
+
+### Subscription Event Dispatch Queue Alert
+This event is recorded when the server's schema-agnostic, internal dispatch queue reaches a given threshold. The internal dispatch queue is where all subscription events destined for connected clients are staged before being processed. The thresholds at which this alert is recorded can be [customized](../advanced/subscriptions.md#dispatch-queue-monitoring).
+
+| Property                    | Description                                                          |
+| ----------------            | ---------------------------------------------------------------------|
+| _ThresholdLevelReached_     | The declared threshold level that was reached causing this entry to be recorded. (Expressed in # of queued events) |
+| _EventQueueCount_           | The actual number of events currently queued.  |
+| _CustomMessage_             | An optional, staticly declared message registered with the threshold level. |
+
 ## Schema Level Events
 
 ### Subscription Route Registered
@@ -169,4 +180,3 @@ Subscription events refer to the events that are raised from mutations and proce
 | _SubscriptionEventId_   | The globally unique id of the subscription event.             |
 | _SubscriptionEventName_ | The name of the event as its defined in the schema.           |
 | _MachineName_           | The `Environment.MachineName` of the current server.          |
-

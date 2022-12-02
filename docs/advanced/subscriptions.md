@@ -359,7 +359,7 @@ When the router receives an event it looks to see which receivers (a.k.a. connec
 
 Each work item is, for the most part, a standard query execution. But with lots of events being delivered on a server saturated with clients, each potentially having multiple subscriptions, along with regular queries and mutations executing as well...limits must be imposed otherwise CPU utilization could unreasonably spike...and it may spike regardless in some use cases. 
 
-By default, the max number of work items the router will deliver simultaniously is `50`.  This is a global, server-wide pool, shared amongst all registered schemas. You can manually adjust this value by changing it prior to calling `.AddGraphQL()`.   This value defaults to a low number on purpose, use it as a starting point to dial up the max concurrency to a level you feel comfortable with in terms of performance and cost. The only limit here is server resources and other environment limitations outside the control of graphql. 
+By default, the max number of work items the router will deliver simultaniously is `500`.  This is a global, server-wide pool, shared amongst all registered schemas. You can manually adjust this value by changing it prior to calling `.AddGraphQL()`.   This value defaults to a low number on purpose, use it as a starting point to dial up the max concurrency to a level you feel comfortable with in terms of performance and cost. The only limit here is server resources and other environment limitations outside the control of graphql. 
 
 ```csharp
 // Startup.cs
@@ -383,3 +383,51 @@ Most of the work is queued, yes, but that's only to put a reasonable cap on the 
 Balancing the load can be difficult. Luckily there are some [throttling levers](/docs/reference/global-configuration#subscriptions) you can adjust.
 
 > Raising subscription events can exponentially increase the load on each of your servers. Think carefully when you deploy subscriptions to your application.
+
+
+### Dispatch Queue Monitoring
+
+Internally, whenever a subscription server instance receives an event, the router checks to see which of the currently connected clients need to process that event. The client/event combination is then put into a dispatch queue that is continually processed via a background service according to the throttling limits you've specified. If events are received faster than they can be dispatched they are queued until resources are freed up. 
+
+There is built in monitoring of this queue that will automatically [record a logging event](../logging/subscription-events.md#subscription-event-dispatch-queue-alert) when a given threshold is reached. 
+
+#### Default Event Alert Threshold
+This event is recorded at a `Critical` level when the queue reaches `10,000 events`. This alert is then re-recorded once every 5 minutes if the 
+queue remains above 10,000 events.
+
+#### Custom Event Alert Thresholds
+
+In some high volume scenarios, its not uncommon for the event queue to spike beyond the default monitoring levels from time to time.  If you need more granular control of the notifications, register an instance of `ISubscriptionClientDispatchQueueAlertSettings` to your DI container before adding GraphQL and your settings will be used instead.
+
+In the example below, if the queue reaches 1,000 events, the debug level alert will be recorded. If 30 seconds pass and the queue is still above 1000 events, the debug level alert will be recorded again. However, if the queue crosses 10,000 events then the warning level alert will be recorded (the debug alert is then ignored).  If the queue reaches 100k events then a critical level alert will be recorded every 15 seconds until it drops below 100k.
+
+ Lower level thresholds (as determined by number of queued events) will not be triggered if a higher level is on active cool down.
+
+```csharp
+// startup configuration
+var thresholds = new SubscriptionClientDispatchQueueAlertSettings();
+thresholds.AddThreshold(
+    LogLevel.Debug,
+    1000,
+    TimeSpan.FromSeconds(30));
+
+thresholds.AddThreshold(
+    LogLevel.Warning,
+    10000,
+    TimeSpan.FromSeconds(120));
+
+thresholds.AddThreshold(
+    LogLevel.Critical,
+    100000,
+    TimeSpan.FromSeconds(15));
+    
+// register the interface as a singleton
+services.AddSingleton<ISubscriptionClientDispatchQueueAlertSettings>(alerts);
+
+// normal graphql configuration
+services.AddGraphQL();
+
+
+```
+
+> Consider using the built in `SubscriptionClientDispatchQueueAlertSettings` object for a standard implementation of the required interface.
