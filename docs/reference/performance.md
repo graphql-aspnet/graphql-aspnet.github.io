@@ -7,7 +7,7 @@ sidebar_label: Benchmarks
 ## Query Benchmarking
 GraphQL ASP.NET is designed to be fast. For our benchmarks, we are tracking a number of query types which measure performance via the various paths through the library; multi controller queries, queries with variables etc. These are executed against an in-memory data store without an attached database. 
 
-The goal of our benchmarks is to measure the library's abiliy to process a query in isolation; not how long an action method takes to query a database for data and send a request over the wire. Obviously, real world workloads are going to be slower than these theoretical max values, but the faster we can make the benchmarks the faster all other scenarios will be.
+The goal of our benchmarks is to measure the library's abiliy to process a query in isolation, to perform the query and execute user code; not how long an action method takes to query a database for data and send a request over the wire. Obviously, real world workloads are going to be slower than these theoretical values, but the faster we can make the benchmarks the faster all other scenarios will be.
 
 As you can see all query types execute in sub-millisecond timeframes. If there is a specific query type or scenario that you are seeing a significant performance degregation with please open an issue on github and let us know! 
 
@@ -18,9 +18,11 @@ As you can see all query types execute in sub-millisecond timeframes. If there i
 
 ## Performance Testing
 
-Expanding on the bench marks above we periodically execute various tests against the library to measure aspects of production execution for a single instance to ensure acceptable performance. 
+We periodically execute tests against the library to measure throughput and stability, for a single server instance, under load. Our goal is to measure the theoretical limits in a multi-user, "production like" scenario.
 
-These tests are executed in a labratory environment with the following conditions:
+<span style="color:pink;">These performance tests are not intended to be used as data points when determining scaling requirements for your own production workloads. Your use cases will be different and effected by factors not present in our lab environment (e.g. databases, service orchrestration, business logic etc.). Be sure to execute your own load tests using queries indicative of your expected user base and act accordingly.</span>
+
+These tests are executed in a controlled setting with the following conditions:
 
 ### Test Configuration and Specs
 #### GraphQL ASP.NET Server:
@@ -29,7 +31,7 @@ These tests are executed in a labratory environment with the following condition
 * .NET 7 Runtime
 * Garbage collection executing in [server mode](https://learn.microsoft.com/en-us/dotnet/core/runtime-config/garbage-collector#workstation-vs-server)
 * Local area, wired, gigabit network
-* All tests are executed against this server environment
+* Simple queries to fetch or mutate a single, in-memory object
 
 ####  Memory Profiling Load:
 
@@ -95,13 +97,11 @@ A test with the server executing in release mode, WITHOUT the subscription serve
 
 |Metric                    |Expectations|
 |--------------------------|-------------|
-|CPU Overhead              |No more than a 5% increase in CPU load when compared to the REST control load |
-|GC % Time                 |Using the metrics obtained via `dotnet-counters` expect that the GC % time is within 1% of the REST control load |
+|CPU Utilization           |Using [Process Explorer](https://learn.microsoft.com/en-us/sysinternals/downloads/process-explorer) to measure utilization, no more than a 5% increase when compared to the REST control load.  |
+|GC % Time                 |Using the metrics obtained via [dotnet-counters](https://learn.microsoft.com/en-us/dotnet/core/diagnostics/dotnet-counters) expect that the GC % time is within 1% of the REST control load |
 |Throughput (req/sec)      |Throughput, measured in requests per second, is within 10% of the peak load generated via the REST control load |
 
 > The aim of this test is to ensure adequate single instance throughput and that the overhead for using graphql on top of web api is kept to a minimum.
-
-<span style="color:pink;">NOTE: CPU Utilization is measured via [Process Explorer](https://learn.microsoft.com/en-us/sysinternals/downloads/process-explorer).</span>
 
 **Results**
 
@@ -119,15 +119,15 @@ A test with the server executing in release mode, WITHOUT the subscription serve
 
 ### Max Throughput Test
 
-A simple test flooding the test server's with an every increasing amount of traffic until it begins to deny requests. The max throughput just prior to failure is recorded.
+A simple test flooding the server with an ever-increasing amount of traffic until it begins to deny requests or fails completely. The throughput of each loading client is summed just prior to failure and recorded as the max throughput.
 
 **Results**
 
 | Date      |  Version    |  Metric          |GraphQL Query  | 
 |-----------|-------------|------------------|-----------------|
-|2022-12-1  |v0.14.0-beta | Max Throughput   |46,000 req/sec*     |
+|2022-12-1  |v0.14.0-beta | Max Throughput   | 57,919 req/sec *     |
 
-\* We ran out of resources in the test environment and could not generate any more load against the test server. 
+\* We ran out of client machines and could not generate any more load against the test server. At the time, the server process indicated 5% CPU utilization and less than 750mb of committed memory.
 
 
 

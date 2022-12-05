@@ -117,7 +117,7 @@ public class SaladOrBread : GraphUnionProxy
 }
 ```
 
-> If you don't supply a name, graphql will automatically use the name of the proxy as the name of the union.
+> If you don't supply a name, graphql will automatically use the class name of the proxy as the name of the union.
 
 ## Union Name Uniqueness
 
@@ -162,7 +162,7 @@ public class BakeryController : GraphController
     public IGraphActionResult SearchFood(
             string name)
     {
-        return new Bagel();
+        return this.Ok(new Bagel());
     }
 }
 ```
@@ -219,7 +219,7 @@ public class BakeryController : GraphController
     [QueryRoot("searchFood", typeof(RollOrBread))]
     public IGraphActionResult SearchFood(string name)
     {
-        return new Bagel();
+        return this.Ok(new Bagel());
     }
 }
 ```
@@ -231,4 +231,4 @@ The query will now interpret all `Bagels` as `Rolls` and be able to process the 
 
 If, via your logic you are unable to determine which of your Union's types to return then return null and GraphQL will supply the caller with an appropriate error message stating the query was indeterminate. Also, returning any type other than one that was formally declared as part of your Union will result in the same indeterminate state.
 
-**Note:** Most of the time GraphQL ASP.NET will never call the `TypeMapper` on your UNION. If your union types do not share an inheritance chain, for instance, the method will never be called. If your types do share an inheritance chain, such as in the example above, considering using an interface graph type along with specific fragments instead of a UNION, to avoid the issue altogether.
+**Note:** Most of the time GraphQL ASP.NET will never call `MapType` on your UNION. If your union types do not share an inheritance chain, for instance, the method will never be called. If your types do share an inheritance chain, such as in the example above, considering using an interface graph type along with specific fragments instead of a UNION, to avoid the issue altogether.

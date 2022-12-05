@@ -4,7 +4,7 @@ title: List & Non-Null
 sidebar_label: List & Non-Null
 ---
 
-In addition to the six fundamental graph types, GraphQL contains two meta graph types; [`LIST` and `NON_NULL`](https://graphql.org/learn/schema/#lists-and-non-null).
+In addition to the six fundamental graph types, GraphQL contains two meta graph types: [`LIST` and `NON_NULL`](https://graphql.org/learn/schema/#lists-and-non-null).
 
 -   `NON_NULL` : Indicates that the Graph Type its describing must not be a null value, be that as an input argument or returned from a field
 -   `LIST`: Indicates that GraphQL should expect a collection of objects instead of just a single item.
@@ -57,6 +57,6 @@ You can override the default behavior by defining a [custom type expression](../
 
 ## Runtime Type Validation
 
-When executing a query and resolving a field, should one of your graph methods (or even your object properties) not return data conforming to the type expression that's defined for it, GraphQL will reject the data. The value is set to null and an error is registered in the response for the field in question. The runtime will not attempt to resolve any referenced child fields for a rejected value.
+When executing a query and resolving a field, should one of your action methods (or even your object properties) not return data conforming to the type expression that's defined for it, GraphQL will reject the data. The value is set to null and an error is registered in the response for the field in question. The runtime will not attempt to resolve any referenced child fields for a rejected value.
 
 If the rejected field does not allow nulls, the error is propagated up to its parent, which is then also set to null. If that parent field can't return a null value the error continues up the chain until it reaches a field that can be null or the entire field collection is nulled out. \[Spec § [6.4.4](https://graphql.github.io/graphql-spec/October2021/#sec-Errors-and-Non-Nullability)\]

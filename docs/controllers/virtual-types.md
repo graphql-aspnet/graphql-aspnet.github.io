@@ -1,72 +1,61 @@
 ---
-id: field-paths
+id: virtual-types
 title: Virtual Graph Types
 sidebar_label: Virtual Graph Types
 ---
 
 ## What is a Virtual Graph Type?
 
-When we reason about ASP.NET MVC, routing comes naturally. We define a URL and perform an HTTP request to fetch data.
+ GraphQL is statically typed. Each field in a query must always resolve to a single graph type known to the schema. This can make query organization rather tedious and adds A LOT of boilerplate code if you wanted to introduce even the slightest complexity to your graph.
 
-```
-GET http://homeMadeBakery.local/pastries/donuts/15
-```
+Let's think about this query:
 
-and we can picture how this might map to an API Controller:
-
-```csharp
-[Route("pastries")]
-public class PastriesController : Controller
-{
-    [HttpGet("donuts/{id}")]
-    public Donut RetrieveDonut(int id)
-    {/* ... */}
-}
-```
-
-When you startup an MVC or Web API application .NET gathers your configured routes and maintains a map of `endpoint -> action method` in order to hand off an HTTP request to a given method.
-
-OK, Great! Now lets think about this graphQL query:
-
-```javascript
+```ruby
 query {
-    pastries {
-        donut(id: 15){
-            name
-            flavor
+    groceryStore {
+        bakery {
+            pastries {
+                    donut(id: 15){
+                        name
+                        flavor
+                    }
+                }
         }
+        deli {
+            meats {
+                beef (id: 23) {
+                    name
+                    cut
+                }
+            }
+        }    
     }
 }
 ```
 
-We can think about each field in the query as a unique path in our schema, similar to the URL above:
+Knowing what we know about GraphQL's requirements, we need to create types for the grocery store, the bakery, pastries, a donut, the deli counter, meats, beef etc. Its a lot of setup for what basically boils down to two methods to retrieve a donut and a cut of beef by their respective ids.
 
-```ruby
-[query]
-[query]/pastries
-[query]/pastries/donut
-[type]/donut/name
-[type]/donut/flavor
-```
-
-In fact, this is how GraphQL ASP.NET knows how to invoke your methods. At startup, a complete map of the query and mutation methods as well as every graph type is translated into a set of field paths. Then, when a request is made of a field, it invokes the method or property associated with that `field path`.
-
-> All action methods, graph type properties and graph type methods must map to a unique field path in your graph schema.
+This is where `virtual graph types` come in. Using a templating pattern similar to what we do with REST queries we can create rich graphs with very little boiler plate. Adding a new arm to your graph is as simple as defining a path to it in a controller.
 
 ```csharp
-[GraphRoute("pastries")]
-public class PastriesController : GraphController
+[GraphRoute("groceryStore")]
+public class GroceryStoreController : GraphController
 {
-    [Query("donut")]
+    [Query("bakery/pastries/donut")]
     public Donut RetrieveDonut(int id)
     {/* ...*/}
 
+    [Query("deli/meats/beef")]
+    public Meat RetrieveCutOfBeef(int id)
+    {/* ...*/}
 }
 ```
 
-This is a different controller than in the top example. We inherit from `GraphController` and use `Query` instead of `Controller` and `HttpGet`, respectively.
+Internally, for each encountered path segment (e.g. `bakery`, `meats`), GraphQL generates a `virutal graph type` to fulfill resolver requests for you and act as a pass through to your real code. It does this in concert with your real code and performs a lot of checks at start up to ensure that the combination of your real types as well as virutal types can be put together to form a functional graph.  If a collision occurs the server will fail to start.
 
-You can nest fields as deep as you need in order to create a rich organizational hierarchy to your data. This is best explained by code, take a look at these two controllers:
+#### Another Example
+
+You can nest fields as deep as you want and spread them across any number of controllers in order to create a rich organizational hierarchy to your data. This is best explained by code, take a look at these two controllers:
 
 ```csharp
 
@@ -143,7 +132,7 @@ With REST, this is probably 4 separate requests or one super contrived request b
 
 ## Actions Must Have a Unique Path
 
-As was said above, each field in your object graph must uniquely map to one method (or getter property) in your code.
+Each field in your object graph must uniquely map to one method (or getter property) in your code.
 
 Take this example:
 
@@ -385,7 +374,7 @@ When you start thinking about large object graphs, 100s of controllers and 100s 
 
 ## Field Path Names
 
-> Each segment of a field path must individually conform to the required naming standards for fields and graph type names.
+> Each segment of a virtual field path must individually conform to the required naming standards for fields and graph type names.
 
 In reality this primarily means don't start your fields with a double underscore, `__`, as thats reserved by the introspection system. The complete regex is available in the source code at `Constants.RegExPatterns.NameRegex`.
 
