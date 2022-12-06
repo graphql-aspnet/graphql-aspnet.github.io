@@ -43,7 +43,7 @@ All directive action methods must:
 
 -   Share the same method signature
     -   The return type must match exactly
-    -   The input arguments must match exactly in name, casing and declaration order.
+    -   The input arguments must match exactly in type, name, casing and declaration order.
 -   Return a `IGraphActionResult` or `Task<IGraphActionResult>`
 
 ### Action Results

@@ -12,7 +12,7 @@
         "Controllers & Actions": [
             "controllers/actions",
             "controllers/model-state",
-            "controllers/field-paths",
+            "controllers/virtual-types",
             "controllers/authorization",
             "controllers/type-extensions",
             "controllers/batch-operations"

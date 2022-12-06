@@ -214,7 +214,7 @@ By default, all properties that are reference types (i.e. classes) are nullable 
 <div class="hljs">
 
 ```csharp
-// Donut.cs
+// Bakery.cs
 public class Bakery
 {
     // a reference to another object
@@ -224,7 +224,7 @@ public class Bakery
 
 ```ruby
 # GraphQL Type Definition
-input Input_Donut {
+input Input_Bakery {
   owner: Input_Person = null
 }
 ```
@@ -232,13 +232,13 @@ input Input_Donut {
 </div>
 <br/>
 
-If you want to force a value to be supplied (either on a query document or by default) you can use the [GraphField] attribute to augment the field.
+If you want to force a value to be supplied (either on a query document or by default) you can use the `[GraphField]` attribute to augment the field.
 
 
 <div class="hljs">
 
 ```csharp
-// Donut.cs
+// Bakery.cs
 public class Bakery
 {
     public Bakery()
@@ -247,13 +247,13 @@ public class Bakery
     }
 
     // a reference to another object
-    [GraphField(TypeExpression = TypeExpressions.IsNotNull)]
+    [GraphField(TypeExpression = "Type!")]
     public Person Owner { get; set; }
 }
 ```
 ```ruby
 # GraphQL Type Definition
-input Input_Donut {
+input Input_Bakery  {
   owner: Input_Person! = { name: "Bob Smith" }
 }
 ```
@@ -279,13 +279,13 @@ public class Bakery
 
     // a reference to another object
     [Required]
-    [[GraphField(TypeExpression = TypeExpressions.IsNotNull)]]
+    [GraphField(TypeExpression = "Type!")]
     public Person Owner { get; set; }
 }
 ```
 ```ruby
 # GraphQL Type Definition
-input Input_Donut {
+input Input_Bakery {
   owner: Input_Person!
 }
 ```

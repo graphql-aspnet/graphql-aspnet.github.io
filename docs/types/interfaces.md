@@ -4,7 +4,7 @@ title: Interfaces
 sidebar_label: Interfaces
 ---
 
-Interfaces in GraphQL work like interfaces in C#. They provide a contract for a set of common fields of different objects. In regards to declarations, the `INTERFACE` graph type works exactly like [object types](./objects).
+Interfaces in GraphQL work like interfaces in C#. They provide a contract for a set of common fields of different objects. When it comes to declaring them, the `INTERFACE` graph type works exactly like [object types](./objects).
 
 By Default, when creating an interface graph type GraphQL:
 
@@ -48,7 +48,7 @@ The section on [working with interfaces](../controllers/actions#working-with-int
 
 Since an interface graph type contains no implementation details, an object graph type is always matched to any retrieved data to provide instructions on how to proceed with child field resolution.
 
-You must let GraphQL know of the possible object types you intend to return as the interface. If your action method returns `IPastry` and you return a `Donut`, but didn't let GraphQL know about the `Donut` class, it won't be able to continue to resolve the requested fields and fail.
+You must let GraphQL know of the possible object types you intend to return as the interface. If your action method returns `IPastry` and you return a `Donut`, but didn't let GraphQL know about the `Donut` class, it won't be able to continue to resolve the requested fields.
 
 Most of the time GraphQL is smart enough to figure out which object types you're referencing by looking at the complete scope of actions and objects in your schema and won't bug you about it. But the steps outlined with defining action methods describe ways to ensure you have no issues.
 
@@ -168,7 +168,7 @@ public interface IDonut : IPastry
 
 In .NET `IDonut`, by virtue of implementing `IPastry`, grants "access" to the Id and Name fields for any object that implements IDonut since said object must implement both interfaces to compile correctly. This is not the case in GraphQL. GraphQL does not attempt to walk or parse any interfaces that are not part of the schema. An interface is added to the schema if its expliclty added at start up or indicated as an allowed return type from one of your controller methods or object fields. This allows you to safely manage your internal interfaces like `IList<T>` without worry that GraphQL will see them and try parse them. 
 
-This can create some less than wanted scenarios. For instance, if only `IDonut` is part of the schema, the fields for `Id` and `Name` won't be seen nor made available in the graph, even though its understandable that you'd want them to be.
+This can create some less than ideal scenarios. For instance, if only `IDonut` is part of the schema, the fields for `Id` and `Name` won't be seen nor made available in the graph, even though its understandable that you'd want them to be.
 
 
 <div class="sideBySideCode hljs">
@@ -196,7 +196,7 @@ interface IDonut {
 </div>
 <br/>
 
-However, since the October 2021 update, GraphQL now supports interface inheritance. As a result, as long as both interfaces are included as part of the schema then the fields will wire up as you'd expect.
+However, since the October 2021 specification update, GraphQL now supports interface inheritance. As a result, as long as both interfaces are included as part of the schema then the fields will wire up as you'd expect.
 
 <div class="sideBySideCode hljs">
 <div>

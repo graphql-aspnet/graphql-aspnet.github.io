@@ -1,14 +1,14 @@
 ---
 id: type-expressions
-title: Custom Type Expressions
+title: Type Expressions
 sidebar_label: Type Expressions
 ---
 
-GraphQL states that when a field returns a value that doesn't conform to the required definition of the field that the value is rejected, converted to null and an error added to the response.
+The GraphQL specification states that when a field resolves a value that doesn't conform to the type expression of the field that the value is rejected, converted to null and an error added to the response.
 
-GraphQL ASP.NET makes as few assumptions as possible about the data returned from your fields to result in as few errors as possible.
+When GraphQL ASP.NET build a schema it makes as few assumptions as possible about the data returned from your fields to result in as few errors as possible.
 
-These assumptions are made:
+These assumptions are:
 
 -   Fields that return reference types **can be** null
 -   Fields that return value types **cannot be** null
@@ -49,20 +49,20 @@ query {
 </div>
 <br/>
 
-This action method could return a `Donut` or returns `null`. But should the donut field, from a GraphQL perspective, allow a null return value? The code certainly does and the rules above say fields that return a reference type can be null...but that's not what's important. Its ultimately your decision to decide if a "null donut" is allowed, not the C# compiler and not the assumptions made by the library.
+This action method could return a `Donut` or return `null`. But should the donut field, from a GraphQL perspective, allow a null return value? The code certainly does and the rules above say fields that return a reference type can be null...but that's not what's important. Its ultimately your decision to decide if a "null donut" is allowed, not the C# compiler and not the assumptions made by the library.
 
 On one hand, if a null value is returned, regardless of it being valid, the _outcome_ of the field is the same. When we return a null no child fields are processed. On the other hand, if null is not allowed we need to tell someone, let them know its nulled out not because it simply _is_ null but because a schema violation occurred.
 
-## Using an Alternate Type Expression
+## Field Type Expressions
 
-Most of the time, using the `TypeExpression` property of a field declaration attribute is sufficient to indicate your intentions.
+You can add more specificity to your fields by using the `TypeExpression` property of the various field declaration attributes.
 
 ```csharp
 
 // Declare that a donut MUST be returned (null is invalid)
 // ----
-// Schema Syntax:  Donut!
-[Query("donut", TypeExpression = TypeExpressions.IsNotNull)]
+// Final Schema Syntax:  Donut!
+[Query("donut", TypeExpression = "Type!")]
 public Donut RetrieveDonut(string id)
 {/*...*/}
 
@@ -73,8 +73,8 @@ public Donut RetrieveDonut(string id)
 // valid:    []
 // invalid:  null
 // ----
-// Schema Syntax:  [Donut]!
-[Query("donut", TypeExpression = TypeExpressions.IsNotNullList)]
+// Final Schema Syntax:  [Donut]!
+[Query("donut", TypeExpression = "[Type]!")]
 public IEnumerable<Donut> RetrieveDonut(string id)
 {/*...*/}
 
@@ -86,69 +86,36 @@ public IEnumerable<Donut> RetrieveDonut(string id)
 // invalid:  [donut1, null, donut2]
 // invalid:  null
 // ----
-// Schema Syntax:  [Donut!]!
-[Query("donut", TypeExpression = TypeExpressions.IsNotNull | TypeExpressions.IsNotNullList)]
+// Final Schema Syntax:  [Donut!]!
+[Query("donut", TypeExpression = "[Type!]!")]
 public IEnumerable<Donut> RetrieveDonut(string id)
 {/*...*/}
 ```
 
-> The `TypeExpression` property is available on `[Query]`, `[QueryRoot]`, `[Mutation]`, `[MutationRoot]`, `[Subscription]`, `[SubscriptionRoot]` and `[GraphField]`
+> The value `Type` used in the examples is arbitrary and can be any valid string. The correct type name for the target schema will be used in its place at runtime.
 
-## Declaring a TypeDefinition
-
-Using the `TypeExpressions` enumeration above is a convenient way to indicate the requirements of a field but in rare occasions you'll need to take it one step further and declare a complete type definition.
-
-Take for instance this type:
+<span style="color:pink;">**Warning**: When declared, the runtime will use your `TypeExpression` as law for any field declarations; skipping its internal checks. You can setup a scenario where by you could return data that the runtime could never validate as being correct and GraphQL will happily process it and return an error every time. </span>
 
 ```csharp
-IEnumerable<IEnumerable<IEnumerable<string>>>
-```
-
-The possible scenarios for our data could be endless:
-
--   A list of a list of a list of strings
--   A list of a list of a list of strings that can't be null
--   A list that returns a list that could be a list or null that contains a list that contains a string
--   ...and so on
-
-For this we have declare the full type definition our self as an array of `MetaGraphType`s
-
-```csharp
-// Declare that the the method will return a "list of a list of a list of strings" and that any element could be null
-// This is equivalent to the defaults applied by GraphQL
-// ----
-// Schema Syntax:  [[[String]]]
-[Query("names", TypeDefinition = [MetaGraphTypes.IsList, MetaGraphTypes.IsList, MetaGraphTypes.IsList])]
-public IEnumerable<IEnumerable<IEnumerable<string>>> GenerateNames(int seed)
-{/*...*/}
-
-// Declare that we will return a "list of a list of a list of strings" and while any list could be null,
-// the strings themselves cannot be null
-// ----
-// Schema Syntax:  [[[String!]]]
-[Query("names", TypeDefinition = [MetaGraphTypes.IsList, MetaGraphTypes.IsList, MetaGraphTypes.IsList, MetaGraphTypes.IsNotNull])]
-public IEnumerable<IEnumerable<IEnumerable<string>>> GenerateNames(int seed)
-{/*...*/}
-
-// Declare that the return type is a "list of a list of non-null lists of strings".
-// ----
-// Schema Syntax:  [[[String]!]]
-[Query("names", TypeDefinition = [MetaGraphTypes.IsList, MetaGraphTypes.IsList,  MetaGraphTypes.IsNotNull, MetaGraphTypes.IsList])]
-public IEnumerable<IEnumerable<IEnumerable<string>>> GenerateNames(int seed)
-{/*...*/}
-```
-
-> The `TypeDefinition` property is available on `[Query]`, `[QueryRoot]`, `[Mutation]`, `[MutationRoot]`, `[Subscription]`, `[SubscriptionRoot]` and `[GraphField]`
-
-**Warning**: When declared, the runtime will accept your `TypeDefinition` or `TypeExpression` as law. You can setup a scenario where by you could return data that the runtime could never validate and GraphQL will happily process it and cause an error every time. For instance returning a single integer but declaring a `TypeDefinition` of a list of integers or declaring a list of donuts but only returning a single instance.
-
-```csharp
-// ERROR
-// GraphQL will expect an IEnumerable to be returned and will fail every time this
+// QUERY EXECUTION ERROR
+// GraphQL will attempt to process Donut as an IEnumerable and will fail to resolve every time this
 // field is invoked
-[Query("donut", TypeDefinition = [MetaGraphTypes.IsList])]
+[Query("donut", TypeExpression ="[Type]")]
 public Donut RetrieveDonut(string id)
 {/*...*/}
 ```
 
-"With great power comes great responsibility" - Uncle Ben
+"With great power comes great responsibility"  -Uncle Ben
+
+## Input Argument Type Expressions
+
+Similar to fields, you can use the `TypeExpression` property on `[FromGraphQL]` to add more specificity to your input arguments.
+
+```csharp
+// Force the argument "id" to supply a string (it cannot be supplied as null)
+// -----------------
+// Final Type Expression of the 'id' arg:  String!
+[Query]
+public Donut RetrieveDonut([FromGraphQL(TypeExpression = "Type!")] string id)
+{/*...*/}
+```

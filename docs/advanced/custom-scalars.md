@@ -256,8 +256,8 @@ The @specifiedBy directive can be applied to a scalar in all the same ways as ot
 GraphQLProviders.ScalarProvider.RegisterCustomScalar(typeof(MoneyScalarType));
 services.AddGraphQL(o => {
     o.ApplyDirective("@specifiedBy")
-    .WithArguments("https://myurl.com")
-    .ToItems(item => item.Name == "Money");
+     .WithArguments("https://myurl.com")
+     .ToItems(item => item.Name == "Money");
 });
 
 // via the ApplyDirective attribute
@@ -286,8 +286,7 @@ A few points about designing your scalar:
 -   Scalar types are expected to be thread safe.
 -   The runtime will pass a new instance of your scalar graph type to each registered schema. It must be declared with a public, parameterless constructor.
 -   Scalar types should be simple and work in isolation.
-    -   The `ReadOnlySpan<char>` provided to `ILeafValueResolver.Resolve` should be all the data needed to generate a value, there should be no need to perform side effects or fetch additional data.
-    -   If you have a lot of logic to unpack a string, consider using a regular OBJECT graph type instead.
+-   The `ReadOnlySpan<char>` provided to `ILeafValueResolver.Resolve` should be all the data needed to generate a value, there should be no need to perform side effects or fetch additional data.
 -   Scalar types should not track any state or depend on any stateful objects.
 -   `ILeafValueResolver.Resolve` must be **FAST**! Since your resolver is used to construct an initial query plan from a text document, it'll be called orders of magnitude more often than any other method.
 
