@@ -68,7 +68,7 @@ Well that's just plain awful. We've over complicated our bakery model and made i
 
 ## The [TypeExtension] Attribute
 
-So what do we do? We've talked in the section on [field paths](./field-paths) about GraphQL maintaining a 1:1 mapping between a field in the graph and a method to retrieve data for it (i.e. its assigned resolver). What prevents us from creating a method to fetch a list of Cake Orders and saying, "Hey, GraphQL! When someone asks for the field `[type]/bakery/orders` call our method instead of a property getter on the `Bakery` class. As it turns out, that is exactly what a `Type Extension` does.
+So what do we do? We've talked before about GraphQL maintaining a 1:1 mapping between a field in the graph and a method to retrieve data for it (i.e. its assigned resolver). What prevents us from creating a method to fetch a list of Cake Orders and saying, "Hey, GraphQL! When someone asks for the field `[type]/bakery/orders` call our method instead of a property getter on the `Bakery` class. As it turns out, that is exactly what a `Type Extension` does.
 
 ```csharp
 // Bakery.cs

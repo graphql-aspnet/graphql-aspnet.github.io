@@ -52,7 +52,7 @@ SubscriptionServerSettings.MaxConcurrentReceiverCount = 50;
 
 | Default Value | Acceptable Values |
 | ------------- | ----------------- |
-| `50`          | > 0               |
+| `500`          | > 0              |
 
 
 ### MaxConnectedClientCount
