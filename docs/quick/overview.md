@@ -39,7 +39,7 @@ This documentation uses a number of terms to refer to the various pieces of the 
 ### Schema
 This is the set of data types, their fields, input arguments etc. that are exposed on an object graph. When you write a graphql query to return data the fields you request, their arguments and their children must all be defined on a schema that graphql will validate your query against.  
 
-> In GraphQL ASP.NET the schema is generated at runtime directly from your C# code, there is no boilerplate code necessary to define up a schema.
+> In GraphQL ASP.NET the schema is generated at runtime directly from your C# controllers; there is no additional boilerplate code necessary to define a schema.
 
 Your schema is "generated" at runtime by analyzing your model classes, controllers and action methods then populating a `GraphSchema` container with the appropriate graph types to map graphql requests to your controllers. 
 

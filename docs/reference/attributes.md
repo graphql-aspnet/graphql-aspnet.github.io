@@ -197,9 +197,9 @@ public class CharacterController : GraphController
 }
 ```
 
-#### `[FromGraphQL(typeExpression)]`
+#### `[FromGraphQL(TypeExpression = "Type!")]`
 
--   `typeExpression`: A custom type expression to declare explicit nullability and list rules for this method parameter.
+-   `TypeExpression`: A custom type expression, in query syntax language, to declare explicit nullability and list rules for this parameter.
 
 ```csharp
 // C# Controller
@@ -208,20 +208,16 @@ public class CharacterController : GraphController
 
     [Query]
     public IGraphActionResult Hero(
-        [FromGraphQL(TypeExpressions.IsNotNull)] string heroId)
+        [FromGraphQL(TypeExpression  = "Type!")] string heroId)
     {
         //....
     }
 }
 ```
 
-**Other Properties**
-
--   `TypeDefinition` - Allows direct access to declare a custom set of meta types.
-
 ## GraphEnumValue
 
-Acts to explicitly declare an enumeration value as being exposed on the enumeration graph type.
+Acts to explicitly declare an enumeration value as being exposed on an enumeration graph type.
 
 #### `[GraphEnumValue]`
 
@@ -259,15 +255,15 @@ public class Human
 }
 ```
 
-#### `[GraphField(TypeExpression = TypeExpressions.IsNotNull)]`
--   `TypeExpression` - Define a custom type expression; useful in setting a normally optional input field (such as a string or other object) to being required.
+#### `[GraphField(TypeExpression = "Type!")]`
+-   `TypeExpression` - Define a custom type expression; useful in setting a normally optional input field (such as a string or other object) to being required. Supply the type expression as a valid graphql syntax type expression. 
 
 ```csharp
 public class Human
 {
     public int Id{get; set; }
 
-    [GraphField(TypeExpression = TypeExpressions.IsNotNull)]
+    [GraphField(TypeExpression = "Type!")]
     public Employer Boss { get; set; }
 }
 ```
@@ -471,14 +467,13 @@ public class CharacterController : GraphController
 
 ** Additional Properties **
 
--   `TypeExpression`: Allows assignment of a non-standard type expression to declare explicit nullability and list rules for this field.
--   `TypeDefinition` - Allows direct access to declare a custom set of meta types when `TypeExpression` is insufficient.
+-   `TypeExpression`: Define a custom type expression; useful in setting a normally optional field (such as a string or other object) to being required. Supply the type expression as a valid graphql syntax type expression.
 
 ```csharp
 public class CharacterController : GraphController
 {
     // declare that this field must return a value (a null human is not allowed)
-    [Query("hero", typeof(Human), TypeExpression = TypeExpressions.IsNotNull)]
+    [Query("hero", typeof(Human), TypeExpression = "Type!")]
     public IGraphActionResult RetrieveTheHero(Episode episode)
     {
         // ....
