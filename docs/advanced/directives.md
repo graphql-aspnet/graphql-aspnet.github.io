@@ -2,11 +2,12 @@
 id: directives
 title: Directives
 sidebar_label: Directives
+sidebar_position: 2
 ---
 
 ## What is a directive?
 
-Directives decorate, or are attached to, parts of your schema or query document to perform some sort of custom logic. What that logic is, is entirely up to you. There are several built in directives:
+Directives decorate, or are attached to, parts of your schema or query document to perform some sort of custom logic. What that logic is, is entirely up to you. There are several directives built into graphql:
 
 -   `@include` : An execution directive that conditionally includes a field or fragment in the results of a graphql query
 -   `@skip` : An execution directive that conditionally excludes a field or fragment from the results of a graphql query
@@ -19,19 +20,18 @@ Beyond this you can create directives to perform any sort of action against your
 
 Directives are implemented in much the same way as a `GraphController` but where you'd indicate an action method as being for a query or mutation, directive action methods must indicate the location(s) they can be applied in either a query document or the type system.
 
-```csharp
-    // an example implementation of the @skip directive
-    public sealed class SkipDirective : GraphDirective
+```csharp title="SkipDirective.cs"
+public sealed class SkipDirective : GraphDirective
+{
+    [DirectiveLocations(DirectiveLocation.FIELD | DirectiveLocation.FRAGMENT_SPREAD | DirectiveLocation.INLINE_FRAGMENT)]
+    public IGraphActionResult Execute([FromGraphQL("if")] bool ifArgument)
     {
-        [DirectiveLocations(DirectiveLocation.FIELD | DirectiveLocation.FRAGMENT_SPREAD | DirectiveLocation.INLINE_FRAGMENT)]
-        public IGraphActionResult Execute([FromGraphQL("if")] bool ifArgument)
-        {
-              if (this.DirectiveTarget is IIncludeableDocumentPart docPart)
-                docPart.IsIncluded = !ifArgument;
+        if (this.DirectiveTarget is IIncludeableDocumentPart docPart)
+            docPart.IsIncluded = !ifArgument;
 
-            return this.Ok();
-        }
+        return this.Ok();
     }
+}
 ```
 
 All directives must:
@@ -42,8 +42,7 @@ All directives must:
 All directive action methods must:
 
 -   Share the same method signature
-    -   The return type must match exactly
-    -   The input arguments must match exactly in type, name, casing and declaration order.
+-   The input arguments must match exactly in type, name, casing and declaration order.
 -   Return a `IGraphActionResult` or `Task<IGraphActionResult>`
 
 ### Action Results
@@ -68,7 +67,7 @@ The following properties are available to all directive action methods:
 
 Directives may contain input arguments just like fields. However, its important to note that while a directive may declare multiple action methods for different locations to seperate your logic better, it is only a single entity in the schema. As a result, ALL action methods must share a common signature. The runtime will throw an exception while creating your schema if the signatures of the action methods differ.
 
-```csharp
+```csharp title="Arguments for Directives"
     public class MyValidDirective : GraphDirective
     {
         [DirectiveLocations(DirectiveLocation.FIELD)]
@@ -89,13 +88,13 @@ Directives may contain input arguments just like fields. However, its important 
     }
 ```
 
-> Directive arguments must match in name, data type and position for all action methods. Being able to use different methods for different locations is a convenience; to GraphQL there is only one directive with one set of parameters.
-
-### Directive Target
-
-The `DirectiveTarget` property available to your directive will contain either an `ISchemaItem` for type system directives or an `IDocumentPart` for execution directives.
+:::info
+ Directive arguments must match in name, data type and position for all action methods. Being able to use different methods for different locations is a convenience; to GraphQL there is only one directive with one set of parameters.
+:::
 
 ## Execution Directives
+
+Execution Directives are applied to query documents and executed on the single request in which they are encountered.
 
 ### Example: @include
 
@@ -105,7 +104,9 @@ This is the code for the built in `@include` directive:
     [GraphType("include")]
     public sealed class IncludeDirective : GraphDirective
     {
-        [DirectiveLocations(DirectiveLocation.FIELD | DirectiveLocation.FRAGMENT_SPREAD | DirectiveLocation.INLINE_FRAGMENT)]
+        [DirectiveLocations(DirectiveLocation.FIELD 
+            | DirectiveLocation.FRAGMENT_SPREAD 
+            | DirectiveLocation.INLINE_FRAGMENT)]
         public IGraphActionResult Execute([FromGraphQL("if")] bool ifArgument)
         {
             if (this.DirectiveTarget is IIncludeableDocumentPart idp)
@@ -133,7 +134,7 @@ When more than one directive is encountered for a single location, they are exec
 
 In this example :
 
-```javascript
+```graphql title="Using Multiple Execution Directives"
 query {
     bakery {
         allPastries{
@@ -155,54 +156,68 @@ Execution directives are applied to document parts, not schema items. As a resul
 
 For this reason it is possible to apply a 'PostResolver' directly to an `IFieldDocumentPart`. This post resolver is executed immediately after the primary field resolver is executed.
 
-```csharp
-    public class ToUpperDirective : GraphDirective
+```csharp title="ToUpperDirective.cs"
+public class ToUpperDirective : GraphDirective
+{
+    [DirectiveLocations(DirectiveLocation.FIELD)]
+    public IGraphActionResult UpdateResolver()
     {
-        [DirectiveLocations(DirectiveLocation.FIELD)]
-        public IGraphActionResult UpdateResolver()
+        if (this.DirectiveTarget as IFieldDocumentPart fieldPart)
         {
-            if (this.DirectiveTarget as IFieldDocumentPart fieldPart)
-            {
-                //
-                if (fieldPart.Field?.ObjectType != typeof(string))
-                    throw new GraphExecutionException("ONLY STRINGS!"); // - hulk
+            //
+            if (fieldPart.Field?.ObjectType != typeof(string))
+                throw new GraphExecutionException("ONLY STRINGS!"); // - hulk
 
-                // add a post resolver to the target field document
-                // part to perform the conversion when the query is
-                // ran
-                fieldPart.PostResolver = ConvertToUpper;
-            }
-
-            return this.Ok();
+            // add a post resolver to the target field document
+            // part to perform the conversion when the query is
+            // ran
+            fieldPart.PostResolver = ConvertToUpper;
         }
 
-        private static Task ConvertToUpper(
-            FieldResolutionContext context,
-            CancellationToken token)
-        {
-            if (context.Result is string)
-                context.Result = context.Result?.ToString().ToUpperInvariant();
-
-            return Task.CompletedTask;
-        }
+        return this.Ok();
     }
 
+    private static Task ConvertToUpper(
+        FieldResolutionContext context,
+        CancellationToken token)
+    {
+        if (context.Result is string)
+            context.Result = context.Result?.ToString().ToUpperInvariant();
+
+        return Task.CompletedTask;
+    }
+}
 ```
 
-#### Working with Batch Extensions
+```graphql title="Using @toUpper"
+query {
+    bakery {
+        allPastries{
+            id
+            name @toUpper
+        }
+    }
+}
+```
+
+### Working with Batch Extensions
 
 Batch extensions work differently than standard field resolvers; they don't resolve a single item at a time. This means our `@toUpper` example above won't work as `context.Result` won't be a string. Should you employ a post resolver that may be applied to a batch extension you'll need to handle the resultant dictionary differently than you would a single field value. The dictionary will always be of the format `IDictionary<TSource, TResult>` where `TSource` is the data type of the field set that owns the field the directive was applied to and `TResult` is the data type or an `IEnumerable` of the data type for the field, depending on the
 batch extension declaration. The dictionary is always keyed by source item reference.
 
-> Batch Extensions will return a dictionary of data not a single item. Your post resolver must be able to handle this dictionary if applied to a field that is a `[BatchExtensionType]`.
+:::caution Be Careful with Batch Type Extensions
+ Batch Extensions will return a dictionary of data not a single item. Your post resolver must be able to handle this dictionary if applied to a field that is a `[BatchExtensionType]`.
+:::
 
 ## Type System Directives
 
+Type System directives are applied to schema items and executed at start up while the schema is being created. 
+
 ### Example: @toLower
 
-This directive will extend the resolver of a field, as its declared in the schema, to turn any strings into lower case letters.
+This directive will extend the resolver of a field, as its declared **in the schema**, to turn any strings into lower case letters.
 
-```csharp
+```csharp title="Example: ToLowerDirective.cs"
     public class ToLowerDirective : GraphDirective
     {
         [DirectiveLocations(DirectiveLocation.FIELD_DEFINITION)]
@@ -238,10 +253,12 @@ This Directive:
 
 -   Targets a FIELD_DEFINITION.
 -   Ensures that the target field returns a string.
--   Extends the field's resolver to convert the result to an upper case string.
--   The directive is executed once per field definition its applied to when the schema is created. The extension method is executed on every field resolution.
+-   Extends the field's resolver to convert the result to a lower-case string.
+-   The directive is executed once per field definition its applied to when the schema is created. The extended resolver method is executed on every field resolution.
 
-> Notice the difference in this type system directive vs. the `@toUpper` execution directive above. Where as toUpper was declared as a PostResolver on the document part, this directive extends the primary resolver of an `IGraphField` and affects ALL queries that request this field.
+:::info Type System Directives
+ Notice the difference in this type system directive vs. the `@toUpper` execution directive above. Where as toUpper was declared as a PostResolver on the document part, this directive extends the primary resolver of an `IGraphField` and affects ALL queries that request this field.
+:::
 
 ### Example: @deprecated
 
@@ -281,11 +298,8 @@ This Directive:
 
 If you have access to the source code of a given type you can use the `[ApplyDirective]` attribute:
 
-<div class="sideBySideCode hljs">
-<div>
 
-```csharp
-// Person.cs
+```csharp title="Person.cs"
 public class Person
 {
     [ApplyDirective(typeof(ToLowerDirective))]
@@ -293,58 +307,32 @@ public class Person
 }
 ```
 
-</div>
-<div>
-
-```javascript
-// GraphQL Type Definition Equivalent
+```graphql title="Person Type Definition"
 type Person  {
   name: String @toLower
 }
 ```
 
-</div>
-</div>
-<br/>
-<br/>
 If different schemas on your server will use different implementations of the directive you can also specify the directive by name. This name is case sensitive and must match the name of the registered directive in the target schema. At runtime, the concrete class declared as the directive in each schema will be instantiated and used.
 
-<div class="sideBySideCode hljs">
-<div>
-
-```csharp
-// Person.cs
+```csharp title="Apply a Directive By Name"
 [ApplyDirective("monitor")]
 public class Person
 {
     public string Name{ get; set; }
 }
 ```
-
-</div>
-<div>
-
-```javascript
-// GraphQL Type Definition Equivilant
+```graphql title="Person Type Definition"
 type Person @monitor  {
   name: String
 }
 ```
-
-</div>
-</div>
-
-<br/>
-<br/>
-**Adding Arguments with [ApplyDirective]**
+**Adding Argument Values with [ApplyDirective]**
 
 Arguments added to the apply directive attribute will be passed to the directive in the order they are encountered. The supplied values must be coercable into the expected data types for any input parameters.
 
-<div class="sideBySideCode hljs">
-<div>
 
-```csharp
-// Person.cs
+```csharp title="Applying Directive Arguments"
 public class Person
 {
     [ApplyDirective(
@@ -354,60 +342,33 @@ public class Person
 }
 ```
 
-</div>
-<div>
-
-```javascript
-// GraphQL Type Definition Equivilant
+```graphql title="Person Type Definition"
 type Person  {
   name: String @deprecated("Names don't matter")
 }
 ```
 
-</div>
-</div>
-
-<br/>
-
 #### Using Schema Options
 
 Alternatively, instead of using attributes to apply directives you can apply directives during schema configuration:
 
-<div class="sideBySideCode hljs">
-<div>
-
-```csharp
-// startup.cs
-public void ConfigureServices(IServiceCollection services)
+```csharp title="Apply Directives at Startup"
+services.AddGraphQL(options =>
 {
-    // other code ommited for brevity
+    options.AddGraphType<Person>();
 
-    services.AddGraphQL(options =>
-    {
-        options.AddGraphType<Person>();
-
-        // mark Person.Name as deprecated
-        options.ApplyDirective("monitor")
-            .ToItems(schemaItem =>
-                schemaItem.IsObjectGraphType<Person>());
-    }
+    // mark Person.Name as deprecated
+    options.ApplyDirective("monitor")
+        .ToItems(schemaItem =>
+            schemaItem.IsObjectGraphType<Person>());
 }
 ```
 
-</div>
-<div>
-
-```javascript
-// GraphQL Type Definition Equivilant
+```graphql title="Person Type Definition"
 type Person  @monitor {
   name: String
 }
 ```
-
-</div>
-</div>
-
-<br/>
 
 > The `ToItems` filter can be invoked multiple times. A schema item must match all filter criteria in order for the directive to be applied.
 
@@ -418,11 +379,8 @@ type Person  @monitor {
 Adding Arguments via schema options is a lot more flexible than via attributes. Use the `.WithArguments` method to supply either a static set of arguments for all matched schema items
 or a `Func<ISchemaItem, object[]>` that returns a collection of any parameters you want on a per item basis.
 
-<div class="sideBySideCode hljs">
-<div>
 
-```csharp
-// startup.cs
+```csharp title="Apply Directives at Startup With Arguments"
 public void ConfigureServices(IServiceCollection services)
 {
     // other code ommited for brevity
@@ -438,30 +396,19 @@ public void ConfigureServices(IServiceCollection services)
 }
 ```
 
-</div>
-<div>
-
-```javascript
-// GraphQL Type Definition Equivilant
+```graphql title="Person Type Definition"
 type Person  {
   name: String @deprecated("Names don't matter")
 }
 ```
 
-</div>
-</div>
-
-<br/>
-
 ### Repeatable Directives
 
 GraphQL ASP.NET supports repeatable type system directives. Sometimes it can be helpful to apply your directive to an schema item more than once, especially if you supply different parameters on each application.
 
-Add the `[Repeatable]` attribute to the directive definition and you can the apply it multiple times using the standard methods. GraphQL tools that support this the repeatable syntax
-will be able to properly interprete your schema.
+Add the `[Repeatable]` attribute to the directive definition and you can then apply it multiple times using the standard methods. GraphQL tools that support this the repeatable syntax will be able to properly interprete your schema.
 
-```csharp
-// apply repeatable attribute
+```csharp title="Repeatable Directives"
 [Repeatable]
 public sealed class ScanItemDirective : GraphDirective
 {
@@ -474,8 +421,7 @@ public sealed class ScanItemDirective : GraphDirective
 [ApplyDirective("@scanItem", "medium")]
 [ApplyDirective("@scanItem", "high")]
 public class Person
-{
-}
+{}
 
 // Option 2: Apply the directive at startup
 services.AddGraphQL(o => {
@@ -495,7 +441,7 @@ GraphQL ASP.NET builds your schema and all of its types from your controllers an
 
 **UML Diagrams**
 
-These [uml diagrams](../assets/2022-10-graphql-aspnet-structural-diagrams.pdf) detail the major interfaces and their most useful properties of the type system. However, these diagrams are not exaustive. Look at the [source code](https://github.com/graphql-aspnet/graphql-aspnet/tree/master/src/graphql-aspnet/Interfaces/TypeSystem) for the full definitions.
+These [uml diagrams](../assets/2022-10-graphql-aspnet-structural-diagrams.pdf) detail the major interfaces and their most useful properties of the type system. However, these diagrams are not exaustive. Look at the [source code](https://github.com/graphql-aspnet/graphql-aspnet/tree/master/src/graphql-aspnet/Interfaces/Schema) for the full definitions.
 
 **Helpful Extensions**
 
@@ -518,7 +464,7 @@ Directives can be secured like controller actions. However, where a controller a
 
 Take for example that the graph schema included a field of data that, by default, was always rendered in a redacted state (meaning it was obsecured) such as social security number. You could have a directive that, when supplied by the requestor, would unredact the field and allow the value to be displayed.
 
-```
+```csharp title="Applying Authorization to Directives"
 [Authorize(Policy = "admin")]
 public sealed class UnRedactDirective : GraphDirective
 {

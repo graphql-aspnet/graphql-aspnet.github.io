@@ -2,23 +2,25 @@
 id: overview
 title: Overview
 sidebar_label: Overview
+sidebar_position: 0
+description: A quick overview of this documentation and how to use it.
 hide_title: true
 ---
 
-> **This project is currently in open beta and subject to change.**
->
-> Some features of the library may change prior to a final release.
+:::info This  project is currently in open beta
+ Some features of the library may change prior to a final release.
+:::
 
 ## How To Use This Documentation
 
 This documentation is best used as a reference guide for the various features of GraphQL ASP.NET but it helps to read through a few sections to get an understanding of the core concepts.
 
-<span style="font-size:20px;vertical-align: center;">&#9989;</span>&nbsp; [Controllers](../controllers/actions) -
+✅ [Controllers](../controllers/actions) -
 An overview on how to build a controller and define an action method.
 
-<span style="font-size:20px;vertical-align: center;">&#9989;</span>&nbsp; [Attributes](../reference/attributes) - A reference to all the attributes supported by GraphQL ASP.NET. Attributes are used extensively to annotate and configure your controllers and model classes.
+✅ [Attributes](../reference/attributes) - A reference to all the attributes supported by GraphQL ASP.NET. Attributes are used extensively to annotate and configure your controllers and model classes.
 
-<span style="font-size:20px;vertical-align: center;">&#9989;</span>&nbsp;   [Schema Configuration](../reference/schema-configuration) - A reference to the various configuration options for your schema and how they affect the runtime.
+✅ [Schema Configuration](../reference/schema-configuration) - A reference to the various configuration options for your schema and how they affect the runtime.
 
 #### Target Audience
 

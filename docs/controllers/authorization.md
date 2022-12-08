@@ -2,14 +2,14 @@
 id: authorization
 title: Authorization
 sidebar_label: Authorization
+sidebar_position: 3
 ---
 
 ## Quick Examples 
 
 If you've wired up ASP.NET authorization before, you'll likely familiar with the `[Authorize]` attribute and how its used to enforce security. GraphQL ASP.NET works the same way.
 
-```csharp
-// BakeryController.cs
+```csharp title="General Authorization Check"
 public class BakeryController : GraphController
 {
     [Authorize]
@@ -18,11 +18,7 @@ public class BakeryController : GraphController
     {/*...*/}
 }
 ```
-
-Need to restrict by policy?
-
-```csharp
-// BakeryController.cs
+```csharp title="Restrict by Policy"
 public class BakeryController : GraphController
 {
     [Authorize(Policy = "CustomerLoyaltyProgram")]
@@ -31,11 +27,7 @@ public class BakeryController : GraphController
     {/*...*/}
 }
 ```
-
-How about by Role?
-
-```csharp
-// BakeryController.cs
+```csharp title="Restrict by Role"
 public class BakeryController : GraphController
 {
     [Authorize(Roles = "Admin, Employee")]
@@ -45,10 +37,8 @@ public class BakeryController : GraphController
 }
 ```
 
-This library supports nested policy and role checks at Controller and Action levels.
-
-```csharp
-// BakeryController.cs
+```csharp title="Multiple Authorization Requirements"
+// The library supports nested policy and role checks at Controller and Action levels.
 [Authorize(Policy = "CurrentCustomer")]
 public class BakeryController : GraphController
 {
@@ -59,10 +49,7 @@ public class BakeryController : GraphController
 }
 ```
 
-And overrides with `[AllowAnonymous]`...
-
-```csharp
-// BakeryController.cs
+```csharp title="Use of [AllowAnonymous]"
 [Authorize]
 public class BakeryController : GraphController
 {
@@ -71,6 +58,7 @@ public class BakeryController : GraphController
     public async Task<IGraphActionResult> OrderDonuts(DonutOrderModel order)
     {/*...*/}
 
+    // No Authorization checks on RetrieveDonutList
     [AllowAnonymous]
     [Mutation("donutList")]
     public async Task<IEnumerable<Donut>> RetrieveDonutList()
@@ -109,13 +97,13 @@ Since this authorization occurs "per field" and not "per controller action" its 
 
 ### Field Authorization Failures are Obfuscated
 
-When GraphQL denies a requestor access to a field a message naming the field path is added to the response. This message is generic on purpose; `"Access denied to field '[query]/bakery/donuts'"`. To view more targeted reasons, such as specific policy failures, you'll need to expose exceptions on the request or turn on [logging](../logging/structured-logging). GraphQL automatically raises the `FieldSecurityChallengeCompleted` log event at a `Warning` level when a security check fails.
+When GraphQL denies a requestor access to a field a message naming the field path is added to the response. This message is generic on purpose: `"Access denied to field '[query]/bakery/donuts'"`. To view more targeted reasons, such as specific policy failures, you'll need to expose exceptions on the request or turn on [logging](../logging/structured-logging). GraphQL automatically raises the `SchemaItemAuthorizationCompleted` log event at a `Warning` level when a security check fails.
 
 ## Execution Directives Authorizations
 
-Execution directives are applied to the _query document_ before a query plan is created and it is the query plan that determines what field resolvers should be called. As a result, execution directives have the potential to alter the document structure and change how a query might be resolved. Because of this, not executing a query directive has the potential to change (or not change) the expected query to be different than what the requestor asked for. 
+Execution directives are applied to the _query document_ before a query plan is created, but it is the query plan that determines what field resolvers should be called. As a result, execution directives have the potential to alter the document structure and change how a query might be resolved. Because of this, not executing a query directive has the potential to change (or not change) the expected query to be different than what the requestor intended to ask for. 
 
-Therefore, if an execution directive fails authorization the query is rejected and not executed.  The called will receive an error message as part of the response indicating the unauthorized directive. Like field authorization failures, the message is obfuscated and contains only a generic message. You'll need to expose exception on the request or turn on logging to see additional details.
+Therefore, if an execution directive fails authorization the query is rejected and not executed.  The caller will receive an error message as part of the response indicating the unauthorized directive. Like field authorization failures, the message is obfuscated and contains only a generic message. You'll need to expose exception on the request or turn on logging to see additional details.
 
 ## Authorization Methods
 
@@ -127,15 +115,13 @@ GraphQL ASP.NET supports two methods of applying the authorization rules out of 
 
 Configure the authorization method at startup:
 
-```csharp
-// Startup.cs
-public void ConfigureServices(IServiceCollection services)
+```csharp title="Startup"
+services.AddGraphQL(schemaOptions =>
 {
-    services.AddGraphQL(schemaOptions =>
-    {
-        schemaOptions.AuthorizationOptions.Method = AuthorizationMethod.PerRequest;
-    });
-}
+    schemaOptions.AuthorizationOptions.Method = AuthorizationMethod.PerRequest;
+});
 ```
 
->Regardless of the authorization method chosen, **execution directives** are ALWAYS evaluated with a "per request" method. If a single execution directive fails, the whole query is dicarded.
+:::info  
+Regardless of the authorization method chosen, **execution directives** are ALWAYS evaluated with a "per request" method. If a single execution directive fails, the whole query is failed and no data will be resolved.
+:::

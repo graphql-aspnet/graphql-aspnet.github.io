@@ -2,25 +2,21 @@
 id: global-configuration
 title: Global Configuration
 sidebar_label: Global Configuration
+sidebar_position: 2
 ---
 
 Global configuration settings affect the entire server instance, they are not restricted to a single schema registration. All global settings are optional and define resonable default values. Use these to fine tune your server environment. You should change any global settings BEFORE calling `.AddGraphQL()`.
 
-```csharp
-// Startup.cs
-public void ConfigureServices(IServiceCollection services)
-{
-    // *************************
-    // CONFIGURE GLOBAL SETTINGS HERE
-    // *************************
-   
-   services.AddGraphQL(options => 
-   {
-        // *************************
-        // CONFIGURE YOUR SCHEMA HERE
-        // *************************
-   });
-}
+```csharp title="Adding Schema Configuration Options"
+// -------------------
+// Configure Global Options before calling AddGraphQL
+// -------------------
+
+services.AddGraphQL();
+
+
+// Be sure to add graphql to the ASP.NET pipeline builder
+appBuilder.UseGraphQL();
 ```
 
 ## General
@@ -36,9 +32,9 @@ GraphQLProviders.GlobalConfiguration.ControllerServiceLifetime = ServiceLifetime
 | ------------- | ----------------- |
 | `Transient `       | `Transient`, `Scoped`, `Singleton`   |
 
-<div style='background-color: #af5059; padding: 10px 3px 10px 3px; color: #F2F2F2;'> 
-<span style='font-weight:bold;'>WARNING:</span> Registering graph controllers as anything other than transient can cause unexpected behavior and result in unexplained crashes, data loss, data exposure and security holes. Consider restructuring your application before changing this setting. Adjusting this value should be a <span style='font-style:italic;text-decoration:underline;'>last resort</span>, not a first option.
-</div>
+:::danger
+ Registering graph controllers as anything other than transient can cause unexpected behavior and result in unexplained crashes, data loss, data exposure and security holes. Consider restructuring your application before changing this setting. Adjusting this value should be a last resort, not a first option.
+:::
 
 ## Subscriptions
 
@@ -47,7 +43,7 @@ GraphQLProviders.GlobalConfiguration.ControllerServiceLifetime = ServiceLifetime
 Indicates the maximum number of entities (i.e. client connections) that will receive a raised subscription event on this server instance. If there are more receivers than this configured limit the others are queued and will recieve the event in turn once as others finish processing it.
 
 ```csharp
-SubscriptionServerSettings.MaxConcurrentReceiverCount = 50;
+SubscriptionServerSettings.MaxConcurrentReceiverCount = 500;
 ```
 
 | Default Value | Acceptable Values |

@@ -2,6 +2,7 @@
 id: http-processor
 title: HTTP Processor
 sidebar_label: HTTP Processor
+sidebar_position: 6
 ---
 
 The `DefaultGraphQLHttpProcessor<TSchema>` is mapped to a route for the target schema and accepts an `HttpContext` from the ASP.NET runtime. It inspects the received payload (the query text and variables) then packages an `IGraphOperationRequest` and sends it to the GraphQL runtime. Once a result is generated the controller forwards that response to the response writer for serialization.
@@ -12,7 +13,7 @@ Extending the http processor allows you to add custom code and interject into a 
 
 First, extend from `DefaultGraphQLHttpProcessor<TSchema>` for your target schema. The processor is instantiated from your DI container on a "per request" basis. Any services referenced in your constructor will need to be servable from `IServiceProvider`. Those required by the default processor are automatically injected during the call to `AddGraphQL()`.
 
-```csharp
+```csharp title="Create a Custom HTTP Processor"
 public class MyHttpProcessor : DefaultGraphQLHttpProcessor<MySchema>
 {
     public MyHttpProcessor(
@@ -29,15 +30,11 @@ public class MyHttpProcessor : DefaultGraphQLHttpProcessor<MySchema>
 
 Second, override the http processor reference in your `Startup.cs`:
 
-```csharp
-// Startup.cs
-public void ConfigureServices(IServiceCollection services)
+```csharp title="Register Your Custom Processor"
+services.AddGraphQL<MySchema>(options =>
 {
-    services.AddGraphQL<MySchema>(options =>
-        {
-            options.QueryHandler.HttpProcessorType = typeof(MyHttpProcessor);
-        });
-}
+    options.QueryHandler.HttpProcessorType = typeof(MyHttpProcessor);
+});
 ```
 
 That's all there is. Your processor will now serve requests for your schema.

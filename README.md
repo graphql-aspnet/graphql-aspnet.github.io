@@ -7,4 +7,4 @@
 This repository contains the source code for the GraphQL ASP.NET documentation website.  Clone the `develop` branch to view the code and update the documentation.  The `master` branch contains the compiled static site served by github pages.
 
 
-_Documentation created using [Docusaurus v1.14.0](https://docusaurus.io)_
+_Documentation created using [Docusaurus v2](https://docusaurus.io)_

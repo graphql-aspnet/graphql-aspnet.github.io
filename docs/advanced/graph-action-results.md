@@ -2,14 +2,14 @@
 id: graph-action-results
 title: Action Results
 sidebar_label: Action Results
+sidebar_position: 4
 ---
 
 ## What is an Action Result?
 
-In ASP.NET MVC you may do things like this:
+In ASP.NET you may do things like this:
 
-```csharp
-// If you wanted to indicate a status 200 (OK) you may write:
+```csharp title="Return an Action Result"
 public class BakeryController : Controller
 {
     [HttpGet("donuts/{id}")]
@@ -22,8 +22,9 @@ public class BakeryController : Controller
         return this.Ok(donut);
     }
 }
+```
 
-// Or Return the object directly:
+```csharp title="Return an Object"
 public class BakeryController : Controller
 {
     [HttpGet("donuts/{id}")]
@@ -38,9 +39,9 @@ public class BakeryController : Controller
 }
 ```
 
-You can either return the data itself or some alternate `IActionResult` to tell MVC how to render a response.
+You can either return the data itself or some alternate `IActionResult` to tell ASP.NET how to render a response.
 
-Some common ASP.NET MVC action results:
+Some common ASP.NET action results:
 
 -   `this.Ok()` : Everything worked fine, return status 200.
 -   `this.NotFound()` : The item doesn't exist, return status 404.
@@ -49,9 +50,9 @@ Some common ASP.NET MVC action results:
 
 This works the same way in GraphQL ASP.NET. The available actions are slightly different (GraphQL won't stream files) but the usage is the same. You can even write your own action results.
 
-## Common Action Results
+## Controller Action Results
 
-Instead of `IActionResult` we use `IGraphActionResult` from a controller action method. Both [directives](../directives) and controller [action methods](../controllers/actions) can return action results.
+Instead of `IActionResult` we use `IGraphActionResult` from a controller action method. Both [directives](./directives) and controller [action methods](../controllers/actions) can return action results.
 
 Built in Controller Action Methods:
 
@@ -63,9 +64,9 @@ Built in Controller Action Methods:
 -   `this.InternalServerError()`: Indicates an unintended error, such as an exception occurred. The supplied message will be added to the response and no child fields will be resolved.
 
 ## Directive Action Results
-[Directives](../directives) have two built in Action Results:
+[Directives](./directives) have two built in Action Results:
 
--   `this.Ok()`: Indicates that the directive completed its expected operation successfully and query processing can continue.
+-   `this.Ok()`: Indicates that the directive completed its expected operation successfully and processing can continue.
 -   `this.Cancel()`: Indicates that the directive did NOT complete its operation successfully. 
     - If this is a type system directive, the schema will fail to complete and the server will not start.
     - If this is an execution directive, the query will be abandoned and the user will receive an error message.
@@ -76,7 +77,7 @@ You can add your own custom action results. This can be particularly useful on l
 
 To create a custom result, implement `IGraphActionResult`, which defines a single method:
 
-```csharp
+```csharp title="IGraphActionResult.cs"
 public interface IGraphActionResult
 {
     Task Complete(ResolutionContext context);
@@ -85,11 +86,13 @@ public interface IGraphActionResult
 
 `ResolutionContext` is the data context used to resolve the field or directive. For controller actions this can be cast to `FieldResolutionContext` to obtain access to the `Result` property. Setting this property sets the resolved value for the field.
 
-> `FieldResolutionContext` contains a `Result` property which indicates the final resolved value for the field.
+:::info
+`FieldResolutionContext` contains a `Result` property which indicates the final resolved value for the field.
+:::
 
 Looking at the `UnauthorizedGraphActionResult` is a great example of how to implement your own:
 
-```csharp
+```csharp title="UnauthorizedGraphActionResult.cs"
     public class UnauthorizedGraphActionResult : IGraphActionResult
     {
         private readonly string _errorCode;

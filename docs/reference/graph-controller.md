@@ -2,16 +2,16 @@
 id: graph-controller
 title: Graph Controller
 sidebar_label: GraphController
+sidebar_position: 4
 ---
 
 The `GraphController`, from which all your controllers inherit, has some useful properties you can take advantage of.
 
 ## ModelState
 
-The completed model state dictionary with an entry for each validated parameter.
+The completed model state dictionary contains an entry for each validated parameter.
 
 ```csharp
-// C# Controller
 public class CharacterController : GraphController
 {
     [Query]
@@ -26,11 +26,9 @@ public class CharacterController : GraphController
 ```
 
 ## Request
-
 The field request that initiated the action method call
 
 ```csharp
-// C# Controller
 public class CharacterController : GraphController
 {
     [Query]
@@ -59,7 +57,6 @@ public class CharacterController : GraphController
 The `ClaimsPrincipal` created by ASP.NET when this request was authorized.
 
 ```csharp
-// C# Controller
 public class CharacterController : GraphController
 {
     [Query]

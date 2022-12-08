@@ -2,29 +2,23 @@
 id: entity-framework
 title: Using Entity Framework
 sidebar_label: Entity Framework
+sidebar_position: 2
 ---
 
 ## DbContext and Parallel Query Operations
 In a standard REST application we would register our `DbContext` like so:
 
-```csharp
-// Startup.cs
-public void ConfigureServices(IServiceCollection services)
+```csharp title="Adding Entity Framework at Startup"
+services.AddDbContext<AppDbContext>(o =>
 {
-    services.AddDbContext<AppDbContext>(o =>
-        {
-            o.UseSqlServer("<connectionString>");
-        });
-}
+    o.UseSqlServer("<connectionString>");
+});
 ```
 This default registration adds the `DbContext` to the DI container is as a `Scoped` service. Meaning one instance is generated per Http request. However, consider the following graph controller and query:
 
 
-<div class="sideBySideCode hljs">
-<div>
 
-```csharp
-// Some code omitted for brevity
+```csharp title="FoodController.cs"
 public class FoodController : GraphController
 {    
     private AppDbContext _context;
@@ -38,11 +32,7 @@ public class FoodController : GraphController
 }
 ```
 
-</div>
-<div>
-
-```js
-// GraphQL Query
+```graphql title="Sample Query"
 query {
     searchMeat(name: "steak*") {
         name
@@ -52,10 +42,6 @@ query {
     }
 }
 ```
-
-</div>
-</div>
-<br/>
 
 The `FoodController` contains two action methods both of which are executed by the query. This means two instances of the controller are needed, once for each field resolution, since they are executed in parallel. While the controller itself is registered with the DI container as transient the `DbContext` is not, it is shared between the controller instances.  This can result in an exception being thrown :
 
@@ -68,8 +54,7 @@ This is caused by graphql attempting to execute both controller actions simultan
 One way to correct this problem is to register your DbContext
 as a transient object.
 
-```csharp
-// Startup.cs
+```csharp title="Register DbContext as Transient"
 public void ConfigureServices(IServiceCollection services)
 {
     services.AddDbContext<AppDbContext>(o =>
@@ -87,14 +72,10 @@ If you have services registered to the DI container that make use of the DbConte
 ## Execute Controller Actions in Isolation
 Another option is to instruct graphql to execute its controller actions in sequence, rather than in parallel. 
 
-```csharp
-// Startup.cs
-public void ConfigureServices(IServiceCollection services)
+```csharp title="Isolate GraphQL Controller Actions"
+services.AddGraphQL(o =>
 {
-    services.AddGraphQL(o =>
-        {
-            o.ExecutionOptions.ResolverIsolation = ResolverIsolationOptions.ControllerActions;
-        }
+    o.ExecutionOptions.ResolverIsolation = ResolverIsolationOptions.ControllerActions;
 }
 ```
 This will instruct graphql to execute each encountered controller action one after the other. Your scoped `DbContext` would then be able to process the queries without issue.

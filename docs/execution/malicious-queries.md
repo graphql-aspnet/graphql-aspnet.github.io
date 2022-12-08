@@ -2,6 +2,7 @@
 id: malicious-queries
 title: Dealing with Malicious Queries
 sidebar_label: Malicious Queries
+sidebar_position: 1
 ---
 
 When GraphQL ASP.NET parses a query it creates two values that attempt to describe the query in terms of impact and server load; Max Depth and Estimated Complexity. There also exists limiters to these values that can be set in the schema configuration such that should any query plan exceed the limits you set, the plan will be rejected and the query not fulfilled.
@@ -12,7 +13,7 @@ Field depth refers to how deeply nested a field is within a query.
 
 In this example, for instance, the "search" field has a depth of 4 and the maximum depth reached is 6: `groceryStore > bakery > pastries > recipe > ingredients > name`
 
-```javascript
+```graphql title="Sample Query"
 query SearchGroceryStore {
     groceryStore {
         bakery {
@@ -39,13 +40,11 @@ To combat this you can set a maximum allowed depth for any query targeting your 
 
 To set a maximum allowed depth, set the appropriate property in your schema configuration at startup:
 
-```csharp
-// Startup
+```csharp title="Configure Max Query Depth"
 services.AddGraphQL(options =>
-    {
-        options.ExecutionOptions.MaxQueryDepth = 15;
-    });
-
+{
+    options.ExecutionOptions.MaxQueryDepth = 15;
+});
 ```
 
 > The default value for `MaxQueryDepth` is `null` or no limit.
@@ -56,7 +55,7 @@ The field depth is only part of the picture though. The way in which your fields
 
 Take for instance this query:
 
-```javascript
+```graphql title="Sample Query"
 query PhoneManufacturer {
     allParts {
         id
@@ -75,15 +74,11 @@ While this query only has a field depth of 3, `allParts > suppliers > name`, the
 
 GraphQL will assign an `estimated complexity` score to each query plan to help gauge the load its likely to incur on the server when trying to execute. As you might expect you can set a maximum allowed complexity value and reject any queries that exceed your limit:
 
-```csharp
-// Startup.cs
-public void ConfigureServices(IServiceCollection services)
+```csharp title="Configure Max Allowed Query Complexity"
+services.AddGraphQL(options =>
 {
-    services.AddGraphQL(options =>
-            {
-                options.ExecutionOptions.MaxQueryComplexity = 50.00;
-            });
-}
+    options.ExecutionOptions.MaxQueryComplexity = 50.00;
+});
 ```
 
 > The default value for `MaxQueryComplexity` is `null` or no limit.
@@ -114,8 +109,7 @@ You can influence the complexity value of any given field by applying a weight t
 
 The attributes `[GraphField]`, `[Query]`, `[Mutation]`, `[QueryRoot]`, `[MutationRoot]` expose access to this value.
 
-```csharp
-// C# Controller
+```csharp title="BakeryController.cs"
 public class BakeryController : GraphController
 {
     // Complexity is a float value
@@ -134,7 +128,7 @@ You can override how GraphQL calculates the complexity of any given query operat
 
 This interface has one method where `IGraphFieldExecutableOperation` represents the collection of requested fields contexts along with the input arguments, child fields and directives that are about to be executed:
 
-```csharp
+```csharp title="IQueryOperationComplexityCalculator<TSchema>.cs"
 public interface IQueryOperationComplexityCalculator<TSchema>
 {
     float Calculate(IGraphFieldExecutableOperation operation);

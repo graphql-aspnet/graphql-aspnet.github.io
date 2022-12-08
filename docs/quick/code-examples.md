@@ -2,25 +2,26 @@
 id: code-examples
 title: Code Examples
 sidebar_label: Code Examples
+sidebar_position: 2
 ---
 
 This page shows a quick introduction to sample graphql queries and the C# code to support. If you need a more complete walk through the links to the left have every thing you need.
 
 These are a great place to start:
 
-<span style="font-size:20px;vertical-align: center;">&#x1F517;</span> [Why Choose GraphQL ASP.NET](../introduction/made-for-aspnet-developers)
+🔗 [Why Choose GraphQL ASP.NET](../introduction/made-for-aspnet-developers)
 
-<span style="font-size:20px;vertical-align: center;">&#x1F517;</span> [Start a new GraphQL ASP.NET Project](./quick-start)
+🔗 [Start a new GraphQL ASP.NET Project](./quick-start)
 
 ## A Basic Controller
 
 A simple controller to return data based on the input of an `Enum`.
 
-<div class="sideBySideCode hljs">
-<div>
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
 
-```csharp
-// C# Controller
+
+```csharp title="HeroController.cs"
 public class HeroController : GraphController
 {
     [QueryRoot]
@@ -48,11 +49,7 @@ public class HeroController : GraphController
 }
 ```
 
-</div>
-<div>
-
-```js
-// GraphQL Query
+```graphql title="GraphQL Query"
 query {
     hero(episode: EMPIRE) {
         name
@@ -61,8 +58,7 @@ query {
 }
 ```
 
-```js
-// response
+```js title="JSON Result" 
 {
     "data" : {
         "hero": {
@@ -73,22 +69,18 @@ query {
 }
 ```
 
-</div>
-</div>
+:::tip Did you notice?
+In the query the hero field is `camelCased` but in C# the method is `ProperCased`? GraphQL ASP.NET automatically translates your names appropriately to standard GraphQL conventions. The same goes for your graph type names, enum values etc.
 
-**Did you notice** that in the query the hero field is `camelCased` but in C# the method is `ProperCased`? GraphQL ASP.NET automatically translates your names appropriately to standard GraphQL conventions. The same goes for your graph type names, enum values etc.
-
-You can implement your own `GraphNameFormatter` and alter the name formats across the board for a single schema or all of them. GraphQL ASP.NET supports multiple schemas running on the same server out of the box.
+You can implement your own `GraphNameFormatter` and alter the name formats for each of your registered schemas.
+:::
 
 ## Using an Interface
 
 If your models share a common interface just return it from a controller action and GraphQL ASP.NET takes care of the rest. You can always use a fragment to specify fields of specific object types.
 
-<div class="sideBySideCode hljs">
-<div>
 
-```csharp
-// C# Controller
+```csharp title="HeroController.cs"
 public class HeroController : GraphController
 {
     [QueryRoot]
@@ -114,7 +106,9 @@ public class HeroController : GraphController
         }
     }
 }
+```
 
+```csharp title="Interfaces.cs"
 // Properties omitted for brevity
 public interface ICharacter
 {/*...*/}
@@ -126,11 +120,7 @@ public class Droid : ICharacter
 {/*...*/}
 ```
 
-</div>
-<div>
-
-```javascript
-// GraphQL Query
+```graphql title="GraphQL Query"
 query {
     hero(episode: JEDI) {
         id
@@ -147,18 +137,12 @@ query {
 }
 ```
 
-</div>
-</div>
-
 ## No Boilerplate Field Paths
 
-We've used `[QueryRoot]` so far to force a controller action to be a root field on the `query` type. But we can use an approximation of MVC's url fragments to create any combination of nested fields needed. When you have 50 controllers with 20-40 actions each, organizing your object hierarchy becomes trivial.
+We've used `[QueryRoot]` so far to force a controller action to be a root field on the `query` type. But we can use an approximation of Web API's url templates to create any combination of nested fields needed. When you have 50 controllers with 20-40 actions each, organizing your object hierarchy becomes trivial.
 
-<div class="sideBySideCode hljs">
-<div>
 
-```csharp
-// C# Controller
+```csharp title="RebelAllianceController.cs"
 [GraphRoute("rebels")]
 public class RebelAllianceController
         : GraphController
@@ -177,10 +161,7 @@ public class RebelAllianceController
 }
 ```
 
-</div>
-<div>
-
-```javascript
+```graphql title="Query"
 // GraphQL Query
 query {
     rebels {
@@ -194,21 +175,13 @@ query {
 }
 ```
 
-</div>
-</div>
-<br/>
 
 ## Dependency Injection
 
 At runtime,  GraphQL invokes your graph controllers and injected services with the same dependency scope as the original HTTP Request. Add a service to a controller's constructor and it will be automatically resolved with its configured scope.
 
-<div class="sideBySideCode hljs">
-<div>
-
-```csharp
-// C# Controller
-public class PersonsController
-        : GraphController
+```cs title="PersonsController.cs"
+public class PersonsController : GraphController
 {
     private IPersonService _personService;
     public PersonsController(IPersonService service)
@@ -216,8 +189,8 @@ public class PersonsController
         _personService = service;
     }
 
-    // we can also set a different C#
-    // method name vs. the graph field name.
+    // your C# method name and the graph field name
+    // can be different
     [QueryRoot("person")]
     public async Task<Human> RetrievePerson(int id)
     {
@@ -226,11 +199,7 @@ public class PersonsController
 }
 ```
 
-</div>
-<div>
-
-```javascript
-// GraphQL Query
+```graphql title="Query"
 query {
     person(id: 1000) {
         id
@@ -240,22 +209,18 @@ query {
 }
 ```
 
-</div>
-</div>
 
-**Did You Notice** we switched to an asynchronous method with `Task<Human>`. GraphQL ASP.NET follows your lead and will execute your actions asynchronously or synchronously as needed.
+:::info Did You Notice? 
+We switched to an asynchronous method with `Task<Human>`. GraphQL ASP.NET follows your lead and will execute your actions asynchronously or synchronously as needed.
+:::
 
 ## Authorization
 
 Add the `[Authorize]` attribute and you're done. GraphQL ASP.NET uses the same authorization pipeline as your application.
 
-<div class="sideBySideCode hljs">
-<div>
 
-```csharp
-// C# Controller
-public class PersonsController
-        : GraphController
+```csharp title="PersonsController.cs"
+public class PersonsController : GraphController
 {
     private IPersonService _personService;
     public PersonsController(IPersonService service)
@@ -272,10 +237,7 @@ public class PersonsController
 }
 ```
 
-</div>
-<div>
-
-```javascript
+```graphql title="Query"
 // GraphQL Query
 query {
     self {
@@ -286,26 +248,19 @@ query {
 }
 ```
 
-</div>
-</div>
-
 #### Notes on Authorization
 
--   Your controller actions have full access to the same `ClaimsPrincipal` that you get with `this.User` on an MVC controller. In fact, its the same object reference.
--   Out of the box, GraphQL performs authorization on a "per field" basis. This includes POCO object properties! If you have a piece of sensitive data attached to a property, say Birthday, on your Person model, then implement your own `IAuthorizeData` attribute and apply it to the property. Unauthorized user's won't be able to query for that field, even if they can access the controller that produced the object its attached or every other field on the object.
+-   Your controller actions have full access to the same `ClaimsPrincipal` that you get with `this.User` on an web api controller. In fact, its the same object reference.
+-   Out of the box, the library performs authorization on a "per field" basis. This includes POCO object properties! If you have a piece of sensitive data attached to a property, say Birthday, on your Person model, then implement your own `IAuthorizeData` attribute and apply it to the property. Unauthorized user's won't be able to query for that field, even if they can access the controller that produced the object its attached or every other field on the object.
 -   GraphQL obeys layered authorization requirements as well. Place an authorization attribute at the controller level and it'll be checked before any method level requirements.
 
-## Updates & Model State
+## Mutations & Model State
 
 GraphQL ASP.NET will automatically enforce the query specification rules for you, but that doesn't help for business-level requirements like string length or integer ranges. For that, it uses the familiar goodness of `ValidationAttribute` (meaning everything under `System.ComponentModel.DataAnnotations`).
 
-<div class="sideBySideCode hljs">
-<div>
 
-```csharp
-// C# Controller
-public class PersonsController
-        : GraphController
+```csharp title="PersonsController.cs"
+public class PersonsController : GraphController
 {
     /* constructor hidden for brevity */
 
@@ -322,7 +277,9 @@ public class PersonsController
         return await _service.CreatePerson(model);
     }
 }
+```
 
+```csharp title="Human.cs"
 public class Human
 {
     public int? Id{ get; set; }
@@ -334,11 +291,7 @@ public class Human
 }
 ```
 
-</div>
-<div>
-
-```javascript
-// GraphQL Query
+```graphql title="Query"
 mutation {
     joinTheResistance(
         newPerson: {
@@ -351,16 +304,16 @@ mutation {
 }
 ```
 
-</div>
-</div>
+:::info Did You Notice?
+We used `Human` as an input argument and as the returned data object. GraphQL ASP.NET will automatically generate the appropriate graph types for `OBJECT` and `INPUT_OBJECT` and add them to your schema when needed.
+:::
 
-**Did You Notice** that we used `Human` as an input argument and the returned data object. GraphQL ASP.NET will automatically generate the appropriate graph types for `OBJECT` and `INPUT_OBJECT` and add them to your schema when needed.
 
 ## Custom Action Results
 
-Just as ASP.NET MVC makes use of `IActionResult` to perform post processing on the result of a controller method, GraphQL ASP.NET makes use of `IGraphActionResult`.
+Just as Web API makes use of `IActionResult` to perform post processing on the result of a controller method, GraphQL ASP.NET makes use of `IGraphActionResult`.
 
-Reusing the previous example, here we make use of `BadRequest()` to automatically generate an appropriate error message inside the response payload's `errors` property when model validation fails. Field origin information including the path array and line/column number of the original query are wired up automatically.
+Reusing the previous example, here we make use of `this.BadRequest()` to automatically generate an appropriate error message inside the response payload's `errors` property when model validation fails. Field origin information including the path array and line/column number of the original query are wired up automatically.
 
 
 ```csharp

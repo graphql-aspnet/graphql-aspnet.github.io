@@ -2,6 +2,7 @@
 id: graph-directive
 title: Graph Directive
 sidebar_label: GraphDirective
+sidebar_position: 5
 ---
 
 These are some useful properties of a `GraphDirective` available to all life cycle methods at runtime.
@@ -51,7 +52,6 @@ public class AllowDirective : GraphDirective
 The `ClaimsPrincipal` created by ASP.NET when this request was authorized.
 
 ```csharp
-// C# Controller
 public class MyCustomDirective : GraphDirective
 {
     public IGraphActionResult BeforeResolution(FilterModel model)

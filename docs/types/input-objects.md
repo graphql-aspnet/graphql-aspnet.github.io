@@ -2,9 +2,10 @@
 id: input-objects
 title: Input Objects
 sidebar_label: Input Objects
+sidebar_position: 1
 ---
 
-`INPUT_OBJECT` graph types (a.k.a. input objects) represent complex data supplied to arguments on fields or directives. Anytime you want to pass more data than a single string or a number, perhaps an Address or a new Employee, you use an INPUT_OBJECT to represent that entity in GraphQL.  When the system scans your controllers, if it comes across a class used as a parameter to a method it will attempt to generate the appropriate input type definition to represent that class.
+`INPUT_OBJECT` graph types (a.k.a. input objects) represent complex data supplied to arguments on fields or directives. Anytime you want to pass more data than a single string or a number, perhaps an Address or a new Employee record, you use an INPUT_OBJECT to represent that entity in GraphQL.  When the system scans your controllers, if it comes across a class or struct used as a parameter to a method it will attempt to generate the appropriate input type definition to represent that class.
 
 The rules surrounding naming, field declarations, exclusions, use of `[GraphSkip]` etc. apply to input objects but with a few key differences:
 
@@ -17,11 +18,7 @@ The rules surrounding naming, field declarations, exclusions, use of `[GraphSkip
 
 Input objects can be given customized names, just like with object types, using the `[GraphType]` attribute. 
 
-<div class="sideBySideCode hljs">
-<div>
-
-```csharp
-// Donut.cs
+```csharp title="Customized Input Object Type Name"
 [GraphType(InputName = "NewDonutModel")]
 public class Donut
 {
@@ -32,30 +29,22 @@ public class Donut
 }
 ```
 
-</div>
-<div>
-
-```
-// GraphQL Type Definition
+```graphql title="Donut Type Definition"
 input NewDonutModel {
-  id: Int!
-  name: String
-  type: DonutType!
-  price: Decimal!
+  id: Int! = 0
+  name: String = null
+  type: DonutType! = FROSTED
+  price: Decimal! = 0
 }
 ```
 
-</div>
-</div>
-<br/>
-
->Not the specific callout to `InputName` in the attribution.
+>Note the specific callout to `InputName` in the attribution.
 
 ## Use an Empty Constructor
 
 When GraphQL executes a query it will attempt to create an instance of your input object then assign the key/value pairs received on the query to the properties. In order to do the initial instantiation it requires a public parameterless constructor to do so.
 
-```csharp
+```csharp title="Input Objects MUST have a Public, Parameterless Constructor
 public class BakeryController : GraphController
 {
     [Mutation("createDonut")]
@@ -76,17 +65,13 @@ public class DonutModel
 }
 ```
 
-Because of this restriction it can be helpful to separate your classes between "input" and "output" types much is the same way we do with `ViewModel` vs. `BindingModel` objects with REST queries in ASP.NET. This is optional, mix and match as needed by your use case.
+> Because of this consturctor restriction it can be helpful to separate your classes between "input" and "output" types much is the same way we do with `ViewModel` vs. `BindingModel` objects with REST queries in ASP.NET. This is optional, mix and match as needed by your use case.
 
 ## Properties Must Have a Public Setter
 
 Properties without a setter are ignored. At runtime, GraphQL compiles an expression tree with the set assignments declared on the graph type, it won't attempt to sneakily reflect and invoke a private or protected setter.
 
-<div class="sideBySideCode hljs">
-<div>
-
-```csharp
-// Donut.cs
+```csharp title="Properties must Have a Public Setter"
 public class Donut
 {
     public int Id { get; }
@@ -96,33 +81,22 @@ public class Donut
 }
 ```
 
-</div>
-<div>
-
-```ruby
+```graphql title="Donut Type Definition"
 // GraphQL Type Definition
-// No Id field is included on the INPUT_OBJECT
-
+// Id field is not included on the INPUT_OBJECT
 input Input_Donut {
-  name: String
-  type: DonutType!
-  price: Decimal!
+  name: String = null
+  type: DonutType! = FROSTED
+  price: Decimal! = 0
 }
 ```
 
-</div>
-</div>
-<br/>
 
 ## Methods are Ignored
 
 While its possible to have methods be exposed as resolvable fields on regular `OBJECT` types, they are ignored for input types regardless of the declaration rules applied to the type.
 
-<div class="sideBySideCode hljs">
-<div>
-
-```csharp
-// Donut.cs
+```csharp title="Methods Are Ignored on Input Objects"
 public class Donut
 {
     [GraphField("salesTax")]
@@ -139,34 +113,23 @@ public class Donut
 }
 ```
 
-</div>
-<div>
-
-```ruby
-# GraphQL Type
-# Definition
+```graphql title="Donut Type Definition"
+# CalculateSalesTax is not included
 input Input_Donut {
-  id: Int!
-  name: String
-  type: DonutType!
-  price: Decimal!
+  id: Int! = 0
+  name: String = null
+  type: DonutType! = FROSTED
+  price: Decimal! = 0
 }
 ```
-
-</div>
-</div>
-<br/>
 
 ## Required Fields And Default Values
 Add `[Required]` (from System.ComponentModel) to any property to force a user to supply the field in a query document.
 
 Any non-required field will automatically be assigned a default value if not supplied. This default value is equivilant to the property value of the object when its instantiated via its public, parameterless constructor.
 
-<div class="sideBySideCode hljs">
-<div>
 
-```csharp
-// Donut.cs
+```csharp title="Add the Required attribute for force a query to define a value"
 public class Donut
 {
     public Donut()
@@ -188,33 +151,25 @@ public class Donut
 }
 ```
 
-</div>
-<div>
-
-```ruby
-# GraphQL Type Definition
+```graphql title="Donut Type Definition"
+# No Default Value on Name
 input Input_Donut {
   name: String!
   id: Int! = 0    
-  type: DonutType! = VANILLA
+  type: DonutType! = FROSTED
   bakery: Input_Bakery = null
   price: Decimal! = 2.99
   isAvailable: Boolean! = true
 }
 ```
 
-</div>
-</div>
-<br/>
 
 ## Non-Nullability
 By default, all properties that are reference types (i.e. classes) are nullable and all value types (primatives, structs etc.) are non-nullable
 
 
-<div class="hljs">
 
-```csharp
-// Bakery.cs
+```csharp title="Owner can be null, it is a reference type"
 public class Bakery
 {
     // a reference to another object
@@ -222,23 +177,19 @@ public class Bakery
 }
 ```
 
-```ruby
-# GraphQL Type Definition
+```graphql title="Donut Type Definition"
 input Input_Bakery {
   owner: Input_Person = null
 }
 ```
 
-</div>
-<br/>
 
 If you want to force a value to be supplied (either on a query document or by default) you can use the `[GraphField]` attribute to augment the field.
 
 
-<div class="hljs">
 
-```csharp
-// Bakery.cs
+
+```csharp title="Force Owner to be non-null"
 public class Bakery
 {
     public Bakery()
@@ -251,46 +202,39 @@ public class Bakery
     public Person Owner { get; set; }
 }
 ```
-```ruby
-# GraphQL Type Definition
+
+```graphql title="Donut Type Definition"
 input Input_Bakery  {
   owner: Input_Person! = { name: "Bob Smith" }
 }
 ```
-</div>
-<br/>
 
+:::info
+ Any field explicitly or implicitly declared as non-nullable, that is not required, MUST have a default value assigned to it that is not `null`. A `GraphTypeDeclarationException` will be thrown at startup if this is not the case.
+:::
 
-> Any field explicitly or implicitly declared as non-nullable, that is not required, MUST have a default value assigned to it that is not `null`.
+#### Combine Non-Null and [Required]
+Combine the [Required] attribute with a custom type expression to force a user to supply a non-null value for the field on a query document.
 
-
-Add the [Required] attribute to force a user to supply a non-null value for the field on a query document.
-
-
-<div class="hljs">
-
-```csharp
-// Donut.cs
+```csharp title="Force Owner to be non-null And Required"
 public class Bakery
 {
     public Bakery()
     {
     }
 
-    // a reference to another object
     [Required]
     [GraphField(TypeExpression = "Type!")]
     public Person Owner { get; set; }
 }
 ```
-```ruby
-# GraphQL Type Definition
+
+```graphql title="Donut Type Definition"
+# No Default Value is supplied. owner must be supplied on a query
 input Input_Bakery {
   owner: Input_Person!
 }
 ```
-</div>
-<br/>
 
 ## Default Values Must be Coercible
 Any default value declared for an input field must be coercible by its target graph type in the target schema. 
@@ -299,7 +243,7 @@ Any default value declared for an input field must be coercible by its target gr
 
 Take a look at this example of an enum and input object:
 
-```csharp
+```csharp title="Using an Enum as a field type"
 public class Donut 
 {
     public string Name{ get; set; }
@@ -316,8 +260,10 @@ public enum DonutFlavor
 ```
 
 When `Donut` is instantiated the value of Flavor will be `Vanilla` because 
-thats the default value (0) of the enum's underlying data type (int). However, the enum value `Vanilla` is marked as being skipped in the schema. 
+thats the default value (0) of the enum. However, the enum value `Vanilla` is marked as being skipped in the schema. 
 
 Because of this mismatch, a `GraphTypeDeclarationException` will be thrown when the introspection data for your schema is built. As a result, the server will fail to start until the problem is corrected.
 
-> Enum values used for the default value of input object properties MUST also exist as values in the schema or an exception will be thrown.
+:::caution
+ Enum values used for the default value of input object properties MUST also exist as values in the schema or an exception will be thrown.
+:::

@@ -2,6 +2,7 @@
 id: subscription-events
 title: Subscription Logging Events
 sidebar_label: Subscription Events
+sidebar_position: 2
 ---
 
 GraphQL ASP.NET tracks some special events related to the management of subscriptions. They are outlined below.

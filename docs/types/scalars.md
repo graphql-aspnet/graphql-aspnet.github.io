@@ -2,6 +2,7 @@
 id: scalars
 title: Scalars
 sidebar_label: Scalars
+sidebar_position: 5
 ---
 
 Scalars are the most basic, fundamental unit of content in GraphQL. It is one of two leaf types (the other being [enums](./enums)). You can extend GraphQL with your own [custom scalars](../advanced/custom-scalars) when needed.
@@ -31,7 +32,9 @@ GraphQL ASP.NET has 20 built in scalar types.
 | Uri            | System.Uri             | String              |
 | UShort         | System.UInt16          | Number              |
 
-> You must target .NET 6.0 or later to use `DateOnly` and `TimeOnly`
+:::info 
+ You must target .NET 6.0 or later to use `DateOnly` and `TimeOnly`
+:::
 
 ## Input Value Resolution
 
@@ -43,13 +46,17 @@ When a value is resolved, it's read from the query document (or variable collect
     -   example: `-123.456e78`
     -   GraphQL numbers must conform to the [IEEE 754](https://en.wikipedia.org/wiki/IEEE_754) standard [Spec § [3.5.2](https://graphql.github.io/graphql-spec/October2021/#sec-Float)]
 
-Scalars used as input arguments require that any supplied value match at least one supported input format before they will attempt to convert the value into the related .NET type. If the value read from the document doesn't match an approved format it is rejected before conversion is attempted. See the table above for the list of allowed formats per scalar type.
+Scalars used as input arguments require that any supplied value match at least one supported input format before they will attempt to convert the value into the related .NET type. If the value read from the document doesn't match an approved format it is rejected before conversion is attempted. 
+
+For example, the library will accept dates as numbers or strings (e.g. `1670466552`, `"2022-12-8'T'02:29:10"`). If you try to supply a boolean value, `true`, the query is rejected outright and no parsing attempt is made. This can come in handy for custom scalar types that may have multiple serialization options.
+
+See the table above for the list of allowed formats per scalar type.
 
 ## Scalar Names Are Fixed
 
 Unlike other graph types, scalar names are fixed across all schemas. The name defined above (including casing), is how they appear in your schema's introspection queries. These names conform to the accepted standard for graphql type names. This is true for any custom scalars you may build as well.
 
-#### Nullable\<T\>
+#### Nullable&lt;T&gt;
 
 `int?`, `float?` etc.
 
@@ -59,15 +66,14 @@ For the value types listed above, GraphQL will automatically coerce values into 
 
 GraphQL defines a special scalar value value called `ID` which is defined as:
 
-"_a unique identifier, often used to refetch an object or as the key for a cache_" [Spec § [3.5.5](https://graphql.github.io/graphql-spec/October2021/#sec-ID)].
+> _a unique identifier, often used to refetch an object or as the key for a cache_" [Spec § [3.5.5](https://graphql.github.io/graphql-spec/October2021/#sec-ID)].
 
 GraphQL ASP.NET maintains a struct, `GraphQL.AspNet.GraphId` to hold this value and serializes and deserializes it as a string. You can perform an implicit and explicit conversion between `GraphId` and `System.String`
 
-```csharp
+```csharp title="Converting GraphId"
 GraphId id = new GraphId("abc");
 string str = id;
 // str == "abc"
-
 
 string str = "abc";
 GraphId id = (GraphId)str;

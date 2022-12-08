@@ -2,6 +2,7 @@
 id: metrics
 title: Profiling Your Queries
 sidebar_label: Query Profiling
+sidebar_position: 0
 ---
 
 GraphQL ASP.NET tracks query metrics through the `IGraphQueryExecutionMetrics` interface attached to each query execution context as its processed by the runtime and allows for tracing and timing of individual fields as they are started and completed.
@@ -20,8 +21,7 @@ Out of the box, the GraphQL ASP.NET implements the [Apollo Tracing](https://gith
 
 Query metrics are appended to the `extensions` node of the standard query response. This query of 3 fields will generate a `tracing` object similar to this:
 
-```javascript
-// Request
+```graphql title="Sample Query"
 {
   hero(episode: EMPIRE) {
     id
@@ -29,81 +29,77 @@ Query metrics are appended to the `extensions` node of the standard query respon
     __typename
   }
 }
+```
 
-
-// Response
+```json title="Profile Results"
 {
-    // data and error nodes omitted
-   "extensions": {
-    "tracing": {
-      "version": 1,
-      "startTime": "2019-09-29T18:21:35.903+00:00",
-      "endTime": "2019-09-29T18:21:35.904+00:00",
-      "duration": 4862,
-      "execution": {
-        "resolvers": [
-          {
-            "path": [
-              "hero"
-            ],
-            "parentType": "Query",
-            "fieldName": "hero",
-            "returnType": "Character!",
-            "startOffset": 78200,
-            "duration": 140500
-          },
-          {
-            "path": [
-              "hero",
-              "id"
-            ],
-            "parentType": "Human",
-            "fieldName": "id",
-            "returnType": "ID!",
-            "startOffset": 297900,
-            "duration": 24100
-          },
-          {
-            "path": [
-              "hero",
-              "name"
-            ],
-            "parentType": "Human",
-            "fieldName": "name",
-            "returnType": "String",
-            "startOffset": 352100,
-            "duration": 18200
-          },
-          {
-            "path": [
-              "hero",
-              "__typename"
-            ],
-            "parentType": "Human",
-            "fieldName": "__typename",
-            "returnType": "String!",
-            "startOffset": 404300,
-            "duration": 18400
-          }
-        ]
-      }
+  // data and error nodes omitted
+  "extensions": {
+  "tracing": {
+    "version": 1,
+    "startTime": "2019-09-29T18:21:35.903+00:00",
+    "endTime": "2019-09-29T18:21:35.904+00:00",
+    "duration": 4862,
+    "execution": {
+      "resolvers": [
+        {
+          "path": [
+            "hero"
+          ],
+          "parentType": "Query",
+          "fieldName": "hero",
+          "returnType": "Character!",
+          "startOffset": 78200,
+          "duration": 140500
+        },
+        {
+          "path": [
+            "hero",
+            "id"
+          ],
+          "parentType": "Human",
+          "fieldName": "id",
+          "returnType": "ID!",
+          "startOffset": 297900,
+          "duration": 24100
+        },
+        {
+          "path": [
+            "hero",
+            "name"
+          ],
+          "parentType": "Human",
+          "fieldName": "name",
+          "returnType": "String",
+          "startOffset": 352100,
+          "duration": 18200
+        },
+        {
+          "path": [
+            "hero",
+            "__typename"
+          ],
+          "parentType": "Human",
+          "fieldName": "__typename",
+          "returnType": "String!",
+          "startOffset": 404300,
+          "duration": 18400
+        }
+      ]
     }
   }
+}
 ```
 
 ## Enable Query Profiling
 
 Metrics can be turned on for all requests during configuration in `Startup.cs`:
 
-```csharp
-// Startup.cs
-public void ConfigureServices(IServiceCollection services)
+```csharp title="Enable Metrics at Startup"
+services.AddGraphQL(options =>
 {
-    services.AddGraphQL(options =>
-      {
-          options.ExecutionOptions.EnableMetrics = true;
-      });
-}
+    options.ExecutionOptions.EnableMetrics = true;
+});
 ```
 
 If you choose to override the default processor that accepts HTTP requests you can also enable metrics on a "per request" basis by overriding the `EnableMetrics` property and/or the `CreateRequest()` method to handle any conditional logic. See the section on the [`GraphQL Http Processor`](../reference/http-processor) for more details.
@@ -114,15 +110,11 @@ Options to profile a query vs. sending the results to a requestor are separate f
 
 To enable delivery of the metrics results to the requestor, set the appropriate schema configuration property at startup:
 
-```csharp
-// Startup.cs
-public void ConfigureServices(IServiceCollection services)
+```csharp title="Expose Metrics at Startup"
+services.AddGraphQL(options =>
 {
-    services.AddGraphQL(options =>
-      {
-          options.ResponseOptions.ExposeMetrics = true;
-      });
-}
+    options.ResponseOptions.ExposeMetrics = true;
+});
 ```
 
 As with enabling metrics, additional control can be gained by overriding `HandleQueryMetrics()` on the http processor.

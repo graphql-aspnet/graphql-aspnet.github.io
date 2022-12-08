@@ -2,6 +2,7 @@
 id: how-it-works
 title: How it Works
 sidebar_label: How it Works
+sidebar_position: 0
 ---
 
 > This document is a high level overview how GraphQL ASP.NET ultimately generates a response to a query with some insight into core details. Its assumes a working knowledge of both ASP.NET and the GraphQL specification. If you are only interested in the "how to" for using the library, feel free to skip this.
@@ -40,11 +41,7 @@ Note: The concept of a phase here is just for organizing the information, there 
 
 ### Phase 1: Parsing & Validation
 
-<div class="sideBySideCode hljs">
-<div>
-
-```csharp
-// C# Controller
+```csharp title="HeroController.cs"
 public class HeroController : GraphController
 {
     [QueryRoot("hero")]
@@ -72,11 +69,7 @@ public class HeroController : GraphController
 }
 ```
 
-</div>
-<div>
-
-```js
-// GraphQL Query Document
+```graphql title="Sample Query"
 query {
     hero(episode: EMPIRE) {
         name
@@ -85,8 +78,7 @@ query {
 }
 ```
 
-```js
-// Generated Response
+```json title="Response JSON"
 {
     "data" : {
         "hero": {
@@ -96,9 +88,6 @@ query {
     }
 }
 ```
-
-</div>
-</div>
 
 _Sample query used as a reference example in this section_
 
@@ -174,10 +163,10 @@ Hopefully we've given you a bit of insight into how the library works under the 
 
 ## Architectural Diagrams
 
-<span style="font-size:20px;vertical-align: center;">&#128204;</span>&nbsp; [Structural Diagrams](../assets/2022-10-graphql-aspnet-structural-diagrams.pdf)
+📌 [Structural Diagrams](../assets/2022-10-graphql-aspnet-structural-diagrams.pdf)
 
 A set of diagrams outlining the major interfaces and classes that make up GraphQL Asp.Net.
 
-<span style="font-size:20px;vertical-align: center;">&#128204;</span>&nbsp; [Execution Diagrams](../assets/2022-10-graphql-aspnet-execution-diagrams.pdf)
+📌 [Execution Diagrams](../assets/2022-10-graphql-aspnet-execution-diagrams.pdf)
 
 A set of flowcharts and relational diagrams showing how various aspects of the library fit together at run time, including the query execution and field execution pipelines.

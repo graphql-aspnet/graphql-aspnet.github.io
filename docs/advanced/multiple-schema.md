@@ -2,6 +2,7 @@
 id: multi-schema-support
 title: Multi-Schema Support
 sidebar_label: Multi-Schema Support
+sidebar_position: 5
 ---
 
 GraphQL ASP.NET supports multiple schemas on the same server out of the box. Each schema is recognized by the runtime by its concrete type. To register multiple schemas you'll need to create your own type that implements `ISchema`
@@ -10,7 +11,7 @@ GraphQL ASP.NET supports multiple schemas on the same server out of the box. Eac
 
 While it is possible to implement `ISchema` directly, if you don't require any extra functionality in your schema its easier to just subclass the default schema.
 
-```csharp
+```csharp title="Declaring Custom Schemas"
 public class EmployeeSchema : GraphSchema
 {
     public override string Name => "Employee Schema";
@@ -26,38 +27,29 @@ public class CustomerSchema : GraphSchema
 
 Each schema can be registered using an overload of `.AddGraphQL()` during startup.
 
-```csharp
-services.AddGraphQL<SchemaType>(options);
+```csharp title="Adding A Custom Schema"
+services.AddGraphQL<SchemaType>();
 ```
-
-### Disable Local Graph Entity Registration
-
-You'll most likely want to disable registering of local graph entities (the entities in the startup assembly) on one or both schemas lest you want each schema contain those controllers and graph types.
 
 ### Give Each Schema its Own HTTP Route
 
-The query handler will attempt to register a schema to `/graphql` for it to receive POST requests. You'll want to ensure that each schema has its own endpoint by updating the individual routes.
+The query handler will attempt to register a schema to `/graphql` for its URL, you'll want to ensure that each schema has its own endpoint by updating the individual routes.
 
-#### adding multiple schemas to start.cs
+```csharp title="Adding Multiple Schemas"
+services.AddGraphQL<EmployeeSchema>((options) =>
+    {
+        options.QueryHandler.Route = "/graphql_employees";
+        // add assembly or graph type references here
+    });
 
-```csharp
-// Startup.cs
-public void ConfigureServices(IServiceCollection services)
-{
-    // other configuration entries omitted for brevity
-
-    services.AddGraphQL<EmployeeSchema>((options) =>
-        {
-            options.AutoRegisterLocalGraphEntities = false;
-            options.QueryHandler.Route = "/graphql_employees";
-            // add assembly or graph type references here
-        });
-
-    services..AddGraphQL<CustomerSchema>((options) =>
-        {
-            options.AutoRegisterLocalGraphEntities = false;
-            options.QueryHandler.Route = "/graphql_customers";
-            // add assembly or graph type references here
-        });
-}
+services.AddGraphQL<CustomerSchema>((options) =>
+    {
+        options.QueryHandler.Route = "/graphql_customers";
+        // add assembly or graph type references here
+    });
 ```
+
+
+## Disable Local Graph Entity Registration
+
+You'll most likely want to disable registering of local graph entities (the entities in the startup assembly) on one or both schemas lest you want each schema contain those controllers and graph types.

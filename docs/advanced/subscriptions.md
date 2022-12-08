@@ -2,17 +2,18 @@
 id: subscriptions
 title: Subscriptions
 sidebar_label: Subscriptions
+sidebar_position: 0
 ---
 
 ## Initial Setup
 
-Successfully handling subscriptions in your GraphQL AspNet server can be straight forward for single server environments or very complicated for multi-server and scalable solutions. First we'll look at adding subscriptions for a single server.
+Successfully handling subscriptions in your GraphQL server can be straight forward for single server environments or very complicated for multi-server and scalable solutions. First we'll look at adding subscriptions for a single server.
 
 ### Install the Subscriptions Package
 
 The first step to using subscriptions is to install the subscription server package.
 
-```Powershell
+```powershell
  PS> Install-Package GraphQL.AspNet.Subscriptions -AllowPrereleaseVersions
 ```
 
@@ -24,33 +25,29 @@ You must configure web socket support for your Asp.Net server instance separatel
 
 After web sockets are added to your server, add subscription support to the graphql registration.
 
-```C#
-// startup.cs
+```csharp title="Add Subscription Support"
 
-    public void ConfigureServices(IServiceCollection services)
-    {
-        services.AddWebSockets(/*...*/);
+// configuring services
+services.AddWebSockets(/*...*/);
 
-        services.AddGraphQL()
-                .AddSubscriptions();
-    }
+services.AddGraphQL()
+        .AddSubscriptions();
 
-    public void Configure(IApplicationBuilder app)
-    {
-        // other required data not shown for brevity
-        app.UseWebSockets();
+// building the application pipeline
+app.UseWebSockets();
 
-        app.UseGraphQL();
-    }
+app.UseGraphQL();    
 ```
 
-> Don't forget to call `.UseWebsockets()` before calling `.UseGraphQL()`
+:::tip 
+ Don't forget to call `.UseWebsockets()` before calling `.UseGraphQL()`
+:::
 
 ### Create a Subscription
 
 Declaring a subscription is the same as declaring a query or mutation on a controller but with `[Subscription]` and `[SubscriptionRoot]` attributes. Feel free to mix subscriptions with your queries and mutations. They do not need to be kept seperate.
 
-```C#
+```csharp title="SubscriptionController.cs"
 public class SubscriptionController : GraphController
 {
     // other code not shown for brevity
@@ -72,13 +69,15 @@ public class SubscriptionController : GraphController
 }
 ```
 
-> Subscriptions can be asyncronous and return a Task&lt;IGraphActionResult&gt; as well.
+:::info
+Subscriptions can be asyncronous and return a `Task<IGraphActionResult>` as well.
+:::
 
 Here we've declared a new subscription, one that takes in a `filter` parameter to restrict the data that any subscribers receive.
 
 A query to invoke this subscription may look like this:
 
-```javascript
+```graphql title="Sample Subscription Query"
 subscription {
     onWidgetChanged(filter: "Big"){
         id
@@ -94,7 +93,7 @@ Any updated widgets that start with the phrase "Big" will then be sent to the re
 
 In order for the subscription server to send data to any subscribers it has to be notified when its time to do so. It does this via named Subscription Events. These are internal, schema-unique keys that identify when something happened, usually via a mutation. Once the mutation publishes an event, the subscription server will execute the appropriate action method for any subscribers, using the supplied data, and deliver the results to the client.
 
-```C#
+```csharp title="MutationController.cs"
 public class MutationController : GraphController
 {
     // other code not shown for brevity
@@ -114,7 +113,9 @@ public class MutationController : GraphController
 }
 ```
 
-> Notice that the event name used in `PublishSubscriptionEvent()` is the same as the `EventName` property on the `[SubscriptionRoot]` attribute. The subscription server will use the published event name to match which registered subscriptions need to receive the data being published.
+:::info Event Names Must Match
+ Notice that the event name used in `PublishSubscriptionEvent()` is the same as the `EventName` property on the `[SubscriptionRoot]` attribute above. The subscription server will use the published event name to match which registered subscriptions need to receive the data being published.
+:::
 
 ### Subscription Event Data Source
 
@@ -122,11 +123,9 @@ In the example above, the data sent with `PublishSubscriptionEvent()` is the sam
 
 You can explicitly flag a different parameter, or a parameter of a different data type to be the expected event source with the `[SubscriptionSource]` attribute.
 
-```C#
+```csharp title="Custom Event Data Source"
 public class SubscriptionController : GraphController
 {
-    // other code not shown for brevity
-    
     [SubscriptionRoot("onWidgetChanged", typeof(Widget), EventName = "WIDGET_CHANGED")]
     public IGraphActionResult  OnWidgetChanged(
         [SubscriptionSource] WidgetInternal eventData,
@@ -141,36 +140,44 @@ public class SubscriptionController : GraphController
 
 Here the subscription expects that an event is published using a `WidgetInternal` data type that it will internally convert to a `Widget` and send to any subscribers. This can be useful if you wish to share internal objects between your mutations and subscriptions that you don't want publicly exposed.
 
-> The data object published with `PublishSubscriptionEvent()` must have the same type as the `[SubscriptionSource]` on the subscription field.
+:::info Event Data Objects Must Match
+ The data object published with `PublishSubscriptionEvent()` must have the same type as the `[SubscriptionSource]` on the subscription field.
+:::
 
 ### Summary
 
 That's all there is for a basic subscription server setup.
 
 1. Add the package reference and update startup.cs
-2. Create a new subscription using `[Subscription]` or `[SubscriptionRoot]`
+2. Declare a new subscription using `[Subscription]` or `[SubscriptionRoot]`
 3. Publish an event from a mutation
 
-### React w/ Apollo Client Example
+### Apollo Client Example
 
 A complete example of single instance subscription server including a react app that utilizes the Apollo Client is available in the [demo projects](../reference/demo-projects) section.
 
 ## Subscription Action Results
 
-You saw above the special action result `SkipSubscriptionEvent()` used to instruct graphql to skip this event and not tell the client about it; this can be very useful in scenarios where the subscription supplies filter data to only receive some very specific data and not all items published via a specific event.
+You saw above the special action result `SkipSubscriptionEvent()` used to instruct graphql to skip the received event and not tell the client about it; this can be very useful in scenarios where the subscription supplies filter data to only receive some very specific data and not all items published via a specific event.
 
 Here is a complete list of the various "subscription specific" action results:
 
 * `SkipSubscriptionEvent()` - Instructs the server to skip the raised event, the client will not receive any data.
 * `OkAndComplete(data)` - Works just like `this.Ok()` but ends the subscription after the event is completed.  The client is informed that no additional data will be sent and that the server is closing the subscription permanently. This, however; does not close the underlying websocket connection.
 
+:::danger Be Careful With Sensitive Data
+Data published via `PublishSubscriptionEvent()` is sent, automatically, to all active subscriptions on the server. 
+
+If there are some scenarios where an event payload should not be shared with some connected users, be sure to enforce that business logic in your subscription method and use `SkipSubscriptionEvent()` as necessary for a given data package.
+:::
+
 ## Scaling Subscription Servers
 
-Using web sockets has a natural limitation in that any single server instance has a maximum number of socket connections that it can realistically handle before being overloaded. Additionally, all cloud providers impose an artifical limit for many of their pricing tiers. Once that limit is reached no additional clients can register subscriptions.
+Using web sockets has a natural limitation in that any single server instance has a maximum number of socket connections that it can realistically handle before being overloaded. Additionally, all cloud providers impose an artifical limit for many of their pricing tiers. Once that limit is reached no additional clients can connect, even if the server has capacity.
 
-Ok no problem, just scale horizontally, spin up additional ASP.NET server instances, add a load balancer and have the new requests open a web socket connection to these additional server instances, right? Not so fast.
+Ok no problem, just scale horizontally, spin up additional server instances, add a load balancer and have the new requests open a web socket connection to these additional server instances, right? Not so fast.
 
-With the examples above, events published by any mutation using `PublishSubscriptionEvent()` are routed internally, directly to the local subscription server meaning only those clients connected to the server where the event was raised will receive it. Clients connected to other server instances will never know an event was raised. This represents a big problem for large scale websites, so what do we do?
+With the examples above, events published by any mutation using `PublishSubscriptionEvent()` are routed internally, directly to the local subscription server meaning only those clients connected to the server where the event was raised will receive it. Clients connected to other server instances will never know the event occured. This represents a big problem for large scale websites, so what do we do?
 
 [This diagram](../assets/2022-10-subscription-server.pdf) shows a high level differences between the default, single server configuration and a custom scalable solution.
 
@@ -182,31 +189,27 @@ Instead of publishing events internally, within the server instance, we need to 
 
 Whatever your technology of choice the first step is to create and register a custom publisher that implements `ISubscriptionEventPublisher`. How your publisher class functions will vary widely depending on your implementation.
 
-```C#
+```csharp title="ISubscriptionEventPublisher.cs"
 public interface ISubscriptionEventPublisher
 {
-    /// <summary>
-    /// Publishs a new subscription event to be acted on.
-    /// </summary>
-    /// <param name="eventData">The event to publish.</param>
-    Task PublishEvent(SubscriptionEvent event);
+    Task PublishEvent(SubscriptionEvent eventData);
 }
 ```
 
-Register your publisher with the DI container BEFORE calling `.AddGraphQL()`
+Register your publisher with the DI container BEFORE calling `.AddGraphQL()` and  GraphQL ASP.NET will use your registered publisher instead of its default, internal publisher.
 
-```C#
+```csharp title="Register Your Event Publisher"
 services.AddSingleton<ISubscriptionEventPublisher, MyEventPublisher>();
-
-// other code omitted for brevity
 
 services.AddGraphQL()
         .AddSubscriptions();
 ```
 
-> GraphQL ASP.NET will use your registered publisher instead of its default, internal publisher.
 
-<span style="color:pink;">Publishing Subscription Events externally is not trivial. You'll have to deal with concerns like data serialization, package size etc..</span>
+:::caution 
+Publishing Subscription Events externally is not trivial. You'll have to deal with concerns like data serialization, package size etc. All of which are specific to your application and environment.
+:::
+
 
 ### Consuming Published Events
 
@@ -214,7 +217,9 @@ At this point, we've successfully published our events to some external data sou
 
 Once you rematerialize a `SubscriptionEvent` you need to let GraphQL know that it occurred. this is done using the `ISubscriptionEventRouter`. In general, you won't need to implement your own router, just inject it into your listener then call `RaisePublishedEvent` and GraphQL will take it from there.
 
-```csharp
+The router will take care of the details in figuring out which schema the event is destined for, which clients have active subscriptions etc. and forward it accordingly.
+
+```csharp title="Cusomer Event Listener Service"
  public class MyListenerService : BackgroundService
     {
         private readonly ISubscriptionEventRouter _router;
@@ -222,7 +227,6 @@ Once you rematerialize a `SubscriptionEvent` you need to let GraphQL know that i
 
         public MyListenerService(ISubscriptionEventRouter router)
         {
-            // other parameters omitted for brevity
             _router = router;
         }
 
@@ -237,7 +241,6 @@ Once you rematerialize a `SubscriptionEvent` you need to let GraphQL know that i
     }
 ```
 
-The router will take care of the details in figuring out which schema the event is destined for, which clients have active subscriptions etc. and forward it accordingly.
 
 
 ### Azure Service Bus Example
@@ -268,14 +271,18 @@ Because subscriptions are long running and registered before any data is process
 
 This is different than the default behavior when subscriptions are not enabled. Queries and mutations, by default, will follow a `PerField` method allowing for partial query resolutions.
 
+:::caution
+ Adding Subscriptions to your server will force the use of `PerRequest` Authorization
+:::
+
 ## Query Timeouts
 
 By default GraphQL does not define a timeout for an executed query. The query will run as long as the underlying HTTP connection is open. This is true for subscriptions as well. Given that the websocket connection is never closed while the end user is connected, any query executed through the websocket will be allowed to run for an infinite amount of time which can have some unintended side effects and consume resources unecessarily.
 
 Optionally, you can define a query timeout for a given schema, which the subscription server will obey:
 
-```csharp
-// startup.cs
+```csharp title="Adding a Query Timeout"
+// startup code
 services.AddGraphQL(o =>
 {
     // define a 2 minute timeout per query or subscription event executed.
@@ -294,10 +301,13 @@ Out of the box, the library supports subscriptions over websockets using `graphq
 
 ### Creating Custom Protocols
 
-If you wish to add support for your own websocket messaging protocol you need to implement `ISubscriptionClientProxyFactory` and create instances
-of a `ISubscriptionClientProxy` that can communicate with a connected client in your chosen protocol.
+If you wish to add support for your own websocket messaging protocol you need to implement two interfaces:
 
-```csharp
+- `ISubscriptionClientProxy` wraps a client connection and performs all the necessary communications.
+- `ISubscriptionClientProxyFactory` which is used create client proxy instances for your protocol.
+
+
+```csharp title="ISubscriptionClientProxyFactory.cs"
 public interface ISubscriptionClientProxyFactory
 {
     // Create client proxy instances that
@@ -313,9 +323,9 @@ public interface ISubscriptionClientProxyFactory
 }
 ```
 
-And inject it into your DI container before calling AddGraphQL:
+Inject it into your DI container before calling AddGraphQL:
 
-```C#
+```csharp title="Register Your Protocol Client Factory"
 // startup
 services.AddSingleton<ISubscriptionClientProxyFactory, MyClientProxyFactory>();
 
@@ -323,15 +333,19 @@ services.AddGraphQL()
         .AddSubscriptions();
 ```
 
-> `ISubscriptionClientProxyFactory` is expected to be a singleton; it is only instantiated once when the server first comes online. The `ISubscriptionClientProxy<TSchema>`instances it creates should be unique per `IClientConnection` instance.
+:::caution Create a Singleton Factory
+ `ISubscriptionClientProxyFactory` is expected to be a singleton; it is only instantiated once when the server first comes online. The `ISubscriptionClientProxy<TSchema>`instances it creates should be unique per `IClientConnection` instance.
+:::
 
 The server will listen for subscription registrations from your client proxy and send back published events when new data is available. It is up to your proxy to interprete these events, generate an appropriate result (including executing queries against the runtime), serialize the data and send it to the connected client on the other end.
 
-<span style="color:pink">The complete details of implementing a custom graphql client proxy are beyond the scope of this documentation. Take a peek at the subscription library source code for some clues on how to get started. </span>
+:::info Custom Protocols are Difficult
+The complete details of implementing a custom graphql client proxy are beyond the scope of this documentation. Take a peek at the subscription library source code for some clues on how to get started.
+:::
 
 ## Other Communication Options
 
-While websockets is the primary medium for persistant connections its not the only option. Internally, the library supplies an `IClientConnection` interface which encapsulates a raw connection websocket received from .NET. This interface is currently implemented as a `WebSocktClientConnection` which is responsible for reading and writing raw bytes to the socket. Its not a stretch of the imagination to implement your own custom client connection, invent a way to capture said connections and basically rewrite the entire communications layer of the subscriptions module.
+While websockets is the primary medium for persistant connections its not the only option. Internally, the library supplies an `IClientConnection` interface which encapsulates a raw websocket received from .NET. This interface is internally implemented as a `WebSocktClientConnection` which is responsible for reading and writing raw bytes to the socket. Its not a stretch of the imagination to implement your own custom client connection, invent a way to capture said connections and basically rewrite the entire communications layer of the subscriptions module.
 
 Please do a deep dive into the subscription code base to learn about all the intricacies of building your own communications layer and how you might go about registering it with the runtime. If you do try to tackle this very large effort don't hesitate to reach out. We're happy to partner with you and meet you half way on a solution if it makes sense for the rest of the community.
 
@@ -345,12 +359,12 @@ Each work item is, for the most part, a standard query execution. But with lots 
 
 By default, the max number of work items the router will deliver simultaniously is `500`.  This is a global, server-wide pool, shared amongst all registered schemas. You can manually adjust this value by changing it prior to calling `.AddGraphQL()`.   This value defaults to a low number on purpose, use it as a starting point to dial up the max concurrency to a level you feel comfortable with in terms of performance and cost. The only limit here is server resources and other environment limitations outside the control of graphql. 
 
-```csharp
-// Startup.cs
+```csharp title="Set A Receiver Throttle"
+// Startup 
 
 // Adjust the max concurrent communications value
 // BEFORE calling .AddGraphQL()
-SubscriptionServerSettings.MaxConcurrentReceiverCount = 50;
+SubscriptionServerSettings.MaxConcurrentReceiverCount = 500;
 
 services.AddGraphQL()
         .AddSubscriptions();
@@ -364,8 +378,9 @@ If, for instance, you have `200 clients` connected to a single server, each with
 
 Balancing the load can be difficult. Luckily there are some [throttling levers](/docs/reference/global-configuration#subscriptions) you can adjust.
 
-> Raising subscription events can exponentially increase the load on each of your servers. Think carefully when you deploy subscriptions to your application.
-
+:::info Know Your User Traffic
+ Raising subscription events can exponentially increase the load on each of your servers. Think carefully when you deploy subscriptions to your application.
+:::
 
 ### Dispatch Queue Monitoring
 
@@ -385,8 +400,9 @@ In the example below, if the queue reaches 1,000 events, the debug level alert w
 
  Lower level thresholds (as determined by number of queued events) will not be triggered if a higher level is on active cool down.
 
-```csharp
+```csharp title="Custom Dispatch Queue Monitoring"
 // startup configuration
+
 var thresholds = new SubscriptionClientDispatchQueueAlertSettings();
 thresholds.AddThreshold(
     LogLevel.Debug,

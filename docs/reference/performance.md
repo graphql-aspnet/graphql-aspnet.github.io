@@ -2,6 +2,7 @@
 id: performance
 title: Benchmarks & Performance
 sidebar_label: Benchmarks
+sidebar_position: 10
 ---
 
 ## Query Benchmarking
@@ -14,13 +15,17 @@ As you can see all query types execute in sub-millisecond timeframes. If there i
 ![benchmarks](../assets/benchmarks.png)
 **Last Updated 2022-12-01; v0.14.0-beta**
 
-> Performance will vary depending on your hardware and environment conditions. You can execute your own test run via the bench marking solution located at `./src/graphql-aspnet-benchmarks.sln` 
+:::note Your Milage May Vary
+ Performance will vary depending on your hardware and environment conditions. You can execute your own test run via the bench marking solution located at `./src/graphql-aspnet-benchmarks.sln` 
+:::
 
 ## Performance Testing
 
-We periodically execute tests against the library to measure throughput and stability, for a single server instance, under load. Our goal is to measure the theoretical limits in a multi-user, "production like" scenario.
+:::caution  Run Your Own Performance Tests
+These performance tests are not intended to be used as data points when determining scaling requirements for your own production workloads. Your use cases will be different and effected by factors not present in our lab environment (e.g. database connections, service orchrestration, business logic etc.). Be sure to execute your own load tests using queries indicative of your expected user base and act accordingly.
+:::
 
-<span style="color:pink;">These performance tests are not intended to be used as data points when determining scaling requirements for your own production workloads. Your use cases will be different and effected by factors not present in our lab environment (e.g. databases, service orchrestration, business logic etc.). Be sure to execute your own load tests using queries indicative of your expected user base and act accordingly.</span>
+We periodically execute tests against the library to measure throughput and stability, for a single server instance, under load. Our goal is to measure the theoretical limits in a multi-user, "production like" scenario.
 
 These tests are executed in a controlled setting with the following conditions:
 
@@ -77,7 +82,9 @@ A qualitative test executed with the server instance running in release mode, ha
 |Memory Allocation| Expect to see steady Gen0 allocation over time, with no extreme spikes. |
 |Object Survival  | Expect to see little to no objects surviving to Gen1 and Gen2 heap collections per GC cycle. When the test completes, the server returns to a steady state of memory usage prior to the test beginning.|
 
-> The aim of this test is to ensure acceptable memory pressure and GC cycles on the server instance in a controlled usage scenario and ensure no memory leaks occur. 
+:::info Goal
+ The aim of this test is to ensure acceptable memory pressure and GC cycles on the server instance in a controlled usage scenario and ensure no memory leaks occur. 
+:::
 
 **Results**
 
@@ -101,19 +108,20 @@ A test with the server executing in release mode, WITHOUT the subscription serve
 |GC % Time                 |Using the metrics obtained via [dotnet-counters](https://learn.microsoft.com/en-us/dotnet/core/diagnostics/dotnet-counters) expect that the GC % time is within 1% of the REST control load |
 |Throughput (req/sec)      |Throughput, measured in requests per second, is within 10% of the peak load generated via the REST control load |
 
-> The aim of this test is to ensure adequate single instance throughput and that the overhead for using graphql on top of web api is kept to a minimum.
+:::info Goal
+ The aim of this test is to ensure adequate single instance throughput and that the overhead for using graphql on top of web api is kept to a minimum.
+:::
 
 **Results**
 
 | Date      |  Version    |  Metric          | REST Workload   |   GraphQL Workload | Variance |
 |-----------|-------------|------------------|-----------------|--------------------|----------|
-|2022-11-30 |v0.13.1-beta | CPU Utilization  | 0.01-2%         |  2-9%              | <span style="color:red;"> +7% </span>          |
-|           |             | GC % Time        | < 1%            |  2-4%              | <span style="color:red;">+3% </span>           |
-|           |             | Throughput       | 37,490 req/sec  |  29,830 req/sec    | <span style="color:red;">-8k (-20%) </span>    |
-|           |             |                  |                 |                    |          |
-|2022-12-1  |v0.14.0-beta | CPU Utilization  |0.01-2%          |  1-3%              | <span style="color:green;"> +1% </span>        |
-|           |             | GC % Time        |  < 1%           |  < 1%              | <span style="color:green;">+0% </span>         |
-|           |             | Throughput       | 37,360 req/sec  |  36,509 req/sec    | <span style="color:green;">-2k (-2.3%)</span>  |
+|2022-11-30 |v0.13.1-beta | CPU Utilization  | 0.01-2%         |  2-9%              | <span style={{color:"red"}}> +7% </span>          |
+|           |             | GC % Time        | < 1%            |  2-4%              | <span style={{color:"red"}}>+3% </span>           |
+|           |             | Throughput       | 37,490 req/sec  |  29,830 req/sec    | <span style={{color:"red"}}>-8k (-20%) </span>    |
+|2022-12-1  |v0.14.0-beta | CPU Utilization  |0.01-2%          |  1-3%              | <span style={{color:"green"}}> +1% </span>        |
+|           |             | GC % Time        |  < 1%           |  < 1%              | <span style={{color:"green"}}>+0% </span>         |
+|           |             | Throughput       | 37,360 req/sec  |  36,509 req/sec    | <span style={{color:"green"}}>-2k (-2.3%)</span>  |
 
 
 
@@ -125,7 +133,7 @@ A simple test flooding the server with an ever-increasing amount of traffic unti
 
 | Date      |  Version    |  Metric          |GraphQL Query  | 
 |-----------|-------------|------------------|-----------------|
-|2022-12-1  |v0.14.0-beta | Max Throughput   | 57,919 req/sec *     |
+|2022-12-1  |v0.14.0-beta | Max Throughput   |<span style={{color:"cyan"}}> 57,919 req/sec * </span>    |
 
 \* We ran out of client machines and could not generate any more load against the test server. At the time, the server process indicated 5% CPU utilization and less than 750mb of committed memory.
 
