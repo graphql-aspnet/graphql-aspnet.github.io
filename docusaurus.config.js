@@ -17,8 +17,8 @@ const config = {
 
   // GitHub pages deployment config.
   // If you aren't using GitHub pages, you don't need these.
-  organizationName: 'kevin-carroll', // Usually your GitHub org/user name.
-  projectName: 'kevin-carroll.github.io', // Usually your repo name.
+  organizationName: 'graphql-aspnet', // Usually your GitHub org/user name.
+  projectName: 'graphql-aspnet.github.io', // Usually your repo name.
   trailingSlash: false,
 
   // Even if you don't use internalization, you can use this field to set useful
