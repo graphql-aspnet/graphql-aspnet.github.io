@@ -2,17 +2,18 @@
 id: what-is-graphql
 title: What is GraphQL?
 sidebar_label: What is GraphQL?
+sidebar_position: 0
 ---
 
 [GraphQL](https://graphql.org) is a query language originally created by [Facebook](https://facebook.com) in 2012 for their own internal use. It was eventually open-sourced and moved to its own foundation, the [GraphQL Foundation](https://foundation.graphql.org/), and hosted by the [Linux Foundation](https://www.linuxfoundation.org/). The query language provides an alternative to traditional REST queries that we all know and love in giving the requestor more control over what data to return.
 
 With REST someone may requst data by querying against a URL with the `GET` HTTP verb. It's up to the server to decide what fields to return.
 
-```javascript
+```javascript title="Sample REST  Query"
 //REST Request:
 GET https://www.the-rebel-alliance.site/directory/persons/1
 
-Response:
+// Response
 {
     "id": 1,
     "name": "Luke Skywalker",
@@ -23,9 +24,7 @@ Response:
 
 But with GraphQL a user _describes_ the data they want in their request to the GraphQL server.
 
-```javascript
-//GraphQL Request:
-POST https://www.the-rebel-alliance.site/graphql
+```graphql title="Sample GraphQL Query"
 query {
     person(id: 1){
         name
@@ -34,7 +33,7 @@ query {
     }
 }
 
-Response:
+// Response
 {
     "data": {
         "person": {

@@ -2,6 +2,7 @@
 id: middleware
 title: Pipelines and Custom Middleware
 sidebar_label: Pipelines & Middleware
+sidebar_position: 7
 ---
 
 At the heart of GraphQL ASP.NET are 4 middleware pipelines; chains of components executed in a specific order to produce a result.
@@ -24,8 +25,7 @@ Each new middleware component must implement one of the four middleware interfac
 
 The interfaces define one method, `InvokeAsync`, with identical signatures save for the type of data context accepted by each.
 
-```csharp
-// The Query Execution Middleware Component definition.
+```csharp title="Query Execution Middleware Component definition."
 public interface IQueryExecutionMiddleware
 {
     Task InvokeAsync(
@@ -37,7 +37,7 @@ public interface IQueryExecutionMiddleware
 
 The library will invoke your component at the appropriate time and pass to it the active data context. Once you have performed any necessary work involving the context invoke the `next` delegate (the second parameter) to pass the context to the next component in the chain.
 
-```csharp
+```csharp title="Example Custom Middleware Component"
 public class MyQueryMiddleware : IQueryExecutionMiddleware
 {
     public async Task InvokeAsync(
@@ -62,15 +62,13 @@ public class MyQueryMiddleware : IQueryExecutionMiddleware
 
 Each pipeline can be extended using the `SchemaBuilder` returned from calling `.AddGraphQL()` at startup. Each schema that is added to GraphQL will generate its own builder with its own set of pipelines and components. They can be configured independently as needed.
 
-```csharp
-// Startup.cs
-
+```csharp title="Register Your Middleware During Startup"
 // obtain a reference to the builder after adding
 // graphql for your schema
 var schemaBuilder = services.AddGraphQL(options =>
-    {
-        options.ExecutionOptions.MaxQueryDepth = 15;
-    });
+{
+    options.ExecutionOptions.MaxQueryDepth = 15;
+});
 
 // add new middleware components to any pipeline
 schemaBuilder.QueryExecutionPipeline.AddMiddleware<MyQueryMiddleware>();
@@ -124,7 +122,7 @@ document on the context.
 
 In addition to the common properties defined above, the query execution context defines a number of useful fields:
 
-```csharp
+```csharp title="GraphQueryExecutionContext.cs"
 public class GraphQueryExecutionContext
 {
     public IGraphOperationResult Result { get; set; }
@@ -151,7 +149,7 @@ The field execution pipeline is executed once for each field of data that needs 
 
 In addition to the common properties defined above the field execution context defines a number of useful properties:
 
-```csharp
+```csharp title="GraphFieldExecutionContext.cs"
 public class GraphFieldExecutionContext
 {
     public IGraphFieldRequest Request { get; }
@@ -176,7 +174,7 @@ The field authorization pipeline can be invoked as part of query execution or fi
 
 In addition to the common properties defined above the field security context defines a number of useful properties:
 
-```csharp
+```csharp title="GraphSchemaItemSecurityChallengeContext.cs"
  public class GraphSchemaItemSecurityChallengeContext
 {
     public SchemaItemSecurityRequirements SecurityRequirements {get; set;}
@@ -202,7 +200,7 @@ The directive execution pipeline will be invoked for each directive applied to e
 
 #### GraphDirectiveExecutionContext
 
-```csharp
+```csharp title="GraphDirectiveExecutionContext"
 public class GraphDirectiveExecutionContext
 {
     public IGraphDirectiveRequest Request { get; }

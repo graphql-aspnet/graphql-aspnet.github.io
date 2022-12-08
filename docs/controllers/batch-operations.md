@@ -2,9 +2,12 @@
 id: batch-operations
 title: Batch Operations
 sidebar_label: Batch Operations
+sidebar_position: 5
 ---
 
-> Read the section on [type extensions](./type-extensions) before reading this document. Batch Operations expand on type extensions and understanding how they work is critical.
+:::caution 
+Read the section on [type extensions](./type-extensions) before reading this document. Batch Operations expand on type extensions and understanding how they work is critical.
+:::
 
 ## The N+1 Problem
 
@@ -12,8 +15,7 @@ There are plenty of articles on the web discussing the theory behind the N+1 pro
 
 Let's build on our example from the discussion on type extensions where we created an extension to retrieve `Cake Orders` for a **single** `Bakery`. What if we're a national chain and need to see the last 50 orders for each of our stores in a region? This seems like a reasonable thing an auditor would do so lets alter our controller to fetch all our bakeries and then let our type extension fetch the cake orders.
 
-```csharp
-// Bakery.cs
+```csharp title="Retrieving Multiple Bakeries"
 public class Bakery
 {
     public int Id { get; set; }
@@ -35,7 +37,7 @@ public class BakedGoodsCompanyController : GraphController
 }
 ```
 
-```javascript
+```graphql title="Sample Query"
 query {
     bakeries(region: SOUTH_WEST){
         name
@@ -57,11 +59,11 @@ If we could _batch_ the cake orders request and fetch all the orders for all the
 
 You'll often hear the term `Data Loaders` when reading about GraphQL implementations. Methods that load the child data being requested as a single operation before assigning to each of the parents. There is no difference with GraphQL ASP.NET. You still have to write that method. But with the ability to capture action method parameters and clever use of an `IGraphActionResult` we can combine the data load phase with the assignment phase into a single batch operation, at least on the surface. The aim is to make it easy to read and easier to write.
 
-## The [BatchTypeExtension] Attribute
+## \[BatchTypeExtension\] Attribute
 
-A batch operation is implemented as a type extension but with the word `Batch` in it. Seriously, lets look at an example.
+A batch operation is implemented as a type extension but with the word `Batch` in it. Lets look at an example:
 
-```csharp
+```csharp title="A Batch Type Extension"
 public class BakedGoodsCompanyController : GraphController
 {
     [QueryRoot("bakeries")]
@@ -99,7 +101,7 @@ GraphQL works behind the scenes to pull together the items generated from the pa
 
 `this.StartBatch()` returns a builder to define how you want GraphQL to construct your batch. We need to tell it how each of the child items we fetched maps to the parents that were supplied (if at all).
 
-In the example we matched on a bakery's primary key selecting `Bakery.Id` from each of the source items and pairing it `CakeOrder.BakeryId` from each of the results. This is enough information for the builder to generate a valid result. Depending on the contents of your data and the definition of your extension there are few scenarios that emerge:
+In the example we matched on a bakery's primary key selecting `Bakery.Id` from each of the source items and pairing it against `CakeOrder.BakeryId` from each of the results. This is enough information for the builder to generate a valid result. Depending on the contents of your data, the type expression of your extension there are few scenarios that emerge:
 
 **1 Source -> 1 Result**
 
@@ -119,19 +121,19 @@ For sibling relationships there are only two options; either the data exists and
 
 > Excluding a source item from `this.StartBatch()` will result in it receiving `null` for its resolved field value.
 
-Note that it is the method's responsibility to be compliant with the type expression of the field in this regard. If a field is marked as `NON_NULL` and you exclude the parent item from the batch (resulting in a null result for the field for that item) the field will be marked invalid and register an error.
+Note that it is your method's responsibility to be compliant with the type expression of the field in this regard. If a field is marked as `NON_NULL` and you exclude the parent item from the batch (resulting in a null result for the field for that item) the field will be marked invalid and register an error.
 
 #### Returning `IDictionary<TSource, TValue>`
 
 Using `this.StartBatch` is the preferred way of returning data from a batch extension but there is a small amount of overhead to it. It has to join two separate lists of data on a common key, which could take a few extra cycles for large data sets.
 
-Another option would be to generate the same result yourself while you're generating your data set. Once its all said and done, `this.StartBatch()` creates an `IDictionary<TSource, TValue>` where `TSource` is a parent object and `TValue` is either a single child or an `IEnumerable<Child>` depending on the type definition of your field. A batch extension is the only operation for which GraphQL will accept a return type of `IDictionary`.
+Another option would be to generate the same result yourself while you're generating your data set. Once its all said and done, `this.StartBatch()` creates an `IDictionary<TSource, TValue>` where `TSource` is a parent object and `TValue` is either a single child or an `IEnumerable<Child>` depending on the type definition of your field. A batch extension is the only operation that will accept a return type of `IDictionary`.
 
-> When returning `IDictionary<TSource, TValue>`, `TSource` **MUST** be the object reference supplied to the the extension method, not a copy.
+> When returning `IDictionary<TSource, TValue>`, the key **MUST** be the original object reference supplied to the the extension method, not a copy.
 
 This is the above batch operation reconfigured to a custom dictionary. Note that when we use an `IDictionary` return type, GraphQL is able to infer our field data type and an explicit declaration is no longer needed on the attribute.
 
-```csharp
+```csharp title="Using a Custom Dictionary"
 public class BakedGoodsCompanyController : GraphController
 {
     [QueryRoot("bakeries")]

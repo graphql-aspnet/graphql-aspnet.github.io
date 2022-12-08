@@ -2,9 +2,10 @@
 id: list-non-null
 title: List & Non-Null
 sidebar_label: List & Non-Null
+sidebar_position: 6
 ---
 
-In addition to the six fundamental graph types, GraphQL contains two meta graph types: [`LIST` and `NON_NULL`](https://graphql.org/learn/schema/#lists-and-non-null).
+In addition to the six fundamental graph types, GraphQL contains two meta graph types: [LIST and NON_NULL](https://graphql.org/learn/schema/#lists-and-non-null).
 
 -   `NON_NULL` : Indicates that the Graph Type its describing must not be a null value, be that as an input argument or returned from a field
 -   `LIST`: Indicates that GraphQL should expect a collection of objects instead of just a single item.
@@ -20,8 +21,7 @@ For example, we would say:
 We can even describe complex scenarios:
 
 -   "A field that might return a collection of `persons` but when returned, each person must be a valid reference."
--   "An input argument that must be a list that contains lists of `integers`."
-    -   e.g. `[[1, 2], [5, 15]]`
+-   "An input argument that must be a list that contains lists of `integers`." (e.g. `[[1, 2], [5, 15]]`)
 
 ## Type Expressions
 
@@ -47,9 +47,9 @@ Type Expressions are commonly shown in the GraphQL schema syntax for field defin
 | IReadOnlyList&lt;long?&gt;                  | [Long]        |
 | IEnumerable&lt;List&lt;ICollection&lt;Donut&gt;&gt;&gt; | [[[Donut]]]   |
 
-##### The `!` indicates NON_NULL and `[]` for a LIST.
+> The `!` indicates NON_NULL and `[]` for a LIST.
 
-#### Overriding Type Expressions
+### Overriding Type Expressions
 
 You may need to override the default behavior from time to time. For instance, a `string`, which is a reference type, is nullable by default but you may need to require a string be supplied in an input argument.
 

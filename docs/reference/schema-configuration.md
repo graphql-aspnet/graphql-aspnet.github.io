@@ -2,29 +2,22 @@
 id: schema-configuration
 title: Schema Configuration
 sidebar_label: Schema Configuration
+sidebar_position: 1
 ---
 
-This document contains a list of various configuration settings available during schema configuration.
+This document contains a list of various configuration settings available during schema configuration. All options are added as part of the `.AddGraphQL()` method used at startup.
 
-```csharp
-// Startup.cs
-public void ConfigureServices(IServiceCollection services)
+```csharp title="Adding Schema Configuration Options"
+services.AddGraphQL(schemaOptions =>
 {
-    // other code omitted for brevity
+    // *************************
+    // CONFIGURE YOUR SCHEMA HERE
+    // *************************
+});
 
-    services.AddGraphQL(schemaOptions =>
-    {
-        // *************************
-        // CONFIGURE YOUR SCHEMA HERE
-        // *************************
-    });
-}
 
-public void Configure(IApplicationBuilder appBuilder)
-{
-    // other code omitted for brevity
-    appBuilder.UseGraphQL();
-}
+// Be sure to add graphql to the ASP.NET pipeline builder
+appBuilder.UseGraphQL();
 ```
 
 ## Builder Options
@@ -470,7 +463,7 @@ serverOptions.DisableDefaultRoute = false;
 | ------------- | ----------------- |
 | `false `       | `true`, `false`   |
 
-When true, GraphQL will not register a component to listen for web socket requests. You must handle the acceptance of web sockets yourself and provision client proxies that can interact with the runtime. If you wish to implement your own web socket middleware handler, viewing [DefaultGraphQLHttpSubscriptionMiddleware<TSchema>](https://github.com/graphql-aspnet/graphql-aspnet/blob/master/src/graphql-aspnet-subscriptions/Defaults/DefaultGraphQLHttpSubscriptionMiddleware.cs) may help.
+When true, GraphQL will not register a component to listen for web socket requests. You must handle the acceptance of web sockets yourself and provision client proxies that can interact with the runtime. If you wish to implement your own web socket middleware handler, viewing [DefaultGraphQLHttpSubscriptionMiddleware&lt;TSchema&gt;](https://github.com/graphql-aspnet/graphql-aspnet/blob/master/src/graphql-aspnet-subscriptions/Defaults/DefaultGraphQLHttpSubscriptionMiddleware.cs) may help.
 
 
 

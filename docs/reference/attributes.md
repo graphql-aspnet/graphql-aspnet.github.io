@@ -2,6 +2,7 @@
 id: attributes
 title: Attributes
 sidebar_label: Attributes
+sidebar_position: 3
 ---
 
 This document contains an alphabetical reference of each of the class, property and method attributes used by GraphQL ASP.NET.
@@ -11,7 +12,7 @@ This document contains an alphabetical reference of each of the class, property 
 Declares that a given type system directive should be applied to the target schema item (an object, a field, an enum etc.). See the page on [type system directives](../advanced/directives.md#type-system-directives) for complete details on how to build your own. Directives can be applied by type, by name and with or without parameters.
 
 
-```csharp
+```csharp 
 public class Person 
 {
     // apply by registered system type
@@ -37,7 +38,6 @@ The batch method must declare a parameter of `IEnumerable<TypeToExtend>`.
 Declares a batch type extension with the given field name. The return type of this field will be taken from the return type of the method. The return type of the method must be `IDictionary<TypeToExtend, ReturnFieldType>`
 
 ```csharp
-// C# Controller
 public class HeroController : GraphController
 {
     [BatchTypeExtension(typeof(Human), "droids")]
@@ -58,7 +58,6 @@ Declares a batch type extension return type explicitly allowing use of `IGraphAc
 a batch collection result.
 
 ```csharp
-// C# Controller
 public class HeroController : GraphController
 {
     [BatchTypeExtension(typeof(Human), "droids", typeof(IEnumerable<Droid>))]
@@ -81,7 +80,6 @@ public class HeroController : GraphController
 Declares the batch type extension as returning a union rather than a single specific data type.
 
 ```csharp
-// C# Controller
 public class HeroController : GraphController
 {
     [BatchTypeExtension(typeof(Human), "bestFriend", "DroidOrHuman", typeof(Droid), typeof(Human))]
@@ -103,7 +101,6 @@ Indicates to any introspection queries that the field or action method is deprec
 -   `reasonText` - The reason for the deprecation that is displayed in an introspection query.
 
 ```csharp
-// C# Controller
 public class CharacterController : GraphController
 {
     [Query]
@@ -124,7 +121,6 @@ Adds a human-readable description to any type, interface, field, parameter, enum
 -   `text` - The text to display in an introspection query.
 
 ```csharp
-// C# Controller
 [Description("A field containing information related to the characters of Star Wars")]
 public class CharacterController : GraphController
 {
@@ -145,14 +141,14 @@ method should be invoked for a particular location.
 #### `[DirectiveLocations(directiveLocation)]`
 
 ```csharp    
-    public sealed class AllowFragment : GraphDirective
+public sealed class AllowFragment : GraphDirective
+{
+    [DirectiveLocations(ExecutableDirectiveLocation.FRAGMENT_SPREAD | ExecutableDirectiveLocation.INLINE_FRAGMENT)]
+    public IGraphActionResult Execute([FromGraphQL("if")] bool ifArgument)
     {
-        [DirectiveLocations(ExecutableDirectiveLocation.FRAGMENT_SPREAD | ExecutableDirectiveLocation.INLINE_FRAGMENT)]
-        public IGraphActionResult Execute([FromGraphQL("if")] bool ifArgument)
-        {
-            return ifArgument ? this.Ok() : this.Cancel();
-        }
+        return ifArgument ? this.Ok() : this.Cancel();
     }
+}
 ```
 
 ## DirectiveInvocationPhase
@@ -165,15 +161,15 @@ during `SchemaGeneration` and `AfterFieldResolution` depending on the allowed ta
 -   `phases` - A bitwise set of `DirectiveInvocationPhase` values indicating when in the execution pipelines this directive should be invoked.
 
 ```csharp    
-    [DirectiveInvocationPhase(DirectiveInvocationPhase.AfterFieldResolution)]
-    public sealed class AllowFragment : GraphDirective
+[DirectiveInvocationPhase(DirectiveInvocationPhase.AfterFieldResolution)]
+public sealed class AllowFragment : GraphDirective
+{
+    [DirectiveLocations(ExecutableDirectiveLocation.FIELD)]
+    public IGraphActionResult Execute([FromGraphQL("if")] bool ifArgument)
     {
-        [DirectiveLocations(ExecutableDirectiveLocation.FIELD)]
-        public IGraphActionResult Execute([FromGraphQL("if")] bool ifArgument)
-        {
-            return ifArgument ? this.Ok() : this.Cancel();
-        }
+        return ifArgument ? this.Ok() : this.Cancel();
     }
+}
 ```
 
 ## FromGraphQL
@@ -186,7 +182,6 @@ and directive action methods.
 -   `argumentName`: The name of this parameter in the object graph
 
 ```csharp
-// C# Controller
 public class CharacterController : GraphController
 {
     [Query]
@@ -202,10 +197,8 @@ public class CharacterController : GraphController
 -   `TypeExpression`: A custom type expression, in query syntax language, to declare explicit nullability and list rules for this parameter.
 
 ```csharp
-// C# Controller
 public class CharacterController : GraphController
 {
-
     [Query]
     public IGraphActionResult Hero(
         [FromGraphQL(TypeExpression  = "Type!")] string heroId)
@@ -292,7 +285,7 @@ public class HeroController : GraphController
 </div>
 <div>
 
-```js
+```graphql
 # GraphQL Query
 query {
     hero(episode: EMPIRE) {
@@ -314,9 +307,6 @@ Indicates a field path in each root graph type where this controller should appe
 -   `template` - A set of `/` separated path segments representing a nested set of fields where the controller should reside.
     -   The `"[controller]"` meta tag can be used and will be replaced by the controller name at runtime.
 
-<div class="sideBySideCode hljs">
-<div>
-
 ```csharp
 [GraphRoute("starWars/characters")]
 public class HeroController : GraphController
@@ -329,11 +319,7 @@ public class HeroController : GraphController
 }
 ```
 
-</div>
-<div>
-
-```js
-// GraphQL Query
+```graphql title="Sample Query"
 query {
     starWars {
         characters {
@@ -345,10 +331,6 @@ query {
     }
 }
 ```
-
-</div>
-</div>
-
 ## GraphSkip
 
 Indicates that the entity to which its attached should be skipped and not included in a schema. GraphSkip can be defined on any controller, method, property, interface, enum or enum value.
@@ -356,7 +338,6 @@ Indicates that the entity to which its attached should be skipped and not includ
 #### `[GraphSkip]`
 
 ```csharp
-// C# Controller
 public class CharacterController : GraphController
 {
     [Query]
@@ -493,7 +474,6 @@ Declares a controller action method as a field on another graph type rather than
 Declares a type extension with the given field name. The return type of this field will be taken from the return type of the method.
 
 ```csharp
-// C# Controller
 public class DroidController : GraphController
 {
     [TypeExtension(typeof(Droid), "ownedBy")]
@@ -513,7 +493,6 @@ public class DroidController : GraphController
 Declares a type extension with an explicit return type. useful when returning `IGraphActionResult`.
 
 ```csharp
-// C# Controller
 public class HeroController : GraphController
 {
     [TypeExtension(typeof(Human), "ownedBy", typeof(Droid))]
@@ -536,7 +515,6 @@ public class HeroController : GraphController
 Declares the type extension as returning a union rather than a specific data type.
 
 ```csharp
-// C# Controller
 public class HeroController : GraphController
 {
     [TypeExtension(typeof(Droid), "bestFriend", "DroidOrHuman", typeof(Droid), typeof(Human))]

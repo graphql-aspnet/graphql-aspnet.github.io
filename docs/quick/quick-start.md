@@ -2,6 +2,7 @@
 id: quick-start
 title: Quick Start Guide
 sidebar_label: Quick Start
+sidebar_position: 1
 ---
 
 This guide will help you get a GraphQL project up and running so you can start experimenting. We'll cover the following:
@@ -53,7 +54,7 @@ From the Visual Studio 2019 start screen:
 3. Choose `ASP.NET Core Web API` when prompted to select a project type.
     - GraphQL ASP.NET has no view layer so we can forgo including Razor and other related options.
     
-![Create an API Project](assets/quick-start-1-choose-api.png)
+![Create an API Project](../assets/quick-start-1-choose-api.png)
 
 ## Step 2: Add the GraphQL ASP.NET Nuget Package
 
@@ -62,7 +63,7 @@ From the Visual Studio 2019 start screen:
     - GraphQL ASP.NET has no external dependencies other than standard Microsoft packages. Follow the prompts to allow these packages to be installed for the project.
 > Be sure to include the `-AllowPrereleaseVersions` flag. GraphQL ASP.NET is still in beta.
 
-![Create an API Project](assets/quick-start-2-package-manager.png)
+![Create an API Project](../assets/quick-start-2-package-manager.png)
 
 ## Step 3: Write Some Code
 
@@ -168,7 +169,7 @@ query {
 
 Here we used Altair to generate the result.
 
-![Altair Results](assets/quick-start-5-altair-results.png)
+![Altair Results](../assets/quick-start-5-altair-results.png)
 
 That's all there is. We've even pulled down the introspected documentation on the right.
 

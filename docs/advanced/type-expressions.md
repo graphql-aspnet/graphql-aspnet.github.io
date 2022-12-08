@@ -2,11 +2,12 @@
 id: type-expressions
 title: Type Expressions
 sidebar_label: Type Expressions
+sidebar_position: 1
 ---
 
-The GraphQL specification states that when a field resolves a value that doesn't conform to the type expression of the field that the value is rejected, converted to null and an error added to the response.
+The GraphQL specification states that when a field resolves a value that doesn't conform to the expected type expression of the field that the value is rejected, converted to null and an error added to the response.
 
-When GraphQL ASP.NET build a schema it makes as few assumptions as possible about the data returned from your fields to result in as few errors as possible.
+When the library build a schema it makes as few assumptions as possible about the data returned from your fields to result in as few errors as possible.
 
 These assumptions are:
 
@@ -19,11 +20,7 @@ Basically, if your method is able to return a value...then its valid as far as G
 
 Lets look at an example:
 
-<div class="sideBySideCode hljs">
-<div>
-
-```csharp
-// C# Controller
+```csharp title="BakeryController.cs"
 [GraphRoute("bakery")]
 public class BakeryController : GraphController
 {
@@ -32,11 +29,7 @@ public class BakeryController : GraphController
     {/*...*/}
 }
 ```
-
-</div>
-<div>
-
-```javascript
+```graphql title="Sample Query"
 query {
     donut(id: 15){
         name
@@ -44,10 +37,6 @@ query {
     }
 }
 ```
-
-</div>
-</div>
-<br/>
 
 This action method could return a `Donut` or return `null`. But should the donut field, from a GraphQL perspective, allow a null return value? The code certainly does and the rules above say fields that return a reference type can be null...but that's not what's important. Its ultimately your decision to decide if a "null donut" is allowed, not the C# compiler and not the assumptions made by the library.
 
@@ -57,8 +46,7 @@ On one hand, if a null value is returned, regardless of it being valid, the _out
 
 You can add more specificity to your fields by using the `TypeExpression` property of the various field declaration attributes.
 
-```csharp
-
+```csharp title="Example Custom Type Expressions"
 // Declare that a donut MUST be returned (null is invalid)
 // ----
 // Final Schema Syntax:  Donut!
@@ -92,26 +80,31 @@ public IEnumerable<Donut> RetrieveDonut(string id)
 {/*...*/}
 ```
 
-> The value `Type` used in the examples is arbitrary and can be any valid string. The correct type name for the target schema will be used in its place at runtime.
+:::info `Type` is a place holder 
+The value `Type` used in the examples is arbitrary and can be any valid string. The correct type name for the target schema will be used in its place at runtime.
+:::
 
-<span style="color:pink;">**Warning**: When declared, the runtime will use your `TypeExpression` as law for any field declarations; skipping its internal checks. You can setup a scenario where by you could return data that the runtime could never validate as being correct and GraphQL will happily process it and return an error every time. </span>
+Note that the library will accept your type string even if it would be impossible, from a C# perspective, to return data that would match.
 
-```csharp
+```csharp title="Data and Type Expression Mismatch"
 // QUERY EXECUTION ERROR
-// GraphQL will attempt to process Donut as an IEnumerable and will fail to resolve every time this
-// field is invoked
+// GraphQL will attempt to process a Donut as an IEnumerable and will fail
 [Query("donut", TypeExpression ="[Type]")]
 public Donut RetrieveDonut(string id)
 {/*...*/}
 ```
 
-"With great power comes great responsibility"  -Uncle Ben
+:::danger 
+When declared, the runtime will use your `TypeExpression` as law for any field declarations; skipping its internal checks. You can setup a scenario where by you could return data that the runtime could never validate as being correct and GraphQL will happily process it and return an error every time. 
+:::
+
+> "With great power comes great responsibility"  -Uncle Ben
 
 ## Input Argument Type Expressions
 
 Similar to fields, you can use the `TypeExpression` property on `[FromGraphQL]` to add more specificity to your input arguments.
 
-```csharp
+```csharp title="Type Expression on an Argument"
 // Force the argument "id" to supply a string (it cannot be supplied as null)
 // -----------------
 // Final Type Expression of the 'id' arg:  String!

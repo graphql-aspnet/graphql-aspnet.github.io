@@ -2,6 +2,7 @@
 id: custom-scalars
 title: Custom Scalars
 sidebar_label: Custom Scalars
+sidebar_position: 3
 ---
 
 Scalars are the most basic, fundamental unit of content in GraphQL. It is one of two leaf types (the other being [ENUMS](../types/enums)). When a query is resolved the returned data will be a set of nested key/value pairs where every key is a string and every value is either another set of key/value pairs, an enum or a scalar.
@@ -12,11 +13,7 @@ This can be done for any value that can be represented as a simple set of charac
 
 Lets say we wanted to build a scalar called `Money` that can handle both an amount and currency symbol. We might accept it in a query like this:
 
-<div class="sideBySideCode hljs">
-<div>
-
 ```csharp
-// C# Controller
 public class InventoryController : GraphController
 {
     [QueryRoot("search")]
@@ -42,10 +39,7 @@ public class Money
 }
 ```
 
-</div>
-<div>
-
-```javascript
+```graphql title="Using the Money Scalar"
 query {
     search(minPrice: "$18.45"){
         id
@@ -54,9 +48,6 @@ query {
 }
 ```
 
-</div>
-</div>
-<br/>
 
 The query supplies the data as a quoted string, `"$18.45"`, but our action method receives a `Money` object. Internally, GraphQL senses that the value should be `Money` from the schema definition and invokes the correct resolver to parse the value and generate the .NET object that can be passed to our action method.
 
@@ -64,34 +55,31 @@ The query supplies the data as a quoted string, `"$18.45"`, but our action metho
 
 To create a scalar graph type we need to implement `IScalarGraphType` and register it with GraphQL. The methods and properties of `IScalarGraphType` are as follows:
 
-```csharp
-namespace GraphQL.AspNet.Interfaces.TypeSystem
+```csharp title="IScalarGraphType.cs"
+public interface IScalarGraphType
 {
-    public interface IScalarGraphType
-    {
-        string Name { get; }
-        string InternalName { get; }
-        string Description { get; }
-        TypeKind Kind { get; }
-        bool Publish { get; }
-        ScalarValueType ValueType { get; }
-        Type ObjectType { get; }
-        TypeCollection OtherKnownTypes { get; }
-        ILeafValueResolver SourceResolver { get; }
-        IScalarValueSerializer Serializer { get; }
+    string Name { get; }
+    string InternalName { get; }
+    string Description { get; }
+    TypeKind Kind { get; }
+    bool Publish { get; }
+    ScalarValueType ValueType { get; }
+    Type ObjectType { get; }
+    TypeCollection OtherKnownTypes { get; }
+    ILeafValueResolver SourceResolver { get; }
+    IScalarValueSerializer Serializer { get; }
 
-        bool ValidateObject(object item);
-    }
+    bool ValidateObject(object item);
+}
 
-    public interface ILeafValueResolver
-    {
-        object Resolve(ReadOnlySpan<char> data);
-    }
+public interface ILeafValueResolver
+{
+    object Resolve(ReadOnlySpan<char> data);
+}
 
-    public interface IScalarValueSerializer
-    {
-        object Serialize(object item);
-    }
+public interface IScalarValueSerializer
+{
+    object Serialize(object item);
 }
 ```
 
@@ -148,7 +136,7 @@ If you throw `UnresolvedValueException` your error message will be delivered ver
 
 Taking a look at the at the serializer for the `Guid` scalar type we can see that while internally the `System.Guid` struct represents the value we convert it to a string when serializing it. Most scalar implementations will serialize to a string.
 
-```csharp
+```csharp title="GuidScalarSerializer.cs"
 public class GuidScalarSerializer : IScalarValueSerializer
 {
     public object Serialize(object item)
@@ -231,19 +219,17 @@ The completed Money custom scalar type
 
 The last step in declaring a scalar is to register it with the runtime. Scalars are schema agnostic. They sit outside of any dependency injection context and must be registered directly with GraphQL.
 
-```csharp
-// Startup.cs (other code)
-public void ConfigureServices(IServiceCollection services)
-{
-    // register the scalar type to the global provider
-    // BEFORE calling .AddGraphQL()
-    GraphQLProviders.ScalarProvider.RegisterCustomScalar(typeof(MoneyScalarType));
+```csharp title="Register The Money Scalar "
+// register the scalar type to the global provider
+// BEFORE calling .AddGraphQL()
+GraphQLProviders.ScalarProvider.RegisterCustomScalar(typeof(MoneyScalarType));
 
-    services.AddGraphQL();
-}
+services.AddGraphQL();
 ```
 
+:::info 
 Since our scalar is represented by a .NET class, if we don't pre-register it GraphQL will attempt to parse the `Money` class as an object graph type. Once registered as a scalar, any attempt to use `Money` as an object graph type will cause an exception.
+:::
 
 ## @specifiedBy Directive
 
@@ -251,7 +237,7 @@ GraphQL provides a special, built-in directive called `@specifiedBy` that allows
 
 The @specifiedBy directive can be applied to a scalar in all the same ways as other type system directives or by use of the special `[SpecifiedBy]` attribute.
 
-```csharp
+```csharp title="Apply the @specifiedBy"
 // apply the directive to a single schema
 GraphQLProviders.ScalarProvider.RegisterCustomScalar(typeof(MoneyScalarType));
 services.AddGraphQL(o => {
@@ -275,7 +261,6 @@ public class MoneyScalarType : IScalarType
 {
     // ...
 }
-
 ```
 
 ## Tips When Developing a Scalar
@@ -297,8 +282,7 @@ Avoid the urge to start declaring a lot of custom scalars. In fact, chances are 
 <div class="sideBySideCode hljs">
 <div>
 
-```csharp
-// C# Controller
+```csharp title="Money as an Input Object Graph Type"
 public class InventoryController : GraphController
 {
     [QueryRoot("search")]
@@ -321,7 +305,7 @@ public class Money
 </div>
 <div>
 
-```javascript
+```graphql title="Using the Money Input Object"
 query {
     search(minPrice: {
             symbol: "$"

@@ -2,6 +2,7 @@
 id: unit-testing
 title: Unit Testing
 sidebar_label: Unit Testing
+sidebar_position: 1
 ---
 
 GraphQL ASP.NET has more than `3000 unit tests and 91% code coverage`. Much of this is powered by a test component designed to quickly build a configurable, fully mocked server instance to perform a query. It may be helpful to download the code and extend it for harnessing your own controllers.
@@ -22,8 +23,7 @@ This document explains how to perform some common test functions for your own co
 
 3. Build the server instance using `.Build()`
 
-```csharp
-// Example NUnit Test
+```csharp title="Configuring a Test Server Instance"
 [Test]
 public async Task MyController_InvocationTest()
 {
@@ -46,8 +46,8 @@ public async Task MyController_InvocationTest()
     - Use `server.ExecuteQuery()` to process the context. `context.Result` will be filled with the final `IGraphOperationResult` which can be inspected for resultant data fields and error messages.
     - Use `server.RenderResult()` to generate the json string a client would recieve if they performed the query.
 
-```csharp
-// Example NUnit Test
+
+```csharp title="Executing a Test Query"
 [Test]
 public async Task MyController_InvocationTest()
 {

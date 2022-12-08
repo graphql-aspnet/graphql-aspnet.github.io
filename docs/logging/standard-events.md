@@ -2,6 +2,7 @@
 id: standard-events
 title: Standard Logging Events
 sidebar_label: Standard Events
+sidebar_position: 1
 ---
 
 GraphQL ASP.NET tracks many standard events. Most of these are recorded during the execution of a query. Some, such as those around field resolution, can be recorded many times in the course of a single request.

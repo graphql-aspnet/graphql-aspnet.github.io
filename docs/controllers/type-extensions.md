@@ -2,17 +2,14 @@
 id: type-extensions
 title: Type Extensions
 sidebar_label: Type Extensions
+sidebar_position: 4
 ---
 
 ## Working with Child Data
 
-Before we dive into `type extensions` we have to talk about parent-child relationships. So far, the examples we've seen have used well defined fields in an object graph. Be that an action method on a controller or a property on an object.
+Before we dive into `type extensions` we have to talk about parent-child relationships. So far, the examples we've seen have used well defined fields in an object graph. Be that an action method on a controller or a property on an object. But when we think about real world data, there are scenarios where that poses a problem. Lets suppose for a moment we have a chain of bakery stores that let customers place orders for cakes at an individual store and customize the writing on the cake.
 
-But when we think about real world data, there are scenarios where that poses a problem. Lets suppose for a moment we have a chain of bakery stores that let customers place orders for cakes at an individual store and customize the writing on the cake.
-
-A C# model might look something like this:
-
-```csharp
+```csharp title="Sample Bakery Model"
 public class Bakery
 {
     public int Id { get; set; }
@@ -31,16 +28,16 @@ public class CakeOrder
 
 Given what we've seen so far:
 
--   What happens when we retrieve a Cake Order?
--   Do we automatically have to populate the entire `Bakery` and `Customer`?
-    -   Even if a query didn't request any of that data?
+-   What happens when we retrieve a single `CakeOrder` via a controller?
+-   Do we automatically have to populate the entire `Bakery` and `Customer` objects?
+    -   Even if a caller didn't request any of that data?
 -   What about retrieving a bakery that may have 1000s of cake orders?
 
-Our application is going to slow to a crawl very quickly doing all this extra data loading. In the case of a single Bakery, a timeout may occur trying to fetch many years of cake orders to populate the bakery instance from a database query only to discard them when a graphql query doesn't ask for it.
+Our application is going to slow to a crawl very quickly doing all this extra data loading. In the case of a single Bakery, a timeout may occur trying to fetch many years of cake orders to populate the bakery instance from a database query only to discard them when a graphql query doesn't ask for it. If we're using something like Entity Framework how do we know when to use an Include statement to populate the child data? (Hint: you don't)
 
 One solution could be to use lazy loading on our model.
 
-```csharp
+```csharp title="Lazy Loading Child Data"
 public class Bakery
 {
 
@@ -68,10 +65,9 @@ Well that's just plain awful. We've over complicated our bakery model and made i
 
 ## The [TypeExtension] Attribute
 
-So what do we do? We've talked before about GraphQL maintaining a 1:1 mapping between a field in the graph and a method to retrieve data for it (i.e. its assigned resolver). What prevents us from creating a method to fetch a list of Cake Orders and saying, "Hey, GraphQL! When someone asks for the field `[type]/bakery/orders` call our method instead of a property getter on the `Bakery` class. As it turns out, that is exactly what a `Type Extension` does.
+We've talked before about GraphQL maintaining a 1:1 mapping between a field in the graph and a method to retrieve data for it (i.e. its assigned resolver). What prevents us from creating a method to fetch a list of Cake Orders and saying, "Hey, GraphQL! When someone asks for the field `[type]/bakery/orders` call our method instead of a property getter on the `Bakery` class. As it turns out, that is exactly what a `Type Extension` does.
 
-```csharp
-// Bakery.cs
+```csharp title="Bakery Type Extension"
 public class Bakery
 {
     public int Id { get; set; }
@@ -101,9 +97,9 @@ There is a lot to unpack here, so lets step through it:
 -   The method returns `List<CakeOrder>` as the type of data it generates.
 -   The method takes in a `Bakery` instance (more on that in a second) as well as an integer, with a default value of `15`, to limit the number of orders to retrieve.
 
-Now we can query the `orders` field from anywhere a bakery is returned in the object graph and GraphQL will invoke our method instead searching for a property named `Bakery.Orders`.
+Now we can query the `orders` field from anywhere a bakery is returned in the object graph and GraphQL will invoke our method:
 
-```javascript
+```graphql title="Sample Query"
 query {
     bakery(id: 5){
         name
@@ -115,7 +111,9 @@ query {
 }
 ```
 
-> Type Extensions allow you to attach new fields to a graph type without altering the original `System.Type`.
+:::tip 
+Type Extensions allow you to attach new fields to a graph type without altering the original `System.Type`.
+:::
 
 #### But what about the Bakery parameter?
 
@@ -133,11 +131,11 @@ This is immensely scalable:
 -   [Field Security](./authorization) is also wired up for us.
 -   The bakery model is greatly simplified.
 
-#### Can every field be a type extension?
+### Can every field be a type extension?
 
 Theoretically, yes. But take a moment and think about performance. For basic objects with few dozen properties which is faster:
 
--   One database query to retrieve 24 columns of a single record then only use six in a graph result.
+-   One database query to retrieve 24 columns of a single record then only use six in a data result.
 -   Six separate database queries, one for each string value requested.
 
 Type extensions shine in parent-child relationships when preloading data is a concern but be careful not to go isolating every graph field just to avoid retrieving data. Fetching a few extra bytes from a database is negligible compared to querying a database 20 individual times. Your REST APIs likely do it as well and they even transmit that data down the wire to the client and the client has to discard it.
