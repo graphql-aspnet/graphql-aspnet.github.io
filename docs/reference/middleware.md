@@ -77,7 +77,9 @@ schemaBuilder.QueryExecutionPipeline.AddMiddleware<MyQueryMiddleware>();
 
 Instead of adding to the end of the existing pipeline you can also call `.Clear()` to remove the default components and rebuild the pipeline from scratch. See below for the list of default middleware components and their order of execution. This can be handy when needing to inject a new component into the middle of the execution chain.
 
-> Modifying the pipeline component order can cause unwanted side effects, including breaking the library such that it no longer functions. Take care when adding or removing middleware components.
+:::caution Component order Matters
+ Modifying the component order of a pipeline can cause unwanted side effects, including breaking the library such that it no longer functions. Take care when adding or removing middleware components.
+:::
 
 ## The Context Object
 
@@ -89,16 +91,18 @@ Each context object has specific data fields required for it to perform its work
 -   `IsValid`: Determines if the context is in a valid and runnable state. Most middleware components will not attempt to process the context if its not in a valid state and will simply forward the request on. By default, a context is automatically invalidated if an error message is added with the `Critical` severity.
 -   `SecurityContext`: The information received from ASP.NET  containing the credentials of the active user. May be null if user authentication is not setup for your application.
 -   `Metrics`: The metrics package performing any profiling of the query. Various middleware components will stop/start phases of execution using this object. If metrics are not enabled this object will be null.
--   `Items`: A key/value pair collection of items. This field is developer driven and not used by the runtime.
+-   `Items`: A key/value collection of items available to every context on every pipeline related to a single request. This field is developer driven and not used by the runtime.
 -   `Logger`: An `IGraphEventLogger` instance scoped to the the current query.
 
 ## Middleware is served from the DI Container
 
-Each pipeline is registered as a singleton instance in your service provider but the components within the pipeline are invoked according to the service lifetime you supply when you register them allowing you to setup dependencies as necessary.
+Each pipeline is registered as a singleton instance in your service provider but the components within the pipeline are invoked according to the service lifetime you supply when you register them, allowing you to manage dependencies as you see fit.
 
-> Register your middleware components with the `Singleton` lifetime scope whenever possible.
+:::tip Register Middleware as Singletons
+ Register your middleware components with the `Singleton` lifetime scope whenever possible to boost performance.
+:::
 
-It is recommended that your middleware components be singleton in nature if possible. The field execution and item authorization pipelines can be invoked many dozens of times per request and fetching new middleware instances for each invocation can impact performance. The internal pipeline manager will retain references to any singleton middleware components once they are generated and avoid this bottleneck whenever possible. Most default components are registered as a singletons.
+It is recommended that your middleware components be singleton in nature if possible. The field execution and item authorization pipelines can be invoked many dozens of times per request and fetching new middleware instances for each invocation can impact performance. Most default components are registered as a singletons.
 
 ## Query Execution Pipeline
 
@@ -215,5 +219,11 @@ public class GraphDirectiveExecutionContext
 -   `Directive`: The specific `IDirective`, registered to the schema, that is being processed.
 -   `Schema`: the schema instance where the directive is declared.
 
-> WARNING: Since the directive execution pipeline is used to construct the schema and apply type system directives, middleware components cannot inject a schema instance
-> from the DI container. To do so will cause a circular reference. Instead use the schema instance attached to the `GraphDirectiveExecutionContext`. The state of this schema object is not guaranteed at during schema generation as it will continue to change as type system directives are applied by the pipeline.
+### A Note on Schema Instances
+ Since the directive execution pipeline is used to construct a schema and apply type system directives, middleware components within it cannot inject a schema instance from the DI container. To do so would cause a circular reference in the DI container. 
+ 
+Instead use the schema instance attached to the `GraphDirectiveExecutionContext`.
+
+:::note
+ You can inject a schema instance into components of every pipeline EXCEPT the Directive Execution Pipeline.
+:::
