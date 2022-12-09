@@ -33,7 +33,7 @@ services.AddGraphQL<SchemaType>();
 
 ### Give Each Schema its Own HTTP Route
 
-The query handler will attempt to register a schema to `/graphql` for its URL, you'll want to ensure that each schema has its own endpoint by updating the individual routes.
+The query handler will attempt to register a schema to `/graphql` as its URL by default; you'll want to ensure that each schema has its own endpoint by updating the individual routes.
 
 ```csharp title="Adding Multiple Schemas"
 services.AddGraphQL<EmployeeSchema>((options) =>
@@ -52,4 +52,12 @@ services.AddGraphQL<CustomerSchema>((options) =>
 
 ## Disable Local Graph Entity Registration
 
-You'll most likely want to disable registering of local graph entities (the entities in the startup assembly) on one or both schemas lest you want each schema contain those controllers and graph types.
+You may want to disable the registering of local graph entities (the entities in the startup assembly) on one or both schemas lest you want each schema to contain the same controllers and graph types.
+
+```csharp title="Startup Code"
+// Optionally Disable Local Entity Registration
+services.AddGraphQL<EmployeeSchema>(o => 
+{
+    o.AutoRegisterLocalEntities = false;
+});
+```
