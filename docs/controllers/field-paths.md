@@ -9,7 +9,7 @@ sidebar_position: 2
 
 Let's think about this query:
 
-```ruby
+```graphql title="Sample Query"
 query {
     groceryStore {
         bakery {
@@ -36,7 +36,7 @@ Knowing what we know about GraphQL's requirements, we need to create types for t
 
 This is where `virtual graph types` come in. Using a templating pattern similar to what we do with REST queries we can create rich graphs with very little boiler plate. Adding a new arm to your graph is as simple as defining a path to it in a controller.
 
-```csharp
+```csharp title="Sample Controller"
 [GraphRoute("groceryStore")]
 public class GroceryStoreController : GraphController
 {
