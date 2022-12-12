@@ -299,7 +299,7 @@ _Note: Metrics data for large queries can be quite expansive; double or tripling
 
 ```csharp
 // usage examples
-schemaOptions.ResponseOptions.ExposeExceptions = true;
+schemaOptions.ResponseOptions.IndentDocument = true;
 ```
 
 | Default Value | Acceptable Values |
@@ -312,13 +312,19 @@ When true, the default json response writer will indent and "pretty up" the outp
 
 ```csharp
 // usage examples
-schemaOptions.ResponseOptions.AppendServerHeader = GraphMessageSeverity.Information;
+schemaOptions.ResponseOptions.MessageSeverityLevel = GraphMessageSeverity.Information;
 ```
 | Default Value                      | Acceptable Values                      |
 | ---------------------------------- | -------------------------------------- |
-| `GraphMessageSeverity.Information` | \-_any `GraphMessageSeverity` value_\- |
+| `Information` | \-_any `GraphMessageSeverity` value_\- |
 
-Indicates which messages generated during a query should be sent to the requestor. Any message with a value at or higher than the provided level will be delivered.
+Indicates which messages generated during a query should be sent to the requestor. Any message with a [severity level](https://github.com/graphql-aspnet/graphql-aspnet/blob/master/src/graphql-aspnet/Execution/GraphMessageSeverity.cs) equal to or greater than the provided level will be delivered.
+
+#### Message Severity Levels
+
+|Value   |  Rank  |
+|--------|--------|
+|
 
 ### TimeStampLocalizer
 
@@ -327,11 +333,11 @@ Indicates which messages generated during a query should be sent to the requesto
 schemaOptions.ResponseOptions.TimeStampLocalizer = (dtos) => dtos.DateTime;
 ```
 
-| Func<DateTimeOffset, DateTime>    |
-| --------------------------------- |
-| `(dtoffset) => dtoffset.DateTime` |
+|Default Value | Acceptable Value                 | 
+| -------------|--------------------------------- |
+|_`null`_      | `Func<DateTimeOffset, DateTime>` |
 
-A function to convert any timestamps present in the output into a value of a given timezone. By default, no localization occurs and all times are delivered in their native `UTC-0` format. This localizer does not effect any query field date values, only those related to internal messaging.
+A function to convert any system-provided timestamp values present in the output into a value of a given timezone. By default, no localization occurs and all times are delivered in their native `UTC-0` format. This localizer does not effect any query field date values. Only those related to internal messaging (e.g. message creation dates, start and stop times for query metrics etc.) are effected.
 
 ## QueryHandler Options
 
@@ -346,7 +352,11 @@ schemaOptions.QueryHandler.AuthenticatedRequestsOnly = false;
 | ------------- | ----------------- |
 | `false`       | `true`, `false`   |
 
-When true, only those requests that are successfully authenticated by the ASP.NET runtime will be passed to GraphQL. Should an unauthenticated request make it to the graphql query processor it will be immediately rejected. This setting has no effect when a custom `HttpProcessorType` is declared.
+When true, only those requests that are successfully authenticated by the ASP.NET runtime will be passed to GraphQL. Should an unauthenticated request make it to the graphql query processor it will be immediately rejected. 
+
+:::note  
+ This setting acts as a short cut to assigning custom HttpProcessorType.  If you provide your own custom [`HttpProcessorType`](#httpprocessortype) this setting has no effect.
+:::
 
 
 ### DisableDefaultRoute
@@ -374,7 +384,11 @@ schemaOptions.QueryHandler.HttpProcessorType = typeof(MyProcessorType);
 | ------------- |
 | `null` |
 
-When set to a Type, GraphQL will attempt to load the provided type from the configured DI container in order to handle graphql requests. Any class wishing to act as an Http Processor must implement `IGraphQLHttpProcessor<TSchema>`. In most cases it may be easier to extend `DefaultGraphQLHttpProcessor<TSchema>`.
+When set to a `System.Type`, GraphQL will attempt to load the provided type from the configured DI container in order to handle graphql requests. Any class wishing to act as an Http Processor must implement `IGraphQLHttpProcessor<TSchema>`. 
+
+:::tip 
+It can be easier to extend `DefaultGraphQLHttpProcessor<TSchema>` instead of implementing the interface from scratch if you only need to make minor changes.
+:::
 
 ### Route
 
@@ -390,14 +404,28 @@ schemaOptions.QueryHandler.Route = "/graphql";
 Represents the REST end point where GraphQL will listen for new POST and GET requests. In multi-schema configurations this value will need to be unique per schema type.
 
 ## Subscription Server Options
-These options are available to configure a subscription server for a given schema via `.AddSubscriptions(serverOptions)`
+These options are available to configure a subscription server for a given schema via `.AddSubscriptions(subscriptionOptions)`
 
+```csharp title="Adding Subscription Configuration Options"
+services.AddGraphQL()
+        .AddSubscriptions(subscriptionOptions =>
+        {
+            // *************************
+            // CONFIGURE YOUR SUBSCRIPTION
+            // OPTIONS  HERE
+            // *************************
+        });
+
+
+// Be sure to add graphql to the ASP.NET pipeline builder
+appBuilder.UseGraphQL();
+```
 
 ### AuthenticatedRequestsOnly
 
 ```csharp
 // usage examples
-serverOptions.AuthenticatedRequestsOnly = false;
+subscriptionOptions.AuthenticatedRequestsOnly = false;
 ```
 
 | Default Value | Acceptable Values |
@@ -412,14 +440,16 @@ The interval at which the subscription server will send a protocol-specific mess
 
 ```csharp
 // usage examples
-serverOptions.ConnectionKeepAliveInterval = TimeSpan.FromMinutes(2);
+subscriptionOptions.ConnectionKeepAliveInterval = TimeSpan.FromMinutes(2);
 ```
 
 | Default Value |
 | ------------- |
 | `2 minutes`    |
 
-_Note: Not all messaging protocols support message level keep alives._
+:::tip 
+This is an application level keep-alive supported by most graphql messaging protocols. This is a different keep-alive than the web socket specific keep alive provided by ASP.NET
+:::
 
 
 ### ConnectionInitializationTimeout
@@ -428,7 +458,7 @@ When supported by a messaging protocol, represents a timeframe after the connect
 
 ```csharp
 // usage examples
-serverOptions.ConnectionInitializationTimeout = TimeSpan.FromSeconds(30);
+subscriptionOptions.ConnectionInitializationTimeout = TimeSpan.FromSeconds(30);
 ```
 
 | Default Value |
@@ -444,7 +474,7 @@ When set, represents a valid and supported messaging protocol that a client shou
 
 ```csharp
 // usage examples
-serverOptions.DefaultMessageProtocol = "my-custom-protocol";
+subscriptionOptions.DefaultMessageProtocol = "my-custom-protocol";
 ```
 
 | Default Value |
@@ -457,13 +487,13 @@ _Note:  By default, this value is not set and connected clients MUST supply a pr
 
 ```csharp
 // usage examples
-serverOptions.DisableDefaultRoute = false;
+subscriptionOptions.DisableDefaultRoute = false;
 ```
 | Default Value | Acceptable Values |
 | ------------- | ----------------- |
 | `false `       | `true`, `false`   |
 
-When true, GraphQL will not register a component to listen for web socket requests. You must handle the acceptance of web sockets yourself and provision client proxies that can interact with the runtime. If you wish to implement your own web socket middleware handler, viewing [DefaultGraphQLHttpSubscriptionMiddleware&lt;TSchema&gt;](https://github.com/graphql-aspnet/graphql-aspnet/blob/master/src/graphql-aspnet-subscriptions/Defaults/DefaultGraphQLHttpSubscriptionMiddleware.cs) may help.
+When true, GraphQL will not register a component to listen for web socket requests. You must handle the acceptance of web sockets yourself and provision client proxies that can interact with the runtime. If you wish to implement your own web socket middleware handler, viewing [DefaultGraphQLHttpSubscriptionMiddleware&lt;TSchema&gt;](https://github.com/graphql-aspnet/graphql-aspnet/blob/master/src/graphql-aspnet-subscriptions/Engine/DefaultGraphQLHttpSubscriptionMiddleware.cs) may help.
 
 
 
@@ -473,7 +503,7 @@ When set, represents the custom middleware component GraphQL will inject into th
 
 ```csharp
 // usage examples
-serverOptions.HttpMiddlewareComponentType = typeof(MyMiddleware);
+subscriptionOptions.HttpMiddlewareComponentType = typeof(MyMiddleware);
 ```
 
 | Default Value |
@@ -488,7 +518,7 @@ Deteremines if a web socket request will be accepted in an unauthenticated state
 
 ```csharp
 // usage examples
-serverOptions.RequiredAuthenticatedConnection = false;
+subscriptionOptions.RequiredAuthenticatedConnection = false;
 ```
 
 | Default Value | Acceptable Values |
@@ -506,7 +536,7 @@ Similar to the query/mutation query handler route this represents the path the d
 
 ```csharp
 // usage examples
-serverOptions.Route = "/graphql";
+subscriptionOptions.Route = "/graphql";
 ```
 
 | Default Value |
@@ -515,6 +545,10 @@ serverOptions.Route = "/graphql";
 
 
 Represents the http end point where GraphQL will listen for new web socket requests. In multi-schema configurations this value will need to be unique per schema type.
+
+:::info
+Your subscriptions can share the same route as your general queries for a schema or be different, its up to you.
+:::
 
 ### SupportedMessageProtocols
 
@@ -533,4 +567,6 @@ serverOptions.SupportedMessageProtocols = myProtocols;
 | ------------- |
 | `null`        |
 
-_Note:  By default, this setting is null, meaning any server supported protocol will be usable by the target schema. If set to an empty set, then the schema is effectively disabled as no supported protocols will be matched._
+:::note
+  By default, `SupportedMessageProtocols` is null; meaning any server supported protocol will be usable by the target schema. If set to an empty set, then the schema is effectively disabled as no supported protocols will be matched.
+:::

@@ -154,7 +154,7 @@ That's all there is for a basic subscription server setup.
 
 ### Apollo Client Example
 
-A complete example of single instance subscription server including a react app that utilizes the Apollo Client is available in the [demo projects](../reference/demo-projects) section.
+📌 A complete example of single instance subscription server including a react app that utilizes the Apollo Client is available in the [demo projects](../reference/demo-projects) section.
 
 ## Subscription Action Results
 
@@ -166,9 +166,9 @@ Here is a complete list of the various "subscription specific" action results:
 * `OkAndComplete(data)` - Works just like `this.Ok()` but ends the subscription after the event is completed.  The client is informed that no additional data will be sent and that the server is closing the subscription permanently. This, however; does not close the underlying websocket connection.
 
 :::danger Be Careful With Sensitive Data
-Data published via `PublishSubscriptionEvent()` is sent, automatically, to all active subscriptions on the server. 
+All active subscriptions, from all connected users, have an opportunity to handle data published via `PublishSubscriptionEvent()`.
 
-If there are some scenarios where an event payload should not be shared with some connected users, be sure to enforce that business logic in your subscription method and use `SkipSubscriptionEvent()` as necessary for a given data package.
+If there are scenarios where an event payload should not be shared with a user, be sure to enforce that business logic in your subscription method and use `SkipSubscriptionEvent()` for a given payload. 
 :::
 
 ## Scaling Subscription Servers
@@ -192,7 +192,7 @@ Whatever your technology of choice the first step is to create and register a cu
 ```csharp title="ISubscriptionEventPublisher.cs"
 public interface ISubscriptionEventPublisher
 {
-    Task PublishEvent(SubscriptionEvent eventData);
+    Task PublishEventAsync(SubscriptionEvent eventData);
 }
 ```
 
@@ -245,11 +245,13 @@ The router will take care of the details in figuring out which schema the event 
 
 ### Azure Service Bus Example
 
-A complete example of a bare bones example, including serialization and deserialization using the Azure Service Bus is available in the [demo projects](../reference/demo-projects) section.
+📌 A functional example, including serialization and deserialization using the Azure Service Bus is available in the [demo projects](../reference/demo-projects) section.
 
-> The demo project represents a functional starting point and lacks a lot of the error handling and resilency needs of a production environment.
+:::note
+ The Azure Service Bus demo project represents a functional starting point and lacks a lot of the error handling and resilency needs of a production environment.
+:::
 
-## Subscription Server Configuration
+## Partial Server Configuration
 
 When using the `.AddSubscriptions()` extension method two seperate operations occur:
 

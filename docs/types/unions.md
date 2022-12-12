@@ -131,6 +131,7 @@ public class KitchenController : GraphController
 
 [Liskov substitutions](https://en.wikipedia.org/wiki/Liskov_substitution_principle) (the L in [SOLID](https://en.wikipedia.org/wiki/SOLID)) are an important part of object oriented programming. To be able to have one class masquerade as another allows us to easily extend our code's capabilities without any rework.
 
+For Example, the Oven object can bake any type of bread!
 
 ```csharp title="Liskov Substitution Example"
 public class Bread
@@ -150,7 +151,6 @@ public class Oven
     }
 }
 ```
-<br/>
 
 However, this presents a problem when when dealing with UNIONs and GraphQL.
 
@@ -158,12 +158,10 @@ However, this presents a problem when when dealing with UNIONs and GraphQL.
 public class BakeryController : GraphController
 {
     [QueryRoot("searchFood", "RollOrBread",  typeof(Roll), typeof(Bread))]
-    public IGraphActionResult SearchFood(string name)
+    public Bread SearchFood(string name)
     {
-        // Bagle is not a declared member of the union
-        // but can be used as a Roll and Bread
-        // which one do we choose?
-        return this.Ok(new Bagel());
+        // Is a bagel a Roll or Bread ??
+        return new Bagel();
     }
 }
 ```
@@ -182,16 +180,15 @@ query {
 }
 ```
 
-Most of the time, graphql can correctly interpret the correct union type of a returned data object and continue processing the query. However, in the above example, we declare a union, `RollOrBread`, that is of types `Roll` or `Bread`  yet we return a `Bagel` from the action method. 
+Most of the time, graphql can correctly interpret the correct type of a returned data object and continue processing the query. However, in the above example, we declare a union, `RollOrBread`, that is of types `Roll` or `Bread`  yet we return a `Bagel` from the action method. 
 
-Since `Bagel` is both a `Roll` and `Bread` which type should graphql match against to continue executing the query? Since it could be either, graphql will be unable to determine which type to use and can't advance the query to select the appropriate fields. The query result is said to be indeterminate. 
+Since `Bagel` is both a `Roll` and `Bread` which type should graphql match against when executing the inline fragments? Since it could be either, graphql will be unable to determine which type to use and can't advance the query to select the appropriate fields. The query result is said to be indeterminate. 
 
 #### IGraphUnionProxy.MapType
-GraphQL ASP.NET offers a way to allow you to take control of your unions and make the determination on your own. The `MapType` method implemented by `IGraphUnionProxy` will be called whenever a query result is indeterminate, allowing you to choose which of your union's allowed types should be used. 
+GraphQL ASP.NET offers a way to allow you to take control of your unions and make the determination on your own. The `MapType` method provided by `IGraphUnionProxy` will be called whenever a query result is indeterminate, allowing you to choose which of your union's allowed types should be used. 
 
 
-```csharp
-// RollOrBread.cs
+```csharp title="Using a Custom Type Mapper"
 public class RollOrBread : GraphUnionProxy
 {
     public RollOrBread()
@@ -206,28 +203,16 @@ public class RollOrBread : GraphUnionProxy
             return typeof(Bread);
     }
 }
-
-// BakeryController.cs
-public class BakeryController : GraphController
-{
-    [QueryRoot("searchFood", typeof(RollOrBread))]
-    public IGraphActionResult SearchFood(string name)
-    {
-        return this.Ok(new Bagel());
-    }
-}
 ```
 
 :::caution
-  `MapType` is not based on the resolved field value, but only on the `System.Type`. This is by design to guarantee consistency in query execution. 
-  
+  `MapType` is not based on a resolved field value, but only on the `System.Type` that was encountered. This is by design to guarantee consistency in query execution. 
+
    If your returned type causes the query to remain indeterminate a validation error (rule [6.4.3](https://spec.graphql.org/October2021/#sec-Value-Completion)) will be applied to the query.
 :::
 
 The query will now interpret all `Bagels` as `Rolls` and be able to process the query correctly.
 
-If, via your logic you are unable to determine which of your Union's types to return then return null and GraphQL will supply the caller with an appropriate error message stating the query was indeterminate. Also, returning any type other than one that was formally declared as part of your Union will result in the same indeterminate state.
+If, via your logic you are unable to determine which of your Union's types to use then return `null` and GraphQL will supply the caller with an appropriate error message stating the query was indeterminate. Also, returning any type other than one that was formally declared as part of your Union will result in the same indeterminate state.
 
-:::info 
-Most of the time GraphQL ASP.NET will never call `MapType` on your UNION. If your union types do not share an inheritance chain, for instance, the method will never be called. If your types do share an inheritance chain, such as in the example above, considering using an interface graph type along with specific fragments instead of a UNION, to avoid the issue altogether.
-:::
+Most of the time GraphQL ASP.NET will never call `MapType` on your union proxy. If your union types do not share an inheritance chain, for instance, the method will never be called.

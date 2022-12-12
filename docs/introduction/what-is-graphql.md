@@ -53,7 +53,7 @@ One of the primary benefits of GraphQL is the requestor only gets the data they 
 
 ## GraphQL is not a .NET Technology
 
-GraphQL is a [specification](https://graphql.github.io/graphql-spec/) , a contract, describing a syntax and rule set for how to process requests for data. There are many implementations of GraphQL for various tech stacks from JavaScript, to Java, to Ruby and even other .NET implementations to choose from.
+GraphQL is a query [language specification](https://spec.graphql.org/); a contract describing a syntax and rule set for how to process requests for data. There are many implementations of GraphQL for various tech stacks from JavaScript, to Java, to Ruby and even other .NET implementations to choose from.
 
 #### Other Popular GraphQL Implementations
 
@@ -62,7 +62,7 @@ GraphQL is a [specification](https://graphql.github.io/graphql-spec/) , a contra
 | [Apollo Server](https://github.com/apollographql/apollo-server) | JavaScript |
 | [GraphQL Ruby](https://graphql-ruby.org/)                       | Ruby       |
 | [GraphQL Java](https://www.graphql-java.com/)                   | Java       |
-| [GraphQL .NET](https://github.com/graphql-dotnet/graphql-dotnet)                                                | .NET       |
+| [GraphQL .NET](https://github.com/graphql-dotnet/graphql-dotnet)| .NET       |
 | [Hot Chocolate](https://github.com/ChilliCream/hotchocolate)    | .NET       |
 
 ## Why Choose GraphQL?

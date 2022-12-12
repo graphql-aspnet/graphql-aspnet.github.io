@@ -121,7 +121,3 @@ services.AddGraphQL(schemaOptions =>
     schemaOptions.AuthorizationOptions.Method = AuthorizationMethod.PerRequest;
 });
 ```
-
-:::info  
-Regardless of the authorization method chosen, **execution directives** are ALWAYS evaluated with a "per request" method. If a single execution directive fails, the whole query is failed and no data will be resolved.
-:::

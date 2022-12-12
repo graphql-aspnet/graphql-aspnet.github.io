@@ -5,9 +5,9 @@ sidebar_label: Directives
 sidebar_position: 2
 ---
 
-## What is a directive?
+## What is a Directive?
 
-Directives decorate, or are attached to, parts of your schema or query document to perform some sort of custom logic. What that logic is, is entirely up to you. There are several directives built into graphql:
+Directives decorate parts of your schema or a query document to perform some sort of custom logic. What that logic is, is entirely up to you. There are several directives built into graphql, however:
 
 -   `@include` : An execution directive that conditionally includes a field or fragment in the results of a graphql query
 -   `@skip` : An execution directive that conditionally excludes a field or fragment from the results of a graphql query
@@ -34,12 +34,23 @@ public sealed class SkipDirective : GraphDirective
 }
 ```
 
-All directives must:
+```graphql title="Quring using @skip"
+# skip including the flavor based on a variable 
+query ($shouldSkip: Boolean!) {
+    donut(id: 15) {
+        id 
+        name
+        flavor @skip(if: $shouldSkip)
+    }
+}
+```
+
+✅ All directives must:
 
 -   Inherit from `GraphQL.AspNet.Directives.GraphDirective`
 -   Provide at least one action method that indicates at least 1 valid `DirectiveLocation`.
 
-All directive action methods must:
+✅ All directive action methods must:
 
 -   Share the same method signature
 -   The input arguments must match exactly in type, name, casing and declaration order.
@@ -94,7 +105,9 @@ Directives may contain input arguments just like fields. However, its important 
 
 ## Execution Directives
 
-Execution Directives are applied to query documents and executed on the single request in which they are encountered.
+(_**a.k.a. Operation Directives**_)
+
+Execution Directives are applied to query documents and executed on the single request in which they are encountered. 
 
 ### Example: @include
 
@@ -200,16 +213,17 @@ query {
 }
 ```
 
-### Working with Batch Extensions
+#### Working with Batch Extensions
 
-Batch extensions work differently than standard field resolvers; they don't resolve a single item at a time. This means our `@toUpper` example above won't work as `context.Result` won't be a string. Should you employ a post resolver that may be applied to a batch extension you'll need to handle the resultant dictionary differently than you would a single field value. The dictionary will always be of the format `IDictionary<TSource, TResult>` where `TSource` is the data type of the field set that owns the field the directive was applied to and `TResult` is the data type or an `IEnumerable` of the data type for the field, depending on the
-batch extension declaration. The dictionary is always keyed by source item reference.
+Batch extensions work differently than standard field resolvers; they don't resolve a single item at a time. This means our `@toUpper` example above won't work as `context.Result` won't be a string. Should you employ a post resolver that may be applied to a batch extension you'll need to handle the resultant dictionary differently than you would a single field value. The dictionary will always be of the format `IDictionary<TSource, TResult>` where `TSource` is the data type of the field that owns the field the directive was applied to and `TResult` is the data type or an `IEnumerable` of the data type the target field returns. The dictionary is always keyed by source item reference.
 
 :::caution Be Careful with Batch Type Extensions
  Batch Extensions will return a dictionary of data not a single item. Your post resolver must be able to handle this dictionary if applied to a field that is a `[BatchExtensionType]`.
 :::
 
 ## Type System Directives
+
+(_**a.k.a. Schema Directives**_)
 
 Type System directives are applied to schema items and executed at start up while the schema is being created. 
 

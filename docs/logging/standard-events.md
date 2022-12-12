@@ -341,7 +341,7 @@ This event is recorded by the controller if it is unable to invoke the target ac
 
 ### Action Unhandled Exception
 
-This event is recorded if an unhandled exception occurs within the controller action method body. Should this event occur the field will be abandoned and a null value returned as the result of the field. Child fields will not be processed but the operation will continue to attempt to resolve other sibling fields and their children.
+This event is recorded if an unhandled exception occurs `within the controller action method body`. Should this event occur the field will be abandoned and a null value returned as the result of the field. Child fields will not be processed but the operation will continue to attempt to resolve other sibling fields and their children.
 
 **Important Properties**
 

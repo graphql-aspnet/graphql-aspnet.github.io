@@ -5,7 +5,7 @@ sidebar_label: How it Works
 sidebar_position: 0
 ---
 
-> This document is a high level overview how GraphQL ASP.NET ultimately generates a response to a query with some insight into core details. Its assumes a working knowledge of both ASP.NET and the GraphQL specification. If you are only interested in the "how to" for using the library, feel free to skip this.
+> This document is a high level overview how GraphQL ASP.NET ultimately generates a response to a query with some insight into core details. Its assumes a working knowledge of both ASP.NET and the GraphQL specification. If you are only interested in the "how" and not the "why", feel free to skip this.
 
 ## Schema Generation
 

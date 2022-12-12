@@ -5,13 +5,8 @@ sidebar_label: Code Examples
 sidebar_position: 2
 ---
 
-This page shows a quick introduction to sample graphql queries and the C# code to support. If you need a more complete walk through the links to the left have every thing you need.
+This page shows a quick introduction to some common scenarios and the C# code to support. 
 
-These are a great place to start:
-
-🔗 [Why Choose GraphQL ASP.NET](../introduction/made-for-aspnet-developers)
-
-🔗 [Start a new GraphQL ASP.NET Project](./quick-start)
 
 ## A Basic Controller
 
@@ -69,7 +64,7 @@ query {
 }
 ```
 
-:::tip Did you notice?
+:::info Did you notice?
 In the query the hero field is `camelCased` but in C# the method is `ProperCased`? GraphQL ASP.NET automatically translates your names appropriately to standard GraphQL conventions. The same goes for your graph type names, enum values etc.
 
 You can implement your own `GraphNameFormatter` and alter the name formats for each of your registered schemas.
@@ -83,7 +78,7 @@ If your models share a common interface just return it from a controller action 
 ```csharp title="HeroController.cs"
 public class HeroController : GraphController
 {
-    [QueryRoot]
+    [QueryRoot(typeof(Droid), typeof(Human))]
     public ICharacter Hero(Episode episode)
     {
         if(episode == Episode.Empire)
@@ -106,18 +101,6 @@ public class HeroController : GraphController
         }
     }
 }
-```
-
-```csharp title="Interfaces.cs"
-// Properties omitted for brevity
-public interface ICharacter
-{/*...*/}
-
-public class Human : ICharacter
-{/*...*/}
-
-public class Droid : ICharacter
-{/*...*/}
 ```
 
 ```graphql title="GraphQL Query"
@@ -144,8 +127,7 @@ We've used `[QueryRoot]` so far to force a controller action to be a root field 
 
 ```csharp title="RebelAllianceController.cs"
 [GraphRoute("rebels")]
-public class RebelAllianceController
-        : GraphController
+public class RebelAllianceController : GraphController
 {
     [Query("directory/hero")]
     public Human RetrieveHero(Episode episode)
@@ -161,8 +143,7 @@ public class RebelAllianceController
 }
 ```
 
-```graphql title="Query"
-// GraphQL Query
+```graphql title="Sample Query"
 query {
     rebels {
         directory {
@@ -189,8 +170,6 @@ public class PersonsController : GraphController
         _personService = service;
     }
 
-    // your C# method name and the graph field name
-    // can be different
     [QueryRoot("person")]
     public async Task<Human> RetrievePerson(int id)
     {
@@ -237,8 +216,7 @@ public class PersonsController : GraphController
 }
 ```
 
-```graphql title="Query"
-// GraphQL Query
+```graphql title="Sample Query"
 query {
     self {
         id
@@ -256,7 +234,7 @@ query {
 
 ## Mutations & Model State
 
-GraphQL ASP.NET will automatically enforce the query specification rules for you, but that doesn't help for business-level requirements like string length or integer ranges. For that, it uses the familiar goodness of `ValidationAttribute` (meaning everything under `System.ComponentModel.DataAnnotations`).
+GraphQL ASP.NET will automatically enforce the query specification rules for you, but that doesn't help for business-level requirements like string length or integer ranges. For that, it uses the familiar goodness of Validation Attributes (e.g. `[StringLength]`, `[Range(1,5)]`).
 
 
 ```csharp title="PersonsController.cs"
@@ -291,7 +269,7 @@ public class Human
 }
 ```
 
-```graphql title="Query"
+```graphql title="Sample Query"
 mutation {
     joinTheResistance(
         newPerson: {
@@ -309,19 +287,18 @@ We used `Human` as an input argument and as the returned data object. GraphQL AS
 :::
 
 
-## Custom Action Results
+## Action Results
 
 Just as Web API makes use of `IActionResult` to perform post processing on the result of a controller method, GraphQL ASP.NET makes use of `IGraphActionResult`.
 
-Reusing the previous example, here we make use of `this.BadRequest()` to automatically generate an appropriate error message inside the response payload's `errors` property when model validation fails. Field origin information including the path array and line/column number of the original query are wired up automatically.
+Reusing the previous example, here we make use of `this.BadRequest()` to automatically generate an appropriate error message in the response when model validation fails. Field origin information including the path array and line/column number of the original query are wired up automatically.
 
+> Note: Unlike WebAPI `BadRequest()` doesn't generate a HTTP Status 400 error. If there are multiple fields being resolved GraphQL can still generate a partial response and render helpful data for other parts of the query.
 
 ```csharp
 // C# Controller
 public class PersonsController : GraphController
 {
-    /* constructor hidden for brevity */
-
     [MutationRoot("joinTheResistance")]
     public async IGraphActionResult CreatePerson(Human model)
     {

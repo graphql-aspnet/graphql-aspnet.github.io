@@ -55,13 +55,10 @@ One way to correct this problem is to register your DbContext
 as a transient object.
 
 ```csharp title="Register DbContext as Transient"
-public void ConfigureServices(IServiceCollection services)
-{
-    services.AddDbContext<AppDbContext>(o =>
-        {
-            o.UseSqlServer("<connectionString>");
-        }, ServiceLifetime.Transient);
-}
+services.AddDbContext<AppDbContext>(o =>
+    {
+        o.UseSqlServer("<connectionString>");
+    }, ServiceLifetime.Transient);
 ```
 Now each controller instance will get its own DbContext and the queries can execute in parallel without issue. 
 

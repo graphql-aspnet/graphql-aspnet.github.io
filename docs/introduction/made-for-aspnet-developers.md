@@ -5,7 +5,7 @@ sidebar_label: Made for ASP.NET Developers
 sidebar_position: 1
 ---
 
-This library is designed by people who use [ASP.NET](https://dotnet.microsoft.com/en-us/apps/aspnet) in their day to day activities and built for similar minded developers. When you first started digging in to GraphQL you most likely came across the plethora of [articles](https://www.graphqlweekly.com/), [documents](https://en.wikipedia.org/wiki/GraphQL), [tutorials](https://www.howtographql.com/) and [groups](https://www.apollographql.com/) centered around JavaScript. JavaScript certainly has the highest adoption rate and with the tools provided by [Apollo](https://www.apollographql.com/) its no surprise. Its amazing how well those tools fit in with the existing knowledge and coding paradigms of JavaScript developers on both sides of the fence (be that front end or back end).
+This library is designed by people who use [ASP.NET](https://dotnet.microsoft.com/en-us/apps/aspnet) in their day to day activities and is built for similar minded developers. When you first started digging in to GraphQL you most likely came across the plethora of [articles](https://www.graphqlweekly.com/), [documents](https://en.wikipedia.org/wiki/GraphQL), [tutorials](https://www.howtographql.com/) and [groups](https://www.apollographql.com/) centered around JavaScript. JavaScript certainly has the highest adoption rate and with the tools provided by [Apollo](https://www.apollographql.com/) its no surprise. Its amazing how well those tools fit in with the existing knowledge and coding paradigms of JavaScript developers on both sides of the fence (be that front end or back end).
 
 We believe that tooling and workflow is everything when it comes to picking up a technology. Its much more difficult for you (or your team) to adopt something new if there is no connection to what you already know. Migrating your personal development efforts or an entire team from .NET to NodeJS to leverage Apollo Server, for instance, is hard. The learning curve and even the monetary cost of bringing a team up to speed is high. But if you can leverage existing skills you reduce that cost significantly.
 
@@ -15,10 +15,9 @@ This is a core, guiding principle for the development of this library. We aim to
 
 Using familiar concepts like _Binding Models_ and _View Models_; commonly used attributes like `[Authorize]`, `[Required]`, `[StringLength]`; modern ASP.NET's abstraction concepts like `IServiceCollection`, `ILogger`, and `Startup.cs` all play a part in hopes to give you a familiar programming model that you can start using immediately without reinventing too many wheels.
 
-Take, for instance, this controller and a sample query that would call it. Can you tell what it does? If you are familiar with ASP.NET MVC then the answer is probably yes!
+Take, for instance, this controller and a sample query that would call it. Can you tell what it does? If you are familiar with Web API then the answer is probably yes!
 
 ```cs title="PersonController.cs"
-// C#
 public class PersonController: GraphController
 {
     private IPersonService _service;
@@ -57,9 +56,13 @@ The library will automatically wire up your graph controllers and scan your mode
 
 Are you working on a large project that has shared assemblies between services? No problem, you can direct GraphQL on where to look for controllers and model objects or even be explicit in what you want it to consume...down to the property level.
 
-## Plays Nice with MVC Controllers, Razor Views and Razor Pages
+:::note
+ You're still in control. Out of the box the library tries to pick the route of least resistance, but there are many ways to control what classes, enums etc. are included (or excluded) in your object graph. 
+:::
 
-This library is an extension on the standard ASP.nET pipeline, not a replacement. At its core, a graphql query is just another route on your application. At startup it registers a middleware component to handle requests using `appBuilder.Map()`.
+## Plays Nice with Web API Controllers, Razor Views and Razor Pages
+
+This library sits as an extension on the standard ASP.NET pipeline, not a replacement. At its core, a graphql query is just another GET or POST route on your application. At startup it registers a middleware component to handle requests using `appBuilder.Map()`.
 
 Also, if you are integrating into an existing project, you'll find a lot of your utility code will work out of the box which should ease your migration. Any existing services, custom Authorization and Validation attributes etc. can be directly attached to graph action methods and input models. You might even find that most of your model objects work as well. 
 
@@ -69,7 +72,7 @@ Services are injected into graph controllers in the same manner as ASP.nET contr
 
 ## User Authorization
 
-The user model is exactly the same. In fact, the `ClaimsPrincipal` passed to `this.User` on an MVC controller is forwarded to GraphQL and used to validate any `[Authorize]` attributes on your graph controller actions. Internally, it uses the same `IAuthorizationService` that gets added when you call `services.AddAuthorization()` in `Startup.cs`.
+The user model is exactly the same. In fact, the `ClaimsPrincipal` passed to `this.User` on an MVC controller is forwarded to GraphQL and used to validate any `[Authorize]` attributes on your graph controller actions. Internally, it uses the same `IAuthorizationService` that gets added when you call `services.AddAuthorization()` during startup.
 
 ## Custom Action Results
 

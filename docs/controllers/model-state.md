@@ -67,6 +67,6 @@ In the example, we returned a IGraphActionResult to make use of `this.BadRequest
 
 #### _Implementation Note_
 
-GraphQL makes use of the same `System.ComponentModel.DataAnnotations.Validator` that ASP.NET does to validate its input objects. [All the applicable rules](https://learn.microsoft.com/en-us/aspnet/core/mvc/models/validation?view=aspnetcore-7.0) that apply to MVC model validation also apply to GraphQL.
+GraphQL makes use of the same `System.ComponentModel.DataAnnotations.Validator` that ASP.NET does to validate its input objects. [All the applicable rules](https://learn.microsoft.com/en-us/aspnet/core/mvc/models/validation?view=aspnetcore-7.0) that apply to Web API model validation also apply to GraphQL.
 
-However, where MVC will validate model binding rules and represent binding errors it its ModelState object, GraphQL will not. GraphQL binding issues such as type expressions and nullability are taken care of at the query level, long before a query plan is finalized and the action method is invoked. As a result, the model state of GraphQL ASP.NET is a close approximation of MVC's model state object, but it is not a direct match.
+However, where Web API will validate model binding rules and represent binding errors it its ModelState object (such as invalid or missing property names)  GraphQL will not. GraphQL binding issues such as type expressions and nullability are taken care of at the query level, long before a query plan is finalized and the action method is invoked. The model state of GraphQL ASP.NET is a close approximation of Web API's model state object, but it is not a direct match.

@@ -82,8 +82,8 @@ public class Donut
 ```
 
 ```graphql title="Donut Type Definition"
-// GraphQL Type Definition
-// Id field is not included on the INPUT_OBJECT
+# Id field is not included 
+
 input Input_Donut {
   name: String = null
   type: DonutType! = FROSTED
@@ -100,8 +100,7 @@ While its possible to have methods be exposed as resolvable fields on regular `O
 public class Donut
 {
     [GraphField("salesTax")]
-    public decimal CalculateSalesTax(
-        decimal taxPercentage)
+    public decimal CalculateSalesTax(decimal taxPercentage)
     {
         return this.Price * taxPercentage;
     }
@@ -123,6 +122,7 @@ input Input_Donut {
 }
 ```
 
+
 ## Required Fields And Default Values
 Add `[Required]` (from System.ComponentModel) to any property to force a user to supply the field in a query document.
 
@@ -135,7 +135,7 @@ public class Donut
     public Donut()
     {
         // set custom defaults if needed
-        this.Type = DonutType.Vanilla;
+        this.Type = DonutType.Frosted;
         this.Price = 2.99;
         this.IsAvailable = true;
     }
@@ -147,14 +147,14 @@ public class Donut
     public DonutType Type { get; set; }
     public Bakery Bakery { get;set; }
     public decimal Price { get; set; }    
-    public decimal IsAvailable { get; set; }
+    public bool IsAvailable { get; set; }
 }
 ```
 
 ```graphql title="Donut Type Definition"
 # No Default Value on Name
 input Input_Donut {
-  name: String!
+  name: String
   id: Int! = 0    
   type: DonutType! = FROSTED
   bakery: Input_Bakery = null
@@ -167,50 +167,51 @@ input Input_Donut {
 ## Non-Nullability
 By default, all properties that are reference types (i.e. classes) are nullable and all value types (primatives, structs etc.) are non-nullable
 
-
-
-```csharp title="Owner can be null, it is a reference type"
-public class Bakery
+```csharp title="Recipe can be null, it is a reference type"
+public class Donut
 {
-    // a reference to another object
-    public Person Owner { get; set; }
+    public Recipe Recipe { get; set; }  // reference type
+    public int Quantity { get; set; }   // value type
 }
 ```
 
-```graphql title="Donut Type Definition"
-input Input_Bakery {
-  owner: Input_Person = null
+```graphql title="Input Donut Definition"
+input Input_Donut {
+  recipe: Input_Recipe = null  # nullable
+  quantity: Int! = 0           # not nullable
 }
 ```
 
 
-If you want to force a value to be supplied (either on a query document or by default) you can use the `[GraphField]` attribute to augment the field.
+If you want to force a reference type to be non-null you can use the `[GraphField]` attribute to augment the field's type expression.
 
-
-
-
-```csharp title="Force Owner to be non-null"
-public class Bakery
+```csharp title="Force Recipe to be non-null"
+public class Donut
 {
-    public Bakery()
+    public Donut()
     {
-        this.Owner = new Person("Bob Smith");
+        this.Recipe = new Recipe("Flour, Sugar, Salt");
     }
 
-    // a reference to another object
     [GraphField(TypeExpression = "Type!")]
-    public Person Owner { get; set; }
+    public Recipe Recipe { get; set; }  // reference type
+    public int Quantity { get; set; }   // value type
 }
 ```
 
-```graphql title="Donut Type Definition"
-input Input_Bakery  {
-  owner: Input_Person! = { name: "Bob Smith" }
+```graphql title="Input Donut Definition"
+input Input_Donut {
+  recipe: Input_Recipe! = {Ingredients : "Flour, Sugar, Salt" }  
+  quantity: Int! = 0                   
 }
 ```
 
-:::info
- Any field explicitly or implicitly declared as non-nullable, that is not required, MUST have a default value assigned to it that is not `null`. A `GraphTypeDeclarationException` will be thrown at startup if this is not the case.
+:::info Did You Notice?
+ We assigned a recipe in the class's constructor to use as the default value.
+ 
+ Any non-nullable field, that does not have the `[Required]` attribute, MUST have a default value assigned to it that is not `null`. 
+ 
+ A `GraphTypeDeclarationException` will be thrown at startup if this is not the case.
 :::
 
 #### Combine Non-Null and [Required]
@@ -236,17 +237,16 @@ input Input_Bakery {
 }
 ```
 
-## Default Values Must be Coercible
-Any default value declared for an input field must be coercible by its target graph type in the target schema. 
+## Enum Fields and Coercability
 
-### Enum Values 
+Any default value declared for an input field must be coercible by its target graph type in the target schema. Because of this there is a small got'cha situation with enum values. 
 
 Take a look at this example of an enum and input object:
 
 ```csharp title="Using an Enum as a field type"
 public class Donut 
 {
-    public string Name{ get; set; }
+    public string Name { get; set; }
     public DonutFlavor Flavor { get; set; }
 }
 
@@ -255,14 +255,32 @@ public enum DonutFlavor
     [GraphSkip]
     Vanilla = 0,
     Chocolate = 1,
-
 }
 ```
 
 When `Donut` is instantiated the value of Flavor will be `Vanilla` because 
 thats the default value (0) of the enum. However, the enum value `Vanilla` is marked as being skipped in the schema. 
 
-Because of this mismatch, a `GraphTypeDeclarationException` will be thrown when the introspection data for your schema is built. As a result, the server will fail to start until the problem is corrected.
+Because of this mismatch, a `GraphTypeDeclarationException` will be thrown when the introspection data for your schema is built. As a result, the server will fail to start until the problem is corrected. 
+
+You can get around this by setting an included enum value in the consturctor:
+
+
+```csharp title="Using an Enum as a field type"
+public class Donut 
+{
+    public Donut()
+    {
+        // set the value of flavor to an enum value 
+        // included in the graph
+        this.Flavor = DonutFlavor.Chocolate;
+    }
+
+    public string Name { get; set; }
+    public DonutFlavor Flavor { get; set; }
+}
+
+```
 
 :::caution
  Enum values used for the default value of input object properties MUST also exist as values in the schema or an exception will be thrown.
