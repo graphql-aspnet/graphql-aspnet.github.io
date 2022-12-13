@@ -4,13 +4,20 @@ title: Overview
 sidebar_label: Overview
 sidebar_position: 0
 description: A quick overview of how to use the library
-hide_title: true
 ---
+
+
+```powershell title="Install The Library"
+# Using the dotnet CLI
+> dotnet add package GraphQL.AspNet --prerelease
+
+# using Package Manager Console
+> Install-Package GraphQL.AspNet -AllowPrereleaseVersions
+```
 
 ## Documentation
 
 This documentation should can be used as a reference for various aspects of the library or read to discover the various features of the library.  If you have questions don't hesitate to ask over on [Github](https://github.com/graphql-aspnet/graphql-aspnet).
-
 
 
 ## Helpful Pages
@@ -23,6 +30,7 @@ This documentation should can be used as a reference for various aspects of the 
 📜 [Attributes](../reference/attributes.md) : A reference list of the various `[Attributes]` used by GraphQL ASP.NET to create your schema.
 
 📐 [Schema Configuration](../reference/schema-configuration.md) : A reference list of the various configuration options available at application startup.
+
 </span>
 
 ## Building Your First Application
@@ -37,7 +45,7 @@ This documentation should can be used as a reference for various aspects of the 
 
 ```powershell
 # Powershell terminal, Package Manager in Visual Studio, Developer Command Prompt etc.
-> dotnet add package GraphQL.AspNet
+> dotnet add package GraphQL.AspNet --prerelease
 ```
 
 ### Create a Controller
