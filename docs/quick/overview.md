@@ -12,7 +12,7 @@ description: A quick overview of how to use the library
 > dotnet add package GraphQL.AspNet --prerelease
 
 # using Package Manager Console
-> Install-Package GraphQL.AspNet -AllowPrereleaseVersions
+> Install-Package GraphQL.AspNet -IncludePrerelease
 ```
 
 ## Documentation

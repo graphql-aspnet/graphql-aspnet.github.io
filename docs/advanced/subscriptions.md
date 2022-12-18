@@ -13,8 +13,12 @@ Successfully handling subscriptions in your GraphQL server can be straight forwa
 
 The first step to using subscriptions is to install the subscription server package.
 
-```powershell
- PS> Install-Package GraphQL.AspNet.Subscriptions -AllowPrereleaseVersions
+```powershell title="Install The Library"
+# Using the dotnet CLI
+> dotnet add package GraphQL.AspNet.Subscriptions --prerelease
+
+# using Package Manager Console
+> Install-Package GraphQL.AspNet.Subscriptions -IncludePrerelease
 ```
 
 This adds the necessary components to create a subscription server for a given schema such as communicating with web sockets, parsing subscription queries and responding to events.

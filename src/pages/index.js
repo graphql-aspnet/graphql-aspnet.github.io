@@ -16,7 +16,7 @@ function HomepageHeader() {
         <h1 className="hero__title">{siteConfig.title}</h1>
         <p className="hero__subtitle">{siteConfig.tagline}</p>
         <div className={styles.buttons} >
-          <div className="row" style={{ columnGap: "15px" }}>
+          <div className={clsx("row", styles["main-buttons"])}>
             <div>
               <Link
                 className="button button--primary button--lg"
@@ -43,7 +43,7 @@ function WriteAController() {
       <CodeBlock className="language-csharp" >
         {"// C# Controller \n" +
           "[GraphRoute(\"groceryStore/bakery\")]\n" +
-          "public class BakeryController : GraphController \n " +
+          "public class BakeryController : GraphController \n" +
           "{ \n" +
           "  [Query(\"pastries/search\")]\n" +
           "  public IEnumerable<IPastry> SearchPastries(string text)\n" +
