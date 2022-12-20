@@ -202,7 +202,7 @@ public class BakeryController : GraphController
 
 From a GraphQL perspective this equivilant to trying to define a `bakery` type with two fields named `orderDonuts`. Since both methods map to a field path of `[mutation]/bakery/orderDonuts` this would cause a `GraphTypeDeclarationException` to be thrown when your application starts. 
 
-With MVC the ASP.NET runtime could inspect any combinations of parameters passed on the query string or the POST body to work out which overload to call. You might be thinking, why can't GraphQL inspect the passed input arguments and make the same determination?
+With Web API, the ASP.NET runtime could inspect any combinations of parameters passed on the query string or the POST body to work out which overload to call. You might be thinking, why can't GraphQL inspect the passed input arguments and make the same determination?
 
 Putting aside that it [violates the specification](http://spec.graphql.org/October2021/#sec-Objects), in some cases it probably could. But looking at this example we run into an issue:
 

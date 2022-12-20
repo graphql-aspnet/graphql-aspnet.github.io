@@ -25,7 +25,7 @@ _Constants for all log entry properties can be found at_ `GraphQL.AspNet.Logging
 
 ### Schema Route Registered
 
-This event is recorded when GraphQL successfully registers an entry in the ASP.NET MVC's route table to accept requests for a target schema. This event is recorded once per application instance.
+This event is recorded when GraphQL successfully registers an entry in the ASP.NET route table to accept requests for a target schema. This event is recorded once per application instance.
 
 **Important Properties**
 

@@ -84,7 +84,7 @@ public class Donut
 💻 Register GraphQL with your services collection and your application pipeline:
 
 ```csharp title="Program.cs"
-using GraphQL.AspNet.Configuration.Mvc;
+using GraphQL.AspNet.Configuration;
 
 var builder = WebApplication.CreateBuilder(args);
 

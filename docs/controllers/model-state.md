@@ -19,7 +19,7 @@ But it fails to enforce the individual business requirements of our data:
 
 #### Model Validation to the Rescue
 
-When your controller action is invoked the runtime will analyze the input parameters and will execute the validation attributes attached to each property to determine a validation state, just like you'd do in an MVC controller.
+When your controller action is invoked the runtime will analyze the input parameters and will execute the validation attributes attached to each property to determine a validation state, just like you'd do in a Web API controller.
 
 In this example we use the `[Range]` attribute under `System.ComponentModel.DataAnnotations` to limit the quantity of donuts that can be ordered to two dozen.
 

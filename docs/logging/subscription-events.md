@@ -26,7 +26,7 @@ This event is recorded when the server's schema-agnostic, internal dispatch queu
 
 ### Subscription Route Registered
 
-This event is recorded when GraphQL successfully registers an entry in the ASP.NET MVC's route table to accept requests for a target schema as well as 
+This event is recorded when GraphQL successfully registers an entry in the ASP.NET route table to accept requests for a target schema as well as 
 register the middleware component necessary to receive websocket requests.
 
 **Important Properties**
