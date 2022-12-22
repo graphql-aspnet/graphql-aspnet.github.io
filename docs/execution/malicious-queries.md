@@ -47,7 +47,9 @@ services.AddGraphQL(options =>
 });
 ```
 
-> The default value for `MaxQueryDepth` is `null` or no limit.
+:::info Default Max Query Depth
+The default value for `MaxQueryDepth` is `null` (i.e. no limit).
+:::
 
 ## Query Complexity
 
@@ -68,7 +70,7 @@ query PhoneManufacturer {
 }
 ```
 
-It would not be far fetched to assume that this phone manufacturer has at least 500 parts in their inventory and that those parts might be sourced from 2-3 individual suppliers. If that's the case our result is going to contain 3000 field resolutions (500 parts \* 3 suppliers \* 2 fields per supplier) just to show the name and address of each supplier. Thats a lot of data!!!! What if we added order history per supplier? Now we'd looking at 100,000+ results. The take away here is that your field resolutions can balloon quickly if you're not careful.
+It would not be far fetched to assume that this phone manufacturer has at least 500 parts in their inventory and that those parts might be sourced from 2-3 individual suppliers. If that's the case our result is going to contain 3000 field resolutions (500 parts \* 3 suppliers \* 2 fields per supplier) just to show the name and address of each supplier. Thats a lot of data!!!! What if we added order history per supplier? Now we'd looking at 100,000+ results. The take away here is that your field resolutions can balloon quickly, even on small queries, if you're not careful.
 
 While this query only has a field depth of 3, `allParts > suppliers > name`, the performance implications are much more impactful than the bakery in the first example because of the type of data involved. (Side note: this is a perfect example where a [batch operation](../controllers/batch-operations) would improve performance exponentially.)
 
@@ -81,11 +83,11 @@ services.AddGraphQL(options =>
 });
 ```
 
-> The default value for `MaxQueryComplexity` is `null` or no limit.
+:::info Default Max Complexity
+The default value for `MaxQueryComplexity` is `null` (i.e. no maximum).
+:::
 
-There is no magic bullet for choosing a maximum value as its going to be largely dependent on your data and how customers query it. 
-
-## Calculating Query Complexity
+### Calculating Query Complexity
 
 After a query plan is generated, the chosen operation is inspected and weights are applied to each of the fields then summed together to generate a final score.
 
@@ -93,15 +95,13 @@ A complexity score is derived from these attributes:
 
 | Attribute         | Description                                                                                                      |
 | ----------------- | ---------------------------------------------------------------------------------------------------------------- |
-| Operation Type    | This refers to the operation as a whole being a `mutation` or a `query`.                                         |
-| Execution Mode    | Whether or not a field is being executed as a batch operation or per source item.                                |
-| Resolver Type     | Is the field targeting a controller action, an object property or an object method?                              |
-| Type Expression   | Does the field produce 1 single item or a collection of items                                                    |
+| Operation Type    | This refers to the operation being a `mutation` or a `query`. Mutations are weighted more than queries.|
+| Execution Mode    | Whether or not a given field is being executed as a batch operation or "per source item".                        |
+| Resolver Type     | The type of resolver being invoked.  For example, controller actions are weighted more heavily than simple property resolvers. |
+| Type Expression   | Does the field produce 1 single item or a collection of items?                                                   |
 | Complexity Factor | A user controlled value to influence the calculation for queries or mutations that are particularly long running |
 
-The `estimated complexity` of the query plan is the operation with the highest individual score.
-
-The code for calculating the value can be seen in [`DefaultOperationComplexityCalculator<TSchema>`](https://github.com/graphql-aspnet/graphql-aspnet/blob/master/src/graphql-aspnet/Defaults/DefaultOperationComplexityCalculator%7BTSchema%7D.cs)
+The code for calculating the value can be seen in [`DefaultOperationComplexityCalculator<TSchema>`](https://github.com/graphql-aspnet/graphql-aspnet/blob/master/src/graphql-aspnet/Engine/DefaultOperationComplexityCalculator%7BTSchema%7D.cs)
 
 ### Setting a Complexity Weight
 
@@ -113,6 +113,7 @@ The attributes `[GraphField]`, `[Query]`, `[Mutation]`, `[QueryRoot]`, `[Mutatio
 public class BakeryController : GraphController
 {
     // Complexity is a float value
+    // highlight-next-line
     [QueryRoot(Complexity = 1.3)]
     public Donut RetrieveDonutType(int id){/*...*/}
 }
@@ -122,9 +123,16 @@ public class BakeryController : GraphController
 -   A factor less than 1 will decrease the weight
 -   The minimum value is `0` and the default value is `1`
 
+Complexity scores that do not exceed the limit are written to `QueryPlanGenerated (EventId: 86400)`, a debug level event, after the query plan is successfully generated. Complexity scores that do exceed the limit are written directly to the errors collection on the query response.
+
+
+:::tip Profile Your Queries
+There is no magic bullet for choosing complexity values or setting a maximum allowed value as its going to be largely dependent on your data and how customers query it. Spend time profiling your queries, investigate their calculated complexities and act accordingly. 
+:::
+
 ## Implement Your Own Complexity Calculation
 
-You can override how GraphQL calculates the complexity of any given query operation. Implement `IQueryOperationComplexityCalculator<TSchema>` and inject it into your DI container before calling `.AddGraphQL()`.
+You can override how the library calculates the complexity of any given query operation. Implement `IQueryOperationComplexityCalculator<TSchema>` and inject it into your DI container before calling `.AddGraphQL()`.
 
 This interface has one method where `IGraphFieldExecutableOperation` represents the collection of requested fields contexts along with the input arguments, child fields and directives that are about to be executed:
 
