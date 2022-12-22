@@ -4,11 +4,13 @@ title: Controllers & Actions
 sidebar_label: Actions
 sidebar_position: 0
 ---
+
+
+## What is an Action?
+
 :::info
  An action is a method on a controller, marked as being a query or mutation field, that is part of your graph schema.
 :::
-
-## What is an Action?
 
 Controllers and actions are the bread and butter of GraphQL ASP.NET. Just like with Web API, they serve as an entry point into your business logic.
 
@@ -29,9 +31,6 @@ query {
 ```
 
 ```csharp title="Controllers.cs"
-using GraphQL.AspNet.Controllers;
-using GraphQL.AspNet.Attributes;
-
 // HeroController.cs
 public class HeroController : GraphController
 {
@@ -53,9 +52,7 @@ public class DroidController : GraphController
 }
 ```
 
-
-
-In the above example, it makes sense these these methods would exist on different controllers, `HeroController` and `DroidController`. Unlike with a REST API request, which will usually invokes one action method and returns the data generated, GraphQL will automatically invoke every action method requested and aggregates the results. If one action fails, the other may not and the results of both the errors and the data retrieved would be returned.
+In the above example, it makes sense these these methods would exist on different controllers, `HeroController` and `DroidController`. Unlike with a REST API request, which will usually invoke one action method and returns the data generated, GraphQL will invoke every action method requested and aggregates the results. If one action fails, the other may not and the results of both the errors and the data retrieved would be returned.
 
 The data returned by your action methods then return their requested child fields, those data items to their children and so on. In many cases this is just a selection of the appropriate properties on a model object, but more complex scenarios involving child objects, [type extensions](./type-extensions) or directly executing POCO methods can also occur.
 
@@ -89,10 +86,12 @@ When used alone, without any parameters, the field name in the schema is the sam
 ```csharp  title="Using [Query] & [Mutation]"
 public class BakeryController : GraphController
 {
+    // highlight-next-line
     [Query]
     public Donut FindDonut(int id)
     {/* ... */ }
 
+    // highlight-next-line
     [Mutation]
     public CakeModel UpdateCake(CakeModel cake)
     {/* ... */ }
@@ -129,10 +128,12 @@ You can supply the name of the field you want to use in the schema allowing for 
 ```csharp  title="Using [Query] & [Mutation]"
 public class BakeryController : GraphController
 {
+    // highlight-next-line
     [Query("donut")]
     public Donut FindDonut(int id)
     {/* ... */ }
 
+    // highlight-next-line
     [Mutation("alterCake")]
     public CakeModel UpdateCake(CakeModel cake)
     {/* ... */ }
@@ -164,7 +165,7 @@ mutation  {
 
 💻  `[Query("donut", typeof(Donut))]`, `[Mutation("donut", typeof(CakeModel))]`
 
- Sometimes, especially when you return action results, you may need to explicitly declare what data type you are returning from the method. This is because returning `IGraphActionResult` obfuscates the results from the templating engine and it won't be able to infer the underlying type expression of the field.  Here we use the built in model state validation to validate the incoming object and return a `BadRequest` error when its not correct:
+ Sometimes, especially when you return action results, you may need to explicitly declare what data type you are returning from the method. This is because returning `IGraphActionResult` obfuscates the results from the templating engine and it won't be able to infer the underlying type expression of the field. 
 
 
 ```csharp  title="Using [Query] & [Mutation]"
@@ -174,12 +175,11 @@ public class BakeryController : GraphController
     public Donut FindDonut(int id)
     {/* ... */ }
 
+    // highlight-next-line
     [Mutation("alterCake",typeof(CakeModel))]
-    public IGraphActionResult UpdateCake(CakeModel cake)
+    public async Task<IGraphActionResult> UpdateCake(CakeModel cake)
     {
-        if (!this.ModelState.IsValid)
-            return this.BadRequest(this.ModelState);
-
+        await _service.UpdateCake(cake);
         return this.Ok(cake);
     }
 }
@@ -195,6 +195,7 @@ These are special overloads to `[Query]` and `[Mutation]`. They are declared in 
 ```csharp  title="Using [QueryRoot]"
 public class BakeryController : GraphController
 {
+    // highlight-next-line
     [QueryRoot("donut")]
     public Donut FindDonut(int id)
     {/* ... */ }
@@ -220,6 +221,7 @@ If you'll recall, Web API uses `[Route("somePathSegment")]` declared on a contro
 
 
 ```csharp  title="Using [GraphRoute]"
+// highlight-next-line
 [GraphRoute("BakedGoods")]
 public class BakeryController : GraphController
 {
@@ -275,6 +277,7 @@ Take this example:
 public class BakeryController : GraphController
 {
     [QueryRoot]
+    // highlight-next-line
     public IPastry SearchPastries(string name)
     {/* ... */}
 }
@@ -305,11 +308,12 @@ There are a number of ways to indicate these required relationships in your code
 
  📃 **Add OBJECT Types Directly to the Action Method**
 
-If you have just two or three possible types, add them directly to the query attribute. You can safely add `typeof(Cake)` across multiple methods as needed, it will only be included in the schema once.
+If you have just two or three possible types, add them directly to the query attribute. You can safely add your types across multiple methods as needed, it will only be included in the schema once.
 
 ```csharp
 public class BakeryController : GraphController
 {
+    // highlight-next-line
     [QueryRoot(typeof(Cake), typeof(Donut))]
     public IPastry SearchPastries(string name)
     {/* ... */}
@@ -326,6 +330,7 @@ The `[Query]` attribute can get a bit hard to read with a ton of data in it (esp
 public class BakeryController : GraphController
 {
     [QueryRoot]
+    // highlight-next-line
     [PossibleTypes(typeof(Cake), typeof(Donut), typeof(Scone), typeof(Croissant))]
     public IPastry SearchPastries(string name)
     {/* ... */}
@@ -343,9 +348,10 @@ The [schema configuration](../reference/schema-configuration) contains a host of
 Assembly pastryAssembly = Assembly.GetAssembly(typeof(Cake));
 
 services.AddGraphQL(options =>
-    {
-        options.AddAssembly(pastryAssembly);
-    });
+{
+    // highlight-next-line
+    options.AddAssembly(pastryAssembly);
+});
 ```
 
 <br/>
@@ -355,12 +361,12 @@ services.AddGraphQL(options =>
 
 You might be wondering, "if I just define `Cake` and `Donut` in my application, why can't GraphQL just include them like it does the controller?".
 
-It certainly can, but there are risks to arbitrarily grabbing class references not exposed on a schema. With introspection queries, all of those classes and their method/property names could be exposed and pose a security risk. It might not be able to query the data, but imagine if a enum named `EmployeeDiscountCodes` was accidentally added to your graph. All the values of that enum would be publically exposed.
+It certainly can, but there are risks to arbitrarily grabbing class references not exposed on a schema. With introspection queries, all of those classes and their method/property names could be exposed and pose a security risk. It might not be able to query the data, but imagine if a enum named `EmployeeDiscountCodes` was accidentally added to your graph. All the values of that enum would be publically exposed via introspection.
 
 To combat this GraphQL will only ingest types that are:
 
--   Referenced in a `GraphController`
--   Attributed with at least once instance of a `[GraphType]` or `[GraphField]` attribute somewhere within the class.
+-   Referenced in a `GraphController` action method **OR**
+-   Attributed with at least once instance of a `[GraphType]` or `[GraphField]` attribute somewhere within the class **OR**
 -   Added explicitly at startup during `.AddGraphQL()`.
 
 This behavior is controlled with your schema's declaration configuration to make it more or less restrictive based on your needs. Ultimately you are in control of how aggressive or restrictive GraphQL should be; even going so far as declaring that every type be declared with `[GraphType]` and every field with `[GraphField]` lest it be ignored completely. The amount of automatic vs. manual wire up will vary from use case to use case but you should be able to achieve the result you desire.
@@ -382,11 +388,12 @@ public class BakeryController : GraphController
     {
         if(name == null || name.Length < 3)
         {
+            // highlight-next-line
             return this.Error(GraphMessageSeverity.Warning, "At least 3 characters is required");
         }
         else
         {
-            var results = await _service.SearchPastries(name);
+            var results = await _service.SearchPastries(name);            
             return this.Ok(results);
         }
     }
@@ -417,12 +424,13 @@ GraphQL will inspect your method parameters and add the appropriate [`SCALAR`](.
 
 ### Naming your Input Arguments
 
-By default, GraphQL will name a field's arguments the same as the parameter names in your method. Sometimes you'll want to override this, like when needing to use a C# keyword as an argument name. Use the `[FromGraphQL]` attribute on the parameter to accomplish this.
+By default, GraphQL will name a field' arguments the same as the parameter names in your method. Sometimes you'll want to override this, like when needing to use a C# keyword as an argument name. Use the `[FromGraphQL]` attribute on the parameter to accomplish this.
 
 ```csharp title="Overriding a Default Argument Name"
 public class BakeryController : GraphController
 {
-    [QueryRoot]
+    [QueryRoot]    
+    // highlight-next-line
     public IEnumerable<Donut> SearchDonuts([FromGraphQL("name")] string searchText)
     {/* ... */}
 }
@@ -443,12 +451,13 @@ query {
 
 ### Default Argument Values
 
-In GraphQL, not all field arguments are required. Those that declare a default value are optional in a submitted query:
+In GraphQL, not all field arguments are required. Add a default value to your method parameters to mark them as optional:
 
 ```csharp title="Using an Optional Field Argument"
 public class BakeryController : GraphController
 {
-    [QueryRoot]
+    [QueryRoot]    
+    // highlight-next-line
     public Donut SearchDonuts(string name = "*")
     {/* ... */}
 }
@@ -472,12 +481,18 @@ query {
 }
 ```
 
-Note that there is a difference between "nullable" and "not required" for input arguments. If we have a nullable int as an input parameter, without a default value we still have to pass it to the field, even if we pass it as null just like if we were to invoke the method from our C# code.
+<br />
+
+⚠️ **Nullable vs. Not Required**
+
+Note that there is a difference between "nullable" and "not required" for field arguments. If we have a nullable int as an input parameter, without a default value we still have to pass it to the field, even if we pass it as `null`; just like if we were to invoke the method from our C# code.
 
 ```csharp title="NumberController.cs"
 public class NumberController : GraphController
 {
-    [QueryRoot]
+    // "seed" is still required, but you can supply null
+    [QueryRoot]    
+    // highlight-next-line
     public int CreateRandomInt(int? seed)
     {/* ... */}
 }
@@ -490,7 +505,9 @@ query {
     createRandomInt(seed: null)
 }
 
+## *** 
 ## ERROR, argument not supplied
+## *** 
 query {
     createRandomInt
 }
@@ -498,11 +515,11 @@ query {
 
 By also defining a default value we can achieve the flexibility we are looking for.
 
-
 ```csharp title="NumberController.cs"
 public class NumberController : GraphController
-{
+{    
     [QueryRoot]
+    // highlight-next-line
     public int CreateRandomInt(int? seed = null)
     {/* ... */}
 }
@@ -647,6 +664,7 @@ public class BakeryController : GraphController
 {
     // Add a CancellationToken to your controller method
     [QueryRoot(typeof(IEnumerable<Donut>))]
+    // highlight-next-line
     public async Task<IGraphActionResult> SearchDonuts(string name, CancellationToken cancelToken)
     {/* ... */}
 }
@@ -666,6 +684,7 @@ Optionally, you can define a query timeout for a given schema:
 services.AddGraphQL(o =>
 {
     // define a 2 minute timeout for every query.
+    // highlight-next-line
     o.ExecutionOptions.QueryTimeout = TimeSpan.FromMinutes(2);
 })
 ```

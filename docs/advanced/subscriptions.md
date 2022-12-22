@@ -29,8 +29,9 @@ You must configure web socket support for your Asp.Net server instance separatel
 
 After web sockets are added to your server, add subscription support to the graphql registration.
 
-```csharp title="Add Subscription Support"
+```csharp title="Add Subscription Support at Startup"
 // configuring services at startup
+// ---------------
 services.AddWebSockets(/*...*/);
 
 services.AddGraphQL()
@@ -38,6 +39,7 @@ services.AddGraphQL()
         .AddSubscriptions();
 
 // building the application pipeline
+// ---------------
 app.UseWebSockets();
 // highlight-next-line
 app.UseGraphQL();    
@@ -56,6 +58,7 @@ public class SubscriptionController : GraphController
 {
     // other code not shown for brevity
 
+    // highlight-next-line
     [SubscriptionRoot("onWidgetChanged", typeof(Widget), EventName = "WIDGET_CHANGED")]
     public IGraphActionResult  OnWidgetChanged(Widget eventData, string filter){
         if(eventData.Name.StartsWith(filter))
@@ -72,11 +75,6 @@ public class SubscriptionController : GraphController
     }
 }
 ```
-
-:::info
-Subscriptions can be asyncronous and return a `Task<IGraphActionResult>` as well.
-:::
-
 Here we've declared a new subscription, one that takes in a `filter` parameter to restrict the data that any subscribers receive.
 
 A query to invoke this subscription may look like this:
@@ -95,7 +93,7 @@ Any updated widgets that start with the phrase "Big" will then be sent to the re
 
 ### Publish a Subscription Event
 
-In order for the subscription server to send data to any subscribers it has to be notified when its time to do so. It does this via named Subscription Events. These are internal, schema-unique keys that identify when something happened, usually via a mutation. Once the mutation publishes an event, the subscription server will execute the appropriate action method for any subscribers, using the supplied data, and deliver the results to the client.
+In order for the subscription server to send data to any subscribers it has to be notified when its time to do so. It does this via named Subscription Events. These are internal, schema-unique keys (strings) that identify when something happened, usually via a mutation. Once the mutation publishes an event, the subscription server will execute the appropriate action method for any subscribers, using the supplied data, and deliver the results to the client.
 
 ```csharp title="MutationController.cs"
 public class MutationController : GraphController
@@ -111,6 +109,7 @@ public class MutationController : GraphController
 
         // publish a new event to let any subscribers know
         // something changed
+        // highlight-next-line
         this.PublishSubscriptionEvent("WIDGET_CHANGED", widget);
         return this.Ok(widget);
     }
@@ -123,7 +122,7 @@ public class MutationController : GraphController
 
 ### Subscription Event Data Source
 
-In the example above, the data sent with `PublishSubscriptionEvent()` is the same as the first input parameter, called `eventData`, on the subscription field, which is the same as the field return type of the subscription controller method. By default, GraphQL will look for a parameter with the same data type as its own return type and use that as the event data source. It will automatically populate this field with the data from `PublishSubscriptionEvent()`; this argument is not exposed in the object graph.
+In the example above, the data sent with `PublishSubscriptionEvent()` is the same as the first input parameter, called `eventData`, on the subscription method, which is the same as the return type of the subscription method. By default, GraphQL will look for a parameter with the same data type as the method's own return type and use that as the event data source. It will automatically populate this field with the data from `PublishSubscriptionEvent()`; this argument is not exposed in the object graph.
 
 You can explicitly flag a different parameter, or a parameter of a different data type to be the expected event source with the `[SubscriptionSource]` attribute.
 
@@ -132,6 +131,7 @@ public class SubscriptionController : GraphController
 {
     [SubscriptionRoot("onWidgetChanged", typeof(Widget), EventName = "WIDGET_CHANGED")]
     public IGraphActionResult  OnWidgetChanged(
+        // highlight-next-line
         [SubscriptionSource] WidgetInternal eventData,
         string filter)
     {
@@ -142,7 +142,7 @@ public class SubscriptionController : GraphController
 }
 ```
 
-Here the subscription expects that an event is published using a `WidgetInternal` data type that it will internally convert to a `Widget` and send to any subscribers. This can be useful if you wish to share internal objects between your mutations and subscriptions that you don't want publicly exposed.
+Here the subscription expects that an event is published using a `WidgetInternal` that it will convert to a `Widget` and send to any subscribers. This can be useful if you wish to share internal objects between your mutations and subscriptions that you don't want publicly exposed.
 
 :::info Event Data Objects Must Match
  The data object published with `PublishSubscriptionEvent()` must have the same type as the `[SubscriptionSource]` on the subscription field.
@@ -150,11 +150,11 @@ Here the subscription expects that an event is published using a `WidgetInternal
 
 ### Summary
 
-That's all there is for a basic subscription server setup.
+That's all there is for a basic subscription server setup:
 
 1. Add the package reference and update your startup code.
-2. Declare a new subscription using `[Subscription]` or `[SubscriptionRoot]`.
-3. Publish an event from a mutation.
+2. Declare a new subscription on a controller using `[Subscription]` or `[SubscriptionRoot]`.
+3. Publish an event (usually from a mutation).
 
 ### Apollo Client Example
 
@@ -179,11 +179,11 @@ If there are scenarios where an event payload should not be shared with a user, 
 
 Using web sockets has a natural limitation in that any single server instance has a maximum number of socket connections that it can realistically handle before being overloaded. Additionally, all cloud providers impose an artifical limit for many of their pricing tiers. Once that limit is reached no additional clients can connect, even if the server has capacity.
 
-Ok no problem, just scale horizontally, spin up additional server instances, add a load balancer and have the new requests open a web socket connection to these additional server instances, right? Not so fast.
+Ok no problem, just scale horizontally, right? Spin up additional server instances, add a load balancer and have the new requests open a web socket connection to these additional server instances...Not so fast!
 
-With the examples above, events published by any mutation using `PublishSubscriptionEvent()` are routed internally, directly to the local subscription server meaning only those clients connected to the server where the event was raised will receive it. Clients connected to other server instances will never know the event occured. This represents a big problem for large scale websites, so what do we do?
+With the examples above, events published by any mutation using `PublishSubscriptionEvent()` are routed internally, directly to the local subscription server meaning only those clients connected to the server instance where the event was raised will receive it. Clients connected to other server instances will never know the event occured. This represents a big problem for large scale websites, so what do we do?
 
-[This diagram](../assets/2022-10-subscription-server.pdf) shows a high level differences between the default, single server configuration and a custom scalable solution.
+[This diagram](../assets/2022-10-subscription-server.pdf) shows a high level difference between the default, single server configuration and a custom scalable solution.
 
 ### Custom Event Publishing
 
@@ -247,6 +247,10 @@ The router will take care of the details in figuring out which schema the event 
     }
 ```
 
+:::info 
+The above example is made using [`Background Services`](https://learn.microsoft.com/en-us/aspnet/core/fundamentals/host/hosted-services?view=aspnetcore-7.0&tabs=visual-studio). A feature of the modern ASP.NET stack.
+:::
+
 
 
 ### Azure Service Bus Example
@@ -275,7 +279,7 @@ The following granular configuration options may be useful:
 
 ## Security & Query Authorization
 
-Because subscriptions are long running and registered before any data is processed, the subscription server requires a [query authorization method](../reference/schema-configuration#authorization-options) of `PerRequest`. This allows the subscription to be fully validated before its registered with the server. This authorization method is set at startup and will apply to queries and mutations as well. It is because of this that it may be useful to split your mutations and subscriptions into different server instances for larger applications, as mentioned above, depending on your reliance on partial query resolution.
+Because subscriptions are long running, consume server resources and registered before any data is processed, the subscription server requires a [query authorization method](../reference/schema-configuration#authorization-options) of `PerRequest`. This allows the subscription to be fully validated before its registered with the server and ensure that any queries can actually be processed when needed. This authorization method is set at startup and will apply to queries and mutations as well. It is because of this that it may be useful to split your mutations and subscriptions into different server instances for larger applications, as mentioned above, depending on your reliance on partial query resolution.
 
 This is different than the default behavior when subscriptions are not enabled. Queries and mutations, by default, will follow a `PerField` method allowing for partial query resolutions. 
 
@@ -285,7 +289,7 @@ This is different than the default behavior when subscriptions are not enabled. 
 
 ## Query Timeouts
 
-By default, the library does not define a timeout for an executed query. The query will run as long as the underlying HTTP connection is open. This is true for subscriptions as well. Given that the websocket connection is never closed while the end user is connected, any query executed through the websocket will be allowed to run for an infinite amount of time which can have some unintended side effects and consume resources unecessarily.
+By default, the library does not define a timeout for an executed query. The query will run as long as the underlying connection is open. This is true for subscriptions as well. Given that the websocket connection is never closed while the end user is connected, any query executed through the websocket will be allowed to run for an infinite amount of time which can have some unintended side effects and consume resources unecessarily.
 
 Optionally, you can define a query timeout for a given schema, which the subscription server will obey:
 
@@ -311,7 +315,7 @@ Out of the box, the library supports subscriptions over websockets using `graphq
 
 If you wish to add support for your own websocket messaging protocol you need to implement two interfaces:
 
-- `ISubscriptionClientProxy` wraps a client connection and performs all the necessary communications.
+- `ISubscriptionClientProxy<TSchema>` wraps a client connection, processes events and performs all necessary communications.
 - `ISubscriptionClientProxyFactory` which is used create client proxy instances for your protocol.
 
 
@@ -342,7 +346,7 @@ services.AddGraphQL()
 ```
 
 :::caution Create a Singleton Factory
- `ISubscriptionClientProxyFactory` is expected to be a singleton; it is only instantiated once when the server first comes online. The `ISubscriptionClientProxy<TSchema>`instances it creates should be unique per `IClientConnection` instance.
+ `ISubscriptionClientProxyFactory` is expected to be a singleton; it is instantiated once when the server first comes online. The `ISubscriptionClientProxy<TSchema>`instances it creates should be unique per `IClientConnection` instance.
 :::
 
 The server will listen for subscription registrations from your client proxy and send back published events when new data is available. It is up to your proxy to interprete these events, generate an appropriate result (including executing queries against the runtime), serialize the data and send it to the connected client on the other end.
@@ -359,13 +363,13 @@ Please do a deep dive into the subscription code base to learn about all the int
 
 ## Performance Considerations
 
-In a production app, its very possible that you may have lots of subscription events fired and communicated to a lot of connected clients in short succession. Its important to understand how the receiving servers will process those events and plan accordingly. 
+In a production app, its very possible that you may have lots of subscription events fired and communicated to a lot of connected clients in short succession. Its important to understand how the server will process those events and plan accordingly. 
 
-When the router receives an event it looks to see which clients are subscribed to that event and queues up a work item for each one. That is to say if there are 5 clients registered to the single event name, then 5 work items are queued. Internally, this work is processed up to a server-configured maximum. Once this maximum is reached, new work will only begin as other work finishes up.
+When the router receives an event it looks to see which clients are subscribed to that event and queues up a work item for each one. If there are 5 clients registered to the single event, then 5 work items are queued. Internally, this work is processed asyncronously to a server-configured maximum. Once this maximum is reached, new work will only begin as other work finishes up.
 
-Each work item is, for the most part, a single query execution. Though, if a client registers to a subscription multiple times each subscription registration is executed as its own query. With lots of events being delivered on a server saturated with clients, each potentially having multiple subscriptions, along with regular queries and mutations executing...limits must be imposed otherwise CPU utilization could unreasonably spike...and it may spike regardless in some use cases. 
+Each work item is, for the most part, a single query execution. Though, if a client registers to a subscription multiple times each registration is executed as its own query. With lots of events being delivered on a server saturated with clients, each potentially having multiple subscriptions, along with regular queries and mutations executing...limits must be imposed otherwise CPU utilization could unreasonably spike...and it may spike regardless in some use cases. 
 
-By default, the max number of work items the router will deliver simultaniously is `500`.  This is a global, server-wide pool, shared amongst all registered schemas. You can manually adjust this value by changing it prior to calling `.AddGraphQL()`.   This value defaults to a low number on purpose, use it as a starting point to dial up the max concurrency to a level you feel comfortable with in terms of performance and cost. The only limit here is server resources and other environment limitations outside the control of graphql. 
+By default, the max number of work items the router will deliver simultaniously is `500`.  This is a global, server-wide pool, shared amongst all registered schemas. You can controller this value by changing it prior to calling `.AddGraphQL()`.   This value defaults to a low number on purpose, use it as a starting point to dial up the max concurrency to a level you feel comfortable with in terms of performance and cost. The only limit here is server resources and other environment limitations outside the control of graphql. 
 
 ```csharp title="Set A Receiver Throttle During Startup"
 // Adjust the max concurrent communications value
@@ -376,6 +380,10 @@ GraphQLSubscriptionServerSettings.MaxConcurrentReceiverCount = 500;
 services.AddGraphQL()
         .AddSubscriptions();
 ```
+
+:::note 
+The max receiver count can easily be set in the 1000s. There is no magic bullet as to an appropriate value. It all depends on the number of events you are expecting, the number of subscribers and the workload of each event in your application.
+:::
 
 ### Event Multiplication
 

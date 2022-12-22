@@ -234,7 +234,7 @@ query {
 
 ## Mutations & Model State
 
-GraphQL ASP.NET will automatically enforce the query specification rules for you, but that doesn't help for business-level requirements like string length or integer ranges. For that, it uses the familiar goodness of Validation Attributes (e.g. `[StringLength]`, `[Range(1,5)]`).
+GraphQL ASP.NET will automatically enforce the query specification rules for you, but that doesn't help for business-level requirements like string length or integer ranges. For that, it uses the familiar goodness of Validation Attributes (e.g. `[StringLength]`, `[Range]` etc.).
 
 
 ```csharp title="PersonsController.cs"
@@ -293,8 +293,6 @@ Just as Web API makes use of `IActionResult` to perform post processing on the r
 
 Reusing the previous example, here we make use of `this.BadRequest()` to automatically generate an appropriate error message in the response when model validation fails. Field origin information including the path array and line/column number of the original query are wired up automatically.
 
-> Note: Unlike WebAPI `BadRequest()` doesn't generate a HTTP Status 400 error. If there are multiple fields being resolved GraphQL can still generate a partial response and render helpful data for other parts of the query.
-
 ```csharp
 // C# Controller
 public class PersonsController : GraphController
@@ -326,3 +324,7 @@ public class Human
     public string HomePlanet { get; set; }
 }
 ```
+
+:::note GraphQL is not Rest
+ Unlike WebAPI, `BadRequest()` doesn't generate a HTTP Status 400 error for the request. If there are multiple controller methods being resolved GraphQL can still generate a partial response and render data for other parts of the query. Most "error" related action results add a standard error message to the result with different reason codes.
+:::
