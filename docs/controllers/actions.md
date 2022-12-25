@@ -52,7 +52,7 @@ public class DroidController : GraphController
 }
 ```
 
-In the above example, it makes sense these these methods would exist on different controllers, `HeroController` and `DroidController`. Unlike with a REST API request, which will usually invoke one action method and returns the data generated, GraphQL will invoke every action method requested and aggregates the results. If one action fails, the other may not and the results of both the errors and the data retrieved would be returned.
+In the above example, it makes sense these these methods would exist on different controllers, `HeroController` and `DroidController`. However, unlike with a REST API request, which will usually invoke one action method and returns the data generated, GraphQL will invoke every action method requested and aggregates the results. If one action fails, the other may not and the results of both the errors and the data retrieved would be returned.
 
 The data returned by your action methods then return their requested child fields, those data items to their children and so on. In many cases this is just a selection of the appropriate properties on a model object, but more complex scenarios involving child objects, [type extensions](./type-extensions) or directly executing POCO methods can also occur.
 

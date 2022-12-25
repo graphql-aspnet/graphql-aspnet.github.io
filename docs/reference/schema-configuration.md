@@ -57,12 +57,14 @@ Adds a single entity of a given type the schema. Use these methods to add indivi
 ### ApplyDirective
 
 ```csharp
-schemaOptions.ApplyDirective("deprecated")
+schemaOptions.ApplyDirective("@deprecated")
     .WithArguments("The name field is deprecated.")
     .ToItems(schemaItem => schemaItem.IsGraphField<Person>("name"));
 ```
 
-Allows for the runtime registration of a type system directive to a given schema item. See the [directives](../advanced/directives.md#applying-type-system-directives) for complete details on how to use this method. 
+Allows for the runtime registration of a type system directive to a given schema item. 
+
+>See the section on [directives](../advanced/directives.md#using-schema-options) for complete details on how to use this method. 
 
 ### AutoRegisterLocalEntities
 ```csharp
@@ -74,7 +76,7 @@ schemaOptions.AutoRegisterLocalEntities = true;
 | ------------- | ----------------- |
 | `true`        | `true`, `false`   |
 
-When true, the graph entities (controllers, types, enums etc.) that are declared in the application entry assembly for the application are automatically registered to the schema. Typically this is your API project where `Startup.cs` or `Program.cs` is declared.
+When true, the graph entities (controllers, types, enums etc.) that are declared in the startup assembly for the application are automatically registered to the schema. Typically this is your API project where `Startup.cs` or `Program.cs` is declared.
 
 ## Authorization Options
 
@@ -111,7 +113,7 @@ schemaOptions.DeclarationOptions.AllowedOperations.Remove(GraphOperationType.Mut
 
 Controls which top level operations are available on your schema. In general, this property is managed internally and you do not need to alter it. An operation not in the list will not be configured at start up.
 
-_Note: Subscriptions are automatically added when the subscription library is configured._ 
+> Subscriptions are automatically added when the subscription library is added via `.AddSubscriptions()`.
 
 
 ### DisableIntrospection
@@ -124,9 +126,9 @@ schemaOptions.DeclarationOptions.DisableIntrospection = false;
 | ------------- | ----------------- |
 | `false`       | `true`, `false`   |
 
-When `true`, any attempts to perform an introspection query by making references to the fields `__schema` and `__type` will fail, preventing exposure of type meta data. 
+When `true`, any attempts to perform an introspection query will fail, preventing exposure of type meta data. 
 
-_Note: Many tools, IDEs and client libraries will fail if you disable introspection data._
+> Note: Many tools, IDEs and client libraries not work if you disable introspection data.
 
 ### FieldDeclarationRequirements
 ```csharp
@@ -142,11 +144,11 @@ Indicates to the runtime which fields and values of POCO classes must be explici
 
 By default:
 
--   All values declared on an `enum` will be included.
--   All properties of POCOs and interfaces will be included.
--   All methods of POCOs and interfaces will be excluded.
+-   All values declared on an `enum` **will be** included.
+-   All properties of POCOs and interfaces **will be** included.
+-   All methods of POCOs and interfaces **will NOT be** included.
 
-_NOTE: Controller and Directive action methods are not effected by this setting. Any_ `[GraphField]` _declaration will automatically override these settings._
+> NOTE: Controller and Directive action methods are not effected by this setting.
 
 ### GraphNamingFormatter
 
@@ -155,7 +157,7 @@ _NOTE: Controller and Directive action methods are not effected by this setting.
 schemaOptions.DeclarationOptions.GraphNamingFormatter = new GraphNameFormatter(...);
 ```
 
-An object that will format any internal name of a class or method to an acceptable name for use in the object graph.
+An object that will format any string to an acceptable name for use in the graph.
 
 | Entity Type      | Default Format | Examples                             |
 | ---------------- | -------------- | ------------------------------------ |
@@ -194,7 +196,7 @@ schemaOptions.ExecutionOptions.EnableMetrics = false;
 
 When true, metrics and query profiling will be enabled for all queries processed for a given schema.
 
-_Note: This option DOES NOT control if those metrics are sent to the query requestor, just that they are recorded. See [ExposeMetrics](./schema-configuration#exposemetrics) in the response options for that switch.
+> Note: This option DOES NOT control if those metrics are sent to the query requestor, just that they are generated. See [ExposeMetrics](./schema-configuration#exposemetrics) in the response options for that switch.
 
 ### MaxQueryComplexity
 
@@ -245,7 +247,7 @@ schemaOptions.ExecutionOptions.ResolverIsolation = ResolverIsolationOptions.Cont
 
 | Default Value | 
 | ------------- | 
-| `ResolverIsolation.None` |
+| `ResolverIsolationOptions.None` |
 
 Resolver types identified in `ResolverIsolation` are guaranteed to be executed independently. This is different than `DebugMode`. In debug mode a single encountered error will end the request whereas errors encountered in isolated resolvers will still be aggregated. This allows the returning partial results which can be useful in some use cases. 
 
@@ -278,7 +280,9 @@ schemaOptions.ResponseOptions.ExposeExceptions = false;
 
 When true, exception details including message, type and stack trace will be sent to the requestor as part of any error messages. 
 
-> WARNING: Setting this value to true can expose sensitive server details and is considered a security risk.
+:::caution WARNING
+Setting this value to true can expose sensitive server details and may be considered a security risk.
+:::
 
 ### ExposeMetrics
 
@@ -291,9 +295,9 @@ schemaOptions.ResponseOptions.ExposeMetrics = false;
 | ------------- | ----------------- |
 | `false`       | `true`, `false`   |
 
-When true, the full Apollo trace gathered when a query is executed is sent to the requestor. This value is disregarded unless `ExecutionOptions.EnableMetrics` is set to true.
+When true, the full set of metrics gathered when a query is executed is sent to the requestor. This value is disregarded unless `ExecutionOptions.EnableMetrics` is set to true.
 
-_Note: Metrics data for large queries can be quite expansive; double or tripling the size of the json data returned._
+> Note: Metrics data for large queries can be quite expansive; double or tripling the size of the json data returned.
 
 ### IndentDocument
 
@@ -466,7 +470,7 @@ subscriptionOptions.ConnectionInitializationTimeout = TimeSpan.FromSeconds(30);
 | `30 seconds`    |
 
 
-_Note: Not all messaging protocols require an explicit timeframe or support an inititalization handshake._
+> Note: Not all messaging protocols require an explicit timeframe or support an inititalization handshake.
 
 ### DefaultMessageProtocol
 
@@ -481,7 +485,7 @@ subscriptionOptions.DefaultMessageProtocol = "my-custom-protocol";
 | ------------- |
 | `null`        |
 
-_Note:  By default, this value is not set and connected clients MUST supply a prioritized protocol list._
+> Note:  By default, this value is not set and connected clients **MUST** supply a prioritized protocol list.
 
 ### DisableDefaultRoute
 
@@ -567,6 +571,4 @@ serverOptions.SupportedMessageProtocols = myProtocols;
 | ------------- |
 | `null`        |
 
-:::note
-  By default, `SupportedMessageProtocols` is null; meaning any server supported protocol will be usable by the target schema. If set to an empty set, then the schema is effectively disabled as no supported protocols will be matched.
-:::
+> By default, `SupportedMessageProtocols` is null; meaning any server supported protocol will be usable by the target schema. If set to an empty set, then the schema is effectively disabled as no supported protocols will be matched.

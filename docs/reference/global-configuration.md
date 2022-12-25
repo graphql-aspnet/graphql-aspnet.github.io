@@ -13,10 +13,6 @@ Global configuration settings affect the entire server instance, they are not re
 // -------------------
 
 services.AddGraphQL();
-
-
-// Be sure to add graphql to the ASP.NET pipeline builder
-appBuilder.UseGraphQL();
 ```
 
 ## General
@@ -62,6 +58,6 @@ GraphQLSubscriptionServerSettings.MaxConnectedClientCount = null;
 
 | Default Value | Acceptable Values |
 | ------------- | ----------------- |
-| `null`        | null OR > 0       |
+| _-not set-_   | null OR > 0       |
 
-_Note:_ `null` _indicates that no limits will be enforced._
+> Note: By default this value is not set, indicating there is no limit. GraphQL will accept any connection passed by the ASP.NET runtime.

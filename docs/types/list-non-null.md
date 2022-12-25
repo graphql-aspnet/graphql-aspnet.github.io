@@ -51,9 +51,9 @@ Type Expressions are commonly shown in the GraphQL schema syntax for field defin
 
 ### Overriding Type Expressions
 
-You may need to override the default behavior from time to time. For instance, a `string`, which is a reference type, is nullable by default but you may need to require a string be supplied in an input argument.
+You may need to override the default behavior from time to time. For instance, a `string`, which is a reference type, is nullable by default but you may need to declare that null is not a valid string. Or, perhaps, an object implements `IEnumerable` but you don't want graphql to treat it as a list.
 
-You can override the default behavior by defining a [custom type expression](../advanced/type-expressions) when needed.
+You can override the default type expression of any field or argument by defining a [custom type expression](../advanced/type-expressions) when needed.
 
 ## Runtime Type Validation
 

@@ -37,13 +37,14 @@ You must let GraphQL know of the possible object types you intend to return as t
 ```csharp title="BakeryController.cs"
 public class BakeryController : GraphController
 {
-    [QueryRoot]
+    // highlight-next-line
+    [QueryRoot(typeof(Donut), typeof(Cake))]
     public IPastry SearchPastries(string name)
     {/* ... */}
 }
 ```
 
-```graphql title="Query"
+```graphql title="Sample Query"
 query {
     searchPastries(name: "chocolate*") {
         id
@@ -83,8 +84,8 @@ public interface IPastry
 
 
 ```graphql title="Type Definitions"
-// Donut is published on the schema
-// IPastry is not included
+# Donut is published on the schema
+# but IPastry is not included
 type Donut {
   id: Int!
   name: String
@@ -107,6 +108,7 @@ public class BakeryController : GraphController
     // ERROR!
     // A GraphTypeDeclarationException will be thrown
     [Mutation]
+    // highlight-next-line
     public Donut AddNewDonut(IPastry newPastry)
     {/* ... */}
 }
@@ -123,6 +125,7 @@ Like with other graph types use the `[GraphType]` attribute to indicate a custom
 
 
 ```csharp title="Interface Custom Name"
+// highlight-next-line
 [GraphType("Pastry")]
 public interface IPastry
 {
@@ -164,6 +167,7 @@ This can create some less than ideal scenarios. For instance, if only `IDonut` i
 ```csharp title="Startup Code"
 services.AddGraphQL(o => 
 {
+  // highlight-next-line
    o.AddGraphType<IDonut>();
 });
 ```
@@ -182,8 +186,10 @@ However GraphQL does support interface inheritance. As long as both interfaces a
 ```csharp title="Startup Code"
 services.AddGraphQL(o => 
 {
-  o.AddGraphType<IPastry>();
+  // highlight-start
+  o.AddGraphType<IPastry>();  
   o.AddGraphType<IDonut>();
+  // highlight-end
 });
 ```
 

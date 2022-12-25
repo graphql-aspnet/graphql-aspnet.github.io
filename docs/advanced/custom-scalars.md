@@ -61,25 +61,22 @@ public interface IScalarGraphType
     string Name { get; }
     string InternalName { get; }
     string Description { get; }
+    string SpecifiedByUrl { get; }
     TypeKind Kind { get; }
     bool Publish { get; }
     ScalarValueType ValueType { get; }
     Type ObjectType { get; }
     TypeCollection OtherKnownTypes { get; }
     ILeafValueResolver SourceResolver { get; }
-    IScalarValueSerializer Serializer { get; }
 
+    object Serialize(object item);
+    string SerializeToQueryLanguage(object item);
     bool ValidateObject(object item);
 }
 
 public interface ILeafValueResolver
 {
     object Resolve(ReadOnlySpan<char> data);
-}
-
-public interface IScalarValueSerializer
-{
-    object Serialize(object item);
 }
 ```
 
@@ -91,11 +88,18 @@ public interface IScalarValueSerializer
 -   `Kind`: Scalars must always be declared as `TypeKind.SCALAR`.
 -   `Publish`: Indicates if the scalar should be published for introspection queries. Unless there is a very strong reason not to, scalars should always be published. Set this value to `true`.
 -   `ValueType`: A set of flags indicating what type of source data, read from a query, this scalar is capable of processing (string, number or boolean). GraphQL will do a preemptive check and if the query document does not supply the data in the correct format it will not attempt to resolve the scalar. Most custom scalars will use `ScalarValueType.String`.
+-   `SpecifiedByUrl`: A url, formatted as a string, pointing to information or the specification that defines this scalar. (optional, can be null)
 -   `ObjectType`: The primary, internal type representing the scalar in .NET. In our example above we would set this to `typeof(Money)`.
 -   `OtherKnownTypes`: A collection of other potential types that could be used to represent the scalar in a controller class. For instance, integers can be expressed as `int` or `int?`. Most scalars will provide an empty list (e.g. `TypeCollection.Empty`).
 -   `SourceResolver`: An object that implements `ILeafValueResolver` which can convert raw input data into the scalar's primary `ObjectType`.
--   `Serializer`: An object that implements `IScalarValueSerializer` that converts the internal representation of the scalar (a class or struct) to a valid, serialized output (a number, string or boolean).
--   `ValidateObject(object)`: A method used when validating data returned from a a field resolver. GraphQL will call this method and provide the value from the resolver to determine if its acceptable and should continue resolving child fields.
+-   `Serialize(object)`: A method that converts an instance of your scalar to a leaf value that is serializable in a query response
+    -   This method must return a `number`, `string`, `bool` or `null`.
+    -   When converting to a number this can be any C# number value type (int, float, decimal etc.).
+-   `SerializeToQueryLanguage(object)`: A method that converts an instance of your scalar to a string representing it if it were declared as part of a schema language type definition. 
+    - This method is used when generated default values for field arguments and input object fields via introspection queries.
+    - This method must return a value exactly as it would appear in a schema type definition For example, strings must be surrounded by quotes.
+    
+-   `ValidateObject(object)`: A method used when validating data returned from a a field resolver. GraphQL will call this method and provide an object instance to determine if its acceptable and can be used in a query.
 
 :::note
  `ValidateObject(object)` should not attempt to enforce nullability rules. In general, all scalars should return `true` for a validation result if the provided object is `null`.
@@ -133,31 +137,6 @@ Throw an exception when this happens and GraphQL will automatically generate an 
 If you throw `UnresolvedValueException` your error message will be delivered verbatim to the requestor as part of the response message instead of being obfuscated. 
 :::
 
-### IScalarValueSerializer Members
-
--   `Serialize(object)`: A serializer that converts the internal representation of the scalar to a [graphql compliant scalar value](https://graphql.github.io/graphql-spec/October2021/#sec-Scalars)
-    -   This method must return a `number`, `string`, `bool` or `null`.
-    -   When converting to a number this can be any C# number value type (int, float, decimal etc.).
-
-Taking a look at the at the serializer for the `Guid` scalar type we can see that while internally the `System.Guid` struct represents the value we convert it to a string when serializing it. Most scalar implementations will serialize to a string.
-
-```csharp title="GuidScalarSerializer.cs"
-public class GuidScalarSerializer : IScalarValueSerializer
-{
-    public object Serialize(object item)
-    {
-        if (item == null)
-            return item;
-
-        return ((Guid)item).ToString();
-    }
-}
-```
-
-> The `Serialize()` method will only be given an object of the approved types for the scalar or null.
-
----
-
 ### Example: Money Scalar
 The completed Money custom scalar type
 
@@ -181,9 +160,27 @@ The completed Money custom scalar type
 
         public TypeCollection OtherKnownTypes => TypeCollection.Empty;
 
-        public ILeafValueResolver SourceResolver { get; } = new MoneyLeafTypeResolver();
+        public ILeafValueResolver SourceResolver { get; } = new MoneyValueResolver();
+        
+        public object Serialize(object item)
+        {
+            if (item == null)
+                return item;
 
-        public IScalarValueSerializer Serializer { get; } = new MoneyScalarTypeSerializer()
+            var money = (Money)item;
+            return $"{money.Symbol}{money.Price}";
+        }
+        
+        public string SerializeToQueryLanguage(object item)
+        {
+            // convert to a string first
+            var serialized = this.Serialize(item);
+            if (serialized == null)
+                return "null";
+
+            // return value as quoted
+            return $"\"{serialized}\"";
+        }
 
         public bool ValidateObject(object item)
         {
@@ -194,7 +191,7 @@ The completed Money custom scalar type
         }
     }
 
-    public class MoneyLeafTypeResolver : ILeafValueResolver
+    public class MoneyValueResolver : ILeafValueResolver
     {
         public object Resolve(ReadOnlySpan<char> data)
         {
@@ -205,17 +202,6 @@ The completed Money custom scalar type
                 throw new UnresolvedValueException("Money must be at least 2 characters");
 
             return new Money(sanitizedMoney[0], Decimal.Parse(sanitizedMoney.Substring(1)));
-        }
-    }
-    public class MoneyScalarTypeSerializer : IScalarValueSerializer
-    {
-        public override object Serialize(object item)
-        {
-            if (item == null)
-                return item;
-
-            var money = (Money)item;
-            return $"{money.Symbol}{money.Price}";
         }
     }
 ```
@@ -242,9 +228,8 @@ GraphQL provides a special, built-in directive called `@specifiedBy` that allows
 
 The @specifiedBy directive can be applied to a scalar in all the same ways as other type system directives or by use of the special `[SpecifiedBy]` attribute.
 
-```csharp title="Apply the @specifiedBy"
-// apply the directive to a single schema
-GraphQLProviders.ScalarProvider.RegisterCustomScalar(typeof(MoneyScalarType));
+```csharp title="Applying the @specifiedBy"
+// apply the directive to a single schema at startup
 services.AddGraphQL(o => {
 // highlight-start
     o.ApplyDirective("@specifiedBy")
@@ -253,22 +238,29 @@ services.AddGraphQL(o => {
 // highlight-end
 });
 
-// via the ApplyDirective attribute
+// via the [ApplyDirective] attribute
 // for all schemas
 // highlight-next-line
 [ApplyDirective("@specifiedBy", "https://myurl.com")]
-public class MoneyScalarType : IScalarType
-{
-    // ...
-}
+public class MoneyScalarType : IScalarGraphType
+{}
 
-// via the special SpecifiedBy attribute
+// via the special [SpecifiedBy] attribute
 // for all schemas
 // highlight-next-line
 [SpecifiedBy("https://myurl.com")]
-public class MoneyScalarType : IScalarType
+public class MoneyScalarType : IScalarGraphType
+{}
+
+// as part of the contructor
+// for all schemas
+public class MoneyScalarType : IScalarGraphType
 {
-    // ...
+    public MoneyScalarType()
+    {
+        // highlight-next-line
+        this.SpecifiedByUrl = "https://myurl.com";
+    }
 }
 ```
 

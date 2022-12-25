@@ -35,12 +35,12 @@ public sealed class SkipDirective : GraphDirective
 ```
 
 ```graphql title="Quring using @skip"
-# skip including the flavor based on a variable 
-query ($shouldSkip: Boolean!) {
+# skip including flavor
+query {
     donut(id: 15) {
         id 
         name
-        flavor @skip(if: $shouldSkip)
+        flavor @skip(if: true)
     }
 }
 ```
@@ -76,7 +76,7 @@ The following properties are available to all directive action methods:
 
 ### Directive Arguments
 
-Directives may contain input arguments just like fields. However, its important to note that while a directive may declare multiple action methods for different locations to seperate your logic better, it is only a single entity in the schema. As a result, ALL action methods must share a common signature. The runtime will throw an exception while creating your schema if the signatures of the action methods differ.
+Directives may contain input arguments just like fields. However, its important to note that while a directive may declare multiple action methods for different locations to seperate your logic better, it is only a single entity in the schema. ALL action methods must share a common signature. The runtime will throw an exception while creating your schema if the signatures of the action methods differ.
 
 ```csharp title="Arguments for Directives"
     public class MyValidDirective : GraphDirective
@@ -91,10 +91,12 @@ Directives may contain input arguments just like fields. However, its important 
     public class MyInvalidDirective : GraphDirective
     {
         [DirectiveLocations(DirectiveLocation.FIELD)]
+        // highlight-next-line
         public IGraphActionResult ExecuteField(int arg1, int arg2) { /.../ }
 
         // method parameters MUST match for all directive action methods.
         [DirectiveLocations(DirectiveLocation.FRAGMENT_SPREAD)]
+        // highlight-next-line
         public IGraphActionResult ExecuteFragSpread(int arg1, string arg2) { /.../ }
     }
 ```
@@ -107,7 +109,7 @@ Directives may contain input arguments just like fields. However, its important 
 
 (_**a.k.a. Operation Directives**_)
 
-Execution Directives are applied to query documents and executed on the single request in which they are encountered. 
+Execution Directives are applied to query documents and executed only on single request in which they are encountered. 
 
 ### Example: @include
 
@@ -117,9 +119,7 @@ This is the code for the built in `@include` directive:
     [GraphType("include")]
     public sealed class IncludeDirective : GraphDirective
     {
-        [DirectiveLocations(DirectiveLocation.FIELD 
-            | DirectiveLocation.FRAGMENT_SPREAD 
-            | DirectiveLocation.INLINE_FRAGMENT)]
+        [DirectiveLocations(DirectiveLocation.FIELD | DirectiveLocation.FRAGMENT_SPREAD | DirectiveLocation.INLINE_FRAGMENT)]
         public IGraphActionResult Execute([FromGraphQL("if")] bool ifArgument)
         {
             if (this.DirectiveTarget is IIncludeableDocumentPart idp)
@@ -136,7 +136,7 @@ This Directive:
     -   The name will be derived from the class name if the attribute is omitted
 -   Declares that it can be applied to a query document at all field selection locations using the `[DirectiveLocations]` attribute
 -   Uses the `[FromGraphQL]` attribute to declare the input argument's name in the schema
-    -   This is because `if` is a keyword in C# and we don't want the argument being named `ifArgument` in the graph.
+    -   This is because `if` is a keyword in C# and we don't want the argument being named `ifArgument` in the schema.
 -   Is executed once for each field, fragment spread or inline fragment to which its applied in a query document.
 
 > The action method name `Execute` in this example is arbitrary. Method names can be whatever makes the most sense to you.
@@ -184,6 +184,7 @@ public class ToUpperDirective : GraphDirective
             // add a post resolver to the target field document
             // part to perform the conversion when the query is
             // ran
+            // highlight-next-line
             fieldPart.PostResolver = ConvertToUpper;
         }
 
@@ -373,8 +374,7 @@ services.AddGraphQL(options =>
 
     // mark Person.Name as deprecated
     options.ApplyDirective("monitor")
-        .ToItems(schemaItem =>
-            schemaItem.IsObjectGraphType<Person>());
+        .ToItems(schemaItem => schemaItem.IsObjectGraphType<Person>());
 }
 ```
 
@@ -395,18 +395,15 @@ or a `Func<ISchemaItem, object[]>` that returns a collection of any parameters y
 
 
 ```csharp title="Apply Directives at Startup With Arguments"
-public void ConfigureServices(IServiceCollection services)
+// startup code
+services.AddGraphQL(options =>
 {
-    // other code ommited for brevity
-
-    services.AddGraphQL(options =>
-    {
-        options.AddGraphType<Person>();
-        options.ApplyDirective("deprecated")
-            .WithArguments("Names don't matter")
-            .ToItems(schemaItem =>
-                schemaItem.IsGraphField<Person>("name"));
-    }
+    options.AddGraphType<Person>();
+    // highlight-start
+    options.ApplyDirective("@deprecated")
+        .WithArguments("Names don't matter")
+        .ToItems(schemaItem => schemaItem.IsGraphField<Person>("name"));
+    // highlight-end
 }
 ```
 
@@ -432,20 +429,24 @@ public sealed class ScanItemDirective : GraphDirective
 }
 
 // Option 1: Apply the directive to the class directly
+// highlight-start
 [ApplyDirective("@scanItem", "medium")]
 [ApplyDirective("@scanItem", "high")]
+// highlight-end
 public class Person
 {}
 
 // Option 2: Apply the directive at startup
 services.AddGraphQL(o => {
     // ...
+    // highlight-start
     o.ApplyDirective("@scanItem")
         .WithArguments("medium")
         .ToItems(item => item.IsObjectGraphType<Person>());
     o.ApplyDirective("@scanItem")
         .WithArguments("high")
         .ToItems(item => item.IsObjectGraphType<Person>());
+    // highlight-end
 });
 ```
 
@@ -479,6 +480,7 @@ Directives can be secured like controller actions. However, where a controller a
 Take for example that the graph schema included a field of data that, by default, was always rendered in a redacted state (meaning it was obsecured) such as social security number. You could have a directive that, when supplied by the requestor, would unredact the field and allow the value to be displayed.
 
 ```csharp title="Applying Authorization to Directives"
+// highlight-next-line
 [Authorize(Policy = "admin")]
 public sealed class UnRedactDirective : GraphDirective
 {

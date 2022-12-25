@@ -189,12 +189,13 @@ public class BakeryController : GraphController
 {
     // highlight-next-line
     [QueryRoot("searchFood", "RollOrBread",  typeof(Roll), typeof(Bread))]
-    public Bread SearchFood(string name)
+    public IGraphActionResult SearchFood(string name)
     {
         // Should GraphQL treat a bagel 
         // as a Roll or Bread ??
         // highlight-next-line
-        return new Bagel();
+        var myBagel = new Bagel();
+        return this.Ok(myBagel);
     }
 }
 ```
@@ -240,14 +241,14 @@ public class RollOrBread : GraphUnionProxy
 }
 ```
 
-:::caution
-  `MapType` is not based on a resolved value, but only on the `System.Type` that was encountered. This is by design to guarantee consistency in query execution. 
-
-   If your returned type causes the query to remain indeterminate a validation error (rule [6.4.3](https://spec.graphql.org/October2021/#sec-Value-Completion)) will be applied to the query.
-:::
-
 The query will now interpret all `Bagels` as `Rolls` and be able to process the query correctly.
 
 If, via your logic you are unable to determine which of your Union's types to use then return `null` and GraphQL will supply the caller with an appropriate error message stating the query was indeterminate. Also, returning any type other than one that was formally declared as part of your Union will result in the same indeterminate state.
 
 Most of the time GraphQL ASP.NET will never call `MapType` on your union proxy. If your union types do not share an inheritance chain, for instance, the method will never be called.
+
+:::caution
+  `MapType` is not based on a resolved value, but only on the `System.Type` that was encountered. This is by design to guarantee consistency in query execution. 
+
+   If your returned type causes the query to remain indeterminate a validation error (rule [6.4.3](https://spec.graphql.org/October2021/#sec-Value-Completion)) will be applied to the query.
+:::
