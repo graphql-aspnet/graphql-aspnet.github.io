@@ -16,10 +16,12 @@ Declares that a given type system directive should be applied to the target sche
 public class Person 
 {
     // apply by registered system type
+    // highlight-next-line
     [ApplyDirective(typeof(DeprecatedDirective))]
     public string FirstName{ get; set; }
 
      // apply by name, also with a reason parameter
+     // highlight-next-line
     [ApplyDirective("deprecated", "Last Name is deprecated")]
     public string LastName{ get; set; }
 }
@@ -40,6 +42,7 @@ Declares a batch type extension with the given field name. The return type of th
 ```csharp
 public class HeroController : GraphController
 {
+    // highlight-next-line
     [BatchTypeExtension(typeof(Human), "droids")]
     public IDictionary<Human, IEnumerable<Droid>> Hero(IEnumerable<Human> humans)
     {
@@ -60,6 +63,7 @@ a batch collection result.
 ```csharp
 public class HeroController : GraphController
 {
+    // highlight-next-line
     [BatchTypeExtension(typeof(Human), "droids", typeof(IEnumerable<Droid>))]
     public IGraphActionResult Hero(IEnumerable<Human> humans)
     {
@@ -82,6 +86,7 @@ Declares the batch type extension as returning a union rather than a single spec
 ```csharp
 public class HeroController : GraphController
 {
+    // highlight-next-line
     [BatchTypeExtension(typeof(Human), "bestFriend", "DroidOrHuman", typeof(Droid), typeof(Human))]
     public IGraphActionResult Hero(IEnumerable<Human> humans)
     {
@@ -104,6 +109,7 @@ Indicates to any introspection queries that the field or action method is deprec
 public class CharacterController : GraphController
 {
     [Query]
+    // highlight-next-line
     [Deprecated("Use the field SuperHero, this field will be removed soon")]
     public IGraphActionResult Hero(Episode episode = Episode.EMPIRE)
     {
@@ -125,6 +131,7 @@ Adds a human-readable description to any type, interface, field, parameter, enum
 public class CharacterController : GraphController
 {
     [Query]
+    // highlight-next-line
     [Description("The hero of a given Star Wars Episode (Default: EMPIRE)")]
     public IGraphActionResult Hero(Episode episode = Episode.EMPIRE)
     {
@@ -143,28 +150,8 @@ method should be invoked for a particular location.
 ```csharp    
 public sealed class AllowFragment : GraphDirective
 {
-    [DirectiveLocations(ExecutableDirectiveLocation.FRAGMENT_SPREAD | ExecutableDirectiveLocation.INLINE_FRAGMENT)]
-    public IGraphActionResult Execute([FromGraphQL("if")] bool ifArgument)
-    {
-        return ifArgument ? this.Ok() : this.Cancel();
-    }
-}
-```
-
-## DirectiveInvocationPhase
-
-A seldom used attribute to instruct the runtime as to when the directive should be invoked. By default all directives are set to be executable
-during `SchemaGeneration` and `AfterFieldResolution` depending on the allowed target locations.
-
-#### `[DirectiveInvocationPhase(phases)]`
-
--   `phases` - A bitwise set of `DirectiveInvocationPhase` values indicating when in the execution pipelines this directive should be invoked.
-
-```csharp    
-[DirectiveInvocationPhase(DirectiveInvocationPhase.AfterFieldResolution)]
-public sealed class AllowFragment : GraphDirective
-{
-    [DirectiveLocations(ExecutableDirectiveLocation.FIELD)]
+    // highlight-next-line
+    [DirectiveLocations(DirectiveLocation.FRAGMENT_SPREAD | DirectiveLocation.INLINE_FRAGMENT)]
     public IGraphActionResult Execute([FromGraphQL("if")] bool ifArgument)
     {
         return ifArgument ? this.Ok() : this.Cancel();
@@ -185,6 +172,7 @@ and directive action methods.
 public class CharacterController : GraphController
 {
     [Query]
+    // highlight-next-line    
     public IGraphActionResult Hero([FromGraphQL("id")] int heroId)
     {
         //....
@@ -200,8 +188,8 @@ public class CharacterController : GraphController
 public class CharacterController : GraphController
 {
     [Query]
-    public IGraphActionResult Hero(
-        [FromGraphQL(TypeExpression  = "Type!")] string heroId)
+    // highlight-next-line
+    public IGraphActionResult Hero([FromGraphQL(TypeExpression  = "Type!")] string heroId)
     {
         //....
     }
@@ -224,6 +212,7 @@ public enum Episode
     NewHope,
     Empire,
 
+    // highlight-next-line
     [GraphEnumValue("Jedi")]
     ReturnOfTheJedi,
 }
@@ -243,6 +232,7 @@ public class Human
 {
     public int Id{get; set; }
 
+    // highlight-next-line
     [GraphField("name")]
     public string FullName { get; set; }
 }
@@ -256,6 +246,7 @@ public class Human
 {
     public int Id{get; set; }
 
+    // highlight-next-line
     [GraphField(TypeExpression = "Type!")]
     public Employer Boss { get; set; }
 }
@@ -271,6 +262,7 @@ Indicates that the controller should not attempt to register a virtual field for
 <div>
 
 ```csharp
+// highlight-next-line
 [GraphRoot]
 public class HeroController : GraphController
 {
@@ -308,6 +300,7 @@ Indicates a field path in each root graph type where this controller should appe
     -   The `"[controller]"` meta tag can be used and will be replaced by the controller name at runtime.
 
 ```csharp
+// highlight-next-line
 [GraphRoute("starWars/characters")]
 public class HeroController : GraphController
 {
@@ -337,15 +330,23 @@ Indicates that the entity to which its attached should be skipped and not includ
 
 #### `[GraphSkip]`
 
-```csharp
-public class CharacterController : GraphController
+```csharp title="C# Class with GraphSkip"
+public class Donut
 {
-    [Query]
+    public int Id{get; set;}
+    public string Name{get;set;}
+
+    // highlight-next-line
     [GraphSkip]
-    public IGraphActionResult Hero([FromGraphQL("id")] int heroId)
-    {
-        // this method will not be included in the graph
-    }
+    public string Recipe {get; set;}
+}
+```
+
+```graphql title="GraphQL Type Definition"
+# 
+type Donut {
+    Id: String
+    Name: String  
 }
 ```
 
@@ -353,16 +354,17 @@ public class CharacterController : GraphController
 
 Indicates additional or non-standard settings for the the class, interface or enum to which its attached. Also indicates the item is explicitly declared as a graph type and should be included in a schema.
 
-#### [GraphType(name)]
+#### `[GraphType(name)]`
 
 -   `name` : The name of graph type as it should appear in the object graph
 
-#### [GraphType(name, inputName)]
+#### `[GraphType(name, inputName)]`
 
 -   `name` : The name of graph type as it should appear in the schema when used as an `OBJECT`
 -   `inputName`: The name of the graph type in the schema when used as an `INPUT_OBJECT` 
 
 ```csharp
+// highlight-next-line
 [GraphType("person", "personModel")]
 public class Human
 {
@@ -375,15 +377,18 @@ public class Human
 
 Controller action method attributes that indicate the method belongs to the specified operation type (query or mutation). When declared as "Root" (i.e. `QueryRoot`), it indicates that the action method should be declared directly on its operation graph type and not nested underneath a controller's virtual field.
 
-> All 4 action method attributes have identical constructor options
+:::tip 
+`[Query]`, `[QueryRoot]`, `[Mutation]` and `[MutationRoot]` all have identical constructor options.
+:::
 
-#### [Query(template)]
+#### `[Query(template)]`
 
 -   `template` - The field path template to use for this method.
 
 ```csharp
 public class CharacterController : GraphController
 {
+    // highlight-next-line
     [Query("hero")]
     public Human RetrieveTheHero(Episode episode)
     {
@@ -392,7 +397,7 @@ public class CharacterController : GraphController
 }
 ```
 
-#### [Query(returnType, params otherTypes)]
+#### `[Query(returnType, params otherTypes)]`
 
 -   `returnType`: the expected return type of this field.
     -   must be used when this field returns an `IGraphActionResult`
@@ -402,6 +407,7 @@ public class CharacterController : GraphController
 ```csharp
 public class CharacterController : GraphController
 {
+    // highlight-next-line
     [Query(typeof(Droid), typeof(Human))]
     public ICharacter Hero(Episode episode)
     {
@@ -410,7 +416,7 @@ public class CharacterController : GraphController
 }
 ```
 
-#### [Query(template, returnType)]
+#### `[Query(template, returnType)]`
 
 -   `template` - The field path template to use for this method.
 -   `returnType`: the expected return type of this field.
@@ -419,6 +425,7 @@ public class CharacterController : GraphController
 ```csharp
 public class CharacterController : GraphController
 {
+    // highlight-next-line
     [Query("hero", typeof(Human))]
     public IGraphActionResult RetrieveTheHero(Episode episode)
     {
@@ -438,6 +445,7 @@ public class CharacterController : GraphController
 ```csharp
 public class CharacterController : GraphController
 {
+    // highlight-next-line
     [Query("hero", "DroidOrHuman", typeof(Droid), typeof(Human))]
     public IGraphActionResult RetrieveCharacter(int id)
     {
@@ -454,6 +462,7 @@ public class CharacterController : GraphController
 public class CharacterController : GraphController
 {
     // declare that this field must return a value (a null human is not allowed)
+    // highlight-next-line
     [Query("hero", typeof(Human), TypeExpression = "Type!")]
     public IGraphActionResult RetrieveTheHero(Episode episode)
     {
@@ -476,6 +485,7 @@ Declares a type extension with the given field name. The return type of this fie
 ```csharp
 public class DroidController : GraphController
 {
+    // highlight-next-line
     [TypeExtension(typeof(Droid), "ownedBy")]
     public Human RetrieveDroidOwner(Droid droid)
     {
@@ -495,6 +505,7 @@ Declares a type extension with an explicit return type. useful when returning `I
 ```csharp
 public class HeroController : GraphController
 {
+    // highlight-next-line
     [TypeExtension(typeof(Human), "ownedBy", typeof(Droid))]
     public IGraphActionResult RetrieveDroidOwner(Droid droid)
     {
@@ -517,6 +528,7 @@ Declares the type extension as returning a union rather than a specific data typ
 ```csharp
 public class HeroController : GraphController
 {
+    // highlight-next-line
     [TypeExtension(typeof(Droid), "bestFriend", "DroidOrHuman", typeof(Droid), typeof(Human))]
     public IGraphActionResult RetrieveDroidsBestFriend(Droid droid)
     {

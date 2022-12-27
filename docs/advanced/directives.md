@@ -5,9 +5,9 @@ sidebar_label: Directives
 sidebar_position: 2
 ---
 
-## What is a directive?
+## What is a Directive?
 
-Directives decorate, or are attached to, parts of your schema or query document to perform some sort of custom logic. What that logic is, is entirely up to you. There are several directives built into graphql:
+Directives decorate parts of your schema or a query document to perform some sort of custom logic. What that logic is, is entirely up to you. There are several directives built into graphql:
 
 -   `@include` : An execution directive that conditionally includes a field or fragment in the results of a graphql query
 -   `@skip` : An execution directive that conditionally excludes a field or fragment from the results of a graphql query
@@ -34,12 +34,23 @@ public sealed class SkipDirective : GraphDirective
 }
 ```
 
-All directives must:
+```graphql title="Quring using @skip"
+# skip including flavor
+query {
+    donut(id: 15) {
+        id 
+        name
+        flavor @skip(if: true)
+    }
+}
+```
+
+✅ All directives must:
 
 -   Inherit from `GraphQL.AspNet.Directives.GraphDirective`
 -   Provide at least one action method that indicates at least 1 valid `DirectiveLocation`.
 
-All directive action methods must:
+✅ All directive action methods must:
 
 -   Share the same method signature
 -   The input arguments must match exactly in type, name, casing and declaration order.
@@ -65,7 +76,7 @@ The following properties are available to all directive action methods:
 
 ### Directive Arguments
 
-Directives may contain input arguments just like fields. However, its important to note that while a directive may declare multiple action methods for different locations to seperate your logic better, it is only a single entity in the schema. As a result, ALL action methods must share a common signature. The runtime will throw an exception while creating your schema if the signatures of the action methods differ.
+Directives may contain input arguments just like fields. However, its important to note that while a directive may declare multiple action methods for different locations to seperate your logic better, it is only a single entity in the schema. ALL action methods must share a common signature. The runtime will throw an exception while creating your schema if the signatures of the action methods differ.
 
 ```csharp title="Arguments for Directives"
     public class MyValidDirective : GraphDirective
@@ -80,10 +91,12 @@ Directives may contain input arguments just like fields. However, its important 
     public class MyInvalidDirective : GraphDirective
     {
         [DirectiveLocations(DirectiveLocation.FIELD)]
+        // highlight-next-line
         public IGraphActionResult ExecuteField(int arg1, int arg2) { /.../ }
 
         // method parameters MUST match for all directive action methods.
         [DirectiveLocations(DirectiveLocation.FRAGMENT_SPREAD)]
+        // highlight-next-line
         public IGraphActionResult ExecuteFragSpread(int arg1, string arg2) { /.../ }
     }
 ```
@@ -94,7 +107,9 @@ Directives may contain input arguments just like fields. However, its important 
 
 ## Execution Directives
 
-Execution Directives are applied to query documents and executed on the single request in which they are encountered.
+(_**a.k.a. Operation Directives**_)
+
+Execution Directives are applied to query documents and executed only on single request in which they are encountered. 
 
 ### Example: @include
 
@@ -104,9 +119,7 @@ This is the code for the built in `@include` directive:
     [GraphType("include")]
     public sealed class IncludeDirective : GraphDirective
     {
-        [DirectiveLocations(DirectiveLocation.FIELD 
-            | DirectiveLocation.FRAGMENT_SPREAD 
-            | DirectiveLocation.INLINE_FRAGMENT)]
+        [DirectiveLocations(DirectiveLocation.FIELD | DirectiveLocation.FRAGMENT_SPREAD | DirectiveLocation.INLINE_FRAGMENT)]
         public IGraphActionResult Execute([FromGraphQL("if")] bool ifArgument)
         {
             if (this.DirectiveTarget is IIncludeableDocumentPart idp)
@@ -123,7 +136,7 @@ This Directive:
     -   The name will be derived from the class name if the attribute is omitted
 -   Declares that it can be applied to a query document at all field selection locations using the `[DirectiveLocations]` attribute
 -   Uses the `[FromGraphQL]` attribute to declare the input argument's name in the schema
-    -   This is because `if` is a keyword in C# and we don't want the argument being named `ifArgument` in the graph.
+    -   This is because `if` is a keyword in C# and we don't want the argument being named `ifArgument` in the schema.
 -   Is executed once for each field, fragment spread or inline fragment to which its applied in a query document.
 
 > The action method name `Execute` in this example is arbitrary. Method names can be whatever makes the most sense to you.
@@ -171,6 +184,7 @@ public class ToUpperDirective : GraphDirective
             // add a post resolver to the target field document
             // part to perform the conversion when the query is
             // ran
+            // highlight-next-line
             fieldPart.PostResolver = ConvertToUpper;
         }
 
@@ -200,16 +214,17 @@ query {
 }
 ```
 
-### Working with Batch Extensions
+#### Working with Batch Extensions
 
-Batch extensions work differently than standard field resolvers; they don't resolve a single item at a time. This means our `@toUpper` example above won't work as `context.Result` won't be a string. Should you employ a post resolver that may be applied to a batch extension you'll need to handle the resultant dictionary differently than you would a single field value. The dictionary will always be of the format `IDictionary<TSource, TResult>` where `TSource` is the data type of the field set that owns the field the directive was applied to and `TResult` is the data type or an `IEnumerable` of the data type for the field, depending on the
-batch extension declaration. The dictionary is always keyed by source item reference.
+Batch extensions work differently than standard field resolvers; they don't resolve a single item at a time. This means our `@toUpper` example above won't work as `context.Result` won't be a string. Should you employ a post resolver that may be applied to a batch extension you'll need to handle the resultant dictionary differently than you would a single field value. The dictionary will always be of the format `IDictionary<TSource, TResult>` where `TSource` is the data type of the field that owns the field the directive was applied to and `TResult` is the data type or an `IEnumerable` of the data type the target field returns. The dictionary is always keyed by source item reference.
 
 :::caution Be Careful with Batch Type Extensions
  Batch Extensions will return a dictionary of data not a single item. Your post resolver must be able to handle this dictionary if applied to a field that is a `[BatchExtensionType]`.
 :::
 
 ## Type System Directives
+
+(_**a.k.a. Schema Directives**_)
 
 Type System directives are applied to schema items and executed at start up while the schema is being created. 
 
@@ -359,8 +374,7 @@ services.AddGraphQL(options =>
 
     // mark Person.Name as deprecated
     options.ApplyDirective("monitor")
-        .ToItems(schemaItem =>
-            schemaItem.IsObjectGraphType<Person>());
+        .ToItems(schemaItem => schemaItem.IsObjectGraphType<Person>());
 }
 ```
 
@@ -381,18 +395,15 @@ or a `Func<ISchemaItem, object[]>` that returns a collection of any parameters y
 
 
 ```csharp title="Apply Directives at Startup With Arguments"
-public void ConfigureServices(IServiceCollection services)
+// startup code
+services.AddGraphQL(options =>
 {
-    // other code ommited for brevity
-
-    services.AddGraphQL(options =>
-    {
-        options.AddGraphType<Person>();
-        options.ApplyDirective("deprecated")
-            .WithArguments("Names don't matter")
-            .ToItems(schemaItem =>
-                schemaItem.IsGraphField<Person>("name"));
-    }
+    options.AddGraphType<Person>();
+    // highlight-start
+    options.ApplyDirective("@deprecated")
+        .WithArguments("Names don't matter")
+        .ToItems(schemaItem => schemaItem.IsGraphField<Person>("name"));
+    // highlight-end
 }
 ```
 
@@ -418,20 +429,24 @@ public sealed class ScanItemDirective : GraphDirective
 }
 
 // Option 1: Apply the directive to the class directly
+// highlight-start
 [ApplyDirective("@scanItem", "medium")]
 [ApplyDirective("@scanItem", "high")]
+// highlight-end
 public class Person
 {}
 
 // Option 2: Apply the directive at startup
 services.AddGraphQL(o => {
     // ...
+    // highlight-start
     o.ApplyDirective("@scanItem")
         .WithArguments("medium")
         .ToItems(item => item.IsObjectGraphType<Person>());
     o.ApplyDirective("@scanItem")
         .WithArguments("high")
         .ToItems(item => item.IsObjectGraphType<Person>());
+    // highlight-end
 });
 ```
 
@@ -465,6 +480,7 @@ Directives can be secured like controller actions. However, where a controller a
 Take for example that the graph schema included a field of data that, by default, was always rendered in a redacted state (meaning it was obsecured) such as social security number. You could have a directive that, when supplied by the requestor, would unredact the field and allow the value to be displayed.
 
 ```csharp title="Applying Authorization to Directives"
+// highlight-next-line
 [Authorize(Policy = "admin")]
 public sealed class UnRedactDirective : GraphDirective
 {

@@ -50,6 +50,7 @@ You can add more specificity to your fields by using the `TypeExpression` proper
 // Declare that a donut MUST be returned (null is invalid)
 // ----
 // Final Schema Syntax:  Donut!
+// highlight-next-line
 [Query("donut", TypeExpression = "Type!")]
 public Donut RetrieveDonut(string id)
 {/*...*/}
@@ -62,6 +63,7 @@ public Donut RetrieveDonut(string id)
 // invalid:  null
 // ----
 // Final Schema Syntax:  [Donut]!
+// highlight-next-line
 [Query("donut", TypeExpression = "[Type]!")]
 public IEnumerable<Donut> RetrieveDonut(string id)
 {/*...*/}
@@ -75,6 +77,7 @@ public IEnumerable<Donut> RetrieveDonut(string id)
 // invalid:  null
 // ----
 // Final Schema Syntax:  [Donut!]!
+// highlight-next-line
 [Query("donut", TypeExpression = "[Type!]!")]
 public IEnumerable<Donut> RetrieveDonut(string id)
 {/*...*/}
@@ -89,6 +92,7 @@ Note that the library will accept your type string even if it would be impossibl
 ```csharp title="Data and Type Expression Mismatch"
 // QUERY EXECUTION ERROR
 // GraphQL will attempt to process a Donut as an IEnumerable and will fail
+// highlight-next-line
 [Query("donut", TypeExpression ="[Type]")]
 public Donut RetrieveDonut(string id)
 {/*...*/}
@@ -109,6 +113,7 @@ Similar to fields, you can use the `TypeExpression` property on `[FromGraphQL]` 
 // -----------------
 // Final Type Expression of the 'id' arg:  String!
 [Query]
+// highlight-next-line
 public Donut RetrieveDonut([FromGraphQL(TypeExpression = "Type!")] string id)
 {/*...*/}
 ```

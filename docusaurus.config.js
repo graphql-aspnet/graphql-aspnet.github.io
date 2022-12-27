@@ -7,7 +7,7 @@ const darkCodeTheme = require('prism-react-renderer/themes/palenight');
 /** @type {import('@docusaurus/types').Config} */
 const config = {
   title: 'GraphQL ASP.NET',
-  tagline: 'v0.14.0-beta',
+  tagline: 'v1.0.0-rc2',
   url: 'https://graphql-aspnet.github.io',
   baseUrl: '/',
   onBrokenLinks: 'throw',

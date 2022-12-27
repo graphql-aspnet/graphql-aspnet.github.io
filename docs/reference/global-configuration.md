@@ -13,10 +13,6 @@ Global configuration settings affect the entire server instance, they are not re
 // -------------------
 
 services.AddGraphQL();
-
-
-// Be sure to add graphql to the ASP.NET pipeline builder
-appBuilder.UseGraphQL();
 ```
 
 ## General
@@ -26,14 +22,14 @@ The configured service lifetime that all discovered controllers and directives w
 process.
 
 ```csharp
-GraphQLProviders.GlobalConfiguration.ControllerServiceLifetime = ServiceLifetime.Transient;
+GraphQLServerSettings.ControllerServiceLifetime = ServiceLifetime.Transient;
 ```
 | Default Value | Acceptable Values |
 | ------------- | ----------------- |
 | `Transient `       | `Transient`, `Scoped`, `Singleton`   |
 
 :::danger
- Registering graph controllers as anything other than transient can cause unexpected behavior and result in unexplained crashes, data loss, data exposure and security holes. Consider restructuring your application before changing this setting. Adjusting this value should be a last resort, not a first option.
+ Registering GraphControllers as anything other than transient can cause unexpected behavior and result in unexplained crashes, data loss, data exposure and security issues in some scenarios. Consider restructuring your application before changing this setting. Adjusting this value should be a last resort, not a first option.
 :::
 
 ## Subscriptions
@@ -43,7 +39,7 @@ GraphQLProviders.GlobalConfiguration.ControllerServiceLifetime = ServiceLifetime
 Indicates the maximum number of entities (i.e. client connections) that will receive a raised subscription event on this server instance. If there are more receivers than this configured limit the others are queued and will recieve the event in turn once as others finish processing it.
 
 ```csharp
-SubscriptionServerSettings.MaxConcurrentReceiverCount = 500;
+GraphQLSubscriptionServerSettings.MaxConcurrentReceiverCount = 500;
 ```
 
 | Default Value | Acceptable Values |
@@ -57,11 +53,11 @@ Indicates the maximum number of client connections this server instance will acc
 
 
 ```csharp
-SubscriptionServerSettings.MaxConnectedClientCount = null;
+GraphQLSubscriptionServerSettings.MaxConnectedClientCount = null;
 ```
 
 | Default Value | Acceptable Values |
 | ------------- | ----------------- |
-| `null`        | null OR > 0       |
+| _-not set-_   | null OR > 0       |
 
-_Note:_ `null` _indicates that no limits will be enforced._
+> Note: By default this value is not set, indicating there is no limit. GraphQL will accept any connection passed by the ASP.NET runtime.

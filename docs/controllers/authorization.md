@@ -7,11 +7,14 @@ sidebar_position: 3
 
 ## Quick Examples 
 
-If you've wired up ASP.NET authorization before, you'll likely familiar with the `[Authorize]` attribute and how its used to enforce security. GraphQL ASP.NET works the same way.
+If you've wired up ASP.NET authorization before, you'll likely familiar with the `[Authorize]` attribute and how its used to enforce security. 
+
+GraphQL ASP.NET works the same way.
 
 ```csharp title="General Authorization Check"
 public class BakeryController : GraphController
 {
+    // highlight-next-line
     [Authorize]
     [MutationRoot("orderDonuts", typeof(CompletedDonutOrder))]
     public async Task<IGraphActionResult> OrderDonuts(DonutOrderModel order)
@@ -21,6 +24,7 @@ public class BakeryController : GraphController
 ```csharp title="Restrict by Policy"
 public class BakeryController : GraphController
 {
+    // highlight-next-line
     [Authorize(Policy = "CustomerLoyaltyProgram")]
     [MutationRoot("orderDonuts", typeof(CompletedDonutOrder))]
     public async Task<IGraphActionResult> OrderDonuts(DonutOrderModel order)
@@ -30,6 +34,7 @@ public class BakeryController : GraphController
 ```csharp title="Restrict by Role"
 public class BakeryController : GraphController
 {
+    // highlight-next-line
     [Authorize(Roles = "Admin, Employee")]
     [MutationRoot("purchaseDough")]
     public async Task<bool> PurchaseDough(int kilosOfDough)
@@ -39,9 +44,14 @@ public class BakeryController : GraphController
 
 ```csharp title="Multiple Authorization Requirements"
 // The library supports nested policy and role checks at Controller and Action levels.
+// highlight-next-line
 [Authorize(Policy = "CurrentCustomer")]
 public class BakeryController : GraphController
 {
+    // The user would have to pass the CurrentCustomer policy
+    // and the LoyaltyProgram policy to access the `orderDonuts` field
+
+    // highlight-next-line
     [Authorize(Policy = "LoyaltyProgram")]
     [MutationRoot("orderDonuts", typeof(CompletedDonutOrder))]
     public async Task<IGraphActionResult> OrderDonuts(DonutOrderModel order)
@@ -59,6 +69,7 @@ public class BakeryController : GraphController
     {/*...*/}
 
     // No Authorization checks on RetrieveDonutList
+    // highlight-next-line
     [AllowAnonymous]
     [Mutation("donutList")]
     public async Task<IEnumerable<Donut>> RetrieveDonutList()
@@ -68,21 +79,16 @@ public class BakeryController : GraphController
 
 ## Use of IAuthorizationService
 
-Under the hood, GraphQL taps into your `IServiceProvider` to obtain a reference to the `IAuthorizationService` that gets created when you configure `.AddAuthorization()` for policy enforcement rules. Take a look at the [Schema Item Authorization Pipeline](https://github.com/graphql-aspnet/graphql-aspnet/tree/master/src/graphql-aspnet/Middleware/SchemaItemSecurity) for the full picture.
+Under the hood, GraphQL taps into your `IServiceProvider` to obtain a reference to the `IAuthorizationService` that gets created when you configure `.AddAuthorization()` at startup. Take a look at the [Schema Item Authorization Pipeline](https://github.com/graphql-aspnet/graphql-aspnet/tree/master/src/graphql-aspnet/Middleware/SchemaItemSecurity) for the full picture.
 
 ## When does Authorization Occur?
 
-![Authorization Flow](../assets/authorization-flow.png)
 
-_The Default "per field" Authorization workflow_
-
----
-
-In the diagram above we can see that user authorization in GraphQL ASP.NET makes use of the result from [ASP.NET's security pipeline](https://docs.microsoft.com/en-us/aspnet/core/security/authorization/introduction). Whether you use Kerberos tokens, oauth2, username/password, API tokens or if you support 2-factor authentication or one-time-use passwords, GraphQL doesn't care. The entirety of your authentication and authorization scheme is executed by GraphQL, no special arrangements or configuration is needed.
+GraphQL ASP.NET makes use of the result from [ASP.NET's security pipeline](https://docs.microsoft.com/en-us/aspnet/core/security/authorization/introduction). Whether you use Kerberos tokens, oauth2, username/password, API tokens or if you support 2-factor authentication or one-time-use passwords, GraphQL doesn't care. The entirety of your authentication and authorization scheme is executed by GraphQL, no special arrangements or configuration is needed.
 
 > GraphQL ASP.NET draws from your configured authentication/authorization solution.
 
-Execution directives and field resolutions are passed through a [pipeline](../reference/how-it-works#middleware-pipelines) where authorization is enforced as a series of middleware components before the respective handlers are invoked. Should a requestor not be authorized for a given schema item an action is taken:
+Execution directives and field resolutions are passed through the libraries internal [pipeline](../reference/how-it-works#middleware-pipelines) where securty is enforced as a series of middleware components before the respective resolvers are invoked. Should a requestor not be authorized for a given schema item they are informed via an error message and denied access to the item.
 
 
 ## Field Authorizations
@@ -97,11 +103,65 @@ Since this authorization occurs "per field" and not "per controller action" its 
 
 ### Field Authorization Failures are Obfuscated
 
-When GraphQL denies a requestor access to a field a message naming the field path is added to the response. This message is generic on purpose: `"Access denied to field '[query]/bakery/donuts'"`. To view more targeted reasons, such as specific policy failures, you'll need to expose exceptions on the request or turn on [logging](../logging/structured-logging). GraphQL automatically raises the `SchemaItemAuthorizationCompleted` log event at a `Warning` level when a security check fails.
+When GraphQL denies a requestor access to a field a message naming the field path is added to the response. This message is generic on purpose. Suppose there was a query where the user requests the `allDonuts` field but is denied access:
 
-## Execution Directives Authorizations
+```graphql
+    {
+        donut(id: 5) {
+            name
+        }
+        allDonuts {
+            name
+        }
 
-Execution directives are applied to the _query document_ before a query plan is created, but it is the query plan that determines what field resolvers should be called. As a result, execution directives have the potential to alter the document structure and change how a query might be resolved. Because of this, not executing a query directive has the potential to change (or not change) the expected query to be different than what the requestor intended to ask for. 
+    }
+
+```
+
+The result might look like this:
+
+```json title="Denied Field Access"
+{
+  "errors": [
+    // highlight-start
+    {    
+      "message": "Access Denied to field [query]/allDonuts",
+      "locations": [
+        {
+          "line": 7,
+          "column": 3
+        }
+      ],
+      "path": [
+        "allDonuts"
+      ],
+      "extensions": {
+        "code": "ACCESS_DENIED",
+        "timestamp": "2022-12-22T22:22:25.017-07:00",
+        "severity": "CRITICAL"
+      }
+    }
+    // highlight-end
+  ],
+  "data": {
+    "donut": {
+      "name": "Super Mega Donut",
+    },
+    // highlight-next-line
+    "allDonuts": null
+  }
+}
+```
+
+:::tip
+ To view more details authorization failure reasons, such as specific policy failures, you'll need to expose exceptions on the request or turn on [logging](../logging/structured-logging). 
+ 
+ GraphQL automatically raises the `SchemaItemAuthorizationCompleted` log event at a `Warning` level when a security check fails.
+:::
+
+## Authorization on Execution Directives
+
+Execution directives are applied to the _query document_, before a query plan is created to fulfill the request. However, it is the query plan that determines which field resolvers should be called. As a result, execution directives have the potential to alter the document structure and change how a query plan might be structured. Because of this, not executing a query directive has the potential to cause a the expected query to be different than what the requestor intended. 
 
 Therefore, if an execution directive fails authorization the query is rejected and not executed.  The caller will receive an error message as part of the response indicating the unauthorized directive. Like field authorization failures, the message is obfuscated and contains only a generic message. You'll need to expose exception on the request or turn on logging to see additional details.
 
@@ -122,6 +182,10 @@ services.AddGraphQL(schemaOptions =>
 });
 ```
 
-:::info  
-Regardless of the authorization method chosen, **execution directives** are ALWAYS evaluated with a "per request" method. If a single execution directive fails, the whole query is failed and no data will be resolved.
+## Performance Considerations
+
+Authorization is not free. Rhere is a minor, but real, performance cost to inspecting and evaluating policies on a field. This true regardless of yor choice of `PerField` or `PerRequest` authorization. Every secure field still needs to be evaluated, whether they are done up front or as the query progresses.  In a REST query, you generally only secure your top-level controller methods, consider doing the same with your GraphQL queries.
+
+:::tip
+Centralize your authorization checks to your controller methods. There is usually no need to apply `[Authorize]`  attributes to each and every method and property across your entire schema.
 :::

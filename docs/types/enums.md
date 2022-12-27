@@ -61,7 +61,7 @@ enum DonutType {
 
 ## Excluding an Enum Value
 
-Use the `[GraphSkip]` attribute to omit a value from the graph. A query will be rejected if it attempts to submit a valid, yet omitted, enum value.
+Use the `[GraphSkip]` attribute to omit a value from the schema. A query will be rejected if it attempts to submit an omitted enum value.
 
 
 ```csharp title="DonutType.cs"

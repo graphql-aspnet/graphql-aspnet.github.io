@@ -63,13 +63,41 @@ Built in Controller Action Methods:
 -   `this.BadRequest()`: Commonly used in conjunction with `this.ModelState`. This result indicates the data supplied to the method is not valid for the operation. If given the model state collection an error for each validation error is rendered.
 -   `this.InternalServerError()`: Indicates an unintended error, such as an exception occurred. The supplied message will be added to the response and no child fields will be resolved.
 
-## Directive Action Results
+### Directive Action Results
 [Directives](./directives) have two built in Action Results:
 
 -   `this.Ok()`: Indicates that the directive completed its expected operation successfully and processing can continue.
 -   `this.Cancel()`: Indicates that the directive did NOT complete its operation successfully. 
     - If this is a type system directive, the schema will fail to complete and the server will not start.
     - If this is an execution directive, the query will be abandoned and the user will receive an error message.
+
+## Using an IGraphActionResult
+
+Using a graph action result is straight forward. Use it like you would a regular action result with a REST query:
+
+```csharp
+public class BakeryController : GraphController
+{
+    [Query("donut", typeof(Donut))]
+    public IGraphActionResult RetrieveDonut(int id)
+    {
+        if(id < 0)
+            // highlight-next-line
+            return this.Error("Invalid Id");
+
+        Donut donut = new Donut(id);
+        // highlight-next-line
+        return this.Ok(donut);
+    }
+}
+```
+
+Notice, however; that we had to declare the return type of the donut field in the `[Query]` attribute. This is because the actual return type is hidden by the use of `IGraphActionResult`.  This is the trade off to the extra functionality provided by action results. Since GraphQL is a statically typed language all field return types must be known at startup. 
+
+:::info
+Using a graph action result requires you to declare the return type of your action method elsewhere, usually in the `[Query]` or `[Mutation]` attribute.
+:::
+
 
 ## Custom Graph Action Results
 

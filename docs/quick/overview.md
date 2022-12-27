@@ -3,60 +3,118 @@ id: overview
 title: Overview
 sidebar_label: Overview
 sidebar_position: 0
-description: A quick overview of this documentation and how to use it.
-hide_title: true
+description: A quick overview of how to use the library
 ---
 
-:::info This  project is currently in open beta
- Some features of the library may change prior to a final release.
-:::
 
-## How To Use This Documentation
+```powershell title="Install The Library"
+# Using the dotnet CLI
+> dotnet add package GraphQL.AspNet --prerelease
 
-This documentation is best used as a reference guide for the various features of GraphQL ASP.NET but it helps to read through a few sections to get an understanding of the core concepts.
+# using Package Manager Console
+> Install-Package GraphQL.AspNet -IncludePrerelease
+```
 
-✅ [Controllers](../controllers/actions) -
-An overview on how to build a controller and define an action method.
+## Documentation
 
-✅ [Attributes](../reference/attributes) - A reference to all the attributes supported by GraphQL ASP.NET. Attributes are used extensively to annotate and configure your controllers and model classes.
+This documentation should can be used as a reference for various aspects of the library or read to discover the various features of the library.  If you have questions don't hesitate to ask over on [Github](https://github.com/graphql-aspnet/graphql-aspnet).
 
-✅ [Schema Configuration](../reference/schema-configuration) - A reference to the various configuration options for your schema and how they affect the runtime.
 
-#### Target Audience
+## Helpful Pages
+<span style={{fontSize: "1.2em"}}> 
 
-This documentation serves as part reference and part tutorial for GraphQL ASP.NET. You should have a familiarity with GraphQL and ASP.NET MVC. We won't spend a lot of time covering core concepts such as how ASP.NET controllers operate or the ends and outs of authorization. Many implementation details are shown in terms of code examples as well and without a familiarity with MVC, things may not always be so clear.
+📌 [Demo Projects](../reference/demo-projects.md) : A number of downloadable sample projects covering a wide range of topics
 
-Here are some good starting points for learning more about GraphQL or ASP.NET MVC before diving in to GraphQL ASP.NET.
+💡 [Controllers](../controllers/actions.md) : Everything you need to know about `GraphController` and defining action methods.
 
-[**Learn GraphQL**](https://graphql.org/learn/) - A walk through on the query language by the GraphQL team
+📜 [Attributes](../reference/attributes.md) : A reference list of the various `[Attributes]` used by GraphQL ASP.NET to create your schema.
 
-[**Comparing GraphQL and REST**](https://blog.apollographql.com/graphql-vs-rest-5d425123e34b) - A helpful comparison by the Apollo Team
+📐 [Schema Configuration](../reference/schema-configuration.md) : A reference list of the various configuration options available at application startup.
 
-[**Getting started with ASP.NET Core MVC**](https://docs.microsoft.com/en-us/aspnet/core/tutorials/first-mvc-app/start-mvc?view=aspnetcore-5.0&tabs=visual-studio) - Scaffolding a .NET ASP.NET Core MVC app from the ground up.
+</span>
 
-## Key Terms
+## Building Your First Application
 
-This documentation uses a number of terms to refer to the various pieces of the library:
+### Create a new Web API Project
+💻 Setup a new `ASP.NET Core Web API` project:
 
-### Schema
-This is the set of data types, their fields, input arguments etc. that are exposed on an object graph. When you write a graphql query to return data the fields you request, their arguments and their children must all be defined on a schema that graphql will validate your query against.  
+![web api project](../assets/create-new-web-api-project.png)
 
-> In GraphQL ASP.NET the schema is generated at runtime directly from your C# controllers; there is no additional boilerplate code necessary to define a schema.
+### Add the Package From Nuget
+💻 Add the `GraphQL.AspNet` nuget package:
 
-Your schema is "generated" at runtime by analyzing your model classes, controllers and action methods then populating a `GraphSchema` container with the appropriate graph types to map graphql requests to your controllers. 
+```powershell
+# Powershell terminal, Package Manager in Visual Studio, Developer Command Prompt etc.
+> dotnet add package GraphQL.AspNet --prerelease
+```
 
-### Fields & Resolvers
-In GraphQL terms, a field is any requested piece of data (such as an id or  name).  A resolver fulfills the request for data from a schema field. It takes in a set of input arguments and produces a piece of data that is returned to the client. In GraphQL ASP.NET your controller methods act as resolvers for top level fields in any query.
+### Create a Controller
 
-### Graph Type
+💻 Create your first Graph Controller:
 
-A graph type is an entity on your object graph; a droid, a donut, a string, a number etc.  In GraphQL ASP.NET your model classes, interfaces, enums, controllers etc. are compiled into the various graph types required by the runtime.
+```csharp  title="BakeryController.cs"
+using GraphQL.AspNet.Attributes;
+using GraphQL.AspNet.Controllers;
 
-#### Root Graph Types
-There are three root graph types in GraphQL: Query, Mutation, Subscription. Whenever you make a graphql request, you always specify which query root you are targeting. This documentation will usually refer to all operations as "queries" but this includes mutations and subscriptions as well.
+public class BakeryController : GraphController
+{
+    [QueryRoot("donut")]
+    public Donut RetrieveDonut()
+    {
+        return new Donut()
+        {
+            Id = 3,
+            Name = "Snowy Dream",
+            Flavor = "Vanilla"
+        };
+    }
+}
 
-### Query Document
-This is the raw query string submitted by a client. When GraphQL accepts a query it is converted from a string to an internal document format that is parsed and used to fulfill the request.  
+public class Donut
+{
+    public int Id { get; set; }
+    public string Name { get; set; }
+    public string Flavor { get; set; }
+}
+```
 
-> Queries, Mutations and Subscriptions are all types of query documents.
 
+### Configure Startup
+
+💻 Register GraphQL with your services collection and your application pipeline:
+
+```csharp title="Program.cs"
+using GraphQL.AspNet.Configuration;
+
+var builder = WebApplication.CreateBuilder(args);
+
+// Add services to the container.
+// highlight-next-line
+builder.Services.AddGraphQL();
+
+var app = builder.Build();
+
+// Configure the HTTP request pipeline.
+// highlight-next-line
+app.UseGraphQL();
+app.Run();
+```
+
+
+### Execute a Query
+
+💻 Start the application and using your favorite tool, execute a query:
+
+```graphql title="Sample Query"
+query {
+    donut {
+        id
+        name
+        flavor
+    }
+}
+```
+
+#### Results:
+
+![query results](../assets/overview-sample-query-results.png)

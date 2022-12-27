@@ -79,3 +79,6 @@ string str = "abc";
 GraphId id = (GraphId)str;
 // id.Value == "abc"
 ```
+
+## Custom Scalars
+See the section on [custom scalars](../advanced/custom-scalars.md) for details on creating your own scalar types.

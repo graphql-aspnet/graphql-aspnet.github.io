@@ -5,9 +5,9 @@ sidebar_label: Interfaces
 sidebar_position: 2
 ---
 
-Interfaces in GraphQL work like interfaces in C#. They provide a contract for a set of common fields of different objects. When it comes to declaring them, the `INTERFACE` graph type works exactly like [object types](./objects).
+Interfaces in GraphQL work like interfaces in C#. They provide a contract for a set of common fields amongst different objects. When it comes to declaring them, the `INTERFACE` graph type works exactly like [object types](./objects).
 
-By Default, when creating an interface graph type GraphQL:
+By default, when creating an interface graph type GraphQL:
 
 -   Will name the interface the same as its C# type name.
 -   Will include all properties that have a getter.
@@ -32,13 +32,34 @@ interface IPastry {
 
 The section on working with interfaces with [action methods](../controllers/actions#working-with-interfaces) provides a great discussion on proper usage but its worth pointing out here as well.
 
-:::info
-If your schema contains an interface (`IPastry`) it must also contain the objects that implement it (`Cake` and `Donut`).
-:::
-
 You must let GraphQL know of the possible object types you intend to return as the interface. If your action method returns `IPastry` and you return a `Donut`, but didn't let GraphQL know about the `Donut` class, it won't be able to continue to resolve the requested fields.
 
-Most of the time GraphQL is smart enough to figure out which object types you're referencing by looking at the complete scope of actions and objects in your schema and won't bug you about it. But the steps outlined with defining action methods describe ways to ensure you have no issues.
+```csharp title="BakeryController.cs"
+public class BakeryController : GraphController
+{
+    // highlight-next-line
+    [QueryRoot(typeof(Donut), typeof(Cake))]
+    public IPastry SearchPastries(string name)
+    {/* ... */}
+}
+```
+
+```graphql title="Sample Query"
+query {
+    searchPastries(name: "chocolate*") {
+        id
+        name
+
+        ...on Donut {
+            isFilled
+        }
+
+        ...on Cake {
+            icingFlavor
+        }
+    }
+}
+```
 
 ## Use It To Include It
 
@@ -63,8 +84,8 @@ public interface IPastry
 
 
 ```graphql title="Type Definitions"
-// Donut is published on the schema
-// IPastry is not included
+# Donut is published on the schema
+# but IPastry is not included
 type Donut {
   id: Int!
   name: String
@@ -87,6 +108,7 @@ public class BakeryController : GraphController
     // ERROR!
     // A GraphTypeDeclarationException will be thrown
     [Mutation]
+    // highlight-next-line
     public Donut AddNewDonut(IPastry newPastry)
     {/* ... */}
 }
@@ -103,6 +125,7 @@ Like with other graph types use the `[GraphType]` attribute to indicate a custom
 
 
 ```csharp title="Interface Custom Name"
+// highlight-next-line
 [GraphType("Pastry")]
 public interface IPastry
 {
@@ -144,6 +167,7 @@ This can create some less than ideal scenarios. For instance, if only `IDonut` i
 ```csharp title="Startup Code"
 services.AddGraphQL(o => 
 {
+  // highlight-next-line
    o.AddGraphType<IDonut>();
 });
 ```
@@ -162,8 +186,10 @@ However GraphQL does support interface inheritance. As long as both interfaces a
 ```csharp title="Startup Code"
 services.AddGraphQL(o => 
 {
-  o.AddGraphType<IPastry>();
+  // highlight-start
+  o.AddGraphType<IPastry>();  
   o.AddGraphType<IDonut>();
+  // highlight-end
 });
 ```
 

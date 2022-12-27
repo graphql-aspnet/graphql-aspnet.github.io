@@ -10,9 +10,23 @@
   overflow: hidden;
 }
 
+
+.main-buttons {
+  column-gap: 15px;
+}
+
 @media screen and (max-width: 996px) {
   .heroBanner {
     padding: 2rem;
+  }
+
+}
+
+@media (max-width: 480px) {
+
+  .main-buttons {
+    justify-content: space-around;
+    row-gap: 5px;
   }
 }
 
