@@ -68,7 +68,7 @@ This is event is recorded when the query execution pipeline first receives a new
 | Property             | Description                                                    |
 | -------------------- | -------------------------------------------------------------- |
 | _Username_           | the value of `this.User.Identity.Name` or null                 |
-| _OperationRequestId_ | A unique id identifying the overall request that was received. |
+| _QueryRequestId_     | A unique id identifying the overall request that was received. |
 | _QueryText_          | The query provided by the user.                                |
 
 ### Query Plan Generated
@@ -129,7 +129,7 @@ This is event is recorded when the final result for the request is generated and
 
 | Property             | Description                                                                           |
 | -------------------- | ------------------------------------------------------------------------------------- |
-| _OperationRequestId_ | A unique id identifying the overall request.                                          |
+| _QueryRequestId_     | A unique id identifying the overall request.                                          |
 | _HasData_            | `true` or `false` indicating if at least one data value was included in the result    |
 | _HasErrors_          | `true` or `false` indicating if at least one error message was included in the result |
 | _TotalExecutionMs_   | A numerical value indicating the total runtime of the request, in milliseconds.       |
@@ -142,7 +142,7 @@ This is event is recorded when the a request is explicitly cancelled, usually by
 
 | Property             | Description                                                                           |
 | -------------------- | ------------------------------------------------------------------------------------- |
-| _OperationRequestId_ | A unique id identifying the overall request.                                          |
+| _QueryRequestId_     | A unique id identifying the overall request.                                          |
 | _TotalExecutionMs_   | A numerical value indicating the total runtime of the request, in milliseconds.       |
 
 
@@ -154,7 +154,7 @@ This is event is recorded when the a request is is cancelled due to reaching a m
 
 | Property             | Description                                                                           |
 | -------------------- | ------------------------------------------------------------------------------------- |
-| _OperationRequestId_ | A unique id identifying the overall request.                                          |
+| _QueryRequestId_     | A unique id identifying the overall request.                                          |
 | _TotalExecutionMs_   | A numerical value indicating the total runtime of the request, in milliseconds.       |
 
 

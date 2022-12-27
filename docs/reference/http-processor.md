@@ -5,7 +5,7 @@ sidebar_label: HTTP Processor
 sidebar_position: 6
 ---
 
-The `DefaultGraphQLHttpProcessor<TSchema>` is mapped to a route for the target schema and accepts an `HttpContext` from the ASP.NET runtime. It inspects the received payload (the query text and variables) then packages an `IGraphOperationRequest` and sends it to the GraphQL runtime. Once a result is generated the controller forwards that response to the response writer for serialization.
+The `DefaultGraphQLHttpProcessor<TSchema>` is mapped to a route for the target schema and accepts an `HttpContext` from the ASP.NET runtime. It inspects the received payload (the query text and variables) then packages an `IQueryExecutionRequest` and sends it to the GraphQL runtime. Once a result is generated the controller forwards that response to the response writer for serialization.
 
 ## Extending the Http Processor
 
@@ -18,9 +18,8 @@ public class MyHttpProcessor : DefaultGraphQLHttpProcessor<MySchema>
 {
     public MyHttpProcessor(
             MySchema schema,
-            ISchemaPipeline<MySchema, GraphQueryContext> queryPipeline,
-            IGraphResponseWriter<MySchema> writer,
-            IGraphQueryExecutionMetricsFactory<MySchema> metricsFactory,
+            IGraphQLRuntime<MySchema> queryPipeline,
+            IQueryResponseWriter<MySchema> writer,
             IGraphEventLogger logger = null)
         : base(schema, queryPipeline, writer, metricsFactory, logger)
     {
@@ -45,13 +44,13 @@ These methods can be overridden to provide custom logic at various points in the
 
 ### CreateRequest(queryData)
 
-Override this method to supply your own `IGraphOperationRequest` to the runtime.
+Override this method to supply your own `IQueryExecutionRequest` to the runtime.
 
 -   `queryData`: The raw data package read from the HttpContext
 
 ### HandleQueryException(exception)
 
-Override this method to provide some custom processing to an unhandled exception. If this method returns an `IGraphOperationResult` it will be sent to the requestor, otherwise return null to allow a status 500 result to be generated.
+Override this method to provide some custom processing to an unhandled exception. If this method returns an `IQueryExecutionResult` it will be sent to the requestor, otherwise return null to allow a status 500 result to be generated.
 
 It is exceedingly rare that this method will ever be called. The runtime will normally attach exceptions as messages to the graphql response. This method exists as a catch all _just in case_ something occurs beyond all expected constraints.
 
@@ -61,7 +60,7 @@ It is exceedingly rare that this method will ever be called. The runtime will no
 
 Override this method to perform some custom processing on a set of query metrics that were gathered for the executed query. This method will only be called if metrics were actually gathered.
 
--   `metrics`: the `IGraphQueryExecutionMetrics` package that was populated during the request.
+-   `metrics`: the `IQueryExecutionMetrics` package that was populated during the request.
 
 ### ExposeExceptions
 

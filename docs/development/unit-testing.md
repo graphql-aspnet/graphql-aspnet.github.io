@@ -43,7 +43,7 @@ public async Task MyController_InvocationTest()
 1. Mock the query execution context (the object that the runtime acts on) using `.CreateQueryContextBuilder()`
 2. Configure the text, variables etc. on the builder.
 3. Build the context and submit it for processing:
-    - Use `server.ExecuteQuery()` to process the context. `context.Result` will be filled with the final `IGraphOperationResult` which can be inspected for resultant data fields and error messages.
+    - Use `server.ExecuteQuery()` to process the context. `context.Result` will be filled with the final `IQueryExecutionResult` which can be inspected for resultant data fields and error messages.
     - Use `server.RenderResult()` to generate the json string a client would recieve if they performed the query.
 
 

@@ -119,7 +119,7 @@ Example string data:
 -   `"""triple quoted string"""`
 -   `"With \"\u03A3scaped ch\u03B1racters\""`;
 
-The `StringScalarType` provides a handy static method for unescaping the data if you don't need to do anything special with it, `StringScalarType.UnescapeAndTrimDelimiters`.
+The static type `GraphQLStrings` provides a handy static method for unescaping the data if you don't need to do anything special with it, `GraphQLStrings.UnescapeAndTrimDelimiters`.
 
 Calling `UnescapeAndTrimDelimiters` with the previous examples produces:
 
@@ -197,7 +197,7 @@ The completed Money custom scalar type
         {
             // example only, more validation code is needed to fully validate 
             // the data
-            var sanitizedMoney = StringScalarType.UnescapeAndTrimDelimiters(data);
+            var sanitizedMoney = GraphQLStrings.UnescapeAndTrimDelimiters(data);
             if(sanitizedMoney == null || sanitizedMoney.Length < 2)
                 throw new UnresolvedValueException("Money must be at least 2 characters");
 

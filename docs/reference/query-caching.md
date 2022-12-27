@@ -21,7 +21,8 @@ At startup, inject the query cache into the service collection. The cache itself
 
 ```csharp title="Startup Code"
 // Register the query cache BEFORE calling .AddGraphQL
-service.AddGraphQLLocalQueryCache();
+// highlight-next-line
+services.AddGraphQLLocalQueryCache();
 
 services.AddGraphQL();
 ```

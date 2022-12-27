@@ -7,7 +7,7 @@ sidebar_position: 2
 
 ## What is a Directive?
 
-Directives decorate parts of your schema or a query document to perform some sort of custom logic. What that logic is, is entirely up to you. There are several directives built into graphql, however:
+Directives decorate parts of your schema or a query document to perform some sort of custom logic. What that logic is, is entirely up to you. There are several directives built into graphql:
 
 -   `@include` : An execution directive that conditionally includes a field or fragment in the results of a graphql query
 -   `@skip` : An execution directive that conditionally excludes a field or fragment from the results of a graphql query
