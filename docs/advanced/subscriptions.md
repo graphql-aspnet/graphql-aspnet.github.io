@@ -142,7 +142,7 @@ public class SubscriptionController : GraphController
 }
 ```
 
-Here the subscription expects that an event is published using a `WidgetInternal` that it will convert to a `Widget` and send to any subscribers. This can be useful if you wish to share internal objects between your mutations and subscriptions that you don't want publicly exposed.
+Here the subscription expects that an event is published using a `WidgetInternal` object that it will convert to a `Widget` and send to any subscribers. This can be useful if you wish to share internal objects between your mutations and subscriptions that you don't want publicly exposed.
 
 :::info Event Data Objects Must Match
  The data object published with `PublishSubscriptionEvent()` must have the same type as the `[SubscriptionSource]` on the subscription field.
@@ -177,7 +177,7 @@ If there are scenarios where an event payload should not be shared with a user, 
 
 ## Scaling Subscription Servers
 
-Using web sockets has a natural limitation in that any single server instance has a maximum number of socket connections that it can realistically handle before being overloaded. Additionally, all cloud providers impose an artifical limit for many of their pricing tiers. Once that limit is reached no additional clients can connect, even if the server has capacity.
+Using web sockets has a natural limitation in that any single server instance has a maximum number of socket connections that it can realistically handle before being overloaded. Additionally, all cloud providers impose an artifical limit for many of their pricing tiers. Once that limit is reached no additional clients can connect, even if the server has additional capacity.
 
 Ok no problem, just scale horizontally, right? Spin up additional server instances, add a load balancer and have the new requests open a web socket connection to these additional server instances...Not so fast!
 
@@ -357,7 +357,7 @@ The complete details of implementing a custom graphql client proxy are beyond th
 
 ## Other Communication Options
 
-While websockets is the primary medium for persistant connections its not the only option. Internally, the library supplies an `IClientConnection` interface which encapsulates a raw websocket received from ASP.NET. This interface is internally implemented as a `WebSocktClientConnection` which is responsible for reading and writing raw bytes to the socket. Its not a stretch of the imagination to implement your own custom client connection, invent a way to capture said connections and basically rewrite the entire communications layer of the subscriptions module.
+While websockets is the primary medium for persistant connections its not the only option. Internally, the library supplies an `IClientConnection` interface which encapsulates a raw websocket received from ASP.NET. This interface is internally implemented as a `WebSocketClientConnection` which is responsible for reading and writing raw bytes to the socket. Its not a stretch of the imagination to implement your own custom client connection, invent a way to capture said connections and basically rewrite the entire communications layer of the subscriptions module.
 
 Please do a deep dive into the subscription code base to learn about all the intricacies of building your own communications layer and how you might go about registering it with the runtime. If you do try to tackle this very large effort don't hesitate to reach out. We're happy to partner with you and meet you half way on a solution if it makes sense for the rest of the community.
 
@@ -369,7 +369,7 @@ When the router receives an event it looks to see which clients are subscribed t
 
 Each work item is, for the most part, a single query execution. Though, if a client registers to a subscription multiple times each registration is executed as its own query. With lots of events being delivered on a server saturated with clients, each potentially having multiple subscriptions, along with regular queries and mutations executing...limits must be imposed otherwise CPU utilization could unreasonably spike...and it may spike regardless in some use cases. 
 
-By default, the max number of work items the router will deliver simultaniously is `500`.  This is a global, server-wide pool, shared amongst all registered schemas. You can controller this value by changing it prior to calling `.AddGraphQL()`.   This value defaults to a low number on purpose, use it as a starting point to dial up the max concurrency to a level you feel comfortable with in terms of performance and cost. The only limit here is server resources and other environment limitations outside the control of graphql. 
+By default, the max number of work items the router will deliver simultaniously is `500`.  This is a global, server-wide pool, shared amongst all registered schemas. You can control this value by changing it prior to calling `.AddGraphQL()`.   This value defaults to a low number on purpose, use it as a starting point to dial up the max concurrency to a level you feel comfortable with in terms of performance and cost. The only limit here is server resources and other environment limitations outside the control of graphql. 
 
 ```csharp title="Set A Receiver Throttle During Startup"
 // Adjust the max concurrent communications value
@@ -387,9 +387,9 @@ The max receiver count can easily be set in the 1000s. There is no magic bullet 
 
 ### Event Multiplication
 
-Think carefully about your production scenarios when you introduce subscriptions into your application.  As mentioned above, for each subscription event raised, each subscription monitoring that event must execute a standard graphql query, with the supplied event data, to generate a result and send it to its connected client. 
+Think carefully about your production scenarios when you introduce subscriptions into your application.  As mentioned above, for each event raised, each subscription monitoring that event must execute a standard graphql query, with the supplied event data, to generate a result and send it to its connected client. 
 
-If, for instance, you have `200 clients` connected to a single server, each with `3 subscriptions` against the same field, thats `600 individual queries` that must be executed to process a single event completely. Even if you call `SkipSubscriptionEvent` to drop the event and send no send data to a client, the query still must be executed to determine if the subscriber is not interested in the data. If you execute any database operations in your `[Subcription]` method, its going to be run 600 times.  Suppose your server receives 5 mutations in rapid succession, all of which raise the event, thats a spike of `3,000 queries`, instantaneously, that the server must process.  
+If, for instance, you have `200 clients` connected to a single server, each with `3 subscriptions` against the same field, thats `600 individual queries` that must be executed to process a single event completely. Even if you call `SkipSubscriptionEvent` to drop the event and send no send data to a client, the query must still be executed to determine if the subscriber is not interested in the data. If you execute any database operations in your `[Subcription]` method, its going to be run 600 times.  Suppose your server receives 5 mutations in rapid succession, all of which raise the event, thats a spike of `3,000 queries`, instantaneously, that the server must process.  
 
 Balancing the load can be difficult. Luckily there are some [throttling levers](/docs/reference/global-configuration#subscriptions) you can adjust.
 
@@ -404,7 +404,7 @@ Internally, whenever a subscription server instance receives an event, the route
 There is a built-in monitoring of this queue that will automatically [record a log event](../logging/subscription-events.md#subscription-event-dispatch-queue-alert) when a given threshold is reached. 
 
 #### Default Event Alert Threshold
-This event is recorded at a `Critical` level when the queue reaches `10,000 events`. This alert is then re-recorded once every 5 minutes if the 
+This log event is recorded at a `Critical` level when the queue reaches `10,000 events`. This alert is then re-recorded once every 5 minutes if the 
 queue remains above 10,000 events.
 
 #### Custom Event Alert Thresholds
@@ -443,4 +443,6 @@ services.AddGraphQL()
         .AddSubscriptions();
 ```
 
-> Consider using the built in `SubscriptionClientDispatchQueueAlertSettings` object for a standard implementation of the required interface.
+:::tip
+ Consider using the built in `SubscriptionClientDispatchQueueAlertSettings` object for a standard implementation of the required interface.
+:::

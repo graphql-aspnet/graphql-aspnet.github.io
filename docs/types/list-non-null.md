@@ -31,7 +31,7 @@ GraphQL ASP.NET makes the following assumptions about your data when creating ty
 
 -   Reference types **can be** null
 -   Value types **cannot be** null
--   Nullable value types (e.g. `int?`) **can be** be null
+-   Nullable value types (e.g. `int?`) **can be** null
 -   When a reference type implements `IEnumerable<TType>` it will be expressed as a "list of `TType`"
 
 Type Expressions are commonly shown in the GraphQL schema syntax for field definitions. Here are a few examples of a .NET type and its equivalent type expression in schema syntax.
@@ -51,7 +51,7 @@ Type Expressions are commonly shown in the GraphQL schema syntax for field defin
 
 ### Overriding Type Expressions
 
-You may need to override the default behavior from time to time. For instance, a `string`, which is a reference type, is nullable by default but you may need to declare that null is not a valid string. Or, perhaps, an object implements `IEnumerable` but you don't want graphql to treat it as a list.
+You may need to override the default behavior from time to time. For instance, a `string`, which is a reference type, is nullable by default but you may want to enforce nullability at the query level and  declare that null is not a valid string. Or, perhaps, an object implements `IEnumerable` but you don't want graphql to treat it as a list.
 
 You can override the default type expression of any field or argument by defining a [custom type expression](../advanced/type-expressions) when needed.
 
