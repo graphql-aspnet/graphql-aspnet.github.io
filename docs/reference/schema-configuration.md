@@ -166,7 +166,9 @@ An object that will format any string to an acceptable name for use in the graph
 | Enum Values      | All Caps       | `CHOCOLATE`, `FEET`, `PHONE_NUMBER`  |
 _Default formats for the three different entity types_
 
-> To make radical changes to your name formats, beyond the available options, inherit from `GraphNameFormatter` and override the different formatting methods.
+:::tip
+ To make radical changes to your name formats, beyond the available options, inherit from `GraphNameFormatter` and override the different formatting methods.
+:::
 
 ## Execution Options
 

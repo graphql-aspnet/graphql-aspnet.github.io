@@ -7,7 +7,7 @@ hide_title: true
 ---
 
 ## What is a Field Path?
- GraphQL is statically typed. Each field in a query must always resolve to a single graph type known to the schema. This can make query organization rather tedious and adds A LOT of boilerplate code if you wanted to introduce even the slightest complexity to your graph.
+ GraphQL is statically typed. Each field in a query must always resolve to a single graph type known to the schema. In .NET terms that means each field must be represented by a method or property on some class or struct.  Traditionally speaking, this can introduce a lot of overhead in defining intermediate types that do nothing but organize our data.
 
 Let's think about this query:
 
@@ -34,9 +34,9 @@ query {
 }
 ```
 
-Knowing what we know about GraphQL's requirements, we need to create types for the grocery store, the bakery, pastries, a donut, the deli counter, meats, beef etc. Its a lot of setup for what basically boils down to two methods to retrieve a donut and a cut of beef by their respective ids.
+Knowing what we know, you may think we need to create types for the grocery store, the bakery, pastries, a donut, the deli counter, meats, beef etc. in order to create properties and methods for all those fields. Its a lot of setup for what basically boils down to two methods to retrieve a donut and a cut of beef by their respective ids.
 
-Using a templating pattern similar to what we do with REST queries we can create rich graphs with very little boiler plate. Adding a new arm to your graph is as simple as defining a path to it in a controller.
+However, with GraphQL ASP.NET, using a templating pattern similar to what we do with REST controllers we can create rich graphs with very little boiler plate. Adding a new arm to your graph is as simple as defining a path to it in a controller.
 
 ```csharp title="Sample Controller"
 // highlight-next-line
@@ -55,7 +55,7 @@ public class GroceryStoreController : GraphController
 }
 ```
 
-Internally, for each encountered path segment (e.g. `bakery`, `meats`), GraphQL generates a `intermediate graph type` to fulfill resolver requests for you and act as a pass through to your real code. It does this in concert with your real code and performs a lot of checks at start up to ensure that the combination of your real types as well as virutal types can be put together to form a functional graph.  If a collision occurs the server will fail to start.
+Internally, for each encountered path segment (e.g. `bakery`, `meats`), GraphQL generates a virutal, intermediate graph type to fulfill resolver requests for you and acts as a pass through to your real code. It does this in concert with your real code and performs a lot of checks at start up to ensure that the combination of your real types as well as virutal types can be put together to form a functional graph.  If a collision occurs the server will fail to start.
 
 :::info Intermediate Type Names
 You may notice some object types in your schema named as `Query_Bakery`, `Query_Deli` these are the virtual types generated at runtime to create a valid schema from your path segments.
@@ -146,7 +146,7 @@ With REST, this is probably 4 separate requests or one super contrived request b
 
 ## Actions Must Have a Unique Path
 
-Each field in your object graph must uniquely map to one method or property getter; commonly referred to as its resolver. We can't declare a field twice.
+Each field of each type in your schema must uniquely map to one method or property getter; commonly referred to as its resolver. We can't declare a field twice.
 
 Take this example:
 
@@ -154,7 +154,7 @@ Take this example:
 [GraphRoute("bakery")]
 public class BakeryController : GraphController
 {
-    // Both Methods represent the same 'orderDonuts' field on the object graph
+    // Both Methods represent the same 'orderDonuts' field on the graph
 
     [Mutation]
     // highlight-next-line
@@ -184,10 +184,7 @@ public class BakeryController : GraphController
     public Manager OrderDonuts(string type, int quantity){/*...*/}
 }
 ```
-
-We'd pair these methods with different URL fragments and could work out which method to call in a REST request based on the full structure of the URL.
-
-However, GraphQL states that input arguments can be passed in any order [Spec § [2.6](https://graphql.github.io/graphql-spec/October2021/#sec-Language.Arguments)]. By definition there is not enough information in the query syntax language to decide which overload to invoke. To combat the issue, the runtime will reject any field that it can't uniquely identify.
+GraphQL states that input arguments can be passed in any order [Spec § [2.6](https://graphql.github.io/graphql-spec/October2021/#sec-Language.Arguments)]. By definition, there is not enough information in the query syntax language to decide which overload to invoke. To combat the issue, the runtime will reject any field that it can't uniquely identify.
 
 No problem through, there are a number of ways fix the conflict.
 
@@ -238,7 +235,7 @@ public class BakeryController : GraphController
 
 ```graphql title="Sample Queries"
 mutation {
-    orderDonuts(count: 12){
+    orderDonuts(count: 12) {
         name
         flavor
     }
@@ -246,9 +243,7 @@ mutation {
 
 mutation {
     bakery {
-        orderDonuts(
-                type: "Chocolate"
-                count: 3){
+        orderDonuts(type: "Chocolate" count: 3) {
             name
             flavor
         }
@@ -347,4 +342,4 @@ mutation {
 }
 ```
 
-You can alter the naming formats for fields, enum values and graph types using the declaration options on your [schema configuration](../reference/schema-configuration).
+You can alter the naming formats for fields, enum values and graph types using the declaration options on your [schema configuration](../reference/schema-configuration#graphnamingformatter).

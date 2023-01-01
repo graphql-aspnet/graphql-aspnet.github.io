@@ -11,7 +11,7 @@ Read the section on [type extensions](./type-extensions) before reading this doc
 
 ## The N+1 Problem
 
-There are plenty of articles on the web discussing the theory behind the N+1 problem ([links below](./batch-operations#other-resources)). Instead, we'll jump into an into an example to illustrate the issue when it comes to GraphQL.
+There are plenty of articles on the web discussing the theory behind the N+1 problem ([links below](./batch-operations#other-resources)). Instead, we'll jump into an example to illustrate the issue when it comes to GraphQL.
 
 Let's build on our example from the discussion on type extensions where we created an extension to retrieve `Cake Orders` for a **single** `Bakery`. What if we're a national chain and need to see the last 50 orders for each of our stores in a region? This seems like a reasonable thing an auditor would do so lets alter our controller to fetch all our bakeries and then let our type extension fetch the cake orders.
 
@@ -25,6 +25,7 @@ public class Bakery
 public class BakedGoodsCompanyController : GraphController
 {
     [QueryRoot("bakeries")]
+    // highlight-next-line
     public async Task<List<Bakery>> RetrieveBakeries(Regions region = Regions.All)
     {/*...*/}
 
@@ -78,10 +79,12 @@ public class BakedGoodsCompanyController : GraphController
         var allOrders = await _service.RetrieveCakeOrders(bakeries.Select(x => x.Id), limitTo);
 
         // return the batch of orders
+        // highlight-start
         return this.StartBatch()
             .FromSource(bakeries, bakery => bakery.Id)
             .WithResults(allOrders, cakeOrder => cakeOrder.BakeryId)
             .Complete();
+        // highlight-end
     }
 }
 ```
@@ -94,7 +97,6 @@ Key things to notice:
 
 The contents of your extension method is going to vary widely from use case to use case. Here we've forwarded the ids of the bakeries to a service to fetch the orders. The important take away is that `RetrieveCakeOrders` is now called only once, regardless of how many items are in the `IEnumerable<Bakery>` parameter.
 
-GraphQL works behind the scenes to pull together the items generated from the parent field and passes them to your batch method.
 
 ## Data Loaders
 
@@ -104,7 +106,7 @@ You'll often hear the term `Data Loaders` when reading about GraphQL implementat
 
 `this.StartBatch()` returns a builder to define how you want GraphQL to construct your batch. We need to tell it how each of the child items we fetched maps to the parents that were supplied (if at all).
 
-In the example we matched on a bakery's primary key selecting `Bakery.Id` from each of the source items and pairing it against `CakeOrder.BakeryId` from each of the results. This is enough information for the builder to generate a valid result. Depending on the contents of your data, the type expression of your extension there are few scenarios that emerge:
+In the example we matched on a bakery's primary key selecting `Bakery.Id` from each of the source items and pairing it against `CakeOrder.BakeryId` from each of the results. This is enough information for the builder to generate a valid result. Depending on the contents of your data and the type expression of your extension there are few scenarios that emerge:
 
 **1 Source -> 1 Result**
 
@@ -122,9 +124,11 @@ To GraphQL, many to many relationships are treated the same as one to many. Inte
 
 For sibling relationships there are only two options; either the data exists and a value is returned or it doesn't and `null` is returned. But with parent/child relationships, sometimes you want to indicate that no results were _included_ for a parent item and sometimes you want to indicate that no results _exist_. This could be represented as being an empty array vs `null`. When working with children, for every parent supplied to `this.StartBatch`, GraphQL will generate a field result of **at least** an empty array. To indicate a parent item should receive `null` instead of `[]` exclude it from the batch.
 
-> Excluding a source item from `this.StartBatch()` will result in it receiving `null` for its resolved field value.
+Note that it is your method's responsibility to be compliant with the type expression of the field. If a field is marked as `NON_NULL` and you exclude the parent item from the batch (resulting in a null result for the field for that item) the field will be marked invalid and register an error.
 
-Note that it is your method's responsibility to be compliant with the type expression of the field in this regard. If a field is marked as `NON_NULL` and you exclude the parent item from the batch (resulting in a null result for the field for that item) the field will be marked invalid and register an error.
+:::caution
+Excluding a  source item from `this.StartBatch()` will result in it receiving `null` for its resolved field value. Be mindful of your extension's type expression. If you've made the field non-nullable an error will be generated.
+:::
 
 #### Returning `IDictionary<TSource, TValue>`
 
@@ -143,10 +147,10 @@ public class BakedGoodsCompanyController : GraphController
     public async Task<List<Bakery>> RetrieveBakeries(Region region){/*...*/}
 
     // declare the batch operation as an extension
+    // highlight-start
     [BatchTypeExtension(typeof(Bakery), "orders")]
-    public async Task<IDictionary<Bakery, IEnumerable<CakeOrder>>> RetrieveCakeOrders(
-        IEnumerable<Bakery> bakeries,
-        int limitTo = 15)
+    public async Task<IDictionary<Bakery, IEnumerable<CakeOrder>>> RetrieveCakeOrders(IEnumerable<Bakery> bakeries, int limitTo = 15)
+    // highlight-end
     {
         //fetch all the orders at once
         Dictionary<Bakery, IEnumerable<CakeOrder>> allOrders = await _service

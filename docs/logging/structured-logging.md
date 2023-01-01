@@ -22,13 +22,14 @@ service.AddGraphQL(/*...*/);
 
 Its common practice to inject an instance of `ILogger` or `ILoggerFactory` into a controller in order to log various events of your controller methods.
 
-This is fully supported but GraphQL can also generate an instance of `IGraphLogger` with a few helpful methods for raising "on the fly" log entries if you wish to make use of it. `IGraphLogger` inherits from `ILogger`, the two can be used interchangeably as needed.
+This is fully supported but the library can also generate an instance of `IGraphLogger` with a few helpful methods for raising "on the fly" log entries if you wish to make use of it. `IGraphLogger` implements `ILogger`, the two can be used interchangeably as needed.
 
 ```csharp title="Using IGraphLogger"
 public class BakeryController : GraphController
 {
     private IGraphLogger _graphLogger;
     private IDonutService _service;
+    // highlight-next-line
     public BakeryController(IDonutService service, IGraphLogger graphLogger)
     {
         _service = service;
@@ -40,17 +41,22 @@ public class BakeryController : GraphController
     {
         Donut donut = _service.CreateDonut(name);
 
+        // highlight-start
         var donutEvent = new GraphLogEntry("New Donut Created!");
         donutEvent["Name"] = name;
         donutEvent["Id"] = donut.Id;
 
         _graphLogger.Log(LogLevel.Information, donutEvent);
+        // highlight-end
+
         return donut;
     }
 }
 ```
 
-> `GraphLogEntry` is an untyped implementation of `IGraphLogEntry` and can be used on the fly for quick operations.
+:::tip
+ `GraphLogEntry` is an untyped implementation of `IGraphLogEntry` and can be used on the fly for quick operations or as a basis for custom log entries.
+:::
 
 ## Custom ILoggers
 
@@ -61,23 +67,14 @@ By default, the log events will return a contextual message on `.ToString()` wit
 But given the extra data the log entries contain, it makes more sense to create a custom `ILogger` to take advantage of the full object.
 
 ```csharp title="Custom ILogger"
-using Microsoft.Extensions.Logging;
-using GraphQL.AspNet.Interfaces.Logging;
 public class MyCustomLogger : ILogger
 {
-    public IDisposable BeginScope<TState>(TState state)
-    {
-        // ...
-    }
-
-    public bool IsEnabled(LogLevel logLevel)
-    {
-        // ...
-    }
+    // other code ommited for brevity
 
     public void Log<TState>(LogLevel logLevel, EventId eventId,
         TState state, Exception exception, Func<TState, Exception, string> formatter)
     {
+        // highlight-next-line
         if (state is IGraphLogEntry logEntry)
         {
             // handle the log entry here
@@ -87,7 +84,7 @@ public class MyCustomLogger : ILogger
 ```
 
 :::info
- The state parameter of `ILogger.Log` will be an instance of `IGraphLogEntry` whenever a GraphQL ASP.NET log event is recorded.
+ The state parameter of `ILogger.Log()` will be an instance of `IGraphLogEntry` whenever a GraphQL ASP.NET log event is recorded.
 :::
 
 ## Log Entries are KeyValuePair Collections
@@ -95,10 +92,7 @@ public class MyCustomLogger : ILogger
 While the various [standard log events](./standard-events) declare explicit properties for the data they return, every log entry is just a collection of key/value pairs that can be iterated through for quick serialization.
 
 ```csharp
-public interface IGraphLogEntry : IGraphLogPropertyCollection
-{ /*...*/ }
-
-public interface IGraphLogPropertyCollection : IEnumerable<KeyValuePair<string, object>>
+public interface IGraphLogEntry : IEnumerable<KeyValuePair<string, object>>
 { /*...*/ }
 ```
 
@@ -123,7 +117,11 @@ Here we've enabled the log events through `appsettings.json`
 }
 ```
 
-Log Entries are not allocated unless their respective log levels are enabled. It is not uncommon for real world queries to generate 100s of log entries per request. Take care to ensure you have enabled or disabled logging appropriately in your environment as it can greatly impact performance if left unchecked. It is never a good idea to enable trace level logging for graphQL outside of development.
+Log Entries are not allocated unless their respective log levels are enabled. It is not uncommon for real world queries to generate 100s of log entries per request. Take care to ensure you have setup your logging appropriately in a given environment as it can greatly impact performance if left on by accident. 
+
+:::caution 
+It is never a good idea to enable trace level logging outside of development.
+:::
 
 ### Scoped Log Entries
 

@@ -17,6 +17,7 @@ Lets say we wanted to build a scalar called `Money` that can handle both an amou
 public class InventoryController : GraphController
 {
     [QueryRoot("search")]
+    // highlight-next-line
     public IEnumerable<Product> Search(Money minPrice)
     {
         return _service.RetrieveProducts(
@@ -41,6 +42,7 @@ public class Money
 
 ```graphql title="Using the Money Scalar"
 query {
+    # highlight-next-line
     search(minPrice: "$18.45"){
         id
         name
@@ -99,29 +101,31 @@ public interface ILeafValueResolver
     - This method is used when generated default values for field arguments and input object fields via introspection queries.
     - This method must return a value exactly as it would appear in a schema type definition For example, strings must be surrounded by quotes.
     
--   `ValidateObject(object)`: A method used when validating data returned from a a field resolver. GraphQL will call this method and provide an object instance to determine if its acceptable and can be used in a query.
+-   `ValidateObject(object)`: A method used when validating data returned from a a field resolver. GraphQL will call this method and provide an object instance to determine if its acceptable and can be used in a query result.
 
 :::note
- `ValidateObject(object)` should not attempt to enforce nullability rules. In general, all scalars should return `true` for a validation result if the provided object is `null`.
+ `ValidateObject(object)` should not attempt to enforce nullability rules. In general, all scalars "could be null" depending on their usage in a schema. All scalars should return `true` for a validation result if the provided object is `null`.
 :::
 
-### ILeafValueResolver Members
+### ILeafValueResolver
 
--   `Resolve(ReadOnlySpan<char>)`: A resolver function capable of converting an array of characters into the internal representation of the scalar.
+ILeafValueResolver contains a single method:
+
+-   `Resolve(ReadOnlySpan<char>)`: A resolver function used for converting an array of characters into the internal representation of the scalar.
 
 #### Dealing with Escaped Strings
 
 The span provided to `ILeafValueResolver.Resolve` will be the raw data read from the query document. If the data represents a string, it will be provided in its delimited format. This means being surrounded by quotes as well as containing escaped characters (including escaped unicode characters):
 
-Example string data:
+Example data:
 
 -   `"quoted string"`
 -   `"""triple quoted string"""`
 -   `"With \"\u03A3scaped ch\u03B1racters\""`;
 
-The static type `GraphQLStrings` provides a handy static method for unescaping the data if you don't need to do anything special with it, `GraphQLStrings.UnescapeAndTrimDelimiters`.
+The static method `GraphQLStrings.UnescapeAndTrimDelimiters` provides a handy way for unescaping the data if you don't need to do anything special with it.
 
-Calling `UnescapeAndTrimDelimiters` with the previous examples produces:
+Calling `GraphQLStrings.UnescapeAndTrimDelimiters` with the previous examples produces:
 
 -   `quoted string`
 -   `triple quoted string`
@@ -129,12 +133,12 @@ Calling `UnescapeAndTrimDelimiters` with the previous examples produces:
 
 #### Indicating an Error
 
-When resolving input values with `Resolve()`, if the provided value is not usable and must be rejected then the entire query document must be rejected. For instance, if a document contained the value `"$15.R0"` for our money scalar it would need to be rejected because `15.R0` cannot be converted to a decimal decimal. 
+When resolving incoming values with `Resolve()`, if the provided value is not usable and must be rejected then the entire query document must be rejected. For instance, if a document contained the value `"$15.R0"` for our money scalar it would need to be rejected because `15.R0` cannot be converted to a decimal. 
 
-Throw an exception when this happens and GraphQL will automatically generate an appropriate response  with the correct origin information indicating the line and column in the query document where the error occurred. However, like with any other encounterd exception, GraphQL will obfuscate it to a generic message and only expose your exception details if allowed by the [schema configuration](../reference/schema-configuration).
+Throw an exception when this happens and GraphQL will automatically generate an appropriate response with the correct origin information indicating the line and column in the query document where the error occurred. However, like with any other encounterd exception, the library will obfuscate it to a generic message and only expose your exception details if allowed by the [schema configuration](../reference/schema-configuration).
 
 :::tip Pro Tip!
-If you throw `UnresolvedValueException` your error message will be delivered verbatim to the requestor as part of the response message instead of being obfuscated. 
+If you throw the special `UnresolvedValueException` your error message will be delivered verbatim to the requestor as part of the response message instead of being obfuscated. 
 :::
 
 ### Example: Money Scalar
@@ -219,7 +223,7 @@ services.AddGraphQL();
 ```
 
 :::info 
-Since our scalar is represented by a .NET class, if we don't pre-register it GraphQL will attempt to parse the `Money` class as an object graph type. Once registered as a scalar, any attempt to use `Money` as an object graph type will cause an exception.
+Since our scalar is represented by a .NET class, if we don't pre-register it GraphQL will attempt to parse the `Money` class as an input object graph type. Once registered as a scalar, any attempt to use `Money` as an object graph type will cause an exception.
 :::
 
 ## @specifiedBy Directive
@@ -274,7 +278,7 @@ A few points about designing your scalar:
 -   Scalar types should be simple and work in isolation.
 -   The `ReadOnlySpan<char>` provided to `ILeafValueResolver.Resolve` should be all the data needed to generate a value, there should be no need to perform side effects or fetch additional data.
 -   Scalar types should not track any state, depend on any stateful objects, or attempt to use any sort of dependency injection.
--   `ILeafValueResolver.Resolve` must be **FAST**! Since your resolver is used to construct an initial query plan from a text document, it'll be called many orders of magnitude more often than any other method.
+-   `ILeafValueResolver.Resolve` must be **FAST**! Since your resolver is used to construct an initial query plan from the raw query text, it'll be called many orders of magnitude more often than any other method.
 
 ### Aim for Fewer Scalars
 
@@ -295,16 +299,14 @@ public class InventoryController : GraphController
 
 public class Money
 {
-    public string Symbol { get; }
-    public decimal Price { get; }
+    public string Symbol { get; set; }
+    public decimal Price { get; set; }
 }
 ```
 
 ```graphql title="Using the Money Input Object"
 query {
-    search(minPrice: {
-            symbol: "$"
-            price: 18.45}){
+    search(minPrice: {symbol: "$" price: 18.45}){
         id
         name
     }
@@ -312,7 +314,7 @@ query {
 ```
 
 
-This is a lot more flexible. We can add more properties to `Money` when needed and not break existing queries. Whereas with a scalar if we change the acceptable format of the string data any existing query text will now be invalid. It is almost always better to represent your data as an object or input object rather than a scalar.
+This is a lot more flexible. We can add more properties to `Money` when needed and not break existing queries. Whereas with a scalar if we change the acceptable format of the string data any existing applications using our graph may need to be updated. It is almost always better to represent your data as an input object rather than a custom scalar.
 
 :::caution Be Careful
 Creating a custom scalar should be a last resort, not a first option.
