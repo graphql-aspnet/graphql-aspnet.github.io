@@ -79,26 +79,26 @@ The following properties are available to all directive action methods:
 Directives may contain input arguments just like fields. However, its important to note that while a directive may declare multiple action methods for different locations to seperate your logic better, it is only a single entity in the schema. ALL action methods must share a common signature. The runtime will throw an exception while creating your schema if the signatures of the action methods differ.
 
 ```csharp title="Arguments for Directives"
-    public class MyValidDirective : GraphDirective
-    {
-        [DirectiveLocations(DirectiveLocation.FIELD)]
-        public IGraphActionResult ExecuteField(int arg1, string arg2) { /.../ }
+public class MyValidDirective : GraphDirective
+{
+    [DirectiveLocations(DirectiveLocation.FIELD)]
+    public IGraphActionResult ExecuteField(int arg1, string arg2) { /.../ }
 
-        [DirectiveLocations(DirectiveLocation.FRAGMENT_SPREAD)]
-        public Task<IGraphActionResult> ExecuteFragSpread(int arg1, string arg2) { /.../ }
-    }
+    [DirectiveLocations(DirectiveLocation.FRAGMENT_SPREAD)]
+    public Task<IGraphActionResult> ExecuteFragSpread(int arg1, string arg2) { /.../ }
+}
 
-    public class MyInvalidDirective : GraphDirective
-    {
-        [DirectiveLocations(DirectiveLocation.FIELD)]
-        // highlight-next-line
-        public IGraphActionResult ExecuteField(int arg1, int arg2) { /.../ }
+public class MyInvalidDirective : GraphDirective
+{
+    [DirectiveLocations(DirectiveLocation.FIELD)]
+    // highlight-next-line
+    public IGraphActionResult ExecuteField(int arg1, int arg2) { /.../ }
 
-        // method parameters MUST match for all directive action methods.
-        [DirectiveLocations(DirectiveLocation.FRAGMENT_SPREAD)]
-        // highlight-next-line
-        public IGraphActionResult ExecuteFragSpread(int arg1, string arg2) { /.../ }
-    }
+    // method parameters MUST match for all directive action methods.
+    [DirectiveLocations(DirectiveLocation.FRAGMENT_SPREAD)]
+    // highlight-next-line
+    public IGraphActionResult ExecuteFragSpread(int arg1, string arg2) { /.../ }
+}
 ```
 
 :::info
@@ -109,25 +109,25 @@ Directives may contain input arguments just like fields. However, its important 
 
 (_**a.k.a. Operation Directives**_)
 
-Execution Directives are applied to query documents and executed only on single request in which they are encountered. 
+Execution Directives are applied to query documents and executed only on the  request in which they are encountered. 
 
 ### Example: @include
 
 This is the code for the built in `@include` directive:
 
 ```csharp
-    [GraphType("include")]
-    public sealed class IncludeDirective : GraphDirective
+[GraphType("include")]
+public sealed class IncludeDirective : GraphDirective
+{
+    [DirectiveLocations(DirectiveLocation.FIELD | DirectiveLocation.FRAGMENT_SPREAD | DirectiveLocation.INLINE_FRAGMENT)]
+    public IGraphActionResult Execute([FromGraphQL("if")] bool ifArgument)
     {
-        [DirectiveLocations(DirectiveLocation.FIELD | DirectiveLocation.FRAGMENT_SPREAD | DirectiveLocation.INLINE_FRAGMENT)]
-        public IGraphActionResult Execute([FromGraphQL("if")] bool ifArgument)
-        {
-            if (this.DirectiveTarget is IIncludeableDocumentPart idp)
-                idp.IsIncluded = ifArgument;
+        if (this.DirectiveTarget is IIncludeableDocumentPart idp)
+            idp.IsIncluded = ifArgument;
 
-            return this.Ok();
-        }
+        return this.Ok();
     }
+}
 ```
 
 This Directive:
@@ -233,35 +233,35 @@ Type System directives are applied to schema items and executed at start up whil
 This directive will extend the resolver of a field, as its declared **in the schema**, to turn any strings into lower case letters.
 
 ```csharp title="Example: ToLowerDirective.cs"
-    public class ToLowerDirective : GraphDirective
+public class ToLowerDirective : GraphDirective
+{
+    [DirectiveLocations(DirectiveLocation.FIELD_DEFINITION)]
+    public IGraphActionResult Execute()
     {
-        [DirectiveLocations(DirectiveLocation.FIELD_DEFINITION)]
-        public IGraphActionResult Execute()
+        // ensure we are working with a graph field definition and that it returns a string
+        if (this.DirectiveTarget is IGraphField field)
         {
-            // ensure we are working with a graph field definition and that it returns a string
-            if (this.DirectiveTarget is IGraphField field)
-            {
-                // ObjectType represents the .NET Type of the data returned by the field
-                if (field.ObjectType != typeof(string))
-                    throw new Exception("This directive can only be applied to string fields");
+            // ObjectType represents the .NET Type of the data returned by the field
+            if (field.ObjectType != typeof(string))
+                throw new Exception("This directive can only be applied to string fields");
 
-                // update the resolver to execute the orignal
-                // resolver then apply lower casing to the string result
-                var resolver = field.Resolver.Extend(ConvertToLower);
-                field.UpdateResolver(resolver);
-            }
-
-            return this.Ok();
+            // update the resolver to execute the orignal
+            // resolver then apply lower casing to the string result
+            var resolver = field.Resolver.Extend(ConvertToLower);
+            field.UpdateResolver(resolver);
         }
 
-        private static Task ConvertToLower(FieldResolutionContext context, CancellationToken token)
-        {
-            if (context.Result is string)
-                context.Result = context.Result?.ToString().ToLower();
-
-            return Task.CompletedTask;
-        }
+        return this.Ok();
     }
+
+    private static Task ConvertToLower(FieldResolutionContext context, CancellationToken token)
+    {
+        if (context.Result is string)
+            context.Result = context.Result?.ToString().ToLower();
+
+        return Task.CompletedTask;
+    }
+}
 ```
 
 This Directive:
@@ -280,25 +280,25 @@ This Directive:
 The `@deprecated` directive is a built in type system directive provided by graphql to indicate deprecation on a field definition or enum value. Below is the code for its implementation.
 
 ```csharp
-    public sealed class DeprecatedDirective : GraphDirective
+public sealed class DeprecatedDirective : GraphDirective
+{
+    [DirectiveLocations(DirectiveLocation.FIELD_DEFINITION | DirectiveLocation.ENUM_VALUE)]
+    public IGraphActionResult Execute([FromGraphQL("reason")] string reason = "No longer supported")
     {
-        [DirectiveLocations(DirectiveLocation.FIELD_DEFINITION | DirectiveLocation.ENUM_VALUE)]
-        public IGraphActionResult Execute([FromGraphQL("reason")] string reason = "No longer supported")
+        if (this.DirectiveTarget is IGraphField field)
         {
-            if (this.DirectiveTarget is IGraphField field)
-            {
-                field.IsDeprecated = true;
-                field.DeprecationReason = reason;
-            }
-            else if (this.DirectiveTarget is IEnumValue enumValue)
-            {
-                enumValue.IsDeprecated = true;
-                enumValue.DeprecationReason = reason;
-            }
-
-            return this.Ok();
+            field.IsDeprecated = true;
+            field.DeprecationReason = reason;
         }
+        else if (this.DirectiveTarget is IEnumValue enumValue)
+        {
+            enumValue.IsDeprecated = true;
+            enumValue.DeprecationReason = reason;
+        }
+
+        return this.Ok();
     }
+}
 ```
 
 This Directive:
@@ -350,9 +350,7 @@ Arguments added to the apply directive attribute will be passed to the directive
 ```csharp title="Applying Directive Arguments"
 public class Person
 {
-    [ApplyDirective(
-        "deprecated",
-        "Names don't matter")]
+    [ApplyDirective("deprecated", "Names don't matter")]
     public string Name{ get; set; }
 }
 ```
@@ -448,6 +446,12 @@ services.AddGraphQL(o => {
         .ToItems(item => item.IsObjectGraphType<Person>());
     // highlight-end
 });
+```
+
+```graphql title="Person Type Definition"
+type Person @scanItem("medium") @scanItem("high") {
+  name: String 
+}
 ```
 
 ### Understanding the Type System

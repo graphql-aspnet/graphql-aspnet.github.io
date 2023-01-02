@@ -5,7 +5,7 @@ sidebar_label: Query Profiling
 sidebar_position: 0
 ---
 
-GraphQL ASP.NET tracks query metrics through the `IGraphQueryExecutionMetrics` interface attached to each query execution context as its processed by the runtime and allows for tracing and timing of individual fields as they are started and completed.
+GraphQL ASP.NET tracks query metrics through the `IQueryExecutionMetrics` interface attached to each query execution context as its processed by the runtime and allows for tracing and timing of individual fields as they are started and completed.
 
 The metrics themselves enable 3 levels of tracing:
 
@@ -127,7 +127,7 @@ Just as with [logging](../logging/structured-logging), profiling your queries to
 
 Customizing the way metrics are captured is not a trivial task but can be done:
 
-1.  Implement `IGraphQueryExecutionMetricsFactory<TSchema>` and register it to your DI container before calling `.AddGraphQL()`. This will override the internal factory and use your implementation to generate metrics packages for any received requests.
-2.  Implement `IGraphQueryExecutionMetrics` and have your factory return transient instances of this class when requested.
+1.  Implement `IQueryExecutionMetricsFactory<TSchema>` and register it to your DI container before calling `.AddGraphQL()`. This will override the internal factory and use your implementation to generate metrics packages for any received requests.
+2.  Implement `IQueryExecutionMetrics` and have your factory return transient instances of this class when requested.
 
 The runtime will now send metrics events to your objects and you can proceed with handling the data. However, the default pipeline structure is still only going to deliver 3 named phases to your metrics package (Parsing, Validation, Execution). If you want to alter the phase sequence or add new ones, you'll need to implement your own core pipeline components, which is beyond the scope of this documentation.

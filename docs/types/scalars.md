@@ -38,19 +38,41 @@ GraphQL ASP.NET has 20 built in scalar types.
 
 ## Input Value Resolution
 
-When a value is resolved, it's read from the query document (or variable collection) in one of three ways:
+When a scalar value is resolved, it's read from the query document (or variable collection) in one of three ways:
 
 -   **String** : A string of characters, delimited by `"quotes"`
--   **Boolean** The value `true` or `false` with no quotes
--   **Number** A sequence of numbers with an optional decimal point, negative sign or the letter `e`
+-   **Boolean** The value `true` or `false` without quotes
+-   **Number** A sequence of numbers with an optional decimal point, negative sign or the letter `e` without quotes
     -   example: `-123.456e78`
     -   GraphQL numbers must conform to the [IEEE 754](https://en.wikipedia.org/wiki/IEEE_754) standard [Spec § [3.5.2](https://graphql.github.io/graphql-spec/October2021/#sec-Float)]
 
 Scalars used as input arguments require that any supplied value match at least one supported input format before they will attempt to convert the value into the related .NET type. If the value read from the document doesn't match an approved format it is rejected before conversion is attempted. 
 
-For example, the library will accept dates as numbers or strings (e.g. `1670466552`, `"2022-12-8'T'02:29:10"`). If you try to supply a boolean value, `true`, the query is rejected outright and no parsing attempt is made. This can come in handy for custom scalar types that may have multiple serialization options.
+For example, the library will accept dates as numbers or strings. If you try to supply a boolean value, `true`, the query is rejected outright and no parsing attempt is made. This can come in handy for custom scalar types that may have multiple serialization options.
 
 See the table above for the list of allowed formats per scalar type.
+
+#### Working With Dates
+
+Date valued scalars (e.g. `DateTime`, `DateTimeOffset`, `DateOnly`) can be supplied as an [RFC 3339](https://www.rfc-editor.org/rfc/rfc3339) compliant string value or as a number representing the amount of time from the [Unix Epoch](https://en.wikipedia.org/wiki/Unix_time).
+
+Examples:
+
+| Supplied Value  | Parsed Date |
+|-----------------|-------------|
+|`"2022-12-30T18:30:38.259+00:00"`  |Dec. 30, 2022 @  6:30:38.259 PM (UTC - 0) |
+|`"2022-12-30"`                     |Dec. 30, 2022 @  00:00:00.000 AM (UTC - 0) |
+|`1586965574234`                    | April 15, 2020 @ 3:46:14.234 AM (UTC - 0) |
+|`1586940374`                       | April 15, 2020 @ 3:46:14.000 AM (UTC - 0) |
+
+:::tip Epoch Values
+Dates supplied as an epoch number can be supplied with or without milliseconds.
+:::
+
+> Note: If a time component is supplied to a `DateOnly` scalar, it will be truncated and only the date portion will be used. 
+
+By Default, the library will serialize all dates as an `RFC 3339` compliant string.
+
 
 ## Scalar Names Are Fixed
 
