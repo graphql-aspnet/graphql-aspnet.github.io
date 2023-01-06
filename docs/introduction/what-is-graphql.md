@@ -60,8 +60,8 @@ GraphQL is a query [language specification](https://spec.graphql.org/); a contra
 | Library Name                                                    | Language   |
 | --------------------------------------------------------------- | ---------- |
 | [Apollo Server](https://github.com/apollographql/apollo-server) | JavaScript |
-| [GraphQL Ruby](https://graphql-ruby.org/)                       | Ruby       |
-| [GraphQL Java](https://www.graphql-java.com/)                   | Java       |
+| [GraphQL Ruby](https://github.com/rmosolgo/graphql-ruby)        | Ruby       |
+| [GraphQL Java](https://github.com/graphql-java/graphql-java)    | Java       |
 | [GraphQL .NET](https://github.com/graphql-dotnet/graphql-dotnet)| .NET       |
 | [Hot Chocolate](https://github.com/ChilliCream/hotchocolate)    | .NET       |
 
