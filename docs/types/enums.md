@@ -44,6 +44,7 @@ public enum DonutType
     Custard,
     Jelly,
     SugarCoated,
+    // highlight-next-line
     Filled = Custard | Jelly
 }
 ```
@@ -55,6 +56,7 @@ enum DonutType {
   CUSTARD
   JELLY
   SUGARCOATED
+  // highlight-next-line
   FILLED
 }
 ```
@@ -72,12 +74,14 @@ public enum DonutType
     Custard,
     Jelly,
 
+    // highlight-next-line
     [GraphSkip]
     SugarCoated,
 }
 ```
 
 ```graphql  title="DonutType Type Definition"
+# Sugar Coated is not part of the enum type
 enum DonutType {
   GLAZED
   CAKE
@@ -86,12 +90,17 @@ enum DonutType {
 }
 ```
 
+:::caution 
+An excluded enum value is not just hidden, its NOT part of the schema. Any attempt to use it as a value in a query will result in a validation error.
+:::
+
 ## Custom Type Name
 
-Like with other graph types use the `[GraphType]` attribute to indicate a custom name for the enumeration in the object graph.
+Like with other graph types use the `[GraphType]` attribute to indicate a custom name for the enumeration in the graph.
 
 
 ```csharp title="DonutType.cs"
+// highlight-next-line
 [GraphType("Donut_Type")]
 public enum DonutType
 {
@@ -104,6 +113,7 @@ public enum DonutType
 ```
 
 ```graphql  title="DonutType Type Definition"
+// highlight-next-line
 enum Donut_Type {
   GLAZED
   CAKE
@@ -115,7 +125,7 @@ enum Donut_Type {
 
 ## Custom Value Names
 
-Use `[GraphEnumValue]` to declare a custom name for the enum value and GraphQL will automatically handle the name translation when parsing a query document. A target schema's naming format rules will be applied and enforced on the name provided.
+Use `[GraphEnumValue]` to declare a custom name for the enum value and GraphQL will automatically handle the name translation when parsing a query document. A target schema's naming format rules will be applied and enforced on the value provided.
 
 ```csharp title="DonutType.cs"
 public enum DonutType
@@ -140,3 +150,24 @@ enum DonutType {
   SUGAR_COATED
 }
 ```
+
+## Value Name Formatting
+
+By default, enum values are rendered in all CAPITAL LETTERS. This is the standard convention for GraphQL. If, however; you'd prefer something different you can override the defaults by creating a new `GraphNameFormatter` on your [schema configuration](../reference/schema-configuration.md#graphnamingformatter).
+
+```csharp title="Startup Code"
+services.AddGraphQL(o => {
+  var customFormatter = = new GraphNameFormatter(enumValueStrategy: GraphNameFormatStrategy.ProperCase);
+  o.DeclarationOptions.GraphNamingFormatter = customFormatter;
+})
+```
+
+```graphql title="Sample Formatting"
+enum DonutType {
+  Glazed
+  Cake
+  Custard
+  Jelly
+}
+```
+> If you need something even more exotic, inherit from `GraphNameFormatter` and override the various methods as you see fit.

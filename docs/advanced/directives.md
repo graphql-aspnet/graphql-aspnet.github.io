@@ -175,7 +175,7 @@ public class ToUpperDirective : GraphDirective
     [DirectiveLocations(DirectiveLocation.FIELD)]
     public IGraphActionResult UpdateResolver()
     {
-        if (this.DirectiveTarget as IFieldDocumentPart fieldPart)
+        if (this.DirectiveTarget is IFieldDocumentPart fieldPart)
         {
             //
             if (fieldPart.Field?.ObjectType != typeof(string))

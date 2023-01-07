@@ -343,7 +343,7 @@ public class Donut
 ```
 
 ```graphql title="GraphQL Type Definition"
-# 
+# Recipe is not included in the schema
 type Donut {
     Id: String
     Name: String  

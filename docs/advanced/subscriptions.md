@@ -15,10 +15,10 @@ The first step to using subscriptions is to install the subscription server pack
 
 ```powershell title="Install The Library"
 # Using the dotnet CLI
-> dotnet add package GraphQL.AspNet.Subscriptions --prerelease
+> dotnet add package GraphQL.AspNet.Subscriptions
 
 # using Package Manager Console
-> Install-Package GraphQL.AspNet.Subscriptions -IncludePrerelease
+> Install-Package GraphQL.AspNet.Subscriptions
 ```
 
 This adds the necessary components to create a subscription server for a given schema such as communicating with web sockets, parsing subscription queries and responding to events.
@@ -60,7 +60,8 @@ public class SubscriptionController : GraphController
 
     // highlight-next-line
     [SubscriptionRoot("onWidgetChanged", typeof(Widget), EventName = "WIDGET_CHANGED")]
-    public IGraphActionResult  OnWidgetChanged(Widget eventData, string filter){
+    public IGraphActionResult  OnWidgetChanged(Widget eventData, string filter)
+    {
         if(eventData.Name.StartsWith(filter))
         {
             // send the data down to the listening client

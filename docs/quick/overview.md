@@ -9,10 +9,10 @@ description: A quick overview of how to use the library
 
 ```powershell title="Install The Library"
 # Using the dotnet CLI
-> dotnet add package GraphQL.AspNet --prerelease
+> dotnet add package GraphQL.AspNet
 
-# using Package Manager Console
-> Install-Package GraphQL.AspNet -IncludePrerelease
+# Using Package Manager Console
+> Install-Package GraphQL.AspNet
 ```
 
 ## Documentation
@@ -45,7 +45,7 @@ This documentation should can be used as a reference for various aspects of the 
 
 ```powershell
 # Powershell terminal, Package Manager in Visual Studio, Developer Command Prompt etc.
-> dotnet add package GraphQL.AspNet --prerelease
+> dotnet add package GraphQL.AspNet
 ```
 
 ### Create a Controller
