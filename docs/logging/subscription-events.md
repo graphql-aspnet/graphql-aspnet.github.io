@@ -5,11 +5,11 @@ sidebar_label: Subscription Events
 sidebar_position: 2
 ---
 
-GraphQL ASP.NET tracks some special events related to the management of subscriptions. They are outlined below.
+GraphQL ASP.NET tracks some special events related to the management of [subscriptions](../advanced/subscriptions.md). They are outlined below.
 
-_**Common Event Properties**_
+**Common Event Properties**
 
-The [common event properties](./standard-events.md) outlined on the standard events page apply to all subscription events.
+The common event properties outlined on the [standard events](./standard-events.md) page apply to all subscription events as well.
 
 ## Server Level Events
 

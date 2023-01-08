@@ -123,18 +123,6 @@ const config = {
                 </a>
               `
               },
-              {
-                html: `
-                      <a 
-                        class="footer__link-item"
-                        href="https://dotnet.microsoft.com/en-us/learn/aspnet" 
-                        target="_blank" 
-                        rel="noreferrer noopener" 
-                        aria-label="Learn ASP.NET">
-                        Learn ASP.NET
-                      </a>
-                    `
-              },
             ],
           },
         ],

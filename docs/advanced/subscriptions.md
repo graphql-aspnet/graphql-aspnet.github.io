@@ -184,7 +184,7 @@ Ok no problem, just scale horizontally, right? Spin up additional server instanc
 
 With the examples above, events published by any mutation using `PublishSubscriptionEvent()` are routed internally, directly to the local subscription server meaning only those clients connected to the server instance where the event was raised will receive it. Clients connected to other server instances will never know the event occured. This represents a big problem for large scale websites, so what do we do?
 
-[This diagram](../assets/2022-10-subscription-server.pdf) shows a high level difference between the default, single server configuration and a custom scalable solution.
+> [This diagram](../assets/2023-01-subscription-server.pdf) shows a high level difference between the default, single server configuration and a custom scalable solution.
 
 ### Custom Event Publishing
 
@@ -383,14 +383,14 @@ services.AddGraphQL()
 ```
 
 :::note 
-The max receiver count can easily be set in the 1000s. There is no magic bullet as to an appropriate value. It all depends on the number of events you are expecting, the number of subscribers and the workload of each event in your application.
+The max receiver count can easily be set in the 1000s or higher. There is no magic bullet in choosing an appropriate value. It all depends on the number of events you are expecting, the number of subscribers, the workload of each event and the hardware available to your application.
 :::
 
 ### Event Multiplication
 
 Think carefully about your production scenarios when you introduce subscriptions into your application.  As mentioned above, for each event raised, each subscription monitoring that event must execute a standard graphql query, with the supplied event data, to generate a result and send it to its connected client. 
 
-If, for instance, you have `200 clients` connected to a single server, each with `3 subscriptions` against the same field, thats `600 individual queries` that must be executed to process a single event completely. Even if you call `SkipSubscriptionEvent` to drop the event and send no send data to a client, the query must still be executed to determine if the subscriber is not interested in the data. If you execute any database operations in your `[Subcription]` method, its going to be run 600 times.  Suppose your server receives 5 mutations in rapid succession, all of which raise the event, thats a spike of `3,000 queries`, instantaneously, that the server must process.  
+If, for instance, you have `200 clients` connected to a single server, each with a subscription against the same field, thats `200 individual queries` that must be executed to process a _single event_ completely. Even if you call `SkipSubscriptionEvent` to drop the event and send no send data to a client, the query must still be executed to determine if the subscriber is not interested in the data. If you execute any database operations in your `[Subcription]` method, its going to be run 200 times.  Suppose your server receives 5 mutations in rapid succession, all of which raise the event, thats a spike of `1,000 queries`, instantaneously, that the server must process.  
 
 Balancing the load can be difficult. Luckily there are some [throttling levers](/docs/reference/global-configuration#subscriptions) you can adjust.
 
@@ -447,3 +447,11 @@ services.AddGraphQL()
 :::tip
  Consider using the built in `SubscriptionClientDispatchQueueAlertSettings` object for a standard implementation of the required interface.
 :::
+
+## General Tips
+
+✅  **DO** exit a subscription with `this.SkipSubscriptionEvent()` as soon as possible. <br/>
+
+✅  **DO** secure your business objects. Subscriptions will receive every event raised against the field they are subscribed to, regardless of the data. <br/>
+
+🧨  **DON'T** rely on database queries or other IO to determine if an event should be skipped.

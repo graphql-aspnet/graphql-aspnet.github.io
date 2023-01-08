@@ -139,7 +139,7 @@ query {
 }
 ```
 
-## No Boilerplate Field Paths
+## Field Paths
 
 We've used `[QueryRoot]` so far to force a controller action to be a root field on the `query` type. But we can use an approximation of Web API's url templates to create any combination of nested fields needed. When you have 50 controllers with 20-40 actions each, organizing your object hierarchy becomes trivial.
 

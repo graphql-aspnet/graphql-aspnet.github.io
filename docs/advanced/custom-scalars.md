@@ -5,13 +5,13 @@ sidebar_label: Custom Scalars
 sidebar_position: 3
 ---
 
-Scalars are the most basic, fundamental unit of content in GraphQL. It is one of two leaf types (the other being [ENUMS](../types/enums)). When a query is resolved the returned data will be a set of nested key/value pairs where every key is a string and every value is either another set of key/value pairs, an enum or a scalar.
+Scalars are the most basic, fundamental unit of content in GraphQL. It is one of two leaf types (the other being [enums](../types/enums)). 
 
 Enums, being a type of their own, are very straight forward in .NET. Scalars, however; can be anything. For instance, the `Uri` scalar is represented in GraphQL by a string. On the server though, we convert it into a `System.Uri` object, with all the extra features that go along with it.
 
-This can be done for any value that can be represented as a simple set of characters. When you create a scalar you declare its .NET type, provide a value resolver that accepts raw data from a query (a `ReadOnlySpan<char>`) and returns the completed scalar value.
+This can be done for any value that can be represented as a simple set of characters. When you create a scalar you declare its .NET type, provide a value resolver that accepts raw data from a query (a `ReadOnlySpan<char>`) and returns the instantiated scalar value.
 
-Lets say we wanted to build a scalar called `Money` that can handle both an amount and currency symbol. We might accept it in a query like this:
+Lets say we wanted to build a scalar called `Money` that can handle both an amount and currency symbol (e.g. "$23.45"). We might accept it in a query like this:
 
 ```csharp title="Declaring a Money Scalar"
 public class InventoryController : GraphController
@@ -84,8 +84,8 @@ public interface ILeafValueResolver
 
 ### IScalarGraphType Members
 
--   `Name`: The name of this scalar in GraphQL. This is the name that will be displayed in introspection queries.
--   `InternalName`: An alternative name representing the scalar in server side code. This name is commonly used in logging messages and exceptions to identify the scalar in terms of the server. Its common to use the fully qualified name, i.e. `"MyNameSpace.Money"`.
+-   `Name`: The unique name of this scalar. This name must be used when declaring a variable.
+-   `InternalName`: An alternate name representing the scalar in server side code. This name is commonly used in logging messages and exceptions to identify the scalar in terms of the server definitions. Its common to use the fully qualified name, i.e. `"MyNameSpace.Money"`.
 -   `Description`: The phrase that will used to describe the scalar in introspection queries.
 -   `Kind`: Scalars must always be declared as `TypeKind.SCALAR`.
 -   `Publish`: Indicates if the scalar should be published for introspection queries. Unless there is a very strong reason not to, scalars should always be published. Set this value to `true`.
@@ -95,16 +95,16 @@ public interface ILeafValueResolver
 -   `OtherKnownTypes`: A collection of other potential types that could be used to represent the scalar in a controller class. For instance, integers can be expressed as `int` or `int?`. Most scalars will provide an empty list (e.g. `TypeCollection.Empty`).
 -   `SourceResolver`: An object that implements `ILeafValueResolver` which can convert raw input data into the scalar's primary `ObjectType`.
 -   `Serialize(object)`: A method that converts an instance of your scalar to a leaf value that is serializable in a query response
-    -   This method must return a `number`, `string`, `bool` or `null`.
-    -   When converting to a number this can be any C# number value type (int, float, decimal etc.).
+    -   This method **must** return a `number`, `string`, `bool` or `null`.
+    -   When converting to a number this method can return any C# number value type (int, float, decimal etc.).
 -   `SerializeToQueryLanguage(object)`: A method that converts an instance of your scalar to a string representing it if it were declared as part of a schema language type definition. 
     - This method is used when generated default values for field arguments and input object fields via introspection queries.
     - This method must return a value exactly as it would appear in a schema type definition For example, strings must be surrounded by quotes.
     
--   `ValidateObject(object)`: A method used when validating data returned from a a field resolver. GraphQL will call this method and provide an object instance to determine if its acceptable and can be used in a query result.
+-   `ValidateObject(object)`: A method used when validating data received from a a field resolver. GraphQL will call this method and provide an object instance to determine if its acceptable and can be used in a query result.
 
 :::note
- `ValidateObject(object)` should not attempt to enforce nullability rules. In general, all scalars "could be null" depending on their usage in a schema. All scalars should return `true` for a validation result if the provided object is `null`.
+ `ValidateObject(object)` should not attempt to enforce nullability rules. In general, all scalars "could be null" depending on their usage in a schema. All scalars should return `true` for a validation result if the provided object is `null`. A field's type expression, enforced by graphql, will decide if null is acceptable on an individual field.
 :::
 
 ### ILeafValueResolver
@@ -223,7 +223,7 @@ services.AddGraphQL();
 ```
 
 :::info 
-Since our scalar is represented by a .NET class, if we don't pre-register it GraphQL will attempt to parse the `Money` class as an input object graph type. Once registered as a scalar, any attempt to use `Money` as an object graph type will cause an exception.
+Since our scalar is represented by a .NET class, if we don't pre-register it, GraphQL will attempt to parse the `Money` class as an input object graph type. Once registered as a scalar, any attempt to use `Money` as an object graph type will cause an exception.
 :::
 
 ## @specifiedBy Directive
@@ -278,7 +278,7 @@ A few points about designing your scalar:
 -   Scalar types should be simple and work in isolation.
 -   The `ReadOnlySpan<char>` provided to `ILeafValueResolver.Resolve` should be all the data needed to generate a value, there should be no need to perform side effects or fetch additional data.
 -   Scalar types should not track any state, depend on any stateful objects, or attempt to use any sort of dependency injection.
--   `ILeafValueResolver.Resolve` must be **FAST**! Since your resolver is used to construct an initial query plan from the raw query text, it'll be called many orders of magnitude more often than any other method.
+-   `ILeafValueResolver.Resolve` must be **FAST**! Since your resolver is used to construct an initial query plan from the raw query text, it'll be called many orders of magnitude more often than any other method. Taking the time and performing various micro-optimizations are appropriate for this method.
 
 ### Aim for Fewer Scalars
 
