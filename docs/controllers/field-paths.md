@@ -343,3 +343,4 @@ mutation {
 ```
 
 You can alter the naming formats for fields, enum values and graph types using the declaration options on your [schema configuration](../reference/schema-configuration#graphnamingformatter).
+

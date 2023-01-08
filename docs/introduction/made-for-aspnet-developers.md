@@ -62,9 +62,9 @@ Are you working on a large project that has shared assemblies between services? 
 
 ## Plays Nice with Web API Controllers, Razor Views and Razor Pages
 
-This library sits as an extension on the standard ASP.NET pipeline, not a replacement. At its core, a graphql query is just another GET or POST route on your application. At startup it registers a middleware component to handle requests using `appBuilder.Map()`.
+This library is an extension to the standard ASP.NET pipeline, not a replacement. At its core, a graphql query is just another GET or POST route on your application. At startup the library registers a middleware component to handle requests using `appBuilder.Map()`.
 
-Also, if you are integrating into an existing project, you'll find a lot of your utility code should work out of the box which should ease your migration. Any existing services, custom authorization and model validation attributes etc. can be directly attached to graph action methods and input models. You might even find that most of your model objects work as well. 
+Also, if you are integrating into an existing project, you'll find a lot of your utility code should work out of the box which should ease your migration. Any existing services, custom authorization and model validation attributes etc. can be directly attached to graph action methods and input models. You might even find that most of your model objects work with little to no changes as well. 
 
 ## Scoped Dependency Injection
 
@@ -72,10 +72,10 @@ Services are injected into graph controllers in the same manner as ASP.NET contr
 
 ## User Authorization
 
-The user model is exactly the same. In fact, the `ClaimsPrincipal` passed to `this.User` on a Web API controller is the same instance used to validate any `[Authorize]` attributes on your graph controller actions. Internally, it uses the same `IAuthorizationService` that gets added when you call `services.AddAuthorization()` during startup.
+The user model is exactly the same. In fact, the `ClaimsPrincipal` passed to `this.User` on a Web API controller is the same instance used to validate any `[Authorize]` attributes on your graph controller actions. Internally, it uses the same `IAuthorizationService` that gets added when you call `.AddAuthorization()` during startup.
 
 ## Custom Action Results
 
-Many teams define custom action results beyond `this.Ok()` and `this.BadRequest()` to standardize how they will respond to requests on their Web API controllers to provide consistent messaging, perform some sort of logging or create a common return payload. GraphQL ASP.NET supports this model as well. Out of the box you get support for many of the relevant action results around returning data, indicating an error or denying access, but you can implement your own `IGraphActionResult` to standardize how a given result is converted into a response object and used by the runtime. This includes control to invalidate the field, inject customized error messages or cancel the field request altogether.
+Many teams define custom action results beyond `this.Ok()` and `this.BadRequest()` for their REST queries to standardize how they will respond to requests on their Web API controllers to provide consistent messaging, perform some sort of logging or create a common return payload. GraphQL ASP.NET supports this model as well. Out of the box you get support for many of the relevant action results around returning data, indicating an error or denying access, but you can implement your own `IGraphActionResult` to standardize how a given result is converted into a response object and used by the runtime. This includes control to invalidate the field, inject customized error messages or cancel the field request altogether.
 
 _Side Note:_ Not all action results make sense in GraphQL. For instance, you won't find a way to download a file or indicate a 204 (no content) result. A GraphQL field must always return a piece of data (even if its null). Since the `IGraphActionResult` object is only a small piece in an entire query of many fields, its scope of abilities is paired to match.

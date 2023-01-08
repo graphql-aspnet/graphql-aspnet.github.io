@@ -7,114 +7,42 @@ description: A quick overview of how to use the library
 ---
 
 
-```powershell title="Install The Library"
+Use the menus on the left to navigate through the documentation. You do not need to read the various sections in order, feel free to use this as a reference guide as you dig deeper.
+
+## Nuget & Installation
+
+<span className="pill">.NET Standard 2.0</span> <span className="pill">.NET 6</span> <span className="pill">.NET 7</span> <br/><br/>
+
+The library is available on [nuget](https://www.nuget.org/packages/GraphQL.AspNet/) and can be added to your project via the conventional means.
+
+```powershell title="How to Install The Library"
 # Using the dotnet CLI
 > dotnet add package GraphQL.AspNet
 
 # Using Package Manager Console
 > Install-Package GraphQL.AspNet
 ```
+<span style={{fontSize: "1.1em"}}> 
 
-## Documentation
+👉 [Quick Start Guide](./create-app.md): Step by step instructions for configuring app services and writing your first controller.
 
-This documentation should can be used as a reference for various aspects of the library or read to discover the various features of the library.  If you have questions don't hesitate to ask over on [Github](https://github.com/graphql-aspnet/graphql-aspnet).
-
-
-## Helpful Pages
-<span style={{fontSize: "1.2em"}}> 
-
-📌 [Demo Projects](../reference/demo-projects.md) : A number of downloadable sample projects covering a wide range of topics
-
-💡 [Controllers](../controllers/actions.md) : Everything you need to know about `GraphController` and defining action methods.
-
-📜 [Attributes](../reference/attributes.md) : A reference list of the various `[Attributes]` used by GraphQL ASP.NET to create your schema.
-
-📐 [Schema Configuration](../reference/schema-configuration.md) : A reference list of the various configuration options available at application startup.
+👉 [Code Examples](./code-examples.md): A few code snippets if you just want the gist of things.
 
 </span>
 
-## Building Your First Application
 
-### Create a new Web API Project
-💻 Setup a new `ASP.NET Core Web API` project:
+## Other Helpful Pages
 
-![web api project](../assets/create-new-web-api-project.png)
+These pages may be helpful in getting started with the library:
 
-### Add the Package From Nuget
-💻 Add the `GraphQL.AspNet` nuget package:
+<span style={{fontSize: "1.1em"}}> 
 
-```powershell
-# Powershell terminal, Package Manager in Visual Studio, Developer Command Prompt etc.
-> dotnet add package GraphQL.AspNet
-```
+💡 [Controllers](../controllers/actions.md) : Everything you need to know about creating a `GraphController` and defining action methods.
 
-### Create a Controller
+📜 [Attributes](../reference/attributes.md) : A reference list of the various `[Attributes]` used to configure your controllers and models.
 
-💻 Create your first Graph Controller:
+📐 [Schema Configuration](../reference/schema-configuration.md) : A reference list of the various configuration options.
 
-```csharp  title="BakeryController.cs"
-using GraphQL.AspNet.Attributes;
-using GraphQL.AspNet.Controllers;
+📌 [Demo Projects](../reference/demo-projects.md) : A number of downloadable sample projects covering a wide range of topics
 
-public class BakeryController : GraphController
-{
-    [QueryRoot("donut")]
-    public Donut RetrieveDonut()
-    {
-        return new Donut()
-        {
-            Id = 3,
-            Name = "Snowy Dream",
-            Flavor = "Vanilla"
-        };
-    }
-}
-
-public class Donut
-{
-    public int Id { get; set; }
-    public string Name { get; set; }
-    public string Flavor { get; set; }
-}
-```
-
-
-### Configure Startup
-
-💻 Register GraphQL with your services collection and your application pipeline:
-
-```csharp title="Program.cs"
-using GraphQL.AspNet.Configuration;
-
-var builder = WebApplication.CreateBuilder(args);
-
-// Add services to the container.
-// highlight-next-line
-builder.Services.AddGraphQL();
-
-var app = builder.Build();
-
-// Configure the HTTP request pipeline.
-// highlight-next-line
-app.UseGraphQL();
-app.Run();
-```
-
-
-### Execute a Query
-
-💻 Start the application and using your favorite tool, execute a query:
-
-```graphql title="Sample Query"
-query {
-    donut {
-        id
-        name
-        flavor
-    }
-}
-```
-
-#### Results:
-
-![query results](../assets/overview-sample-query-results.png)
+</span>

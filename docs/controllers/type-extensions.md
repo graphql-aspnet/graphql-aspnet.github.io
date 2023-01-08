@@ -142,3 +142,4 @@ Theoretically, yes. But take a moment and think about performance. For basic obj
 Type extensions shine in parent-child relationships when preloading data is a concern but be careful not to go isolating every graph field just to avoid retrieving data. Fetching a few extra bytes from a database is negligible compared to querying a database 20 individual times. Your REST APIs were already querying extra data and they were likely transmitting that data to the client.
 
 It comes down to your use case. There are times when it makes sense to seperate things using type extensions and times when preloading whole objects is better. For many applications, once you've deployed to production, the queries being executed are finite. Design your model objects and extensions to be performant in the ways your data is being requested, not in the ways it _could be_ requested.
+

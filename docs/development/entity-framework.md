@@ -22,13 +22,13 @@ This default registration adds the `DbContext` to the DI container is as a `Scop
 public class FoodController : GraphController
 {    
     private AppDbContext _context;
-    public FoodController(AppDbContext context){}
+    public FoodController(AppDbContext context){/**/}
 
     [QueryRoot]
-    public IFood SearchMeat(string name){}
+    public IFood SearchMeat(string name){/**/}
 
     [QueryRoot]
-    public IFood SearchVeggies(string name){}
+    public IFood SearchVeggies(string name){/**/}
 }
 ```
 
@@ -43,33 +43,32 @@ query {
 }
 ```
 
-The `FoodController` contains two action methods both of which are executed by the query. This means two instances of the controller are needed, once for each field resolution, since they are executed in parallel. While the controller itself is registered with the DI container as transient the `DbContext` is not, it is shared between the controller instances.  This can result in an exception being thrown :
+The `FoodController` contains two action methods both of which are requested. Since this is a query and not a mutation, both top-level action methods are executed in parallel. This can result in an exception being thrown :
 
 ![Ef Core Error](../assets/ef-core-error.png)
 
-This is caused by graphql attempting to execute both controller actions simultaneously. Ef Core will reject multiple active queries. There are a few ways to handle this and each comes with its own trade offs:
+This is caused by graphql attempting to execute both controller actions simultaneously. EF Core will reject multiple active queries. There are a few ways to address this and each comes with its own trade offs:
 
-## Register DbContext as Transient
+### Register DbContext as Transient
 
-One way to correct this problem is to register your DbContext
-as a transient object.
+One way to correct this problem is to register your DbContext as a transient object.
 
-```csharp title="Register DbContext as Transient"
+```csharp title="Option 1: Register DbContext as Transient"
 services.AddDbContext<AppDbContext>(o =>
     {
         o.UseSqlServer("<connectionString>");
     }, ServiceLifetime.Transient);
 ```
-Now each controller instance will get its own DbContext and the queries can execute in parallel without issue. 
+Now each invocation will get its own DbContext and the queries can execute in parallel without issue. 
 
-The tradeoff here is that you lose the singular scoped unit-of-work for the whole request granted by the shared context. 
+The tradeoff here is that you lose the singular scoped unit-of-work for the whole request granted by the shared context.
 
 If you have services registered to the DI container that make use of the DbContext you would want to register them as `Transient` as well lest one scoped service be created for the request trapping a single DbContext instance. Sometimes, however; this is unavoidable, especially with legacy code...
 
-## Execute Controller Actions in Isolation
+### Execute Controller Actions in Isolation
 Another option is to instruct graphql to execute its controller actions in sequence, rather than in parallel. 
 
-```csharp title="Isolate GraphQL Controller Actions"
+```csharp title="Option 2: Isolate GraphQL Controller Actions"
 services.AddGraphQL(o =>
 {
     o.ExecutionOptions.ResolverIsolation = ResolverIsolationOptions.ControllerActions;

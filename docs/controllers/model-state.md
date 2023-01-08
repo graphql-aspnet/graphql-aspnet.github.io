@@ -23,13 +23,13 @@ But it fails to enforce the individual business requirements of application:
 
 When your controller action is invoked the runtime will analyze the input parameters and will execute the validation attributes attached to each object to determine its validations tate. This works just the same was as with a Web API controller.
 
-In this example we use the `[Range]` attribute under to limit the quantity of donuts that can be ordered to two dozen.
+In this example we use the `[Range]` attribute to limit the quantity of donuts that can be ordered to three dozen.
 
 ```csharp title="DonutOrderModel.cs"
 public class DonutOrderModel
 {
     // highlight-next-line
-    [Range(1, 24)]
+    [Range(1, 36)]
     public int Quantity { get; set; }
     public string Type { get; set; }
 }
@@ -59,7 +59,7 @@ public class BakeryController : GraphController
 # A valid query
 # that breaks a required business rule
 mutation {
-    orderDonuts(order: {quantity: 60}) {
+    orderDonuts(order: {quantity: 60, type: "glazed"}) {
         id
         name
     }
@@ -70,8 +70,8 @@ Just like with ASP.NET, `this.ModelState` contains an entry for each "validatiab
 
 In the example, we returned a IGraphActionResult to make use of `this.BadRequest()` which will add the friendly error messages to the outgoing response automatically. But we could have easily just returned null, thrown an exception or generated a generic custom error message. However you choose to deal with `ModelState` is up to you. 
 
-:::note
-GraphQL will validate the data but it doesn't take action when model validation fails. That's up to you.
+:::tip
+GraphQL will validate the data but it doesn't take action when model validation fails. That's up to you. If a valid query is provided your action method will be invoked.
 :::
 
 <br />

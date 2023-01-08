@@ -397,10 +397,22 @@ public class CharacterController : GraphController
 }
 ```
 
+```graphql title="Sample Query"
+query {
+    character {
+        # field is named "hero" not "RetrieveTheHero"
+        hero(episode: EMPIRE) { 
+            name
+            homePlanet
+        }
+    }
+}
+```
+
 #### `[Query(returnType, params otherTypes)]`
 
 -   `returnType`: the expected return type of this field.
-    -   must be used when this field returns an `IGraphActionResult`
+    -   **Must** be used when this field returns an `IGraphActionResult`
 -   `otherTypes`: additional possible types this field could return.
     -   Can be used to declare possible concrete types when this field returns an interface.
 
@@ -420,7 +432,7 @@ public class CharacterController : GraphController
 
 -   `template` - The field path template to use for this method.
 -   `returnType`: the expected return type of this field.
-    -   must be used when this field returns an `IGraphActionResult`
+    -   **Must** be used when this field returns an `IGraphActionResult`
 
 ```csharp
 public class CharacterController : GraphController
@@ -471,9 +483,58 @@ public class CharacterController : GraphController
 }
 ```
 
+## PossibleTypes
+
+_(optional)_ When returning an interface from an action method, this attribute allows for the declaration of additional object types to help reduce clutter in the primary query or mutation declaration.
+
+#### `[PossibleTypes(typeof(TypeA), typeof(TypeB) ...)]`
+
+These two controller examples are identical:
+
+```csharp title="Example A"
+public class CharacterController : GraphController
+{
+    // highlight-next-line
+    [Query("hero", typeof(Human), typeof(Droid), typeof(Gungan)]
+    public ICharacter RetrieveTheHero(Episode episode)
+    {
+        // ....
+    }
+}
+```
+
+```csharp title="Example B"
+public class CharacterController : GraphController
+{
+    [Query("hero")]    
+    // highlight-next-line
+    [PossibleTypes(typeof(Human), typeof(Droid), typeof(Gungan))]
+    public ICharacter RetrieveTheHero(Episode episode)
+    {
+        // ....
+    }
+}
+```
+## SpecifiedBy
+
+_(optional)_ Provides a convienent way to apply the `@specifiedBy` directive to a custom scalar. When not used, no url is provided to introspection requests for the scalar information.
+
+#### `[SpecifiedBy(url)]`
+
+```csharp
+// highlight-next-line
+[SpecifiedBy("https://documentation.example.com/api/money-scalar")]
+public class MoneyScalar : IScalarGraphType
+{
+    // details ommited...
+}
+```
+
+
 ## TypeExtension
 
 Declares a controller action method as a field on another graph type rather than a query or mutation action.
+
 
 #### `[TypeExtension(typeToExtend, fieldName)]`
 

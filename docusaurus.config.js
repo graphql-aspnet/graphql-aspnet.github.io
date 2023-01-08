@@ -68,7 +68,14 @@ const config = {
           alt: 'My Site Logo',
           src: 'img/logo-128.png',
         },
-        items: [],
+        items: [
+          {
+            to: 'https://github.com/graphql-aspnet/graphql-aspnet',
+            position: 'right',
+            className: 'header-github-link',
+            'aria-label': 'GitHub repository',
+          }
+        ],
       },
       footer: {
         links: [

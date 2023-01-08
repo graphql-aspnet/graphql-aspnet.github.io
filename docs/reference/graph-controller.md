@@ -15,8 +15,9 @@ The completed model state dictionary contains an entry for each validated parame
 public class CharacterController : GraphController
 {
     [Query]
-    public IGraphActionResult Hero(Episode episode = Episode.EMPIRE)
+    public IGraphActionResult CreateCharacter(Character characterModel)
     {
+        // highlight-next-line
         if(!this.ModelState.IsValid)
             return this.BadRequest(this.ModelState);
 
@@ -34,6 +35,7 @@ public class CharacterController : GraphController
     [Query]
     public IGraphActionResult Hero(Episode episode = Episode.EMPIRE)
     {
+        // highlight-next-line
         if(this.Request.Field.IsLeaf)
         {
             // ...
@@ -62,6 +64,7 @@ public class CharacterController : GraphController
     [Query]
     public IGraphActionResult Hero(Episode episode = Episode.EMPIRE)
     {
+        // highlight-next-line
         if(this.User.Identity.Name == "DebbieEast")
         {
             // ...

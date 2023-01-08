@@ -13,8 +13,7 @@ function HomepageHeader() {
   return (
     <header className={clsx(styles.heroBanner)}>
       <div className="container">
-        <h1 className="hero__title">{siteConfig.title}</h1>
-        <p className="hero__subtitle">{siteConfig.tagline}</p>
+        <h1 className="hero__title">{siteConfig.title} <span className="pill-header pill-small">.NET 6+</span></h1>
         <div className={styles.buttons} >
           <div className={clsx("row", styles["main-buttons"])}>
             <div>
@@ -24,14 +23,10 @@ function HomepageHeader() {
                 Documentation
               </Link>
             </div>
-            <div>
-              <a className="button button--primary button--lg" target="_blank" href="https://github.com/graphql-aspnet/graphql-aspnet">
-                Github Repo
-              </a>
-            </div>
           </div>
         </div>
       </div>
+
     </header >
   );
 }

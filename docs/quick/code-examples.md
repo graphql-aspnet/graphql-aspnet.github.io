@@ -7,22 +7,38 @@ sidebar_position: 2
 
 This page shows a quick introduction to some common scenarios and the C# code to support. 
 
+## Configuring Services 
+
+The library uses a standard "Add & Use" pattern for configuring services with your application. A route is added to the ASP.NET request pipeline when you call `.UseGraphQL()`. Place it as appropriate amongst any other configurations, routes, authorization etc. when you build your pipeline.
+
+```csharp title="Program.cs"
+var builder = WebApplication.CreateBuilder(args);
+
+// Add graphql services to the DI container
+// highlight-next-line
+builder.Services.AddGraphQL();
+
+var app = builder.Build();
+
+// Configure the HTTP request pipeline
+// highlight-next-line
+app.UseGraphQL();
+app.Run();
+```
+> _The configuration steps may vary slightly when using a Startup.cs file; typical for .NET 5 or earlier _
+
 
 ## A Basic Controller
 
-A simple controller to return data based on the input of an `Enum`.
-
-import Tabs from '@theme/Tabs';
-import TabItem from '@theme/TabItem';
-
+A simple controller to return data based on a string value.
 
 ```csharp title="HeroController.cs"
 public class HeroController : GraphController
 {
     [QueryRoot]
-    public Human Hero(Episode episode)
+    public Human Hero(string episode)
     {
-        if(episode == Episode.Empire)
+        if(episode == "Empire")
         {
             return new Human()
             {
@@ -46,7 +62,7 @@ public class HeroController : GraphController
 
 ```graphql title="GraphQL Query"
 query {
-    hero(episode: EMPIRE) {
+    hero(episode: "Empire") {
         name
         homePlanet
     }
@@ -65,20 +81,23 @@ query {
 ```
 
 :::info Did you notice?
-In the query the hero field is `camelCased` but in C# the method is `ProperCased`? GraphQL ASP.NET automatically translates your names appropriately to standard GraphQL conventions. The same goes for your graph type names, enum values etc.
+In the query the hero field is `camelCased` but in C# the method is `ProperCased`? Field names are automatically translated to standard GraphQL conventions. The same goes for your graph type names, enum values etc.
 
-You can implement your own `GraphNameFormatter` and alter the name formats for each of your registered schemas.
+You can also implement your own `GraphNameFormatter` and alter the name formats for each of your registered schemas.
 :::
 
 ## Using an Interface
 
-If your models share a common interface just return it from a controller action and GraphQL ASP.NET takes care of the rest. You can always use a fragment to specify fields of specific object types.
+If your models share a common interface just return it from a controller action and the library will take care of the rest. 
 
+> Don't forget to declare the object types that implement your interface or graphql won't know what resolvers to invoke at runtime. In this example, we've declared them inline but you can easily add them at startup to reduce the noise.
 
 ```csharp title="HeroController.cs"
 public class HeroController : GraphController
 {
+    // highlight-next-line
     [QueryRoot(typeof(Droid), typeof(Human))]
+    // highlight-next-line
     public ICharacter Hero(Episode episode)
     {
         if(episode == Episode.Empire)
@@ -126,9 +145,11 @@ We've used `[QueryRoot]` so far to force a controller action to be a root field 
 
 
 ```csharp title="RebelAllianceController.cs"
+// highlight-next-line
 [GraphRoute("rebels")]
 public class RebelAllianceController : GraphController
 {
+    // highlight-next-line
     [Query("directory/hero")]
     public Human RetrieveHero(Episode episode)
     {
@@ -207,6 +228,7 @@ public class PersonsController : GraphController
         _personService = service;
     }
 
+    // highlight-next-line
     [Authorize]
     [QueryRoot("self")]
     public async Task<Employee> RetrievePerson()
@@ -226,7 +248,7 @@ query {
 }
 ```
 
-#### Notes on Authorization
+#### ✅ Notes on Authorization
 
 -   Your controller actions have full access to the same `ClaimsPrincipal` that you get with `this.User` on an web api controller. In fact, its the same object reference.
 -   Out of the box, the library performs authorization on a "per field" basis. This includes POCO object properties! If you have a piece of sensitive data attached to a property, say Birthday, on your Person model, then implement your own `IAuthorizeData` attribute and apply it to the property. Unauthorized user's won't be able to query for that field, even if they can access the controller that produced the object its attached or every other field on the object.
@@ -249,8 +271,10 @@ public class PersonsController : GraphController
         // Check if the model passed validation
         // requirements before using it
         // ***************************
+        // highlight-start
         if(!this.ModelState.IsValid)
             return null;
+        // highlight-end
 
         return await _service.CreatePerson(model);
     }
@@ -262,6 +286,7 @@ public class Human
 {
     public int? Id{ get; set; }
 
+    // highlight-next-line
     [StringLength(35)]
     public string Name { get; set; }
 
@@ -283,7 +308,7 @@ mutation {
 ```
 
 :::info Did You Notice?
-We used `Human` as an input argument and as the returned data object. GraphQL ASP.NET will automatically generate the appropriate graph types for `OBJECT` and `INPUT_OBJECT` and add them to your schema when needed.
+We used `Human` as an input argument **and** as the returned data object. The library will automatically generate the appropriate graph types for `OBJECT` and `INPUT_OBJECT` and add them to your schema when needed.
 :::
 
 
@@ -297,7 +322,7 @@ Reusing the previous example, here we make use of `this.BadRequest()` to automat
 // C# Controller
 public class PersonsController : GraphController
 {
-    [MutationRoot("joinTheResistance")]
+    [MutationRoot("joinTheResistance", typeof(Human))]
     public async IGraphActionResult CreatePerson(Human model)
     {
         // ***************************
@@ -305,12 +330,15 @@ public class PersonsController : GraphController
         // requirements before using it
         // ***************************
         if(!this.ModelState.IsValid)
+        // highlight-next-line
             return this.BadRequest(this.ModelState);
 
         var result = await _service.CreatePerson(model);
         return result != null
+        // highlight-start
             ? this.Ok(result)
             : this.Error("Woops Something broke");
+        // highlight-end
     }
 }
 
