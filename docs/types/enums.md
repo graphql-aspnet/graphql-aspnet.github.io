@@ -61,6 +61,35 @@ enum DonutType {
 }
 ```
 
+## Including an Enum in Your Schema
+
+An enum graph type is automatically created from a .NET enum if it is:
+
+*  Used as a parameter to an action method
+*  Used as a return value of an action method
+*  Used as a parameter or return type of any property or method of any included class or struct.
+
+```csharp title="DonutController.cs"
+public class DonutController : GraphController 
+{
+  [QueryRoot]
+  // highlight-next-line
+  public int RetrieveDonutCount(DonutType donutType)
+  {
+    /* ... */
+  }
+}
+```
+
+You can also explicitly add an enum at start up:
+
+```csharp title="Startup code"
+services.AddGraphQL(options => 
+{
+   options.AddGraphType<DonutType>();
+});
+```
+
 ## Excluding an Enum Value
 
 Use the `[GraphSkip]` attribute to omit a value from the schema. A query will be rejected if it attempts to submit an omitted enum value.
@@ -91,12 +120,12 @@ enum DonutType {
 ```
 
 :::caution 
-An excluded enum value is not just hidden, its NOT part of the schema. Any attempt to use it as a value in a query will result in a validation error.
+An excluded enum value is not just hidden, its NOT part of the schema. Any attempt to use it as a value in a query, a variable or as a result from a field resolution will cause a validation error.
 :::
 
 ## Custom Type Name
 
-Like with other graph types use the `[GraphType]` attribute to indicate a custom name for the enumeration in the graph.
+Like with other graph types, use the `[GraphType]` attribute to indicate a custom name for the enum in the schema.
 
 
 ```csharp title="DonutType.cs"
@@ -157,8 +186,10 @@ By default, enum values are rendered in all CAPITAL LETTERS. This is the standar
 
 ```csharp title="Startup Code"
 services.AddGraphQL(o => {
-  var customFormatter = = new GraphNameFormatter(enumValueStrategy: GraphNameFormatStrategy.ProperCase);
+  // highlight-start
+  var customFormatter = new GraphNameFormatter(enumValueStrategy: GraphNameFormatStrategy.ProperCase);
   o.DeclarationOptions.GraphNamingFormatter = customFormatter;
+  // highlight-end
 })
 ```
 
@@ -170,4 +201,6 @@ enum DonutType {
   Jelly
 }
 ```
-> If you need something even more exotic, inherit from `GraphNameFormatter` and override the various methods as you see fit.
+:::tip
+If you need something even more exotic, inherit from `GraphNameFormatter` and override the various methods as you see fit.
+:::

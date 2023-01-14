@@ -5,11 +5,11 @@ sidebar_label: Code Examples
 sidebar_position: 2
 ---
 
-This page shows a quick introduction to some common scenarios and the C# code to support. 
+Below is a quick introduction to some common scenarios and the C# code to support them. 
 
 ## Configuring Services 
 
-The library uses a standard "Add & Use" pattern for configuring services with your application. A route is added to the ASP.NET request pipeline when you call `.UseGraphQL()`. Place it as appropriate amongst any other configurations, routes, authorization etc. when you build your pipeline.
+The library uses a standard "Add & Use" pattern for configuring services with your application. A route is added to the ASP.NET request pipeline to handle GET and POST requests when you call `.UseGraphQL()`. Place it as appropriate amongst any other configurations, routes, authorization etc. when you build your pipeline.
 
 ```csharp title="Program.cs"
 var builder = WebApplication.CreateBuilder(args);
@@ -30,9 +30,12 @@ app.Run();
 
 ## A Basic Controller
 
-A simple controller to return data based on a string value.
+A simple controller to return data based on a string value. 
+
+>Notice we inherit from `GraphController` not the standard web api Controller.
 
 ```csharp title="HeroController.cs"
+// highlight-next-line
 public class HeroController : GraphController
 {
     [QueryRoot]
@@ -60,7 +63,7 @@ public class HeroController : GraphController
 }
 ```
 
-```graphql title="GraphQL Query"
+```graphql title="Sample Query"
 query {
     hero(episode: "Empire") {
         name
@@ -88,9 +91,9 @@ You can also implement your own `GraphNameFormatter` and alter the name formats 
 
 ## Using an Interface
 
-If your models share a common interface just return it from a controller action and the library will take care of the rest. 
+If your models share a common interface just return it from a controller action and the library will create the appropriate graph types for you. 
 
-> Don't forget to declare the object types that implement your interface or graphql won't know what resolvers to invoke at runtime. In this example, we've declared them inline but you can easily add them at startup to reduce the noise.
+> Don't forget to declare the object types that implement your interface (e.g. Droid and Human) or the library won't know what resolvers to invoke at runtime. In this example, we've declared them inline but you can easily add them at startup to reduce the noise.
 
 ```csharp title="HeroController.cs"
 public class HeroController : GraphController
@@ -180,12 +183,13 @@ query {
 
 ## Dependency Injection
 
-At runtime,  GraphQL invokes your graph controllers and injected services with the same dependency scope as the original HTTP Request. Add a service to a controller's constructor and it will be automatically resolved with its configured scope.
+At runtime,  GraphQL invokes your graph controllers and injected services with the same dependency scope as the original HTTP Request. Add a known service to a controller's constructor and it will be automatically resolved with its configured scope.
 
 ```cs title="PersonsController.cs"
 public class PersonsController : GraphController
 {
     private IPersonService _personService;
+    // highlight-next-line
     public PersonsController(IPersonService service)
     {
         _personService = service;
@@ -251,7 +255,8 @@ query {
 #### ✅ Notes on Authorization
 
 -   Your controller actions have full access to the same `ClaimsPrincipal` that you get with `this.User` on an web api controller. In fact, its the same object reference.
--   Out of the box, the library performs authorization on a "per field" basis. This includes POCO object properties! If you have a piece of sensitive data attached to a property, say Birthday, on your Person model, then implement your own `IAuthorizeData` attribute and apply it to the property. Unauthorized user's won't be able to query for that field, even if they can access the controller that produced the object its attached or every other field on the object.
+-   Out of the box, the library performs authorization on a "per field" basis. This includes POCO object properties! If you have a piece of sensitive data attached to a property, say Birthday, on your Person model, you can apply a policy or role to it. Unauthorized user's won't be able to query for that field, even if they can access the controller that produced the object its attached or every other field on the object.
+    - _Note: You'll have to implement .NET's_ `IAuthorizeData` _interface on your own custom attribute, the_ `[Authorize]` _attribute provided by .NET does not allow targeting of properties._
 -   GraphQL obeys layered authorization requirements as well. Place an authorization attribute at the controller level and it'll be checked before any method level requirements.
 
 ## Mutations & Model State
@@ -308,7 +313,7 @@ mutation {
 ```
 
 :::info Did You Notice?
-We used `Human` as an input argument **and** as the returned data object. The library will automatically generate the appropriate graph types for `OBJECT` and `INPUT_OBJECT` and add them to your schema when needed.
+We used `Human` as an input argument **and** as the returned data object. The library will automatically generate the appropriate graph types for `INPUT_OBJECT` and `OBJECT`, respectively,  add them to your schema when needed.
 :::
 
 

@@ -24,7 +24,7 @@ The library is available on [nuget](https://www.nuget.org/packages/GraphQL.AspNe
 ```
 <span style={{fontSize: "1.1em"}}> 
 
-👉 [Quick Start Guide](./create-app.md): Step by step instructions for configuring app services and writing your first controller.
+👉 [Your First App](./create-app.md): Step by step instructions for configuring app services and writing your first controller.
 
 👉 [Code Examples](./code-examples.md): A few code snippets if you just want the gist of things.
 
@@ -37,7 +37,7 @@ These pages may be helpful in getting started with the library:
 
 <span style={{fontSize: "1.1em"}}> 
 
-💡 [Controllers](../controllers/actions.md) : Everything you need to know about creating a `GraphController` and defining action methods.
+💡 [Controllers & Actions](../controllers/actions.md) : Everything you need to know about creating a `GraphController` and defining action methods.
 
 📜 [Attributes](../reference/attributes.md) : A reference list of the various `[Attributes]` used to configure your controllers and models.
 

@@ -9,15 +9,15 @@ GraphQL, as a language, can easily enforce query level requirements like :
 
 ✅   The data must a collection.<br/>
 ✅   The data value cannot be null.<br/>
-✅   The argument 'zipCode' must be supplied.
+✅   The argument 'zipCode' must be supplied as a string.
 
 <br />
 
 But it fails to enforce the individual business requirements of application:
 
-🧨   Is the employee's last name less than 70 characters?<br/>
-🧨   Is the customer's phone number 7 or 10 digits?<br/>
-🧨   Is the number of donuts ordered at least 1?
+🧨   The employee's last name must be less than 70 characters.<br/>
+🧨   A customer's phone number should be 7 or 10 digits.<br/>
+🧨   A customer must order at least 1 donut.
 
 ## Using Model Validation
 
