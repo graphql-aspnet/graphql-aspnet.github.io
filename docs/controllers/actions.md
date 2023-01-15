@@ -420,11 +420,11 @@ Action results for graph fields are not the same as REST action results.  For Ex
 
 ## Method Parameters
 
-GraphQL will inspect your method parameters and add the appropriate [`SCALAR`](../types/scalars), [`ENUM`](../types/enums) and [`INPUT_OBJECT`](../types/input-objects) graph types to your schema automatically.
+Parameters on your action methods are interpreted as field arguments in your graph.  GraphQL will inspect your method parameters and add the appropriate [`SCALAR`](../types/scalars), [`ENUM`](../types/enums) and [`INPUT_OBJECT`](../types/input-objects) graph types to your schema automatically.
 
 ### Naming your Input Arguments
 
-By default, GraphQL will name a field' arguments the same as the parameter names in your method. Sometimes you'll want to override this, like when needing to use a C# keyword as an argument name. Use the `[FromGraphQL]` attribute on the parameter to accomplish this.
+By default, GraphQL will name a field's arguments the same as the parameter names in your method. Sometimes you'll want to override this, like when needing to use a C# keyword as an argument name. Use the `[FromGraphQL]` attribute on the parameter to accomplish this.
 
 ```csharp title="Overriding a Default Argument Name"
 public class BakeryController : GraphController
@@ -544,7 +544,7 @@ query {
 
 ### Working With Lists
 
-When constructing a set of items as an argument to an action method, GraphQL will instantiate a `List<T>` internally and fill it with the appropriate data; be that another list, another input object, a scalar etc. While you can declare an array (e.g. `Donut[]`, `int[]` etc.) as your list structure for an input argument, graphql has to rebuild its internal representation as an array (or nested arrays) to meet the requirements of your method.  In some cases, especially with nested lists, this results in an `O(N)` increase in processing time. 
+When constructing a set of items as an argument to an action method, GraphQL will instantiate a `List<T>` internally and fill it with the appropriate data; be that another list, another input object, a scalar etc. While you can declare an array (e.g. `Donut[]`, `int[]` etc.) as your list structure for an input argument, graphql has to rebuild its internal representation to meet the requirements of your method.  In some cases, especially with nested lists, or combinations of lists and arrays, this results in an `O(N)` increase in processing time. 
 
 :::tip 
 Use `IEnumerable<T>` or `IList<T>` as your argument types to avoid a performance bottleneck when sending lots of items as input data.

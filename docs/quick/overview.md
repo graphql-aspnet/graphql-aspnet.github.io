@@ -6,7 +6,6 @@ sidebar_position: 0
 description: A quick overview of how to use the library
 ---
 
-
 Use the menus on the left to navigate through the documentation. You do not need to read the various sections in order, feel free to use this as a reference guide as you dig deeper.
 
 ## Nuget & Installation

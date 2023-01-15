@@ -5,6 +5,8 @@ sidebar_label: Model State
 sidebar_position: 1
 ---
 
+## What is Model State?
+
 GraphQL, as a language, can easily enforce query level requirements like :
 
 ✅   The data must a collection.<br/>
@@ -13,15 +15,17 @@ GraphQL, as a language, can easily enforce query level requirements like :
 
 <br />
 
-But it fails to enforce the individual business requirements of application:
+But it fails to enforce the individual business level requirements:
 
 🧨   The employee's last name must be less than 70 characters.<br/>
 🧨   A customer's phone number should be 7 or 10 digits.<br/>
 🧨   A customer must order at least 1 donut.
 
+This is where model state can come in handy. Its completely optional, but if you choose to make use of it, it provides a handy way to inforce business level requirements in your action methods.
+
 ## Using Model Validation
 
-When your controller action is invoked the runtime will analyze the input parameters and will execute the validation attributes attached to each object to determine its validations tate. This works just the same was as with a Web API controller.
+When your controller action is invoked the runtime will analyze the input parameters and execute the validation attributes attached to each object to determine its validation state. This works in the same way as it does with a Web API controller.
 
 In this example we use the `[Range]` attribute to limit the quantity of donuts that can be ordered to three dozen.
 
@@ -66,18 +70,20 @@ mutation {
 }
 ```
 
-Just like with ASP.NET, `this.ModelState` contains an entry for each "validatiable" object passed to the method and its current validation state (valid, invalid, skipped etc.) along with all the rules that did not pass. Also, just like with ASP.NET you can define custom attributes that inherit from `ValidationAttriubte` and GraphQL will execute them as well.
+Just like with ASP.NET, `this.ModelState` contains an entry for each "validatiable" object passed to the method and its current validation state (valid, invalid, skipped etc.) along with all the rules that did not pass. Also, just like with ASP.NET you can define custom attributes that inherit from `ValidationAttribute` and GraphQL will execute them as well.
 
 In the example, we returned a IGraphActionResult to make use of `this.BadRequest()` which will add the friendly error messages to the outgoing response automatically. But we could have easily just returned null, thrown an exception or generated a generic custom error message. However you choose to deal with `ModelState` is up to you. 
 
 :::tip
-GraphQL will validate the data but it doesn't take action when model validation fails. That's up to you. If a valid query is provided your action method will be invoked.
+GraphQL will validate the data but it doesn't take action when model validation fails. That's up to you. If a valid query is provided your action method will be invoked and executed.
 :::
 
 <br />
 
 ⚠️ **Implementation Note**
 
-GraphQL makes use of the same `System.ComponentModel.DataAnnotations.Validator` that ASP.NET does to validate its input objects. [All the applicable rules](https://learn.microsoft.com/en-us/aspnet/core/mvc/models/validation?view=aspnetcore-7.0) that apply to Web API model validation also apply to GraphQL.
+The library makes use of the same `System.ComponentModel.DataAnnotations.Validator` that ASP.NET does to validate its input objects. [All the applicable rules](https://learn.microsoft.com/en-us/aspnet/core/mvc/models/validation?view=aspnetcore-7.0) that apply to Web API model validation also apply to your controllers and models.
 
-However, where Web API will validate model binding rules and represent binding errors it its ModelState object (such as invalid or missing property names)  GraphQL will not. GraphQL binding issues such as type expressions and nullability are taken care of at the query level, long before a query plan is finalized and the action method is invoked. The model state of GraphQL ASP.NET is a close approximation of Web API's model state object, but it is not an exact match.
+However, where Web API will validate model binding rules and represent binding errors it its ModelState object (such as invalid or missing property names) the GraphQL implementation will not. GraphQL binding issues such as invalid type expressions, nullability and missing arguments are taken care of at the query level, long before a query plan is finalized and the action method is invoked. In fact, your action methods won't even be invoked unless all the correct data was supplied and the query was properly structured. 
+
+The model state of GraphQL ASP.NET is a close approximation of Web API's model state object, but it is not an exact match.
