@@ -20,7 +20,7 @@ GraphQL ASP.NET has 20 built in scalar types.
 | Double         | System.Double          | Number              |
 | Float          | System.Single          | Number              |
 | Guid           | System.Guid            | String              |
-| ID             | GraphQL.AspNet.GraphId | String              |
+| ID             | GraphQL.AspNet.GraphId | String or Number    |
 | Int            | System.Int32           | Number              |
 | Long           | System.Int64           | Number              |
 | Short          | System.Int16           | Number              |
@@ -84,13 +84,27 @@ Unlike other graph types, scalar names are fixed across all schemas. The name de
 
 For the value types listed above, GraphQL will automatically coerce values into the appropriate `Nullable<T>` as required by an argument's type expression.
 
-## GraphId
+## ID Scalar
 
 GraphQL defines a special scalar value value called `ID` which is defined as:
 
 > _a unique identifier, often used to refetch an object or as the key for a cache_" [Spec § [3.5.5](https://graphql.github.io/graphql-spec/October2021/#sec-ID)].
 
-GraphQL ASP.NET maintains a struct, `GraphQL.AspNet.GraphId` to hold this value and serializes and deserializes it as a string. You can perform an implicit and explicit conversion between `GraphId` and `System.String`
+GraphQL ASP.NET maintains a struct, `GraphQL.AspNet.GraphId` to hold this value and will always serialize it to a string. However, per the specification, when supplying values on a query document, ID can accept strings or integers as input values. Floating point numbers and boolean values are not allowed.
+
+- Valid ID values
+    - `"abc"`
+    -  `34`
+    - `-200`
+- Invalid ID Values
+    - `true`
+    -  `4.0` 
+
+:::note Integer Value Range
+When using an integer value for an ID scalar, the minimum allowed value is `long.MinValue` and the maximum allowed value is `ulong.MaxValue`
+:::
+
+You can perform an implicit and explicit conversion between `GraphId` and `System.String` as well.
 
 ```csharp title="Converting GraphId"
 GraphId id = new GraphId("abc");
@@ -104,3 +118,7 @@ GraphId id = (GraphId)str;
 
 ## Custom Scalars
 See the section on [custom scalars](../advanced/custom-scalars.md) for details on creating your own scalar types.
+
+### Working with Structs
+
+Structs, by default, will be treated like [object graph types](./objects.md). Sometimes it may make sense to create a custom scalar out of a struct, for example, the default scalar for `Guid`. Use your best judgement when determining if a struct should be a scalar or not. But always try to opt for fewer scalars when possible.

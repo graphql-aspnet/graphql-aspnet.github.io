@@ -12,6 +12,7 @@ GraphQL ASP.NET supports multiple schemas on the same server out of the box. Eac
 To register multiple schemas you'll need to create your own class that implements `ISchema`. While it is possible to implement `ISchema` directly, if you don't require any extra functionality in your schema its easier to just inherit from the default `GraphSchema`. Updating the `Name` and `Description` is highly encouraged as the information is referenced in several different messages and can be very helpful in debugging.
 
 ```csharp title="Declaring Custom Schemas"
+// highlight-next-line
 public class EmployeeSchema : GraphSchema
 {
     // The schema name may be referenced in some error messages
@@ -19,15 +20,16 @@ public class EmployeeSchema : GraphSchema
     public override string Name => "Employee Schema";
 
     // The description is publically available via introspection queries.
-    public override string Description => "My Custom Schema";
+    public override string Description => "Employee Related Data";
 }
 
+// highlight-next-line
 public class CustomerSchema : GraphSchema
 {
     public override string Name => "Customer Schema";
+    public override string Description => "Customer Related Data";
 }
 ```
-
 
 > Implementing `ISchema` and its dependencies from scratch is not a trivial task and is beyond the scope of this documentation.
 
@@ -36,30 +38,35 @@ public class CustomerSchema : GraphSchema
 
 Each schema can be registered using an overload of `.AddGraphQL()` during startup.
 
-```csharp title="Adding A Custom Schema at Startup"
-services.AddGraphQL<EmployeeSchema>();
-```
-
-### Give Each Schema its Own HTTP Route
-
-The query handler will attempt to register a schema to `/graphql` as its URL by default; you'll want to ensure that each schema has its own endpoint by updating the individual routes.
+By default, the query handler will attempt to register a schema to `/graphql` as its URL. You'll want to ensure that each schema has its own endpoint by updating individual routes as necessary. 
 
 ```csharp title="Adding Multiple Schemas"
-services.AddGraphQL<EmployeeSchema>((options) =>
-    {
-        // highlight-next-line
-        options.QueryHandler.Route = "/graphql_employees";
-        // add assembly or graph type references here
-    });
+var builder = WebApplication.CreateBuilder(args);
 
-services.AddGraphQL<CustomerSchema>((options) =>
-    {
-        // highlight-next-line
-        options.QueryHandler.Route = "/graphql_customers";
-        // add assembly or graph type references here
-    });
+builder.Services.AddGraphQL<EmployeeSchema>((options) =>
+{
+    // highlight-next-line
+    options.QueryHandler.Route = "/graphql_employees";
+    // add assembly or graph type references here
+});
+
+builder.Services.AddGraphQL<CustomerSchema>((options) =>
+{
+    // highlight-next-line
+    options.QueryHandler.Route = "/graphql_customers";
+    // add assembly or graph type references here
+});
+
+var app = builder.Build();
+
+// highlight-next-line
+app.UseGraphQL();
+app.Run();
 ```
 
+:::note
+Each schema **must** be configured to use its own endpoint.
+:::
 
 ## Disable Local Graph Entity Registration
 

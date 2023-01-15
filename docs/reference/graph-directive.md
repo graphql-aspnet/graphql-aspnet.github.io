@@ -4,8 +4,10 @@ title: Graph Directive
 sidebar_label: GraphDirective
 sidebar_position: 5
 ---
+✅ See the section on [Directives](../advanced/directives.md) for a detailed explination on how directive action methods work and how to declare them.
 
-These are some useful properties of a `GraphDirective` available to all life cycle methods at runtime.
+The `GraphDirective`, from which all of your directives inherit, is a core object used throughout graphql. This page details some lesser known and lesser used object referenced made available to each directive.
+
 
 ## ModelState
 
@@ -41,6 +43,8 @@ public class AllowDirective : GraphDirective
 }
 ```
 
+### Notable Items on the Request
+
 -   `Request.Directive`: Useful metadata related to the directive type being resolved.
 -   `Request.LifeCycle`: The enumeration value indicating which life cycle point is being executed.
 -   `Request.DirectiveLocation`: Indicates location in the query text this directive instance is currently being executed.
@@ -63,3 +67,23 @@ public class MyCustomDirective : GraphDirective
     }
 }
 ```
+
+
+## Schema
+
+The `Schema` property contains a reference to the singleton instance of the schema the current controller is resolving a field for. This object is considered read-only and should not be modified.
+
+```csharp
+public class AllowDirective : GraphDirective
+{
+    public IGraphActionResult BeforeResolution(FilterModel model)
+    {
+        // highlight-next-line
+        IObjectGraphType droidType = this.Schema.KnownTypes.FindGraphType(typeof(Droid), TypeKind.OBJECT);
+        // ...
+    }
+}
+```
+:::caution
+ For type system directives, executed as part of schema construction, the schema object available may be incomplete or null. Avoid using and do not rely on the data in `this.Schema` for type system directives.
+:::

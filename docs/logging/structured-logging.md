@@ -133,7 +133,7 @@ Here we've used a custom `ILogProvider` and written out a small sample of events
 [{
   "eventId": 86000,
   "eventName": "GraphQL Request Received",
-  "dateTimeUTC": "2019-09-23T22:05:39.6023597+00:00",
+  "dateTimeUTC": "2022-09-23T22:05:39.6023597+00:00",
   "logEntryId": "6afdf3d1f9464679becfbd2b96aa594f",
   "operationRequestId": "a13f5f7232dc475783c4e4798cfb50d2",
   "userName": "john-doe",
@@ -144,7 +144,7 @@ Here we've used a custom `ILogProvider` and written out a small sample of events
 {
   "eventId": 86400,
   "eventName": "GraphQL Query Plan Generated",
-  "dateTimeUTC": "2019-09-23T22:05:39.7214431+00:00",
+  "dateTimeUTC": "2022-09-23T22:05:39.7214431+00:00",
   "logEntryId": "d133e032e2fc42a98a639ee8c72d2497",
   "schemaType": "GraphQL.AspNet.Schemas.GraphSchema",
   "isValid": true,
@@ -158,7 +158,7 @@ Here we've used a custom `ILogProvider` and written out a small sample of events
   "eventId": 86599,
   "eventName": "GraphQL Field Resolution Completed",
   "path": "[type]/Human/Id",
-  "dateTimeUTC": "2019-09-23T22:05:39.8528847+00:00",
+  "dateTimeUTC": "2022-09-23T22:05:39.8528847+00:00",
   "logEntryId": "750ee155bf7e4eea895e5eec01d3fb6d",
   "pipelineRequestId": "aa670d3e2d6a41e1b314711acf6bc51c",
   "typeExpression": "ID!",

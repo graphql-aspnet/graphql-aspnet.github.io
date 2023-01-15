@@ -7,7 +7,7 @@ const darkCodeTheme = require('prism-react-renderer/themes/palenight');
 /** @type {import('@docusaurus/types').Config} */
 const config = {
   title: 'GraphQL ASP.NET',
-  tagline: 'v1.0.0-rc4',
+  tagline: 'v1.0.0',
   url: 'https://graphql-aspnet.github.io',
   baseUrl: '/',
   onBrokenLinks: 'throw',
@@ -68,7 +68,14 @@ const config = {
           alt: 'My Site Logo',
           src: 'img/logo-128.png',
         },
-        items: [],
+        items: [
+          {
+            to: 'https://github.com/graphql-aspnet/graphql-aspnet',
+            position: 'right',
+            className: 'header-github-link',
+            'aria-label': 'GitHub repository',
+          }
+        ],
       },
       footer: {
         links: [
@@ -115,18 +122,6 @@ const config = {
                   GraphQL.org
                 </a>
               `
-              },
-              {
-                html: `
-                      <a 
-                        class="footer__link-item"
-                        href="https://dotnet.microsoft.com/en-us/learn/aspnet" 
-                        target="_blank" 
-                        rel="noreferrer noopener" 
-                        aria-label="Learn ASP.NET">
-                        Learn ASP.NET
-                      </a>
-                    `
               },
             ],
           },

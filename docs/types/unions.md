@@ -13,7 +13,7 @@ Unlike other graph types there is no concrete representation of unions. Where a 
 
 You can declare a union in your action method using one of the many overloads to the query and mutation attributes:
 
-```csharp title="Declaring a Union on an Action Method"
+```csharp title="Declaring an 'inline' Union on an Action Method"
 public class DataController : GraphController
 {
     // highlight-next-line
@@ -105,11 +105,13 @@ public class DataController : GraphController
     }
 }
 ```
-> Here we've added a custom type expression to tell GraphQL that this field returns a list of objects. GraphQL will then process each item on the enumeration according to the rules of the union.
+> Here we've added a custom type expression to tell GraphQL that this field returns a list of objects. GraphQL will then process each item on the list according to the rules of the union.
 
 ## Union Proxies
 
-In the example above, we declare the union inline on the query attribute. But what if we wanted to reuse the `SaladOrHouse` union in multiple places. You could declare the union exactly the same on each method or use a union proxy. Create a class that implements `IGraphUnionProxy` or inherits from `GraphUnionProxy` to encapsulate the details, then add that as a reference in your controller methods instead of the individual types. This can also be handy for uncluttering your code if you have a lot of possible types for the union. The return type of your method will still need to be `IGraphActionResult`. You cannot return a `IGraphUnionProxy` as a value.
+In the example above, we declare the union inline on the query attribute. But what if we wanted to reuse the `SaladOrHouse` union in multiple places. You could declare the union exactly the same on each method or use a union proxy. 
+
+Create a class that implements `IGraphUnionProxy` or inherits from `GraphUnionProxy` to encapsulate the details, then add that as a reference in your controller methods instead of the individual types. This can also be handy for uncluttering your code if you have a lot of possible types for the union. The return type of your method will still need to be `IGraphActionResult`. You cannot return a proxy as a value.
 
 ```csharp title="Example Using IGraphUnionProxy"
 public class KitchenController : GraphController
@@ -124,7 +126,6 @@ public class KitchenController : GraphController
 public class SaladOrHouse : GraphUnionProxy
 {
      public SaladOrHouse()
-        : base()
     {
         this.Name = "SaladOrHouse";
         this.AddType(typeof(Salad));
@@ -226,8 +227,10 @@ Luckily there is a way to allow you to take control of your unions and make the 
 public class RollOrBread : GraphUnionProxy
 {
     public RollOrBread()
-        : base(typeof(Roll), typeof(Bread))
-    {}
+    {
+        this.AddType(typeof(Roll));
+        this.AddType(typeof(Bread));
+    }
 
     // highlight-start
     public override Type MapType(Type runtimeObjectType)
@@ -248,7 +251,5 @@ If, via your logic you are unable to determine which of your Union's types to us
 Most of the time GraphQL ASP.NET will never call `MapType` on your union proxy. If your union types do not share an inheritance chain, for instance, the method will never be called.
 
 :::caution
-  `MapType` is not based on a resolved value, but only on the `System.Type` that was encountered. This is by design to guarantee consistency in query execution. 
-
-   If your returned type causes the query to remain indeterminate a validation error (rule [6.4.3](https://spec.graphql.org/October2021/#sec-Value-Completion)) will be applied to the query.
+  The `MapType()` function is not based on a resolved value, but only on the `System.Type` that was encountered. This is by design to guarantee consistency in query execution. 
 :::

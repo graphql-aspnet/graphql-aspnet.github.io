@@ -27,4 +27,6 @@ services.AddGraphQLLocalQueryCache();
 services.AddGraphQL();
 ```
 
-**Note:** Because a query plan contains function pointers and references to local types, the default query cache is currently restricted to being in-process for a single server instance. Query Plan serialization for a shared cache such as Redis is on the road map after v1.0 is complete. If you would like to contribute in this area please reach out!
+:::note
+Because a query plan contains function pointers and references to local graph types, the default query cache is restricted to being "in process" for a single server instance and does not scale out to reddis or other similar technologies. 
+:::

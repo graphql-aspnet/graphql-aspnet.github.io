@@ -7,7 +7,9 @@ hide_title: true
 ---
 
 ## What is a Field Path?
- GraphQL is statically typed. Each field in a query must always resolve to a single graph type known to the schema. In .NET terms that means each field must be represented by a method or property on some class or struct.  Traditionally speaking, this can introduce a lot of overhead in defining intermediate types that do nothing but organize our data.
+ GraphQL is statically typed. All possible fields on all possible objects must be pre-defined and well-known in advance. This is what defines the  schema of your graph.  Along with this, each field must be "resolvable" in a known and consistant manner. If a user requests the `name` field of a donut, graphql must know what steps to take in order to generate a data value for that field.  
+ 
+ In .NET terms that means each field must be represented by a method or property on some class or struct.  Traditionally speaking, this can introduce a lot of overhead in defining intermediate types that do nothing but organize our data. 
 
 Let's think about this query:
 
@@ -34,9 +36,9 @@ query {
 }
 ```
 
-Knowing what we know, you may think we need to create types for the grocery store, the bakery, pastries, a donut, the deli counter, meats, beef etc. in order to create properties and methods for all those fields. Its a lot of setup for what basically boils down to two methods to retrieve a donut and a cut of beef by their respective ids.
+Knowing what we know, you may think we need to create classes for the grocery store, the bakery, pastries, a donut, the deli counter, meats, beef etc. in order to create properties and methods for all those fields. Its a lot of setup for what basically boils down to two methods to retrieve a donut and a cut of beef by their respective ids. Some other GraphQL libraries take this approach and it provides an extreme amount of customization at the cost of being rather verbose.
 
-However, with GraphQL ASP.NET, using a templating pattern similar to what we do with REST controllers we can create rich graphs with very little boiler plate. Adding a new arm to your graph is as simple as defining a path to it in a controller.
+GraphQL ASP.NET takes a different appraoch and uses a templating pattern similar to what we do with REST controllers we can create rich graphs with very little boiler plate. Adding a new branch to your graph is as simple as defining a path to it in a controller. 
 
 ```csharp title="Sample Controller"
 // highlight-next-line
@@ -58,7 +60,7 @@ public class GroceryStoreController : GraphController
 Internally, for each encountered path segment (e.g. `bakery`, `meats`), GraphQL generates a virutal, intermediate graph type to fulfill resolver requests for you and acts as a pass through to your real code. It does this in concert with your real code and performs a lot of checks at start up to ensure that the combination of your real types as well as virutal types can be put together to form a functional graph.  If a collision occurs the server will fail to start.
 
 :::info Intermediate Type Names
-You may notice some object types in your schema named as `Query_Bakery`, `Query_Deli` these are the virtual types generated at runtime to create a valid schema from your path segments.
+You may notice some object types in your schema named as `Query_Bakery`, `Mutation_Deli`. These are the virtual types generated at runtime to create a valid schema from your path segments.
 :::
 
 ## Declaring Field Paths
@@ -166,7 +168,7 @@ public class BakeryController : GraphController
 }
 ```
 
-From a GraphQL perspective this equivilant to trying to define a `bakery` type with two fields named `orderDonuts`. Since both methods map to a field path of `[mutation]/bakery/orderDonuts` this would cause a `GraphTypeDeclarationException` to be thrown when your application starts. 
+From a GraphQL perspective this equivilant to trying to define a `Bakery` type with two fields named `orderDonuts`. Since both methods map to a field path this would cause a `GraphTypeDeclarationException` to be thrown when your application starts. 
 
 With Web API, the ASP.NET runtime could inspect any combinations of parameters passed on the query string or the POST body to work out which overload to call. You might be thinking, why can't GraphQL inspect the passed input arguments and make the same determination?
 
@@ -212,7 +214,7 @@ But this can feel a bit awkward in some situations so instead...
 
 ### Change The Hierarchy
 
-Another alternative is to change where in the object graph the field sits. Here we've moved one field to the root mutation type and left the other under the controller's own `bakery` field. This can be a good strategy if you have one primary way of interacting with your data and a few auxillary methods such as a quick dozen donuts at the drive thru window or going into the shop and selecting which ones you want.
+Another alternative is to change where in the object graph the field sits. Here we've moved one field to the root mutation type and left the other under the controller's own virtual `Bakery` type. This can be a good strategy if you have one primary way of interacting with your data and a few auxillary methods such as a quick dozen donuts at the drive thru window or going into the shop and selecting which ones you want.
 
 
 ```csharp title="Change the Field Path"
@@ -306,21 +308,21 @@ These are some valid field paths:
 
 ```csharp title="Valid Field Fragments"
 [Mutation("store/bakery/deliCounter/sandwiches/order")]
-[Mutation("path1/path2/path3/path4/")]
+[Query("path1/path2/path3/path4/")]
 [Mutation("path1/path1/path1/path1/path1/path1/path1/path1/path1")]
 ```
 
 But if even one segment of the path is invalid GraphQL will reject it completely.
 
 ```csharp title="Invalid Field Fragments"
-[Query("store/__bakery")] // can't start with "__"
-[Query("store/βakery")]  // unicode characters are not allowed
-[Query("path1/path2/path 33")]  // spaces are not allowed
+[Query("store/__bakery")]  // can't start with "__"
+[Query("store/βakery")]   // unicode characters are not allowed
+[Query("path1/path2/path 33")]   // spaces are not allowed
 ```
 
-### Schema Naming Formats
+### Field Naming Formats
 
-At runtime, when your schema is generated, the naming requirements it defines will be enforced for each path segment. By default this means `camelCasing` on field names.
+At runtime, when your schema is generated, the naming requirements it defines for fields will be enforced for each path segment individually. By default, this means `camelCasing`:
 
 If you declare:
 
@@ -343,3 +345,4 @@ mutation {
 ```
 
 You can alter the naming formats for fields, enum values and graph types using the declaration options on your [schema configuration](../reference/schema-configuration#graphnamingformatter).
+

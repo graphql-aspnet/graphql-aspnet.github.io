@@ -18,8 +18,10 @@ public class BakeryController : Controller
         Donut donut = null;
         // ...
 
+        // highlight-start
         // return the donut and indicate success
-        return this.Ok(donut);
+        return this.Ok(donut);        
+        // highlight-end
     }
 }
 ```
@@ -33,13 +35,15 @@ public class BakeryController : Controller
         Donut donut = null;
         // ...
 
-        // return the donut directly!
+        // highlight-start
+        // return the donut directly!        
         return donut;
+        // highlight-end
     }
 }
 ```
 
-You can either return the data itself or some alternate `IActionResult` to tell ASP.NET how to render a response.
+> You can either return the data itself or some alternate `IActionResult` to tell ASP.NET how to render a response.
 
 Some common ASP.NET action results:
 
@@ -48,7 +52,7 @@ Some common ASP.NET action results:
 -   `this.File()`: Return status 200 and stream the file to the client.
 -   `this.View()`: Render a razor view and send the HTML to the client.
 
-This works the same way in GraphQL ASP.NET. The available actions are slightly different (GraphQL won't stream files) but the usage is the same. You can even write your own action results.
+This works the same way in GraphQL ASP.NET. The available actions are slightly different (e.g. GraphQL won't stream files) but the usage is the same. You can even write your own action results.
 
 ## Controller Action Results
 
@@ -57,10 +61,10 @@ Instead of `IActionResult` we use `IGraphActionResult` from a controller action 
 Built in Controller Action Methods:
 
 -   `this.Ok(fieldValue)` : Return _fieldValue_ as the resolved value of the field and indicate to the runtime that everything completed successfully.
--   `this.Error(message)`: Indicates a problem. Child fields are not processed and an error message with the given text and error code is added to the response payload.
+-   `this.Error(message)`: Indicates a problem. The field will resolve to a `null` value automatically. Child fields are not processed and an error message with the given text and error code is added to the response payload.
 -   `this.StartBatch()` : Initiates the start a of a new batch. See [batch operations](../controllers/batch-operations.md) for details.
--   `this.Unauthorized()`: Indicate the user is not authorized to request the field. A message telling them as such will be added to the result and no child fields will be processed. The field will be returned a `null` value automatically. This is sometimes necessary for data-level validation that can't be readily determined from an `[Authorize]` attribute or query level validation.
--   `this.BadRequest()`: Commonly used in conjunction with `this.ModelState`. This result indicates the data supplied to the method is not valid for the operation. If given the model state collection an error for each validation error is rendered.
+-   `this.Unauthorized()`: Indicate the user is not authorized to request the field. A message telling them as such will be added to the result and no child fields will be processed. The field will resolve to a `null` value automatically. This is sometimes necessary for data-level validation that can't be readily determined from an `[Authorize]` attribute or query level validation.
+-   `this.BadRequest()`: Commonly used in conjunction with `this.ModelState`. This result indicates the data supplied to the method is not valid for the operation. If given a model state collection, an error for each validation error is rendered.
 -   `this.InternalServerError()`: Indicates an unintended error, such as an exception occurred. The supplied message will be added to the response and no child fields will be resolved.
 
 ### Directive Action Results
@@ -108,7 +112,7 @@ To create a custom result, implement `IGraphActionResult`, which defines a singl
 ```csharp title="IGraphActionResult.cs"
 public interface IGraphActionResult
 {
-    Task Complete(ResolutionContext context);
+    Task CompleteAsync(ResolutionContext context);
 }
 ```
 
@@ -134,17 +138,20 @@ Looking at the `UnauthorizedGraphActionResult` is a great example of how to impl
             _errorCode = errorCode ?? Constants.ErrorCodes.ACCESS_DENIED;
         }
 
-        public Task Complete(ResolutionContext context)
+        public Task CompleteAsync(ResolutionContext context)
         {
+            // add an error message to the response
             context.Messages.Critical(
                    _errorMessage,
                    _errorCode,
                    context.Request.Origin);
 
+            // instruct graphql to stop processing this field 
+            // and its children
             context.Cancel();
             return Task.CompletedTask;
         }
     }
 ```
 
-The result takes in an optional error message and code, providing defaults if not supplied. Then on `Complete` it adds the message to the context and cancels its execution.
+The result takes in an optional error message and code, providing defaults if not supplied. Then on `CompleteAsync` it adds the message to the context and cancels its execution.

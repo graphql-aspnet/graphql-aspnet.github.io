@@ -7,19 +7,25 @@ sidebar_position: 1
 
 GraphQL ASP.NET tracks many standard events. Most of these are recorded during the execution of a query. Some, such as those around field resolution, can be recorded many times in the course of a single request.
 
-_**Common Event Properties**_
+## Common Event Properties
 
-All events share a common set of properties inherited from `GraphLogEntry`.
+All logging events share a common set of properties.
 
 | Property      | Description                                              |
 | ------------- | -------------------------------------------------------- |
 | _EventId_     | The numeric constant assigned to the event.              |
 | _EventName_   | The human-friendly name of the event.                    |
+| _LogEntryId_  | A guid unique to the given log entry.                    |
+| _Message_     | A simple text message.                                   |
 | _DateTimeUTC_ | A date and time, in UTC-0, when the event was _created_. |
 
-_Constants for event names and ids can be found at_ `GraphQL.AspNet.Logging.LogEventIds`
+> Constants for `EventIds` can be found at `GraphQL.AspNet.Logging.LogEventIds`
 
-_Constants for all log entry properties can be found at_ `GraphQL.AspNet.Logging.LogPropertyNames`
+> Constants for all built in log entry properties can be found at `GraphQL.AspNet.Logging.LogPropertyNames`
+
+:::tip Scope Id
+Another common, but not universal, property is `ScopeId`.  Any log entries related to the execution of a single query will have a common scope id. In general, this id is unique per HTTP request.
+:::
 
 ## Schema Level Events
 

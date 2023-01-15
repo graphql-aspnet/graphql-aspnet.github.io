@@ -16,6 +16,9 @@ Demonstrates the creation of a custom `ILogProvider` to intercept logging events
 📌  [Custom Http Processor](https://github.com/graphql-aspnet/demo-projects/tree/master/Custom-HttpProcessor)<br/>
 Demonstrates overriding the default HTTP Processor to conditionally process entire queries at the ASP.NET level.
 
+
+<br/>
+
 ### Authentication & Authorization
 
 📌  [Field Authorization](https://github.com/graphql-aspnet/demo-projects/tree/master/Authorization)<br/>
@@ -23,6 +26,8 @@ Demonstrates fields with authorization requirements and how access denied messag
 
 📌  [Firebase Authentication](https://github.com/graphql-aspnet/demo-projects/tree/master/Firebase-Authentication)<br/>
 Demonstrates how to setup a [Firebase](https://firebase.google.com/) project and link a GraphQL ASP.NET project to it.
+
+<br/>
 
 ### Subscriptions
 
