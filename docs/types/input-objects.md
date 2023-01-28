@@ -122,48 +122,6 @@ input Input_Donut {
 }
 ```
 
-
-## Required Fields And Default Values
-Add `[Required]` (from System.ComponentModel) to any property to force a user to supply the field in a query document.
-
-Any non-required field will automatically be assigned a default value if not supplied. This default value is equivilant to the property value of the object when its instantiated via its public, parameterless constructor.
-
-
-```csharp title="Add the Required attribute for force a query to define a value"
-public class Donut
-{
-    public Donut()
-    {
-        // set custom defaults if needed
-        this.Type = DonutType.Frosted;
-        this.Price = 2.99;
-        this.IsAvailable = true;
-    }
-
-    [Required]
-    public string Name { get; set; }
-
-    public int Id { get; set; }
-    public DonutType Type { get; set; }
-    public Bakery Bakery { get;set; }
-    public decimal Price { get; set; }    
-    public bool IsAvailable { get; set; }
-}
-```
-
-```graphql title="Donut Type Definition"
-# No Default Value on Name
-input Input_Donut {
-  name: String
-  id: Int! = 0    
-  type: DonutType! = FROSTED
-  bakery: Input_Bakery = null
-  price: Decimal! = 2.99
-  isAvailable: Boolean! = true
-}
-```
-
-
 ## Non-Nullability
 By default, all properties that are reference types (i.e. classes) are nullable and all value types (primatives, structs etc.) are non-nullable
 
@@ -190,6 +148,8 @@ public class Donut
 {
     public Donut()
     {
+        // we must supply a non-null default value 
+        // for a non-nullable field
         this.Recipe = new Recipe("Flour, Sugar, Salt");
     }
 
@@ -201,7 +161,7 @@ public class Donut
 
 ```graphql title="Input Donut Definition"
 input Input_Donut {
-  recipe: Input_Recipe! = {Ingredients : "Flour, Sugar, Salt" }  
+  recipe: Input_Recipe! = {ingredients : "Flour, Sugar, Salt" }  
   quantity: Int! = 0                   
 }
 ```
@@ -209,21 +169,71 @@ input Input_Donut {
 :::info Did You Notice?
  We assigned a recipe in the class's constructor to use as the default value.
  
- Any non-nullable field, that does not have the `[Required]` attribute, MUST have a default value assigned to it that is not `null`. 
- 
- A `GraphTypeDeclarationException` will be thrown at startup if this is not the case.
+ Any non-nullable field, that does not have the `[Required]` attribute (see below), MUST have a default value assigned to it that is not `null`. A `GraphTypeDeclarationException` will be thrown at startup if this is not the case.
 :::
 
-#### Combine Non-Null and [Required]
-Combine the [Required] attribute with a custom type expression to force a user to supply a non-null value for the field on a query document.
+
+## Required Fields And Default Values
+Add `[Required]` (from System.ComponentModel) to any property to force a user to supply the field in a query document.
+
+Any non-required field will automatically be assigned a default value if not supplied on a query. This default value is equivilant to the property value of the object when its instantiated via its public, parameterless constructor.
+
+```csharp title="Add the Required attribute for force a query to define a value"
+public class Donut
+{
+    public Donut()
+    {
+        // set custom defaults if needed
+        this.Type = DonutType.Frosted;
+        this.IsAvailable = true;
+    }    
+    
+    [Required]
+    public int Id { get; set; }
+
+    public string Name { get; set; }
+    public DonutType Type { get; set; }
+    public Bakery Bakery { get;set; }   
+    public bool IsAvailable { get; set; }
+    public int SkuNumber { get; set; }
+}
+```
+
+```graphql title="Donut Type Definition"
+input Input_Donut {
+  id: Int!   # No Default Value on Id
+  name: String = null    
+  type: DonutType! = FROSTED
+  bakery: Input_Bakery = null
+  isAvailable: Boolean! = true
+  skuNumber: Int! = 0
+}
+```
+
+### Nullable Fields are Never Required
+By Definition (spec § [5.6.4](https://spec.graphql.org/October2021/#sec-Input-Object-Required-Fields)), a nullable field without a 
+declared default value is still considered optional and does not need to be supplied.  That is to say that if a query does not include a field that is nullable, it will default to `null` regardless of the use of the `[Required]` attribute.
+
+These two property declarations for an input object are identical as far as graphql is concerned:
+
+```csharp title='Example Input object Fields'
+public InputEmployee
+{
+    public string  FirstName { get; set; }
+
+    [Required]
+    public string LastName { get; set; }
+}
+```
+
+Both `FirstName` and `LastName` are of type `string`, which is nullable.  GraphQL will ignore the required attribute and still allow a query to process even if neither value is supplied on a query.
+
+### Required Reference Types
+Combine the [Required] attribute with a non-nullable type expression to force an otherwise nullable field to be required.
 
 ```csharp title="Force Owner to be non-null And Required"
 public class Bakery
 {
-    public Bakery()
-    {
-    }
-
     [Required]
     [GraphField(TypeExpression = "Type!")]
     public Person Owner { get; set; }
@@ -231,11 +241,14 @@ public class Bakery
 ```
 
 ```graphql title="Donut Type Definition"
-# No Default Value is supplied. owner must be supplied on a query
+# No Default Value is supplied. 
+# the 'owner' must be supplied on a query
 input Input_Bakery {
   owner: Input_Person!
 }
 ```
+
+`Owner` is of type Person, which is a reference type, which is nullable by default.  By augmenting its type expression to be non-null and adding the `[Required]` attribute graphql will not supply a default value require it to be supplied on a query.
 
 ## Enum Fields and Coercability
 
