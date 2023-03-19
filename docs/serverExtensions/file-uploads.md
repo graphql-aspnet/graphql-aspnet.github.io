@@ -41,6 +41,7 @@ using GraphQL.AspNet.ServerExtensions.MultipartRequests;
 public class FileUploadController : GraphController
 {
     [MutationRoot("singleFileUpload")]
+    // highlight-next-line
     public async Task<int> UploadFile(FileUpload fileRef)
     {
         var stream = await fileRef.OpenFileAsync();
@@ -51,10 +52,11 @@ public class FileUploadController : GraphController
 }
 ```
 
-The scalar is presented to a query as the type `Upload` as defined in the specification. 
+The scalar is presented to a query as the type `Upload` as defined in the specification. Be sure to declare your variables as `Upload` type to indicate an uploaded file.
 
 ```bash  title="Sample Query"
 curl localhost:3000/graphql \
+  # highlight-next-line
   -F operations='{ "query": "mutation ($file: Upload) { singleFileUpload(file: $file) }", "variables": { "file": null } }' \
   -F map='{ "0": ["variables", "file"] }' \
   -F 0=@a.txt
@@ -71,6 +73,7 @@ using GraphQL.AspNet.ServerExtensions.MultipartRequests;
 public class FileUploadController : GraphController
 {
     [MutationRoot("multiFileUpload")]
+    // highlight-next-line
     public async Task<int> UploadFile(IList<FileUpload> files)
     {
         foreach(var file in files)
@@ -94,11 +97,29 @@ curl localhost:3000/graphql \
 ```
 
 :::info
-The server extension will only replace existing `null` values in an array declared on a variable collection. It will NOT attempt to arbitrarily add files to an empty array. 
+The server extension will only replace existing `null` values in an array declared on a variable collection. It will NOT attempt to arbitrarily add files to an empty or null array. 
 
 Notice in the above curl command that the `files` variable is declared as an array with two elements and that the `map` field 
 points to each of those indexed elements.
 :::
+
+### Handling an Unknown Number of Files
+There are scenarios where you may ask your users to select a few files to upload without knowing how many they might choose. Some tools may be able to smartly determine the number of files and ensure the target array is declared correctly. However, you can always declare an array with more elements than you need. Those not supplied will be set to null.
+
+```bash  title="Sample Query"
+
+# Only two files are supplied, but we've declared room for 6. File indexes 2-6 will be null 
+# when the list appears in your controller
+curl localhost:3000/graphql \
+  -F operations='{ 
+                   "query": "mutation ($files: [Upload]) { multiFileUpload(files: $files) }",  
+                   # highlight-next-line
+                   "variables": { "files": [null, null, null, null, null, null] } }' \
+  -F map='{ "firstFile": ["variables", "files", 0], "secondFile": ["variables", "files", 1] }' \
+  -F firstFile=@a.txt
+  -F secondFile=@b.txt
+```
+
 
 ## File Uploads on Batched Queries
 File uploads work in conjunction with batched queries. When processing a multi-part request as a batch, prefix each of the mapped object-path references with an index of the batch you want the file to apply to. As you might guess this is usually handled by a supported client automatically.
@@ -126,23 +147,44 @@ The following properties on the `FileUpload` scalar can be useful:
 ## Opening a File Stream 
 When opening a file stream you need to call await a call `FileUpload.OpenFileAsync()`. This method is an abstraction on top of an internal wrapper that standardizes file streams across all implementions (see below for implementing your own file processor).  When working with the standard `IFormFile` interface provided by ASP.NET this call is a simple wrapper for `IFormFile.OpenReadStream()`. 
 
-## Custom File Handling 
-By default, this extension  segments the request on an `HttpContext` and presents the different parts to the query engine in a manner it expects. This means that any uploaded files are delt under the hood with as `IFormFile` references. While this is likely fine for most users, it can be troublesome with regard to timeouts and large file requests. Also, there may be scenarios where you want to save off files prior to executing a query. Perhaps you'll need to process the file stream multiple times?
+```csharp title=ExampleFile Upload Controller
+using GraphQL.AspNet.ServerExtensions.MultipartRequests;
 
-Implement and register your own `IFileUploadScalarValueMaker` to add custom processing logic for each file BEFORE graphql gets ahold of it. For instance, some users may want to write incoming files to local disk or cloud storage and present GraphQL with a stream that points to that local reference, rather than the file reference on the raw request.
+public class FileUploadController : GraphController
+{
+    [MutationRoot("singleFileUpload")]
+    public async Task<int> UploadFile(FileUpload fileRef)
+    {
+        // do something with the file stream
+        // it is your responsibility to close it
+        // highlight-next-line
+        var stream = await fileRef.OpenFileAsync();        
+
+        return 0;
+    }
+}
+```
+
+## Custom File Handling 
+By default, this extension just splits the request on an `HttpContext` and presents the different parts to the query engine at different times in a manner it expects. This means that any uploaded files are delt under the hood with as `IFormFile` references. While this is likely fine for most users, it can be troublesome with regard to timeouts and large file requests. Also, there may be scenarios where you want to save off files prior to executing a query. Perhaps you'll need to process the file stream multiple times? There are a number of niche cases where working through the raw `IFormFile` is not sufficient. 
+
+You can implement and register your own `IFileUploadScalarValueMaker` to add custom processing logic for each file or blob BEFORE graphql gets ahold of it. For instance, some users may want to write incoming files to local disk or cloud storage and present GraphQL with a stream that points to that local reference, rather than the file reference on the raw request.
 
 ```csharp
  public interface IFileUploadScalarValueMaker
-    {
-        Task<FileUpload> CreateFileScalar(IFormFile aspNetFile);
+{
+    // This overload is used when processing traditional files received as part of a 
+    // multi-part form through ASP.NET's HttpContext
+    Task<FileUpload> CreateFileScalar(IFormFile aspNetFile);
 
-        // This overload is used when processing data received on a 
-        // multi-part form field rather than as a formal file upload.
-        Task<FileUpload> CreateFileScalar(string mapKey, byte[] blobData);
-    }
+    // This overload is used when processing data received on a 
+    // multi-part form field rather than as a formal file upload.
+    Task<FileUpload> CreateFileScalar(string mapKey, byte[] blobData);
+}
 ```
 
-```csharp title=Register Your Custom Value Maker
+
+```csharp title="Register Your Custom Value Maker"
 // startup code
 
 // register your value maker BEFORE calling .AddGraphQL
@@ -152,6 +194,10 @@ services.AddGraphQL(options => {
     options.RegisterExtension<MultipartRequestServerExtension>();
 });
 ```
+
 :::tip
-Take a look at the [`default upload scalar value maker`]("http://google.com") for some helpful details when trying to implement your own.
+You can inherit from `FileUpload` any extend it as needed.
 :::
+
+Take a look at the [default upload scalar value maker]("http://google.com") for some helpful details when trying to implement your own.
+
