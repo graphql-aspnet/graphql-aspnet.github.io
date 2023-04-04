@@ -4,10 +4,10 @@ title: File Uploads
 sidebar_label: File Uploads
 sidebar_position: 0
 ---
+<span className="pill">.NET 6+</span>
 
 ## GraphQL Multipart Request Specification
-GraphQL ASP.NET provides built in support for file uploads via an implementation of the `GraphQL Multipart Request Specification`.  You can read the 
-specification [here](https://github.com/jaydenseric/graphql-multipart-request-spec) if you are interested in the details.
+GraphQL ASP.NET provides built in support for file uploads via an implementation of the [GraphQL Multipart Request Specification](https://github.com/jaydenseric/graphql-multipart-request-spec).
 
 :::caution
 This document covers how to setup a controller to accept files from an http request that conforms to the above specification. It provides sample curl requests that would be accepted for the given sample code but does not explain in detail the various form fields required to complete a request. It is highly recommended to use a [supported client](https://github.com/jaydenseric/graphql-multipart-request-spec#client) when enabling this server extension.
@@ -32,12 +32,10 @@ File uploads and [batch query processing](./batch-processing.md) are implemented
 
 ## A Basic Controller
 
-Files are received as a special scalar type `GraphQL.AspNet.ServerExtensions.MultipartRequests.FileUpload`. Add a reference in your controller to this 
+Files are received as a special scalar type `FileUpload`. Add a reference in your controller to this 
 scalar like you would any other scalar.
 
 ```csharp title=ExampleFile Upload Controller
-using GraphQL.AspNet.ServerExtensions.MultipartRequests;
-
 public class FileUploadController : GraphController
 {
     [MutationRoot("singleFileUpload")]
@@ -54,7 +52,13 @@ public class FileUploadController : GraphController
 
 The scalar is presented to a query as the type `Upload` as defined in the specification. Be sure to declare your variables as `Upload` type to indicate an uploaded file.
 
-```bash  title="Sample Query"
+```graphql title="Use the Upload graph type for variables"
+mutation ($file: Upload) { 
+    singleFileUpload(file: $file) 
+}
+```
+
+```bash  title="Sample curl Query"
 curl localhost:3000/graphql \
   # highlight-next-line
   -F operations='{ "query": "mutation ($file: Upload) { singleFileUpload(file: $file) }", "variables": { "file": null } }' \
@@ -96,15 +100,8 @@ curl localhost:3000/graphql \
   -F secondFile=@b.txt
 ```
 
-:::info
-The server extension will only replace existing `null` values in an array declared on a variable collection. It will NOT attempt to arbitrarily add files to an empty or null array. 
-
-Notice in the above curl command that the `files` variable is declared as an array with two elements and that the `map` field 
-points to each of those indexed elements.
-:::
-
 ### Handling an Unknown Number of Files
-There are scenarios where you may ask your users to select a few files to upload without knowing how many they might choose. Some tools may be able to smartly determine the number of files and ensure the target array is declared correctly. However, you can always declare an array with more elements than you need. Those not supplied will be set to null.
+There are scenarios where you may ask your users to select a few files to upload without knowing how many they might choose. As long as your indicating path points to an index value, the target array will be resized accordingly.
 
 ```bash  title="Sample Query"
 
@@ -114,12 +111,12 @@ curl localhost:3000/graphql \
   -F operations='{ 
                    "query": "mutation ($files: [Upload]) { multiFileUpload(files: $files) }",  
                    # highlight-next-line
-                   "variables": { "files": [null, null, null, null, null, null] } }' \
+                   "variables": { "files": [] } }' \
   -F map='{ "firstFile": ["variables", "files", 0], "secondFile": ["variables", "files", 1] }' \
   -F firstFile=@a.txt
   -F secondFile=@b.txt
 ```
-
+_In the above example, the `files` array will be automatically expanded to include indexes 0 and 1 as requested by the `map`._
 
 ## File Uploads on Batched Queries
 File uploads work in conjunction with batched queries. When processing a multi-part request as a batch, prefix each of the mapped object-path references with an index of the batch you want the file to apply to. As you might guess this is usually handled by a supported client automatically.
@@ -127,8 +124,8 @@ File uploads work in conjunction with batched queries. When processing a multi-p
 ```bash  title="Sample Query"
 curl localhost:3000/graphql \
   -F operations='[
-         { "query": "mutation ($files: [Upload]) { multiFileUpload(files: $files) }", "variables": { "files": [null, null] } },
-         { "query": "mutation ($files: [Upload]) { multiFileUpload(files: $files) }", "variables": { "files": [null, null] } },
+         { "query": "mutation ($files: [Upload]) { multiFileUpload(files: $files) }", "variables": { "files": [] } },
+         { "query": "mutation ($files: [Upload]) { multiFileUpload(files: $files) }", "variables": { "files": [] } },
        ]' \
    # highlight-next-line
   -F map='{ "firstFile": [0, "variables", "files", 0], "secondFile": [1, "variables", "files", 0] }' \
@@ -156,19 +153,20 @@ public class FileUploadController : GraphController
     public async Task<int> UploadFile(FileUpload fileRef)
     {
         // do something with the file stream
-        // it is your responsibility to close it
+        // it is your responsibility to close and dispose of it
         // highlight-next-line
-        var stream = await fileRef.OpenFileAsync();        
+        var stream = await fileRef.OpenFileStreamAsync();        
 
         return 0;
     }
 }
 ```
 
-## Custom File Handling 
-By default, this extension just splits the request on an `HttpContext` and presents the different parts to the query engine at different times in a manner it expects. This means that any uploaded files are delt under the hood with as `IFormFile` references. While this is likely fine for most users, it can be troublesome with regard to timeouts and large file requests. Also, there may be scenarios where you want to save off files prior to executing a query. Perhaps you'll need to process the file stream multiple times? There are a number of niche cases where working through the raw `IFormFile` is not sufficient. 
 
-You can implement and register your own `IFileUploadScalarValueMaker` to add custom processing logic for each file or blob BEFORE graphql gets ahold of it. For instance, some users may want to write incoming files to local disk or cloud storage and present GraphQL with a stream that points to that local reference, rather than the file reference on the raw request.
+## Custom File Handling 
+By default, this extension just splits the request on an `HttpContext` and presents the different parts to the query engine in a manner it expects. This means that any uploaded files are consumed under the hood as ASP.NET's built in `IFormFile` interface. While this is likely fine for most users, it can be troublesome with regard to timeouts and large file requests. Also, there may be scenarios where you want to save off files prior to executing a query or perhaps you'll need to process the file stream multiple times? There are a number of niche cases where working through the raw `IFormFile` is not sufficient. 
+
+You can implement and register your own `IFileUploadScalarValueMaker` to add custom processing logic for each file or blob BEFORE graphql gets ahold of it. For instance, some users may want to write incoming files to local disk or cloud storage and present GraphQL with a stream that points to that local reference, rather than the file reference on the http request.
 
 ```csharp
  public interface IFileUploadScalarValueMaker
@@ -199,5 +197,5 @@ services.AddGraphQL(options => {
 You can inherit from `FileUpload` any extend it as needed.
 :::
 
-Take a look at the [default upload scalar value maker]("http://google.com") for some helpful details when trying to implement your own.
+Take a look at the [default upload scalar value maker](https://google.com) for some helpful details when trying to implement your own.
 
