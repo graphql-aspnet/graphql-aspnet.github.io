@@ -50,7 +50,7 @@ public class FileUploadController : GraphController
 }
 ```
 
-The scalar is presented to a query as the type `Upload` as defined in the specification. Be sure to declare your variables as `Upload` type to indicate an uploaded file.
+The scalar is named `Upload` in the final graphql schema as defined in the specification. Be sure to declare your variables as an `Upload` type to indicate an uploaded file.
 
 ```graphql title="Use the Upload graph type for variables"
 mutation ($file: Upload) { 
@@ -62,7 +62,7 @@ mutation ($file: Upload) {
 curl localhost:3000/graphql \
   # highlight-next-line
   -F operations='{ "query": "mutation ($file: Upload) { singleFileUpload(file: $file) }", "variables": { "file": null } }' \
-  -F map='{ "0": ["variables", "file"] }' \
+  -F map='{ "0": ["variables.file"] }' \
   -F 0=@a.txt
 ```
 
@@ -71,14 +71,18 @@ curl localhost:3000/graphql \
 Arrays of files work just like any other list in GraphQL. When declaring the map variable for the multi-part request, be sure 
 to indicate which index you are mapping the file to. The extension will not magically append files to an array. Each mapped file must explicitly declare the element index in an array where it is being placed.
 
-```csharp title=ExampleFile Upload Controller
+<span style={{"color": "red"}}>Warning: Be sure to dispose of each file stream when you are finished with them</span>
+<br/>
+<br/>
+
+```csharp title="Example File Upload Controller"
 using GraphQL.AspNet.ServerExtensions.MultipartRequests;
 
 public class FileUploadController : GraphController
 {
     [MutationRoot("multiFileUpload")]
     // highlight-next-line
-    public async Task<int> UploadFile(IList<FileUpload> files)
+    public async Task<int> UploadFile(IEnumerable<FileUpload> files)
     {
         foreach(var file in files)
         {
@@ -91,22 +95,26 @@ public class FileUploadController : GraphController
 }
 ```
 
-```bash  title="Sample Query"
+```graphql title="Declare a list of files on a query"
+# highlight-next-line
+mutation ($files: [Upload]) { 
+    multiFileUpload(file: $files) 
+}
+```
+
+```bash  title="Sample Curl"
 curl localhost:3000/graphql \
-  -F operations='{ "query": "mutation ($files: [Upload]) { multiFileUpload(files: $files) }", "variables": { "files": [null, null] } }' \
-  # highlight-next-line
+# highlight-next-line
+  -F operations='{ "query": "mutation ($files: [Upload]) { multiFileUpload(files: $files) }", "variables": { "files": [null, null] } }' \  
   -F map='{ "firstFile": ["variables", "files", 0], "secondFile": ["variables", "files", 1] }' \
   -F firstFile=@a.txt
   -F secondFile=@b.txt
 ```
 
 ### Handling an Unknown Number of Files
-There are scenarios where you may ask your users to select a few files to upload without knowing how many they might choose. As long as your indicating path points to an index value, the target array will be resized accordingly.
+There are scenarios where you may ask your users to select a few files to upload without knowing how many they might choose. As long each declaration in your `map` field points to a position that could be a valid index in an array on the `operations` object, the target array will be resized accordingly. 
 
-```bash  title="Sample Query"
-
-# Only two files are supplied, but we've declared room for 6. File indexes 2-6 will be null 
-# when the list appears in your controller
+```bash  title="Adding Two Files"
 curl localhost:3000/graphql \
   -F operations='{ 
                    "query": "mutation ($files: [Upload]) { multiFileUpload(files: $files) }",  
@@ -116,7 +124,39 @@ curl localhost:3000/graphql \
   -F firstFile=@a.txt
   -F secondFile=@b.txt
 ```
-_In the above example, the `files` array will be automatically expanded to include indexes 0 and 1 as requested by the `map`._
+
+
+In the above example, the `files` array will be automatically expanded to include indexes 0 and 1 as requested by the `map`:
+
+```json title="Resultant Operations Object"
+{
+    "query": "mutation ($files: [Upload]) { multiFileUpload(files: $files) }",  
+    "variables": { "files": [<firstFile>, <secondFile>] }
+}
+```
+
+### Skipping Array Indexes 
+If you skip any indexes in your `map` declaration, the target array will be expanded to to include the out of sequence index. This can produce null values in your array and, depending on your query declaration, result in an error if your variable does not allow nulls.
+
+```bash  title="Adding One File To Index 5"
+# Only one file is supplied but its mapped to index 5
+# the final array at 'variables.files` will be 6 elements long with 5 null elements.
+curl localhost:3000/graphql \
+  -F operations='{ 
+                   "query": "mutation ($files: [Upload]) { multiFileUpload(files: $files) }",  
+                   # highlight-next-line
+                   "variables": { "files": [] } }' \
+  # highlight-next-line
+  -F map='{ "firstFile": ["variables", "files", 5] }' \
+  -F firstFile=@a.txt
+```
+
+```json title="Resultant Operations Object"
+{
+    "query": "mutation ($files: [Upload]) { multiFileUpload(files: $files) }",  
+    "variables": { "files": [null, null, null, null, null, <firstFile>] }
+}
+```
 
 ## File Uploads on Batched Queries
 File uploads work in conjunction with batched queries. When processing a multi-part request as a batch, prefix each of the mapped object-path references with an index of the batch you want the file to apply to. As you might guess this is usually handled by a supported client automatically.
@@ -136,13 +176,13 @@ curl localhost:3000/graphql \
 ## The FileUpload Scalar
 The following properties on the `FileUpload` scalar can be useful:
 
-* `FileName` - The name of the file that was uploaded. This property will be null if a non-file form field is referenced
+* `FileName` - The name of the file that was uploaded. This property will be null if a non-file form field is referenced.
 * `MapKey` - The key value used to place this file within a variable collection. This is usually the form field name on the multi-part request.
 * `ContentType` -  The supplied `content-type` value sent with the file. This value will be null for non-file fields.
 * `Headers` -  A collection of all the headers provided with the uploaded file. This value will be null for non-file fields.
 
 ## Opening a File Stream 
-When opening a file stream you need to call await a call `FileUpload.OpenFileAsync()`. This method is an abstraction on top of an internal wrapper that standardizes file streams across all implementions (see below for implementing your own file processor).  When working with the standard `IFormFile` interface provided by ASP.NET this call is a simple wrapper for `IFormFile.OpenReadStream()`. 
+When opening a file stream you need to await a call `FileUpload.OpenFileAsync()`. This method is an abstraction on top of an internal wrapper that standardizes file streams across all implementions (see below for implementing your own file processor).  When working with the standard `IFormFile` interface provided by ASP.NET this call is a simple wrapper for `IFormFile.OpenReadStream()`. 
 
 ```csharp title=ExampleFile Upload Controller
 using GraphQL.AspNet.ServerExtensions.MultipartRequests;
@@ -162,9 +202,8 @@ public class FileUploadController : GraphController
 }
 ```
 
-
 ## Custom File Handling 
-By default, this extension just splits the request on an `HttpContext` and presents the different parts to the query engine in a manner it expects. This means that any uploaded files are consumed under the hood as ASP.NET's built in `IFormFile` interface. While this is likely fine for most users, it can be troublesome with regard to timeouts and large file requests. Also, there may be scenarios where you want to save off files prior to executing a query or perhaps you'll need to process the file stream multiple times? There are a number of niche cases where working through the raw `IFormFile` is not sufficient. 
+By default, this extension just splits the request on an `HttpContext` and presents the different parts to the query engine in a manner it expects. This means that any uploaded files are consumed under the hood as ASP.NET's built in `IFormFile` interface. While this is fine for most users, it can be troublesome with regard to timeouts and large file requests. Also, there may be scenarios where you want to save off files prior to executing a query or perhaps you'll need to process the file stream multiple times? 
 
 You can implement and register your own `IFileUploadScalarValueMaker` to add custom processing logic for each file or blob BEFORE graphql gets ahold of it. For instance, some users may want to write incoming files to local disk or cloud storage and present GraphQL with a stream that points to that local reference, rather than the file reference on the http request.
 
@@ -194,8 +233,14 @@ services.AddGraphQL(options => {
 ```
 
 :::tip
-You can inherit from `FileUpload` any extend it as needed.
+You can inherit from `FileUpload` and extend it as needed. Just be sure to declare it as `FileUpload` in your controllers so that GraphQL knows
+what scalar you are requesting.
 :::
 
 Take a look at the [default upload scalar value maker](https://google.com) for some helpful details when trying to implement your own.
 
+## Timeouts and File Uploads
+
+Be mindful of any query timeouts you have set for your schemas. ASP.NET may start processing your query before all the file contents are made available to the server as long as it has the initial POST request. This also means that your graphql queries may start executing before the file contents arrive. 
+
+While this asysncronicty usually works to your advantage, you may find that your queries pause on `.OpenFileStreamAsync()` waiting for the file for a long period of time if there is a network delay or a large file being uploaded. If you have a [custom timeout](../reference/schema-configuration.md#querytimeout) configured for a schema, it may trigger while waiting for the file. Be sure to set your timeouts to a long enough period of time to avoid this issue.
