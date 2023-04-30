@@ -15,25 +15,29 @@ This document covers how to setup a controller to accept files from an http requ
 
 ## Enable File Upload Support
 
-While file upload support is shipped as part of the main library it is disabled by default and must be explicitly enabled as an extension to each individual schema. 
+While file upload support is shipped as part of the main library it is disabled by default and must be explicitly enabled as an extension to each schema. 
 
 ```csharp title='Register the Server Extension'
 // Startup Code
 // other code omitted for brevity
 services.AddGraphQL(options => {
-    options.RegisterExtension<MultipartRequestServerExtension>();
+    options.AddMultipartRequestSupport();
 });
 ```
 
 :::tip
-File uploads and [batch query processing](./batch-processing.md) are implemented as part of the same specification and are encapsulated in the same extension.
+File uploads and [batch query processing](./batch-processing.md) are implemented as part of the same specification and are encapsulated in the same "multi-part request" extension.
 :::
 
 
 ## A Basic Controller
 
-Files are received as a special scalar type `FileUpload`. Add a reference in your controller to this 
+Files are received as a special C# class named `FileUpload`. Add a reference in your controller to this 
 scalar like you would any other scalar.
+
+<span style={{"color": "red"}}>Warning: Be sure to dispose of the file stream when you are finished with it.</span>
+<br/>
+<br/>
 
 ```csharp title=ExampleFile Upload Controller
 public class FileUploadController : GraphController
@@ -42,7 +46,7 @@ public class FileUploadController : GraphController
     // highlight-next-line
     public async Task<int> UploadFile(FileUpload fileRef)
     {
-        var stream = await fileRef.OpenFileAsync();
+        using var stream = await fileRef.OpenFileAsync();
         // do something with the file stream
 
         return 0;
@@ -50,7 +54,7 @@ public class FileUploadController : GraphController
 }
 ```
 
-The scalar is named `Upload` in the final graphql schema as defined in the specification. Be sure to declare your variables as an `Upload` type to indicate an uploaded file.
+The scalar in your schema is named `Upload` per the specification. Be sure to declare your graphql variables as an `Upload` type to indicate an uploaded file.
 
 ```graphql title="Use the Upload graph type for variables"
 mutation ($file: Upload) { 
@@ -71,7 +75,7 @@ curl localhost:3000/graphql \
 Arrays of files work just like any other list in GraphQL. When declaring the map variable for the multi-part request, be sure 
 to indicate which index you are mapping the file to. The extension will not magically append files to an array. Each mapped file must explicitly declare the element index in an array where it is being placed.
 
-<span style={{"color": "red"}}>Warning: Be sure to dispose of each file stream when you are finished with them</span>
+<span style={{"color": "red"}}>Warning: Be sure to dispose of each file stream when you are finished with it.</span>
 <br/>
 <br/>
 
@@ -95,7 +99,7 @@ public class FileUploadController : GraphController
 }
 ```
 
-```graphql title="Declare a list of files on a query"
+```graphql title="Declaring a list of files on a graphql query"
 # highlight-next-line
 mutation ($files: [Upload]) { 
     multiFileUpload(file: $files) 
@@ -112,7 +116,7 @@ curl localhost:3000/graphql \
 ```
 
 ### Handling an Unknown Number of Files
-There are scenarios where you may ask your users to select a few files to upload without knowing how many they might choose. As long each declaration in your `map` field points to a position that could be a valid index in an array on the `operations` object, the target array will be resized accordingly. 
+There are scenarios where you may ask your users to select a few files to upload without knowing how many they might choose. As long each declaration in your `map` field points to a position that _could be_ a valid index, the target array will be resized accordingly. 
 
 ```bash  title="Adding Two Files"
 curl localhost:3000/graphql \
@@ -136,7 +140,7 @@ In the above example, the `files` array will be automatically expanded to includ
 ```
 
 ### Skipping Array Indexes 
-If you skip any indexes in your `map` declaration, the target array will be expanded to to include the out of sequence index. This can produce null values in your array and, depending on your query declaration, result in an error if your variable does not allow nulls.
+If you skip any indexes in your `map` declaration, the target array will be expanded to to include the out of sequence index. This can produce null values in your array and result in an error if your variable declaration does not allow nulls.
 
 ```bash  title="Adding One File To Index 5"
 # Only one file is supplied but its mapped to index 5
@@ -154,6 +158,7 @@ curl localhost:3000/graphql \
 ```json title="Resultant Operations Object"
 {
     "query": "mutation ($files: [Upload]) { multiFileUpload(files: $files) }",  
+    // highlight-next-line
     "variables": { "files": [null, null, null, null, null, <firstFile>] }
 }
 ```
@@ -174,7 +179,7 @@ curl localhost:3000/graphql \
 ```
 
 ## The FileUpload Scalar
-The following properties on the `FileUpload` scalar can be useful:
+The following properties on the `FileUpload` C# class can be useful:
 
 * `FileName` - The name of the file that was uploaded. This property will be null if a non-file form field is referenced.
 * `MapKey` - The key value used to place this file within a variable collection. This is usually the form field name on the multi-part request.
@@ -195,7 +200,7 @@ public class FileUploadController : GraphController
         // do something with the file stream
         // it is your responsibility to close and dispose of it
         // highlight-next-line
-        var stream = await fileRef.OpenFileStreamAsync();        
+        using var stream = await fileRef.OpenFileStreamAsync();        
 
         return 0;
     }
@@ -203,7 +208,7 @@ public class FileUploadController : GraphController
 ```
 
 ## Custom File Handling 
-By default, this extension just splits the request on an `HttpContext` and presents the different parts to the query engine in a manner it expects. This means that any uploaded files are consumed under the hood as ASP.NET's built in `IFormFile` interface. While this is fine for most users, it can be troublesome with regard to timeouts and large file requests. Also, there may be scenarios where you want to save off files prior to executing a query or perhaps you'll need to process the file stream multiple times? 
+By default, this extension splits the POST request on an `HttpContext` and presents the different parts to the query engine in a manner it expects. This means that any uploaded files are consumed under the hood as ASP.NET's built in `IFormFile` interface. While this is fine for most users, it can be troublesome with regard to timeouts and large file requests. Also, there may be scenarios where you want to save off files prior to executing a query or perhaps you'll need to process the file stream multiple times. 
 
 You can implement and register your own `IFileUploadScalarValueMaker` to add custom processing logic for each file or blob BEFORE graphql gets ahold of it. For instance, some users may want to write incoming files to local disk or cloud storage and present GraphQL with a stream that points to that local reference, rather than the file reference on the http request.
 
@@ -222,25 +227,24 @@ You can implement and register your own `IFileUploadScalarValueMaker` to add cus
 
 
 ```csharp title="Register Your Custom Value Maker"
-// startup code
+// other startup code omitted
 
-// register your value maker BEFORE calling .AddGraphQL
+// register your scalar value maker BEFORE calling .AddGraphQL
 services.AddSingleton<IFileUploadScalarValueMaker, MyFileUploadScalarValueMaker>();
 
 services.AddGraphQL(options => {
-    options.RegisterExtension<MultipartRequestServerExtension>();
+    options.AddMultipartRequestSupport();
 });
 ```
 
 :::tip
-You can inherit from `FileUpload` and extend it as needed. Just be sure to declare it as `FileUpload` in your controllers so that GraphQL knows
-what scalar you are requesting.
+You can inherit from `FileUpload` and extend it as needed on your custom maker. However, be sure to declare your method parameters as `FileUpload` in your controllers so that GraphQL knows what scalar you are requesting.
 :::
 
 Take a look at the [default upload scalar value maker](https://google.com) for some helpful details when trying to implement your own.
 
 ## Timeouts and File Uploads
 
-Be mindful of any query timeouts you have set for your schemas. ASP.NET may start processing your query before all the file contents are made available to the server as long as it has the initial POST request. This also means that your graphql queries may start executing before the file contents arrive. 
+Be mindful of any query timeouts you have set for your schemas. ASP.NET may start processing your query before all the file contents are made available to the server as long as it has the initial POST request. This also means that your graphql queries may start executing before the file contents arrive.
 
-While this asysncronicty usually works to your advantage, you may find that your queries pause on `.OpenFileStreamAsync()` waiting for the file for a long period of time if there is a network delay or a large file being uploaded. If you have a [custom timeout](../reference/schema-configuration.md#querytimeout) configured for a schema, it may trigger while waiting for the file. Be sure to set your timeouts to a long enough period of time to avoid this issue.
+While this asysncronicty usually works to your advantage, allowing your queries to begin processing before all the files are uploaded to the server; you may find that your queries pause on `.OpenFileStreamAsync()` waiting for the file stream to become available if there is a network delay or a large file being uploaded. If you have a [custom timeout](../reference/schema-configuration.md#querytimeout) configured for a schema, it may trigger while waiting for the file. Be sure to set your timeouts to a long enough period of time to avoid this scenario.

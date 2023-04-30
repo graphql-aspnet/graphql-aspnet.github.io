@@ -21,7 +21,7 @@ While batch query support is shipped as part of the main library it is disabled 
 // Startup Code
 // other code omitted for brevity
 services.AddGraphQL(options => {
-    options.RegisterExtension<MultipartRequestServerExtension>();
+    options.AddMultipartRequestSupport();
 });
 ```
 
@@ -87,14 +87,13 @@ curl localhost:3000/graphql \
    }
 ]
 ```
-## Batch Order is Never Guaranteed
-While the order of the results is guaranteed to be sorted in the same order in which the queries were received, there is no guarantee that the queries are executed in any specific order. This means if you submit a batch of 5 requests, each requests may complete in a randomized order. If the same batch is submitted 3 times, its possible that the execution order will be different each time. 
+## Batch Execution Order is Never Guaranteed
+While the order of the results is guaranteed to be the same order in which the queries were received, there is no guarantee that the queries are executed in any specific order. This means if you submit a batch of 5 requests, each requests may complete in a randomized order. If the same batch is submitted 3 times, its possible that the execution order will be different each time. 
 
-For queries this is usally not an issue, but if you are batching mutations, make sure you don't have any unexpected dependencies between queries. If your controllers perform business logic against an existing object and that object is modified by more than of your mutations its highly possible that the state of the object may be unexpectedly modified in some executions but not in others. 
+For queries this is usally not an issue, but if you are batching mutations, make sure you don't have any unexpected dependencies or side effects between queries. If your controllers perform business logic against an existing object and that object is modified by more than of your mutations its highly possible that the state of the object may be unexpectedly modified in some executions but not in others. 
 
 Take this controller and query:
-```csharp title=Example Controller
-
+```csharp title="Example Controller"
 public class FileUploadController : GraphController
 {
     [MutationRoot("addMoney")]
@@ -107,8 +106,6 @@ public class FileUploadController : GraphController
         await _service.UpdateItem(item);
         return item;
     }
-
-
 }
 ```
 
