@@ -37,3 +37,11 @@ Demonstrates the use of an external subscription event publisher and a consumer 
 
 📌  [Subscriptions w/ React & Apollo Client](https://github.com/graphql-aspnet/demo-projects/tree/master/Subscriptions-ReactApolloClient)<br/>
 A sample react application that makes use of the [apollo client](https://www.apollographql.com/docs/react/) to connect to a GraphQL ASP.NET server.
+
+<br/>
+
+### Extensions
+
+📌  [File Uploads](https://github.com/graphql-aspnet/demo-projects/tree/master/File-Uploads)<br/>
+Demonstrates the use the [graphql-multipart-form-spec](https://github.com/jaydenseric/graphql-multipart-request-spec) compliant extension to perform file uploads as part of a graphql query. 
+
