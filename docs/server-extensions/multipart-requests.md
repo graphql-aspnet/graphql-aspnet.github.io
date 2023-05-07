@@ -239,7 +239,7 @@ services.AddGraphQL(options => {
 You can inherit from `FileUpload` and extend it as needed on your custom maker. However, be sure to declare your method parameters as `FileUpload` in your controllers so that GraphQL knows what scalar you are requesting.
 :::
 
-Take a look at the [default upload scalar value maker](https://google.com) for some helpful details when trying to implement your own.
+Take a look at the [default upload scalar value maker](https://github.com/graphql-aspnet/graphql-aspnet/blob/master/src/graphql-aspnet/ServerExtensions/MultipartRequests/Engine/TypeMakers/DefaultFileUploadScalarValueMaker.cs) for some helpful details when trying to implement your own.
 
 ### Timeouts and File Uploads
 
