@@ -10,7 +10,9 @@ sidebar_position: 0
 ## Multipart Request Specification
 GraphQL ASP.NET provides built in support for batch query processing and file uploads via an implementation of the [GraphQL Multipart Request Specification](https://github.com/jaydenseric/graphql-multipart-request-spec).
 
-:::caution
+This extension requires a minimum version of `v1.2.0` of the main library and you must target .NET 6 or later. This extension will not work with the .NET standard implementation.
+
+:::info
 This document covers how to submit a batch query and upload files that conform to the above specification. It provides sample curl requests that would be accepted for the given sample code but does not explain in detail the various form fields required to complete a request. It is highly recommended to use a [supported client](https://github.com/jaydenseric/graphql-multipart-request-spec#client) when enabling this server extension.
 :::
 
@@ -507,3 +509,6 @@ mpOptions.RequireMultipartRequestHttpProcessor = true;
 | `true`       | `true`, `false`   |
 
 Determines if, when starting up the application, the extension will check that the required http processor is registered. When set to true, if the required processor is not registered and configuration exception will be thrown and the server will fail to start.  This can be helpful when registering multiple extensions to ensure that a valid processor is registered such that multipart form requests will be handled correctly.
+
+## Demo Project
+See the [demo projects](../reference/demo-projects.md) for a sample project utilizing [jaydenseric's apollo-upload-client](https://github.com/jaydenseric/apollo-upload-client) as a front end for performing file uploads against this  extension.
