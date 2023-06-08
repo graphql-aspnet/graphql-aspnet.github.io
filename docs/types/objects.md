@@ -110,7 +110,7 @@ public class Donut
     public string Name { get; set; }
     public DonutType Type { get; set; }
 
-    /highlight-next-line
+    // highlight-next-line
     [GraphSkip]
     public decimal Price { get; set; }
 }
