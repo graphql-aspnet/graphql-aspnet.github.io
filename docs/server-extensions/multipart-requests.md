@@ -448,7 +448,7 @@ A bitwise flag enumeration allowing the inclusion of different types of values f
 mpOptions.RequestMode = MultipartRequestMode.Default;
 ```
 
-A bitwise flag enumeration that controls which actions the multi-part request extension. By default, both batch queries and file uploads are enabled.
+A bitwise flag enumeration that controls which parts of the multi-part request extension are enabled. By default, both batch queries and file uploads are enabled.
 
 | Option | Description |
 | ------------- | ----------------- |
@@ -508,7 +508,7 @@ mpOptions.RequireMultipartRequestHttpProcessor = true;
 | ------------- | ----------------- |
 | `true`       | `true`, `false`   |
 
-Determines if, when starting up the application, the extension will check that the required http processor is registered. When set to true, if the required processor is not registered and configuration exception will be thrown and the server will fail to start.  This can be helpful when registering multiple extensions to ensure that a valid processor is registered such that multipart form requests will be handled correctly.
+Determines if, when starting up the application, the extension will check that the required http processor is registered. When set to true, if the required processor is not registered a configuration exception will be thrown and the server will fail to start.  This can be helpful when registering multiple extensions to ensure that a valid processor is registered such that multipart-form requests will be handled correctly.
 
 ## Demo Project
 See the [demo projects](../reference/demo-projects.md) for a sample project utilizing [jaydenseric's apollo-upload-client](https://github.com/jaydenseric/apollo-upload-client) as a front end for performing file uploads against this  extension.
