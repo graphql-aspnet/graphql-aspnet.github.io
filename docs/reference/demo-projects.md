@@ -16,6 +16,8 @@ Demonstrates the creation of a custom `ILogProvider` to intercept logging events
 📌  [Custom Http Processor](https://github.com/graphql-aspnet/demo-projects/tree/master/Custom-HttpProcessor)<br/>
 Demonstrates overriding the default HTTP Processor to conditionally process entire queries at the ASP.NET level.
 
+📌  [Unit Test Framework](https://github.com/graphql-aspnet/demo-projects/tree/master/Unit-Testing)<br/>
+An example project that utilizes the test framework nuget package to execute some unit tests against a graph controller using xUnit.
 
 <br/>
 
