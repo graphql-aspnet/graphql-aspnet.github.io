@@ -188,3 +188,5 @@ public async Task WhenUserHasPolicy_ThenAllowExecution()
 
 The user context is always injected when you run a query on the test server. By default it is an anonymous user and credentials are applied when you add a claim or policy to the context during setup. 
 
+## Demo project
+See the [demos page](../reference/demo-projects.md) for a working demo using XUnit. 
