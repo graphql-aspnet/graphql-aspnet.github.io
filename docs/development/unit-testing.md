@@ -88,13 +88,13 @@ public async Task MyController_InvocationTest()
     });
 
     var server = builder.Build();
-    var contextBuilder = server.CreateQueryContextBuilder();
-    contextBuilder.AddQueryText("query { controller { actionMethod { property1 } } }");
+    var queryBuilder = server.CreateQueryContextBuilder();
+    queryBuilder.AddQueryText("query { controller { actionMethod { property1 } } }");
 
-    var context = contextBuilder.Build();
+    var queryContext = queryBuilder.Build();
 
     // Act
-    var result = await server.RenderResult(context);
+    var result = await server.RenderResult(queryContext);
 
     /* result contains the string for:
     {
@@ -126,15 +126,15 @@ public async Task MyController_InvocationTest()
     });
 
     var server = builder.Build();
-    var contextBuilder = server.CreateQueryContextBuilder();
-    contextBuilder.AddQueryText("query { controller { actionMethod { property1 } } }");
+    var queryBuilder = server.CreateQueryContextBuilder();
+    queryBuilder.AddQueryText("query { controller { actionMethod { property1 } } }");
 
-    var context = contextBuilder.Build();
+    var queryContext = queryBuilder.Build();
 
     // Act
     // Use ExecuteQuery instead of RenderResult to obtain the response object
     // highlight-next-line
-    var result = await server.ExecuteQuery(queryBuilder);
+    var result = await server.ExecuteQuery(queryContext);
 
     // Assert
     // ensure a message was captured
@@ -173,13 +173,13 @@ public async Task WhenUserHasPolicy_ThenAllowExecution()
     // highlight-end
 
     var server = builder.Build();
-    var contextBuilder = server.CreateQueryContextBuilder();
-    contextBuilder.AddQueryText("query { controller { actionMethod { property1 } } }");
+    var queryBuilder = server.CreateQueryContextBuilder();
+    queryBuilder.AddQueryText("query { controller { actionMethod { property1 } } }");
 
-    var context = contextBuilder.Build();
+    var queryContext = queryBuilder.Build();
 
     // Act
-    var result = await server.RenderResult(queryBuilder);
+    var result = await server.RenderResult(queryContext);
 
     // Assert
     // ....
