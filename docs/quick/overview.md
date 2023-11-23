@@ -10,7 +10,7 @@ Use the menus on the left to navigate through the documentation. You do not need
 
 ## Nuget & Installation
 
-<span className="pill">.NET Standard 2.0</span> <span className="pill">.NET 6</span> <span className="pill">.NET 7</span> <br/><br/>
+<span className="pill">.NET Standard 2.0</span> <span className="pill">.NET 6</span> <span className="pill">.NET 7</span> <span className="pill">.NET 8</span> <br/><br/>
 
 The library is available on [nuget](https://www.nuget.org/packages/GraphQL.AspNet/) and can be added to your project via the conventional means.
 
