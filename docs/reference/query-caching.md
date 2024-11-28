@@ -28,5 +28,5 @@ services.AddGraphQL();
 ```
 
 :::note
-Because a query plan contains function pointers and references to local graph types, the default query cache is restricted to being "in process" for a single server instance and does not scale out to reddis or other similar technologies. 
+Because a query plan contains function pointers and references to local graph types, the default query cache is restricted to being "in process" for a single server instance and does not scale out to redis or other similar technologies. 
 :::
