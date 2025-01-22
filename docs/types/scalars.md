@@ -33,7 +33,7 @@ GraphQL ASP.NET has 20 built in scalar types.
 | UShort         | System.UInt16          | Number              |
 
 :::info 
- You must target .NET 6.0 or later to use `DateOnly` and `TimeOnly`
+ You must target .NET 8.0 or later to use `DateOnly` and `TimeOnly`
 :::
 
 ## Input Value Resolution

@@ -5,12 +5,12 @@ sidebar_label: File Uploads & Batching
 sidebar_position: 0
 ---
 
-<span className="pill">.NET 6+</span>
+<span className="pill">.NET 8+</span>
 
 ## Multipart Request Specification
 GraphQL ASP.NET provides built in support for batch query processing and file uploads via an implementation of the [GraphQL Multipart Request Specification](https://github.com/jaydenseric/graphql-multipart-request-spec).
 
-This extension requires a minimum version of `v1.2.0` of the main library and you must target .NET 6 or later. This extension will not work with the .NET standard implementation.
+This extension requires a minimum version of `v1.2.0` of the main library and you must target .NET 8 or later. This extension will not work with the .NET standard implementation.
 
 :::info
 This document covers how to submit a batch query and upload files that conform to the above specification. It provides sample curl requests that would be accepted for the given sample code but does not explain in detail the various form fields required to complete a request. It is highly recommended to use a [supported client](https://github.com/jaydenseric/graphql-multipart-request-spec#client) when enabling this server extension.
