@@ -5,12 +5,12 @@ sidebar_label: Unit Testing
 sidebar_position: 1
 ---
 
-<span className="pill">.NET 6+</span>
+<span className="pill">.NET 8+</span>
 <br/>
 <br/>
 
 :::info
-Your test projects must target .NET 6 or greater to use the test framework
+Your test projects must target .NET 8 or greater to use the test framework
 :::
 
 GraphQL ASP.NET has more than `3500 unit tests and 91% code coverage`. All the internal integration tests are powered by a framework designed to quickly build a configurable, fully mocked server instance to perform a query against the runtime. It may be helpful to use and extend the framework to test your own controllers.
