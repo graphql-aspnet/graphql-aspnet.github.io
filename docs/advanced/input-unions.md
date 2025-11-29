@@ -5,6 +5,8 @@ sidebar_label: Input Unions
 sidebar_position: 3
 ---
 
+
+
 Input unions (Spec § [3.10.1](https://spec.graphql.org/September2025/#sec-OneOf-Input-Objects)) are a variant on standard input objects such that only one of the defined fields may be used in a query. This can be helpful if you have an input object, such as search parameters, that gives multiple ways to search, but you want the user submitting a query to choose exactly one option to search by.
 
 By definition an input union is a standard [input object](../types/input-objects.md) (a class or a struct), all rules of standard input objects apply (i.e. field names must be unique, no use of interfaces etc.).  However...
@@ -16,7 +18,6 @@ By definition an input union is a standard [input object](../types/input-objects
 :::warning
 A declaration exception will be thrown and the server will fail to start if either of these rules are violated for any declared input union.
 :::
-
 
 ## Creating An Input Union
 An object can be declared as an input union in multiple ways:
@@ -167,3 +168,7 @@ public class BakeryController : GraphController
 :::info
 The `ValueOrDefault()` method will return a type of the fallback value, NOT of the input object property. This allows you to return non-null defaults in place of nullable values that must be passed on the input object. This should greatly reduce bloat in transferring query supplied values and reasonable fallbacks when necessary. When returning non-reference types, they must have compatibility between the nullable and non-nullable versions (e.g. `int` and `int?`)
 :::
+
+
+## Support
+Input Unions are supported in *GraphQL ASP.NET version 1.6* or later
