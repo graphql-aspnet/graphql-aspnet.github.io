@@ -298,3 +298,6 @@ public class Donut
 :::caution
  Enum values used for the default value of input object properties MUST also exist as values in the schema or an exception will be thrown.
 :::
+
+## Input Unions / @oneOf
+See [Input Unions](../advanced/input-unions.md) in the advanced section for details on using the `@oneOf` directive.
