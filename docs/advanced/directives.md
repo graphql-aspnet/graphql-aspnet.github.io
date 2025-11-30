@@ -111,7 +111,7 @@ public class MyInvalidDirective : GraphDirective
 
 Execution Directives are applied to query documents and executed only on the  request in which they are encountered. 
 
-### Example: @include
+### Custom Example: @include
 
 This is the code for the built in `@include` directive:
 
@@ -228,9 +228,46 @@ Batch extensions work differently than standard field resolvers; they don't reso
 
 Type System directives are applied to schema items and executed at start up while the schema is being created. 
 
-### Example: @toLower
+### @oneOf
 
-This directive will extend the resolver of a field, as its declared **in the schema**, to turn any strings into lower case letters.
+*See [input unions](input-unions.md) for further details*
+
+### @deprecated
+
+The `@deprecated` directive is a built in type system directive provided by graphql to indicate deprecation on a field definition or enum value. Below is the code for its implementation.
+
+```csharp
+public sealed class DeprecatedDirective : GraphDirective
+{
+    // additional validation checks and locations are excluded for brevity
+    [DirectiveLocations(DirectiveLocation.FIELD_DEFINITION)]
+    public IGraphActionResult Execute([FromGraphQL("reason", TypeExpression = "Type!")] string reason)
+    {        
+         if (this.DirectiveTarget is IDeprecatable deprecatable)
+        {
+            deprecatable.IsDeprecated = true;
+            deprecatable.DeprecationReason = reason;
+        }
+
+        return this.Ok();
+    }
+}
+```
+
+This Directive:
+
+-   Marks a field, input field, enum value or argument as deprecated and attaches the provided deprecation reason
+-   Requires that a reason for deprecation be supplied
+-   The directive is executed once per definition its applied to when the schema is created.
+
+
+:::info 
+Deprecation reason became a required value with the Sept. '25 specification update. (Library version v1.5)
+:::
+
+### Custom Example: @toLower
+
+This custom example directive will extend the resolver of a field, as its declared **in the schema**, to turn any strings into lower case letters.
 
 ```csharp title="Example: ToLowerDirective.cs"
 public class ToLowerDirective : GraphDirective
@@ -274,38 +311,6 @@ This Directive:
 :::info Type System Directives
  Notice the difference in this type system directive vs. the `@toUpper` execution directive above. Where as toUpper was declared as a PostResolver on the document part, this directive extends the primary resolver of an `IGraphField` and affects ALL queries that request this field.
 :::
-
-### Example: @deprecated
-
-The `@deprecated` directive is a built in type system directive provided by graphql to indicate deprecation on a field definition or enum value. Below is the code for its implementation.
-
-```csharp
-public sealed class DeprecatedDirective : GraphDirective
-{
-    [DirectiveLocations(DirectiveLocation.FIELD_DEFINITION | DirectiveLocation.ENUM_VALUE)]
-    public IGraphActionResult Execute([FromGraphQL("reason")] string reason = "No longer supported")
-    {
-        if (this.DirectiveTarget is IGraphField field)
-        {
-            field.IsDeprecated = true;
-            field.DeprecationReason = reason;
-        }
-        else if (this.DirectiveTarget is IEnumValue enumValue)
-        {
-            enumValue.IsDeprecated = true;
-            enumValue.DeprecationReason = reason;
-        }
-
-        return this.Ok();
-    }
-}
-```
-
-This Directive:
-
--   Targets a FIELD_DEFINITION or ENUM_VALUE.
--   Marks the field or enum value as deprecated and attaches the provided deprecation reason
--   The directive is executed once per field definition and enum value its applied to when the schema is created.
 
 ### Applying Type System Directives
 

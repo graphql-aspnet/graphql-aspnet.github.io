@@ -2,7 +2,7 @@
 id: multi-schema-support
 title: Multi-Schema Support
 sidebar_label: Multi-Schema Support
-sidebar_position: 5
+sidebar_position: 6
 ---
 
 GraphQL ASP.NET supports multiple schemas on the same server out of the box. Each schema is recognized by its concrete .NET type. 
