@@ -10,9 +10,11 @@ Use the menus on the left to navigate through the documentation. You do not need
 
 ## Nuget & Installation
 
-<span className="pill">.NET Standard 2.0</span> <span className="pill">.NET 8</span> <span className="pill">.NET 9</span> <br/><br/>
+<span className="pill">.NET 8+</span><br/><br/>
+
 
 The library is available on [nuget](https://www.nuget.org/packages/GraphQL.AspNet/) and can be added to your project via the conventional means.
+
 
 ```powershell title="How to Install The Library"
 # Using the dotnet CLI
@@ -28,6 +30,8 @@ The library is available on [nuget](https://www.nuget.org/packages/GraphQL.AspNe
 👉 [Code Examples](./code-examples.md): A few code snippets if you just want the gist of things.
 
 </span>
+
+
 
 
 ## Other Helpful Pages

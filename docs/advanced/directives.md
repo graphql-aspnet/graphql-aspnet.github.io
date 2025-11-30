@@ -239,18 +239,14 @@ The `@deprecated` directive is a built in type system directive provided by grap
 ```csharp
 public sealed class DeprecatedDirective : GraphDirective
 {
-    [DirectiveLocations(DirectiveLocation.FIELD_DEFINITION | DirectiveLocation.ENUM_VALUE)]
-    public IGraphActionResult Execute([FromGraphQL("reason")] string reason = "No longer supported")
-    {
-        if (this.DirectiveTarget is IGraphField field)
+    // additional validation checks and locations are excluded for brevity
+    [DirectiveLocations(DirectiveLocation.FIELD_DEFINITION)]
+    public IGraphActionResult Execute([FromGraphQL("reason", TypeExpression = "Type!")] string reason)
+    {        
+         if (this.DirectiveTarget is IDeprecatable deprecatable)
         {
-            field.IsDeprecated = true;
-            field.DeprecationReason = reason;
-        }
-        else if (this.DirectiveTarget is IEnumValue enumValue)
-        {
-            enumValue.IsDeprecated = true;
-            enumValue.DeprecationReason = reason;
+            deprecatable.IsDeprecated = true;
+            deprecatable.DeprecationReason = reason;
         }
 
         return this.Ok();
@@ -260,9 +256,14 @@ public sealed class DeprecatedDirective : GraphDirective
 
 This Directive:
 
--   Targets a FIELD_DEFINITION or ENUM_VALUE.
--   Marks the field or enum value as deprecated and attaches the provided deprecation reason
--   The directive is executed once per field definition and enum value its applied to when the schema is created.
+-   Marks a field, input field, enum value or argument as deprecated and attaches the provided deprecation reason
+-   Requires that a reason for deprecation be supplied
+-   The directive is executed once per definition its applied to when the schema is created.
+
+
+:::info 
+Deprecation reason became a required value with the Sept. '25 specification update. (Library version v1.5)
+:::
 
 ### Custom Example: @toLower
 
