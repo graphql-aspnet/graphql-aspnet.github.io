@@ -1,8 +1,9 @@
 // @ts-check
 // Note: type annotations allow type checking and IDEs autocompletion
 
-const lightCodeTheme = require('prism-react-renderer/themes/github');
-const darkCodeTheme = require('prism-react-renderer/themes/palenight');
+const {themes} = require('prism-react-renderer');
+const lightCodeTheme = themes.github;
+const darkCodeTheme = themes.vsDark;
 
 /** @type {import('@docusaurus/types').Config} */
 const config = {
@@ -11,8 +12,13 @@ const config = {
   url: 'https://graphql-aspnet.github.io',
   baseUrl: '/',
   onBrokenLinks: 'throw',
-  onBrokenMarkdownLinks: 'warn',
   favicon: 'img/favicon.ico',
+
+  markdown: {
+    hooks: {
+      onBrokenMarkdownLinks: 'warn',
+    },
+  },
 
 
   // GitHub pages deployment config.

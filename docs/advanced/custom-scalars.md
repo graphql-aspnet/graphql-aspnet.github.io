@@ -2,7 +2,7 @@
 id: custom-scalars
 title: Custom Scalars
 sidebar_label: Custom Scalars
-sidebar_position: 3
+sidebar_position: 4
 ---
 
 Scalars are the most basic, fundamental unit of content in GraphQL. It is one of two leaf types (the other being [enums](../types/enums)). 
