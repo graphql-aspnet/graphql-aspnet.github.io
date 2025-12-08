@@ -171,4 +171,4 @@ The `ValueOrDefault()` method will return a type of the fallback value, NOT of t
 
 
 ## Support
-Input Unions are supported in *GraphQL ASP.NET version 1.6* or later
+Input Unions are supported in *GraphQL ASP.NET version 1.5* or later
